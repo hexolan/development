@@ -8,7 +8,7 @@
   "scripts": {
     "start": "tsx ./src/main.ts",
     "dev": "tsx watch ./src/main.ts",
-    "gen-protobufs": "npx buf generate ../../protobufs/user.proto"
+    "protobufs-compile": "npx buf generate ../../protobufs/user.proto"
   },
   "homepage": "https://github.com/Hexolan/Panels",
   "dependencies": {
