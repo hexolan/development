@@ -1,5 +1,5 @@
-import { Text } from '@mantine/core';
-import { useParams } from 'react-router-dom';
+import { Text } from '@mantine/core'
+import { useParams } from 'react-router-dom'
 
 type PanelPageParams = {
   panelName: string;
@@ -15,4 +15,4 @@ function PanelPage() {
   )
 }
 
-export default PanelPage;
+export default PanelPage

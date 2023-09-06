@@ -1,4 +1,4 @@
-import { Text, Center, Container } from '@mantine/core';
+import { Text, Center, Container } from '@mantine/core'
 
 const IndexPage = () => {
   return (
@@ -10,4 +10,4 @@ const IndexPage = () => {
   )
 }
 
-export default IndexPage;
+export default IndexPage

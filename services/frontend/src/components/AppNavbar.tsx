@@ -1,8 +1,8 @@
-import { createElement } from 'react';
+import { createElement } from 'react'
 
-import { Navbar, ThemeIcon, Group, Text, UnstyledButton,rem } from '@mantine/core';
-import { IconTrendingUp, IconSearch, IconMessages } from '@tabler/icons-react';
-import { NavLink } from 'react-router-dom';
+import { Navbar, ThemeIcon, Group, Text, UnstyledButton,rem } from '@mantine/core'
+import { IconTrendingUp, IconSearch, IconMessages } from '@tabler/icons-react'
+import { NavLink } from 'react-router-dom'
 
 const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: JSX.ElementType }) => (
   <NavLink to={page} style={{ textDecoration: 'none' }}>
@@ -74,4 +74,4 @@ function AppNavbar() {
   )
 }
 
-export default AppNavbar;
+export default AppNavbar

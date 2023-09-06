@@ -1,9 +1,9 @@
-import React from 'react';
-import { AppShell } from '@mantine/core';
-import { Outlet } from 'react-router-dom';
+import React from 'react'
+import { AppShell } from '@mantine/core'
+import { Outlet } from 'react-router-dom'
 
-import AppNavbar from './AppNavbar';
-import AppHeader from './AppHeader';
+import AppNavbar from './AppNavbar'
+import AppHeader from './AppHeader'
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -21,4 +21,4 @@ function AppLayout(props: AppLayoutProps) {
   );
 }
 
-export default AppLayout;
+export default AppLayout

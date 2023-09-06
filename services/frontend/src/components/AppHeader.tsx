@@ -1,7 +1,7 @@
-import { Header, Button, Group } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Header, Button, Group } from '@mantine/core'
+import { Link } from 'react-router-dom'
 
-import panelsLogo from '../assets/logo.svg';
+import panelsLogo from '../assets/logo.svg'
 
 function AppHeader() {
   return (
@@ -17,4 +17,4 @@ function AppHeader() {
   )
 }
 
-export default AppHeader;
+export default AppHeader

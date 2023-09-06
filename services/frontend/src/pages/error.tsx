@@ -1,8 +1,8 @@
-import { Title, Text, Button, Center, Container, Group, rem } from '@mantine/core';
-import { Link, useRouteError, isRouteErrorResponse } from 'react-router-dom';
+import { Title, Text, Button, Center, Container, Group, rem } from '@mantine/core'
+import { Link, useRouteError, isRouteErrorResponse } from 'react-router-dom'
 
 const ErrorPage = () => {
-  const error = useRouteError();
+  const error = useRouteError()
 
   let title: string = 'Uh, oh!'
   let subTitle: string = 'Something went wrong.'
@@ -51,4 +51,4 @@ const ErrorPage = () => {
   )
 }
 
-export default ErrorPage;
+export default ErrorPage

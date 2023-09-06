@@ -1,10 +1,10 @@
-import { MantineProvider } from '@mantine/core';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { MantineProvider } from '@mantine/core'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import AppLayout from './components/AppLayout';
-import IndexPage from './pages/index';
-import PanelPage from './pages/panel';
-import ErrorPage from './pages/error';
+import AppLayout from './components/AppLayout'
+import IndexPage from './pages/index'
+import PanelPage from './pages/panel'
+import ErrorPage from './pages/error'
 
 const router = createBrowserRouter([
   {
@@ -31,4 +31,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
