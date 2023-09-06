@@ -6,9 +6,9 @@ A forum application created using a microservices architecture.
 
 ## About
 
-The overall application is currently a work-in-progress. In current form it serves as a proof of concept containing bare-bones functionality. 
+In current form the application serves as a proof of concept containing bare-bones functionality.
 
-There are definitely aspects I'd like to polish off, along with some ideas for additional functionality that I'd like to implement in spare time.
+There are definitely aspects I'd like to polish off, along with some ideas for additional functionality that I'd like to implement in spare time, as such this application should be considered a work-in-progress.
 
 ## Services
 
@@ -18,11 +18,11 @@ Inter-service communication is handled through RPC calls (utilising [gRPC](https
 
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
-| [frontend](/services/frontend) | JavaScript (React) | N/A | Web-based user interface |
+| [frontend](/services/frontend) | TypeScript (React) | N/A | Web-based user interface |
 | [gateway-service](/services/gateway-service) | Golang | N/A | Exposes a HTTP REST API to allow users to communicate with the application from the ``frontend``. |
 | [panel-service](/services/panel-service) | Golang | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to panels |
 | [post-service](/services/post-service) | Golang | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to posts |
-| [user-service](/services/user-service) | JavaScript (Node) | [MongoDB](https://www.mongodb.com/) | Responsible for operations related to users |
+| [user-service](/services/user-service) | TypeScript (Node) | [MongoDB](https://www.mongodb.com/) | Responsible for operations related to users |
 | [auth-service](/services/auth-service) | Python | [PostgreSQL](https://www.postgresql.org/) | Responsible for authenticating users |
 | [comment-service](/services/comment-service) | Python | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to comments |
 

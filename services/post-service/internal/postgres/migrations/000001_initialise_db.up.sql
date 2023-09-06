@@ -1,4 +1,4 @@
-CREATE TABLE "posts" (
+CREATE TABLE posts (
     "id" serial PRIMARY KEY,
     "panel_id" varchar(64) NOT NULL,
     "author_id" varchar(64) NOT NULL,
@@ -7,5 +7,3 @@ CREATE TABLE "posts" (
     "created_at" timestamp NOT NULL DEFAULT timezone('utc', now()),
     "updated_at" timestamp
 );
-
-INSERT INTO "posts" ("panel_id", "author_id", "title", "content") VALUES ('1', '1', 'Welcome to Panels!', 'This is the first post.');
