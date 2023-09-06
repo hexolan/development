@@ -4,7 +4,7 @@ import { Navbar, ThemeIcon, Group, Text, UnstyledButton,rem } from '@mantine/cor
 import { IconTrendingUp, IconSearch, IconMessages } from '@tabler/icons-react';
 import { NavLink } from "react-router-dom";
 
-const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: any }) => (
+const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: JSX.ElementType }) => (
   <NavLink to={page} style={{ textDecoration: "none" }}>
     {({ isActive }) => (
       <UnstyledButton
