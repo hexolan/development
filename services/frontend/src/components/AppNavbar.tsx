@@ -2,30 +2,30 @@ import { createElement } from 'react';
 
 import { Navbar, ThemeIcon, Group, Text, UnstyledButton,rem } from '@mantine/core';
 import { IconTrendingUp, IconSearch, IconMessages } from '@tabler/icons-react';
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: JSX.ElementType }) => (
-  <NavLink to={page} style={{ textDecoration: "none" }}>
+  <NavLink to={page} style={{ textDecoration: 'none' }}>
     {({ isActive }) => (
       <UnstyledButton
         sx={(theme) => ({
-          display: "block",
-          width: "100%",
+          display: 'block',
+          width: '100%',
           padding: theme.spacing.xs,
           borderRadius: theme.radius.sm,
 
-          backgroundColor: isActive ? theme.colors.gray[0] : "inherit",
-          "&:hover": {
+          backgroundColor: isActive ? theme.colors.gray[0] : 'inherit',
+          '&:hover': {
             backgroundColor: theme.colors.gray[0],
           },
         })}
       >
         <Group>
-          <ThemeIcon color="teal" variant="light">
-            { createElement(icon, {size: "1rem"}) }
+          <ThemeIcon color='teal' variant='light'>
+            { createElement(icon, { size: '1rem' }) }
           </ThemeIcon>
 
-          <Text size="sm">{text}</Text>
+          <Text size='sm'>{text}</Text>
         </Group>
       </UnstyledButton>
     )}
@@ -34,11 +34,11 @@ const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: 
 
 function AppNavbar() {
   return (
-    <Navbar width={{ base: 300 }} p="xs">
-      <Navbar.Section py="xs">
+    <Navbar width={{ base: 300 }} p='xs'>
+      <Navbar.Section py='xs'>
         <Text
-          size="xs"
-          color="dimmed"
+          size='xs'
+          color='dimmed'
           sx={(theme) => ({
             marginLeft: theme.spacing.xs,
             marginBottom: theme.spacing.xs,
@@ -47,8 +47,8 @@ function AppNavbar() {
         >
           Browse
         </Text>
-        <NavbarButton text="Feed" page="/" icon={IconTrendingUp} />
-        <NavbarButton text="Find Panels" page="/panels" icon={IconSearch} />
+        <NavbarButton text='Feed' page='/' icon={IconTrendingUp} />
+        <NavbarButton text='Find Panels' page='/panels' icon={IconSearch} />
       </Navbar.Section>
 
       <Navbar.Section 
@@ -59,8 +59,8 @@ function AppNavbar() {
         })}
       >
         <Text 
-          size="xs"
-          color="dimmed"
+          size='xs'
+          color='dimmed'
           sx={(theme) => ({
             margin: theme.spacing.xs,
             fontWeight: 500,
@@ -68,7 +68,7 @@ function AppNavbar() {
         >
           Subscribed Panels
         </Text>
-        <NavbarButton text="panel/Panel" page="/panel/Panel" icon={IconMessages} />
+        <NavbarButton text='panel/Panel' page='/panel/Panel' icon={IconMessages} />
       </Navbar.Section>
     </Navbar>
   )

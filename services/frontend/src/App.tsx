@@ -1,5 +1,5 @@
 import { MantineProvider } from '@mantine/core';
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import AppLayout from './components/AppLayout';
 import IndexPage from './pages/index';
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
         element: <IndexPage />,
       },
       {
-        path: "/panel/:panelName",
+        path: '/panel/:panelName',
         element: <PanelPage />,
       }
     ]

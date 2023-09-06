@@ -1,27 +1,27 @@
 import { Title, Text, Button, Center, Container, Group, rem } from '@mantine/core';
-import { Link, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { Link, useRouteError, isRouteErrorResponse } from 'react-router-dom';
 
 const ErrorPage = () => {
   const error = useRouteError();
 
-  let title: string = "Uh, oh!"
-  let subTitle: string = "Something went wrong."
+  let title: string = 'Uh, oh!'
+  let subTitle: string = 'Something went wrong.'
   if (isRouteErrorResponse(error)) {
-    title = "Error " + String(error.status)
+    title = `Error ${error.status}`
     subTitle = error.statusText
   } else if (error instanceof Error) {
     subTitle = error.message
   }
 
   return (
-    <Center h="100%">
+    <Center h='100%'>
       <Container>
         <Title
           sx={(theme) => ({
-            textAlign: "center",
+            textAlign: 'center',
             fontWeight: 900,
             fontSize: rem(38),
-            [theme.fn.smallerThan("sm")]: {
+            [theme.fn.smallerThan('sm')]: {
               fontSize: rem(32),
             },
           })}
@@ -29,11 +29,11 @@ const ErrorPage = () => {
           {title}
           </Title>
         <Text 
-          size="lg"
-          color="dimmed"
+          size='lg'
+          color='dimmed'
           sx={(theme) => ({
             maxWidth: rem(500),
-            textAlign: "center",
+            textAlign: 'center',
             marginTop: theme.spacing.xl,
             marginBottom: `calc(${theme.spacing.xl} * 1.5)`,
           })}
@@ -41,8 +41,8 @@ const ErrorPage = () => {
           {subTitle}
         </Text>
 
-        <Group position="center">
-          <Button component={Link} to="/" variant="subtle" size="md">
+        <Group position='center'>
+          <Button component={Link} to='/' variant='subtle' size='md'>
             Back to Home
           </Button>
         </Group>
