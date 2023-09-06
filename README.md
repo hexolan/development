@@ -14,6 +14,8 @@ There are definitely aspects I'd like to polish off, along with some ideas for a
 
 The application is currently comprised of 7 services. Users are served the React site from the ``frontend`` and make calls to the REST API exposed by the ``gateway-service``. 
 
+![Architecture](/docs/img-2.jpg)
+
 Inter-service communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)). 
 
 | Service | Language | Datastores | Description |
