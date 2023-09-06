@@ -1,0 +1,4 @@
+from comment_service.events.producer import CommentEventProducer
+from comment_service.events.post_consumer import PostEventConsumer
+from comment_service.events.user_consumer import UserEventConsumer
+from comment_service.events.service import create_consumers, create_producer

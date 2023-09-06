@@ -1,0 +1,2 @@
+from auth_service.events.user_consumer import UserEventConsumer
+from auth_service.events.service import create_consumers

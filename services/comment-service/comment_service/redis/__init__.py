@@ -1,0 +1,1 @@
+from comment_service.redis.service import create_redis_repository
