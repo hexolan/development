@@ -16,7 +16,7 @@ The application is currently comprised of 7 services. Users are served the React
 
 ![Architecture](/docs/img-2.png)
 
-Inter-service communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)). 
+Interservice communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)). 
 
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
