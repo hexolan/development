@@ -12,11 +12,7 @@ There are definitely aspects I'd like to polish off, along with some ideas for a
 
 ## Services
 
-The application is currently comprised of 7 services. Users are served the React site from the ``frontend`` and make calls to the REST API exposed by the ``gateway-service``. 
-
-![Architecture](/docs/img-2.png)
-
-Interservice communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)). 
+The application is currently comprised of 7 services. 
 
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
@@ -27,6 +23,14 @@ Interservice communication is handled through RPC calls (utilising [gRPC](https:
 | [user-service](/services/user-service) | TypeScript (Node) | [MongoDB](https://www.mongodb.com/) | Responsible for operations related to users |
 | [auth-service](/services/auth-service) | Python | [PostgreSQL](https://www.postgresql.org/) | Responsible for authenticating users |
 | [comment-service](/services/comment-service) | Python | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to comments |
+
+## Architecture
+
+Users are served the React site from the ``frontend`` and make calls to the REST API exposed by the ``gateway-service``. The ``gateway-service`` makes calls to the relevant services for the request.
+
+Interservice communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)).
+
+![Architecture](/docs/img-2.png)
 
 ## Deployment and Configuration
 
