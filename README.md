@@ -30,7 +30,7 @@ Inter-service communication is handled through RPC calls (utilising [gRPC](https
 
 ## Deployment and Configuration
 
-For information on how to deploy this application, and the configuration options that each service requires, view the [documentation.](/docs/README.md)
+For more information about configuration and deployment, please view the [documentation](/docs/README.md) located in the ``/docs`` folder.
 
 ## License
 
