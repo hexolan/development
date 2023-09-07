@@ -15,7 +15,7 @@ There are definitely aspects I'd like to polish off, along with some ideas for a
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
 | [frontend](/services/frontend) | TypeScript (React) | N/A | Web-based user interface |
-| [gateway-service](/services/gateway-service) | Golang | N/A | Exposes a HTTP REST API to allow users to communicate with the application from the ``frontend``. |
+| [gateway-service](/services/gateway-service) | Golang | N/A | Exposes a HTTP REST API to allow users to communicate with the application. |
 | [panel-service](/services/panel-service) | Golang | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to panels |
 | [post-service](/services/post-service) | Golang | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to posts |
 | [user-service](/services/user-service) | TypeScript (Node) | [MongoDB](https://www.mongodb.com/) | Responsible for operations related to users |
@@ -39,6 +39,6 @@ For more information about configuration and deployment, please view the [docume
 **Acknowledgments:**
 
 * Logo Icon: [Tabler Icons](https://github.com/tabler/tabler-icons) ([MIT License](https://github.com/tabler/tabler-icons/blob/master/LICENSE)) 
-* Logo Font: [Oregano](https://fonts.google.com/specimen/Oregano) ([Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL))
+* Logo Font: [Oregano](https://fonts.google.com/specimen/Oregano) ([Open Font License](https://scripts.sil.org/OFL))
 
 This repository is licensed under the [Apache License v2.0](/LICENSE).
