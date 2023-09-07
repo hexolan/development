@@ -12,8 +12,6 @@ There are definitely aspects I'd like to polish off, along with some ideas for a
 
 ## Services
 
-The application is currently comprised of 7 services. 
-
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
 | [frontend](/services/frontend) | TypeScript (React) | N/A | Web-based user interface |
