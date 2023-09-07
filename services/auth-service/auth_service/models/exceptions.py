@@ -23,9 +23,7 @@ class ServiceErrorCode(Enum):
 
 
 class ServiceException(Exception):
-    """A custom service exception.
-
-    This exception provides an interface to convert
+    """This exception provides an interface to convert
     service errors into gRPC errors, which can then be
     returned to the caller.
 

@@ -10,7 +10,21 @@ from auth_service.rpc.servicer import AuthServicer
 
 
 class RPCServerWrapper:
+    """A wrapper class for the RPC server.
+    
+    Provides a method to begin serving RPC.
+
+    Attributes:
+        _grpc_server (grpc.aio.Server): The gRPC server instance.
+    
+    """
     def __init__(self, svc_repo: Type[AuthRepository]) -> None:
+        """Creates the gRPC server and add the servicers.
+        
+        Args:
+            svc_repo (AuthRepository): The service repository to pass to the servicers.
+
+        """
         self._grpc_server = grpc.aio.server()
         self._grpc_server.add_insecure_port("[::]:9090")
 
@@ -20,10 +34,20 @@ class RPCServerWrapper:
         health_pb2_grpc.add_HealthServicer_to_server(health.aio.HealthServicer(), self._grpc_server)
 
     async def start(self) -> None:
+        """Begin serving RPC asynchronously."""
         logging.info("attempting to serve RPC...")
         await self._grpc_server.start()
         await self._grpc_server.wait_for_termination()
 
 
 def create_rpc_server(svc_repo: Type[AuthRepository]) -> RPCServerWrapper:
+    """Instantialise the RPC server wrapper.
+    
+    Args:
+        svc_repo (AuthRepository): The service repository for the RPC servicers to interface with.
+
+    Returns:
+        RPCServerWrapper
+
+    """
     return RPCServerWrapper(svc_repo)

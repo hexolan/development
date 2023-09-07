@@ -23,6 +23,21 @@ class ConfigSource(EnvSettingsSource):
 
 
 class Config(BaseSettings):
+    """The service configuration loaded from environment
+    variables.
+    
+    Attributes:
+        postgres_user (str): Loaded from the 'POSTGRES_USER' envvar.
+        postgres_pass (str): Loaded from the 'POSTGRES_PASS' envvar.
+        postgres_host (str): Loaded from the 'POSTGRES_HOST' envvar.
+        postgres_database (str): Loaded from the 'POSTGRES_DATABASE' envvar.
+        kafka_brokers (list[str]): Loaded and comma delmited from the 'KAFKA_BROKERS' envvar.
+        jwt_public_key (str): Loaded and decoded, from base64, from the 'JWT_PUBLIC_KEY' envvar.
+        jwt_private_key (str): Loaded and decoded, from base64, from the 'JWT_PRIVATE_KEY' envvar.
+        password_pepper (str): Loaded from the 'PASSWORD_PEPPER' envvar.
+        postgres_dsn (str): Computed when accessed the first time. (@property)
+    
+    """
     postgres_user: str
     postgres_pass: str
     postgres_host: str
@@ -38,6 +53,13 @@ class Config(BaseSettings):
     @computed_field
     @property
     def postgres_dsn(self) -> str:
+        """Uses the postgres_user, postgres_pass, postgres_host,
+        and postgres_database options to assemble a DSN.
+
+        Returns:
+            String - DSN for connecting to database.
+        
+        """
         return "postgresql+asyncpg://{user}:{password}@{host}/{db}".format(
             user=self.postgres_user,
             password=self.postgres_pass,

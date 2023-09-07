@@ -51,6 +51,7 @@ class UserEventConsumer:
         
         Args:
             msg (kafka.Message): The event to process.
+        
         """
         try:    
             event = user_pb2.UserEvent()
