@@ -6,9 +6,9 @@ A forum application created using a microservices architecture.
 
 ## About
 
-In current form the application serves as a proof of concept containing bare-bones functionality.
+In current form the application serves as a proof of concept containing the bare-bones functionality.
 
-There are definitely aspects I'd like to polish off, along with some ideas for additional functionality that I'd like to implement in spare time, as such this application should be considered a work-in-progress.
+There are definitely aspects I'd like to improve or polish further, as such this application should be considered a work-in-progress. I have some ideas for additional functionality that I'd like to implement in spare time.
 
 ## Services
 
