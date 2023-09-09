@@ -6,6 +6,16 @@ from auth_service.models.service import AuthDBRepository, AuthRecord
 
 
 class ServiceDBRepository(AuthDBRepository):
+    """Database repository responsible for CRUD actions 
+    on the database.
+    
+    This repository will be utilised by other upstream repositories
+    or the Kafka event consumers.
+
+    Attributes:
+        _db (Database): The postgres database connection handler.
+
+    """
     def __init__(self, db: Database) -> None:
         self._db = db
 

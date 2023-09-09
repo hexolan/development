@@ -11,14 +11,38 @@ from auth_service.models.proto import auth_pb2, auth_pb2_grpc
 
 
 class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
+    """Class definition for all RPC methods.
+    
+    The request attributes are validated and translated 
+    from protobufs into business model form, then the
+    request is handled by the service repository.
+
+    Attributes:
+        _svc_repo (Type[AuthRepository]): The highest level service repository.
+    
+    """
     def __init__(self, svc_repo: Type[AuthRepository]) -> None:
         self._svc_repo = svc_repo
     
     def _apply_error(self, context: RpcContext, code: StatusCode, msg: str) -> None:
+        """Set an error on a given RPC request.
+        
+        Args:
+            context (grpc.RpcContext): The context to apply the error to.
+            code (grpc.StatusCode): The gRPC status code.
+            msg (str): The error details.
+
+        """
         context.set_code(code)
         context.set_details(msg)
     
     def _apply_unknown_error(self, context: RpcContext) -> None:
+        """Apply a de facto error fallback message.
+        
+        Args:
+            context (grpc.RpcContext): The context to apply the error to.
+        
+        """
         self._apply_error(context, StatusCode.UNKNOWN, "unknown error occured")
 
     async def AuthWithPassword(self, request: auth_pb2.PasswordAuthRequest, context: RpcContext) -> auth_pb2.AuthToken:

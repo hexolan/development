@@ -9,12 +9,15 @@ from pydantic_settings.sources import PydanticBaseSettingsSource
 
 
 class ConfigSource(EnvSettingsSource):
+    """Responsible for loading config options for set environment variables."""
     def prepare_field_value(self, field_name: str, field: FieldInfo, value: Any, value_is_complex: bool) -> Any:
         if field_name == "kafka_brokers":
+            # Comma delimit the kafka brokers.
             if value == None:
                 return None
             return value.split(",")
         elif field_name == "jwt_public_key" or field_name == "jwt_private_key":
+            # Decode the JWT public and private keys from base64.
             if value == None:
                 return None
             return base64.standard_b64decode(value).decode(encoding="utf-8")
@@ -57,7 +60,7 @@ class Config(BaseSettings):
         and postgres_database options to assemble a DSN.
 
         Returns:
-            String - DSN for connecting to database.
+            str: DSN for connecting to the database.
         
         """
         return "postgresql+asyncpg://{user}:{password}@{host}/{db}".format(

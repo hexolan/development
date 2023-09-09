@@ -17,11 +17,11 @@ class AuthToken(BaseModel):
     token_type: str = "Bearer"
     access_token: str
     expires_in: int = Field(default=int(timedelta(minutes=30).total_seconds()))
-    refresh_token: Optional[str] = None  # todo: implement functionality in the future
+    # refresh_token: str  # todo: implement functionality in the future
 
     @classmethod
     def to_protobuf(cls, auth_token: "AuthToken") -> auth_pb2.AuthToken:
-        return auth_pb2.AuthToken(**auth_token.model_dump(exclude_none=True))
+        return auth_pb2.AuthToken(**auth_token.model_dump())
 
 
 class AccessTokenClaims(BaseModel):
@@ -31,6 +31,7 @@ class AccessTokenClaims(BaseModel):
 
 
 class AuthRepository:
+    """Abstract repository interface"""
     async def auth_with_password(self, user_id: str, password: str) -> AuthToken:
         raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
     
@@ -42,6 +43,7 @@ class AuthRepository:
 
 
 class AuthDBRepository(AuthRepository):
+    """Abstract database repository interface"""
     async def get_auth_record(self, user_id: str) -> Optional[AuthRecord]:
         raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
 

@@ -6,7 +6,7 @@ from grpc_health.v1 import health, health_pb2_grpc
 
 from auth_service.models.proto import auth_pb2_grpc
 from auth_service.models.service import AuthRepository
-from auth_service.rpc.servicer import AuthServicer
+from auth_service.rpc.auth import AuthServicer
 
 
 class RPCServerWrapper:

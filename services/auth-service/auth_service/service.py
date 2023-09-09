@@ -12,6 +12,17 @@ from auth_service.models.service import AuthRepository, AuthDBRepository, AuthTo
 
 
 class ServiceRepository(AuthRepository):
+    """The service repository responsible for handling
+    the business logic.
+
+    Attributes:
+        _repo (AuthDBRepository): The downstream database repository.
+        _jwt_private (str): RSA private key for producing JWT tokens.
+        _hasher (argon2.PasswordHasher): Library class utilised for hashing passwords.
+        _pepper (bytes): An additional 'secret salt' applied to all passwords when hashed.
+    
+    """
+
     def __init__(self, config: Config, downstream_repo: Type[AuthDBRepository]) -> None:
         self._repo = downstream_repo
 
@@ -21,15 +32,60 @@ class ServiceRepository(AuthRepository):
         self._pepper = bytes(config.password_pepper, encoding="utf-8")
 
     def _apply_pepper(self, password: str) -> str:
+        """Apply the pepper ('secret salt') to
+        a given password using HMAC.
+
+        Args:
+            password (str): The password to apply to pepper to.
+
+        Returns:
+            str: The password with applied pepper (in hexadecimal form). 
+        
+        """
         return hmac.new(key=self._pepper, msg=bytes(password, encoding="utf-8"), digestmod=hashlib.sha256).hexdigest()
 
     def _hash_password(self, password: str) -> str:
+        """Hash a given password.
+
+        The pepper is applied to the password, and the result
+        is then hashed using Argon2id.
+        
+        Args:
+            password (str): The password to hash.
+
+        Returns:
+            str: The hashed password.
+        
+        """
         return self._hasher.hash(self._apply_pepper(password))
 
     def _verify_password(self, hash: str, password: str) -> None:
+        """Verify that an input password matches
+        a hash.
+
+        The pepper is applied to the input password
+        and compared to the stored hash.
+
+        Args:
+            hash (str): The existing hashed password.
+            password (str): The password to verify against the hash.
+
+        Raises:
+            argon2.Exceptions.VerificationError: if the password does not match
+        
+        """
         self._hasher.verify(hash, self._apply_pepper(password))
 
     def _issue_auth_token(self, user_id: str) -> AuthToken:
+        """Issue an auth token.
+        
+        Args:
+            user_id (str): The user to issue the tokens to.
+
+        Returns:
+            AuthToken: A response containing the generated access token,
+                token type and expiry time.        
+        """
         claims = AccessTokenClaims(sub=user_id)
         access_token = jwt.encode(claims.model_dump(), self._jwt_private, algorithm="RS256")
         return AuthToken(access_token=access_token)
