@@ -12,6 +12,8 @@ There are definitely aspects I'd like to improve or polish further, as such this
 
 ## Services
 
+I wrote the services in a variety of languages as the architecture gave me some room to play around with.
+
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
 | [frontend](/services/frontend) | TypeScript (React) | N/A | Web-based user interface |

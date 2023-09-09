@@ -11,11 +11,16 @@ from auth_service.models.proto import auth_pb2, auth_pb2_grpc
 
 
 class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
-    """Class definition for all RPC methods.
+    """Contains definitions for the service's RPC methods.
     
     The request attributes are validated and translated 
-    from protobufs into business model form, then the
-    request is handled by the service repository.
+    from protobufs into business model form, then passed
+    along to the service repository to handling the
+    business logic.
+
+    Responses from calls to methods in the service repository
+    are then translated back to protobuf form to return
+    to the user.
 
     Attributes:
         _svc_repo (Type[AuthRepository]): The highest level service repository.
@@ -46,6 +51,16 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         self._apply_error(context, StatusCode.UNKNOWN, "unknown error occured")
 
     async def AuthWithPassword(self, request: auth_pb2.PasswordAuthRequest, context: RpcContext) -> auth_pb2.AuthToken:
+        """AuthWithPassword RPC Call
+        
+        Args:
+            request (auth_pb2.PasswordAuthRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            auth_pb2.AuthToken: With a succesfully authentication.
+
+        """
         # validate the request inputs
         if request.user_id == "":
             self._apply_error(
@@ -78,6 +93,16 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         return AuthToken.to_protobuf(token)
 
     async def SetPasswordAuth(self, request: auth_pb2.SetPasswordAuthMethod, context: RpcContext) -> empty_pb2.Empty:
+        """SetPasswordAuth RPC Call
+        
+        Args:
+            request (auth_pb2.SetPasswordAuthMethod): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            empty_pb2.Empty: Empty protobuf response (in effect returns None).
+
+        """
         # validate the request inputs
         if request.user_id == "":
             self._apply_error(
@@ -110,6 +135,16 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         return empty_pb2.Empty()
 
     async def DeletePasswordAuth(self, request: auth_pb2.DeletePasswordAuthMethod, context: RpcContext) -> empty_pb2.Empty:
+        """DeletePasswordAuth RPC Call
+        
+        Args:
+            request (auth_pb2.DeletePasswordAuthMethod): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            empty_pb2.Empty: Empty protobuf response (in effect returns None).
+
+        """
         # Ensure a user id is provided
         if request.user_id == "":
             self._apply_error(

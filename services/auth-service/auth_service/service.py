@@ -15,6 +15,18 @@ class ServiceRepository(AuthRepository):
     """The service repository responsible for handling
     the business logic.
 
+    As I've developed most of the services in this project
+    using a repository pattern, this provides a level
+    of abstraction, allowing me to swap out the downstream
+    repositories to add additional layers.
+
+    For example, instead of have the next downstream
+    repository (`_repo` attribute) point directly
+    to the DB repo instance, I could point it to a
+    Redis repository to use as a caching layer, as I
+    have done so in some of the other services in this
+    project.
+
     Attributes:
         _repo (AuthDBRepository): The downstream database repository.
         _jwt_private (str): RSA private key for producing JWT tokens.
@@ -91,6 +103,14 @@ class ServiceRepository(AuthRepository):
         return AuthToken(access_token=access_token)
 
     async def auth_with_password(self, user_id: str, password: str) -> AuthToken:
+        """Attempt to authenticate a user with a
+        provided password.
+
+        Args:
+            user_id (str): The user to attempt to authenticate.
+            password (str): The password to verify against.
+         
+        """
         # Get the auth record for that user
         auth_record = await self._repo.get_auth_record(user_id)
         if not auth_record:
@@ -110,6 +130,17 @@ class ServiceRepository(AuthRepository):
         return self._issue_auth_token(auth_record.user_id)
 
     async def set_password_auth_method(self, user_id: str, password: str) -> None:
+        """Set a user's password for use when authenticating.
+        
+        If the specified user does not already have an existing
+        authentication method, then insert a record, otherwise
+        update their existing record.
+
+        Args:
+            user_id (str): The referenced user.
+            password (str): The new password for that user.
+        
+        """
         # Hash the password
         password = self._hash_password(password)
 
@@ -121,4 +152,10 @@ class ServiceRepository(AuthRepository):
             await self._repo.create_password_auth_method(user_id, password)
 
     async def delete_password_auth_method(self, user_id: str) -> None:
+        """Delete a user's authentication method.
+
+        Args:
+            user_id (str): The referenced user.        
+        
+        """
         await self._repo.delete_password_auth_method(user_id)
