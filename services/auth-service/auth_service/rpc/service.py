@@ -11,8 +11,6 @@ from auth_service.rpc.servicer import AuthServicer
 
 class RPCServerWrapper:
     """A wrapper class for the RPC server.
-    
-    Provides a method to begin serving RPC.
 
     Attributes:
         _grpc_server (grpc.aio.Server): The gRPC server instance.
