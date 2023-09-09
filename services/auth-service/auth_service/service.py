@@ -1,12 +1,14 @@
 import hmac
 import hashlib
-from typing import Type, Optional
+from typing import Type
 
 import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerificationError
 
-from auth_service.models import (Config, AuthRepository, AuthDBRepository, ServiceException, ServiceErrorCode, AuthToken, AccessTokenClaims)
+from auth_service.models.config import Config
+from auth_service.models.exceptions import ServiceException, ServiceErrorCode
+from auth_service.models.service import AuthRepository, AuthDBRepository, AuthToken, AccessTokenClaims
 
 
 class ServiceRepository(AuthRepository):

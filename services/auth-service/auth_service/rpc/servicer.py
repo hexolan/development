@@ -5,7 +5,8 @@ from typing import Type
 from google.protobuf import empty_pb2
 from grpc import RpcContext, StatusCode
 
-from auth_service.models import AuthRepository, ServiceException, AuthToken
+from auth_service.models.exceptions import ServiceException
+from auth_service.models.service import AuthRepository, AuthToken
 from auth_service.models.proto import auth_pb2, auth_pb2_grpc
 
 

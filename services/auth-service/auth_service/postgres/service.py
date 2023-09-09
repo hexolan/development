@@ -1,9 +1,8 @@
 import logging
-from typing import Type
 
 from databases import Database
 
-from auth_service.models import Config, AuthDBRepository
+from auth_service.models.config import Config
 from auth_service.postgres.repository import ServiceDBRepository
 
 
@@ -27,14 +26,14 @@ async def connect_database(config: Config) -> Database:
     return db
 
 
-async def create_db_repository(config: Config) -> Type[AuthDBRepository]:
+async def create_db_repository(config: Config) -> ServiceDBRepository:
     """Create the database repository.
     
     Open a database connection and instantialise the
     database repository.
 
     Returns:
-        AuthDBRepository
+        ServiceDBRepository
     
     """
     db = await connect_database(config)

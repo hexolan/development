@@ -2,7 +2,7 @@ from typing import Optional
 
 from databases import Database
 
-from auth_service.models import AuthDBRepository, AuthRecord
+from auth_service.models.service import AuthDBRepository, AuthRecord
 
 
 class ServiceDBRepository(AuthDBRepository):

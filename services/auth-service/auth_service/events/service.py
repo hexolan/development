@@ -1,6 +1,7 @@
 from typing import Type
 
-from auth_service.models import Config, AuthDBRepository
+from auth_service.models.config import Config
+from auth_service.models.service import AuthDBRepository
 from auth_service.events.user_consumer import UserEventConsumer
 
 

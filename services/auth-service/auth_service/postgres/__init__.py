@@ -1,2 +1,0 @@
-from auth_service.postgres.repository import ServiceDBRepository
-from auth_service.postgres.service import create_db_repository

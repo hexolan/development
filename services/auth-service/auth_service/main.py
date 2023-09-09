@@ -2,11 +2,11 @@ import asyncio
 import logging
 from sys import stdout
 
-from auth_service.models import Config
-from auth_service.events import create_consumers
-from auth_service.postgres import create_db_repository
+from auth_service.models.config import Config
+from auth_service.events.service import create_consumers
+from auth_service.postgres.service import create_db_repository
 from auth_service.service import ServiceRepository
-from auth_service.rpc import create_rpc_server
+from auth_service.rpc.service import create_rpc_server
 
 
 async def main() -> None:

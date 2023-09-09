@@ -4,8 +4,8 @@ from typing import Type
 import grpc
 from grpc_health.v1 import health, health_pb2_grpc
 
-from auth_service.models import AuthRepository
 from auth_service.models.proto import auth_pb2_grpc
+from auth_service.models.service import AuthRepository
 from auth_service.rpc.servicer import AuthServicer
 
 
@@ -29,7 +29,8 @@ class RPCServerWrapper:
         auth_servicer = AuthServicer(svc_repo)
         auth_pb2_grpc.add_AuthServiceServicer_to_server(auth_servicer, self._grpc_server)
 
-        health_pb2_grpc.add_HealthServicer_to_server(health.aio.HealthServicer(), self._grpc_server)
+        health_servicer = health.aio.HealthServicer()
+        health_pb2_grpc.add_HealthServicer_to_server(health_servicer, self._grpc_server)
 
     async def start(self) -> None:
         """Begin serving RPC asynchronously."""

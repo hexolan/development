@@ -5,7 +5,8 @@ from google.protobuf import message
 from aiokafka import AIOKafkaConsumer
 from aiokafka.structs import ConsumerRecord
 
-from auth_service.models import Config, AuthDBRepository
+from auth_service.models.config import Config
+from auth_service.models.service import AuthDBRepository
 
 
 class EventConsumer:
