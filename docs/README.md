@@ -8,13 +8,17 @@ This project is a work-in-progress hobby project, however contributions are welc
 
 ### Using [Kubernetes](https://kubernetes.io/):
 
-*TODO: finalise documentation*
+The application can be deployed to Kubernetes using [Skaffold](https://skaffold.dev/):
 
-When deploying to Kubernetes, you will need to deploy Redis, Postgres and Mongo instances off cluster and adjust your configuration.
+> skaffold run
+
+Note that when deploying to Kubernetes, you will need to have deployed Redis, Postgres and Mongo instances off cluster and adjusted your configuration for the services.
 
 ### Using [Docker](https://www.docker.com/):
 
-*TODO: finalise documentation*
+The application can be easily deployed with [Docker Compose](https://docs.docker.com/compose/) using the following command from the root directory:
+
+> docker compose up
 
 When deploying using Docker Compose, the default container configuration (exposed as environment variables in [docker-compose.yaml](/docker-compose.yaml)) can be left as is.
 

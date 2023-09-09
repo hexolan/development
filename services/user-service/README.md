@@ -17,7 +17,7 @@
 
 **MongoDB:**
 
-``MONGODB_URI`` *(Required)*
+``MONGODB_URI`` (Required)
 
 - e.g. "mongodb://mongo:mongo@127.0.0.1:27017/"
 
@@ -25,6 +25,6 @@
 
 **Kafka:**
 
-``KAFKA_BROKERS`` *(Required)*
+``KAFKA_BROKERS`` (Required)
 
 - e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"

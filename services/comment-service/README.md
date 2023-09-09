@@ -20,19 +20,19 @@
 
 **PostgreSQL:**
 
-``POSTGRES_USER`` *(Required)*
+``POSTGRES_USER`` (Required)
 
 - e.g. "postgres"
 
-``POSTGRES_PASS`` *(Required)*
+``POSTGRES_PASS`` (Required)
 
 - e.g. "postgres"
 
-``POSTGRES_HOST`` *(Required)*
+``POSTGRES_HOST`` (Required)
 
 - e.g. "127.0.0.1:5432"
 
-``POSTGRES_DATABASE`` *(Required)*
+``POSTGRES_DATABASE`` (Required)
 
 - e.g. "postgres"
 
@@ -40,11 +40,11 @@
 
 **Redis:**
 
-``REDIS_HOST`` *(Required)*
+``REDIS_HOST`` (Required)
 
 - e.g. "127.0.0.1:6379"
 
-``REDIS_PASS`` *(Required)*
+``REDIS_PASS`` (Required)
 
 - e.g. "redis"
 
@@ -52,6 +52,6 @@
 
 **Kafka:**
 
-``KAFKA_BROKERS`` *(Required)*
+``KAFKA_BROKERS`` (Required)
 
 - e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"

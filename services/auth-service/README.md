@@ -15,19 +15,19 @@
 
 **PostgreSQL:**
 
-``POSTGRES_USER`` *(Required)*
+``POSTGRES_USER`` (Required)
 
 - e.g. "postgres"
 
-``POSTGRES_PASS`` *(Required)*
+``POSTGRES_PASS`` (Required)
 
 - e.g. "postgres"
 
-``POSTGRES_HOST`` *(Required)*
+``POSTGRES_HOST`` (Required)
 
 - e.g. "127.0.0.1:5432"
 
-``POSTGRES_DATABASE`` *(Required)*
+``POSTGRES_DATABASE`` (Required)
 
 - e.g. "postgres"
 
@@ -35,7 +35,7 @@
 
 **Kafka:**
 
-``KAFKA_BROKERS`` *(Required)*
+``KAFKA_BROKERS`` (Required)
 
 - e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"
 
@@ -43,7 +43,7 @@
 
 **Other:**
 
-``JWT_PRIVATE_KEY`` *(Required)*
+``JWT_PRIVATE_KEY`` (Required)
 
 - RSA Private Key (used to encode JWT tokens) represented in base64
 
@@ -51,7 +51,7 @@
   - Using OpenSSL: ``openssl genrsa -out private.pem 2048``
   - Getting Base64 Representation: ``python -c "import base64;private_key=open('private.pem', 'r').read();print(base64.standard_b64encode(private_key.encode('utf-8')).decode('utf-8'))"``
 
-``JWT_PUBLIC_KEY`` *(Required)*
+``JWT_PUBLIC_KEY`` (Required)
 
 - RSA Public Key (used to verify JWT tokens) represented in base64
 
@@ -59,7 +59,7 @@
   - Using OpenSSL: ``openssl rsa -in private.pem -pubout -out public.pem``
   - Getting Base64 Representation: ``python -c "import base64;private_key=open('public.pem', 'r').read();print(base64.standard_b64encode(private_key.encode('utf-8')).decode('utf-8'))"``
 
-``PASSWORD_PEPPER`` *(Required)*
+``PASSWORD_PEPPER`` (Required)
 
 - A secret salt applied globally along with generated password salts.
 
