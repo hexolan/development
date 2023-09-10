@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import { apiSlice } from './api'
-import authReducer from './slices/auth'
-import panelsReducer from './slices/panels'
-import postsReducer from './slices/posts'
-import usersReducer from './slices/users'
+import authReducer from './features/auth'
+import panelsReducer from './features/panels'
+import postsReducer from './features/posts'
+import usersReducer from './features/users'
 
 export const store = configureStore({
   reducer: {

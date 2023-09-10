@@ -1,12 +1,17 @@
 import { apiSlice } from '../api'
 
+export interface SignInData {
+  username: string;
+  password: string;
+}
+
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     signIn: builder.mutation({
-      query: details => ({
+      query: (data: SignInData) => ({
         url: '/v1/auth/login',
         method: 'POST',
-        body: { ...details }
+        body: { ...data }
       })
     }),
   })
