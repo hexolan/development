@@ -1,6 +1,5 @@
-import { Header, Button, Group, createStyles } from '@mantine/core'
-import { Avatar, Text, Menu } from '@mantine/core'
 import { Link } from 'react-router-dom'
+import { Header, Button, Group, Avatar, Text, Menu, createStyles } from '@mantine/core'
 import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
