@@ -1,14 +1,13 @@
 import { Text, Center, Container } from '@mantine/core'
 
-const IndexPage = () => {
+const SignInPage = () => {
   return (
     <Center h='100%'>
       <Container>
-        <Text>Homepage Text</Text>
-        <Text>{import.meta.env.VITE_API_URL}</Text>
+        <Text>Sign In Page</Text>
       </Container>
     </Center>
   )
 }
 
-export default IndexPage
+export default SignInPage

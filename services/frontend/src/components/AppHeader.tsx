@@ -1,18 +1,57 @@
-import { Header, Button, Group } from '@mantine/core'
+import { Header, Button, Group, createStyles } from '@mantine/core'
+import { Avatar, Text, Menu } from '@mantine/core'
 import { Link } from 'react-router-dom'
+import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
+import { useAppSelector } from '../app/hooks';
+
+const useStyles = createStyles({
+  header: {
+    padding: 20
+  },
+  headerContents: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '100%',
+  }
+})
 
 function AppHeader() {
-  return (
-    <Header height={60} px={20} py={15}>
-      <Link to='/'>
-        <img src={panelsLogo} height={30} alt='Panels Logo' />
-      </Link>
+  const { classes } = useStyles();
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
 
-      <Group>
-        <Button>Sign In</Button>
-      </Group>
+  return (
+    <Header height={60} className={classes.header}>
+      <div className={classes.headerContents}>
+        <Link to='/'>
+          <img src={panelsLogo} height={30} alt='Panels Logo' />
+        </Link>
+        {currentUser === null ? (
+          <Button color='teal' component={Link} to='/signin'>Sign In</Button>
+        ): (
+          <Menu>
+            <Menu.Target>
+              <Button color='teal' variant='outline'>
+                <Group spacing={7}>
+                  <Avatar color='teal' radius='xl' size={25} />
+                  <Text weight={500} size='sm' sx={{ lineHeight: 1 }} mr={3}>
+                    {currentUser.username}
+                  </Text>
+                  <IconChevronDown size={20} />
+                </Group>
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>User Actions</Menu.Label>
+              <Menu.Item icon={<IconUserEdit />} component={Link} to={'/user/' + currentUser.username}>My Profile</Menu.Item>
+              <Menu.Item color='red' icon={<IconLogout />}>Sign Out</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        )}
+      </div>
     </Header>
   )
 }
