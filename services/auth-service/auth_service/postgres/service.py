@@ -13,7 +13,7 @@ async def connect_database(config: Config) -> Database:
         config (Config): The app configuration.
 
     Returns:
-        A connected databases.Database
+        A connected databases.Database instance
 
     """
     db = Database(config.postgres_dsn)
