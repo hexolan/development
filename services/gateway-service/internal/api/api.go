@@ -17,12 +17,13 @@ func NewAPIApp(cfg internal.Config) *fiber.App {
 		AppName: "Panels REST Gateway",
 		ErrorHandler: handlers.ErrorHandler,
 
-		// swap out the JSON encoder for faster marshaling
+		// Swap out the JSON encoder for faster marshaling
 		JSONEncoder: json.Marshal,
 		JSONDecoder: json.Unmarshal,
 	})
 
-	// Middleware - todo: ratelimiting
+	// Middleware
+	// todo: ratelimiting
 	handlers.NewAuthMiddleware(cfg)
 	app.Use(cors.New())
 	app.Use(logger.New())
