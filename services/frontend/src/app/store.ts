@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 
 import { apiSlice } from './api'
 
@@ -14,9 +14,6 @@ export const store = configureStore({
     panels: panelsReducer,
     posts: postsReducer,
     users: usersReducer,
-  },
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(apiSlice.middleware)
   }
 });
 
