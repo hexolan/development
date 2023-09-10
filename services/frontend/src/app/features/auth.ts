@@ -17,20 +17,10 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLoggedIn: (state, action: PayloadAction<string>) => {
-      const token = action.payload
-      try {
-        let tokenPayload = JSON.parse(atob(token.split('.')[1]))
-        state.token = token
-        state.currentUser = {
-          'id': tokenPayload['sub'],
-          'username': 'test',
-          'createdAt': new Date()
-        }
-      } catch {
-        state.token = null
-        state.currentUser = null
-      }
+    setLoggedIn: (state, action: PayloadAction<{ token: string, currentUser: User }>) => {
+      const { token, currentUser } = action.payload
+      state.token = token
+      state.currentUser = currentUser
     },
     setLoggedOut: (state, _action: PayloadAction) => {
       state.token = null
@@ -41,3 +31,18 @@ export const authSlice = createSlice({
 
 export const { setLoggedIn, setLoggedOut } = authSlice.actions
 export default authSlice.reducer
+
+/*
+  try {
+    let tokenPayload = JSON.parse(atob(token.split('.')[1]))
+    state.token = token
+    state.currentUser = {
+      'id': tokenPayload['sub'],
+      'username': 'test',
+      'createdAt': new Date()
+    }
+  } catch {
+    state.token = null
+    state.currentUser = null
+  }
+*/

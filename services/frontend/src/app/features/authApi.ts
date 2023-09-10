@@ -2,12 +2,14 @@ import { apiSlice } from '../api'
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
-    signin: builder.mutation({
+    signIn: builder.mutation({
       query: details => ({
-        url: '/v1/auth/',
+        url: '/v1/auth/login',
         method: 'POST',
         body: { ...details }
       })
     }),
   })
 })
+
+export const { useSignInMutation } = authApiSlice
