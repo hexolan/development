@@ -6,13 +6,19 @@ A forum application created using a microservices architecture.
 
 ## About
 
-In current form the application serves as a proof of concept containing some bare-bones functionality.
+In current form the application serves as a proof of concept containing bare-bones functionality.
 
-There are definitely aspects I'd like to improve or polish further, as such this application should be considered a work-in-progress at this stage.
+There are definitely aspects I'd like to improve or polish further, as such at this stage the application should be considered a work-in-progress.
+
+## Architecture
+
+Users are served the React site from the ``frontend`` and make calls to the REST API exposed by the ``gateway-service``. The ``gateway-service`` makes calls to the relevant services for the request.
+
+Interservice communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)).
+
+![Architecture](/docs/img-2.png)
 
 ## Services
-
-I wrote the services in a variety of languages as the architecture gave me some room to play around with.
 
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
@@ -23,14 +29,6 @@ I wrote the services in a variety of languages as the architecture gave me some 
 | [user-service](/services/user-service) | TypeScript (Node) | [MongoDB](https://www.mongodb.com/) | Responsible for operations related to users |
 | [auth-service](/services/auth-service) | Python | [PostgreSQL](https://www.postgresql.org/) | Responsible for authenticating users |
 | [comment-service](/services/comment-service) | Python | [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/) | Responsible for operations related to comments |
-
-## Architecture
-
-Users are served the React site from the ``frontend`` and make calls to the REST API exposed by the ``gateway-service``. The ``gateway-service`` makes calls to the relevant services for the request.
-
-Interservice communication is handled through RPC calls (utilising [gRPC](https://grpc.io/)) and [event sourcing](https://microservices.io/patterns/data/event-sourcing.html) (utilising [Kafka](https://kafka.apache.org/)).
-
-![Architecture](/docs/img-2.png)
 
 ## Deployment and Configuration
 
