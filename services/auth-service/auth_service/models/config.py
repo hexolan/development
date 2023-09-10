@@ -9,7 +9,7 @@ from pydantic_settings.sources import PydanticBaseSettingsSource
 
 
 class ConfigSource(EnvSettingsSource):
-    """Responsible for loading config options for set environment variables."""
+    """Responsible for loading config options from environment variables."""
     def prepare_field_value(self, field_name: str, field: FieldInfo, value: Any, value_is_complex: bool) -> Any:
         if field_name == "kafka_brokers":
             # Comma delimit the kafka brokers.

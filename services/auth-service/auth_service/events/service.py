@@ -14,16 +14,16 @@ class EventConsumersWrapper:
     """
 
     def __init__(self, user_consumer: UserEventConsumer) -> None:
-        """Instantiate the consumers in the wrapper.
+        """Add the consumers to the wrapper
         
         Args:
-            user_consumer (events.UserEventConsumer): Initialised user consumer.
+            user_consumer (UserEventConsumer): Initialised user consumer.
         
         """
         self._user_consumer = user_consumer
 
     async def start(self) -> None:
-        """Begins consuming events on all the event consumers."""
+        """Begin consuming events on all the event consumers."""
         await self._user_consumer.start()
 
 
@@ -31,8 +31,8 @@ def create_consumers(config: Config, db_repo: Type[AuthDBRepository]) -> EventCo
     """Initialse the event consumers and return them in a wrapper.
     
     Args:
-        config (models.Config): The app configuration instance.
-        db_repo (AuthDBRepository): The database repo to pass to the consumers.
+        config (Config): The app configuration instance.
+        db_repo (Type[AuthDBRepository]): The database repo to pass to the consumers.
     
     Returns:
         EventConsumerWrapper

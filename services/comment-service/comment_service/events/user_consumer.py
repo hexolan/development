@@ -5,6 +5,15 @@ from comment_service.events.base_consumer import EventConsumer
 
 
 class UserEventConsumer(EventConsumer):
+    """Consumer class responsible for 'user' events.
+    
+    Attributes:
+        CONSUMER_TOPIC: The topic to consume events from.
+        CONSUMER_EVENT_TYPE (user_pb2.UserEvent): Kafka messages are serialised to this type.
+        _db_repo (CommentDBRepository): The repository interface for modifying data.
+        _consumer (aiokafka.AIOKafkaConsumer): The underlying Kafka instance.
+
+    """
     CONSUMER_TOPIC = "user"
     CONSUMER_EVENT_TYPE = user_pb2.UserEvent
 

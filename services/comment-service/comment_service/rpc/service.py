@@ -29,7 +29,8 @@ class RPCServerWrapper:
         comment_servicer = CommentServicer(svc_repo)
         comment_pb2_grpc.add_CommentServiceServicer_to_server(comment_servicer, self._grpc_server)
 
-        health_pb2_grpc.add_HealthServicer_to_server(health.aio.HealthServicer(), self._grpc_server)
+        health_servicer = health.aio.HealthServicer()
+        health_pb2_grpc.add_HealthServicer_to_server(health_servicer, self._grpc_server)
 
     async def start(self) -> None:
         """Begin serving RPC asynchronously."""

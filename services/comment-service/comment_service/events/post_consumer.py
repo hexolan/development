@@ -5,6 +5,15 @@ from comment_service.events.base_consumer import EventConsumer
 
 
 class PostEventConsumer(EventConsumer):
+    """Consumer class responsible for 'post' events.
+    
+    Attributes:
+        CONSUMER_TOPIC: The topic to consume events from.
+        CONSUMER_EVENT_TYPE (post_pb2.PostEvent): Kafka messages are serialised to this type.
+        _db_repo (CommentDBRepository): The repository interface for modifying data.
+        _consumer (aiokafka.AIOKafkaConsumer): The underlying Kafka instance.
+
+    """
     CONSUMER_TOPIC = "post"
     CONSUMER_EVENT_TYPE = post_pb2.PostEvent
 

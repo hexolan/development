@@ -4,6 +4,7 @@ from grpc import RpcContext, StatusCode
 
 
 class ServiceErrorCode(Enum):
+    """Error codes used for classifying ServiceExceptions."""
     INVALID_ARGUMENT = auto()
     CONFLICT = auto()
     NOT_FOUND = auto()
@@ -19,15 +20,40 @@ class ServiceErrorCode(Enum):
     }
 
     def to_rpc_code(self) -> StatusCode:
+        """Convert a service error code to a gRPC status code.
+
+        Returns:
+            The mapped RPC status code, if found, otherwise gRPC Unknown status code.
+
+        """
         return self.__class__.__RPC_CODE_MAP__.get(self.value, StatusCode.UNKNOWN)
 
 
 class ServiceException(Exception):
-    def __init__(self, message: str, error_code: ServiceErrorCode) -> None:
-        super().__init__(message)
-        self.message = message
+    """This exception provides an interface to convert service errors 
+    into gRPC errors, which can then be returned to the caller.
+
+    Args:
+        msg (str): Error message.
+        error_code (ServiceErrorCode): Categorisation code for the error.
+    
+    Attributes:
+        msg (str): The error message.
+        error_code (ServiceErrorCode): Categorisation code for the error.
+    
+    """
+
+    def __init__(self, msg: str, error_code: ServiceErrorCode) -> None:
+        super().__init__(msg)
+        self.msg = msg
         self.error_code = error_code
 
     def apply_to_rpc(self, context: RpcContext) -> None:
+        """Apply the exception to an RPC context.
+        
+        Args:
+            context (grpc.RpcContext): The context to apply to.
+        
+        """
         context.set_code(self.error_code.to_rpc_code())
-        context.set_details(self.message)
+        context.set_details(self.msg)
