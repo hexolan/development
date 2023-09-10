@@ -27,7 +27,7 @@ const ErrorPage = () => {
           })}
         >
           {title}
-          </Title>
+        </Title>
         <Text 
           size='lg'
           color='dimmed'

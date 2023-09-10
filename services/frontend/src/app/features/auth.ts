@@ -17,13 +17,11 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setToken: (state, action: PayloadAction<string>) => {
+    setLoggedIn: (state, action: PayloadAction<string>) => {
       const token = action.payload
       try {
-        // decode the JWT token to capture the user ID
         let tokenPayload = JSON.parse(atob(token.split('.')[1]))
         state.token = token
-        // state.currentUser = tokenPayload['sub']
         state.currentUser = {
           'id': tokenPayload['sub'],
           'username': 'test',
@@ -34,12 +32,12 @@ export const authSlice = createSlice({
         state.currentUser = null
       }
     },
-    logOut: (state, _action: PayloadAction) => {
+    setLoggedOut: (state, _action: PayloadAction) => {
       state.token = null
       state.currentUser = null
     }
   },
 })
 
-export const { setToken } = authSlice.actions
+export const { setLoggedIn, setLoggedOut } = authSlice.actions
 export default authSlice.reducer

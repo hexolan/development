@@ -8,12 +8,12 @@ export interface User {
   updatedAt?: Date;
 }
 
-export type Users = {
+type UserMap = {
   [idKey: string]: User;
 }
 
 export interface UsersState {
-  items: Users;
+  items: UserMap;
   loading: boolean;
 }
 

@@ -8,7 +8,7 @@ A forum application created using a microservices architecture.
 
 This application was created as a hobby project in spare time. In current form the application serves as a proof of concept containing bare-bones functionality. 
 
-There are definitely aspects that I'd like to improve or polish further, in addition to some ideas for functionality that I would like to implement at some point, as such the application should be considered a work-in-progress at this stage.
+There are definitely aspects that I'd like to improve or polish further, in addition to some ideas for functionality that I would like to implement at some point. As such, the application should be considered a work-in-progress at this stage.
 
 ## Architecture
 
