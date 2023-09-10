@@ -1,1 +1,0 @@
-from comment_service.rpc.service import create_rpc_server

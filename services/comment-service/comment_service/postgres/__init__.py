@@ -1,2 +1,0 @@
-from comment_service.postgres.repository import ServiceDBRepository
-from comment_service.postgres.service import create_db_repository

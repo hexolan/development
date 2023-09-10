@@ -1,4 +1,5 @@
-from comment_service.models import Config, CommentDBRepository
+from comment_service.models.config import Config
+from comment_service.models.service import CommentDBRepository
 from comment_service.events.producer import CommentEventProducer
 from comment_service.events.post_consumer import PostEventConsumer
 from comment_service.events.user_consumer import UserEventConsumer

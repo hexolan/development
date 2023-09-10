@@ -1,9 +1,15 @@
 from typing import Type, List
 
-from comment_service.models import CommentRepository, Comment, CommentCreate, CommentUpdate
+from comment_service.models.service import CommentRepository, Comment, CommentCreate, CommentUpdate
 
 
 class ServiceRepository(CommentRepository):
+    """The comment service repository.
+
+    Attributes:
+        _repo (Type[CommentRepository]): The downstream repository (Redis Repository -> DB Repository).
+    
+    """
     def __init__(self, downstream_repo: Type[CommentRepository]) -> None:
         self._repo = downstream_repo
 

@@ -4,7 +4,7 @@ from typing import Type, List
 
 import redis.asyncio as redis
 
-from comment_service.models import CommentRepository, Comment, CommentCreate, CommentUpdate
+from comment_service.models.service import CommentRepository, Comment, CommentCreate, CommentUpdate
 
 
 class ServiceRedisRepository(CommentRepository):

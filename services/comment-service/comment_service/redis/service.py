@@ -2,7 +2,8 @@ from typing import Type
 
 import redis.asyncio as redis
 
-from comment_service.models import Config, CommentRepository
+from comment_service.models.config import Config
+from comment_service.models.service import CommentRepository
 from comment_service.redis.repository import ServiceRedisRepository
 
 

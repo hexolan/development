@@ -12,7 +12,7 @@ The application can be deployed to Kubernetes using [Skaffold](https://skaffold.
 
 > skaffold run
 
-Note that when deploying to Kubernetes, you will need to have deployed Redis, Postgres and Mongo instances off cluster and adjusted your configuration for the services.
+Note that when deploying to Kubernetes you will need to have deployed Redis, Postgres and Mongo instances off cluster and adjusted your configuration for the services.
 
 ### Using [Docker](https://www.docker.com/):
 

@@ -17,10 +17,10 @@ class RPCServerWrapper:
     
     """
     def __init__(self, svc_repo: Type[AuthRepository]) -> None:
-        """Creates the gRPC server and add the servicers.
+        """Creates the gRPC server and adds the servicers.
         
         Args:
-            svc_repo (AuthRepository): The service repository to pass to the servicers.
+            svc_repo (Type[AuthRepository]): The service repository to pass to the servicers.
 
         """
         self._grpc_server = grpc.aio.server()
@@ -43,7 +43,7 @@ def create_rpc_server(svc_repo: Type[AuthRepository]) -> RPCServerWrapper:
     """Instantialise the RPC server wrapper.
     
     Args:
-        svc_repo (AuthRepository): The service repository for the RPC servicers to interface with.
+        svc_repo (Type[AuthRepository]): The service repository for the RPC servicers to interface with.
 
     Returns:
         RPCServerWrapper

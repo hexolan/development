@@ -2,12 +2,12 @@ import asyncio
 import logging
 from sys import stdout
 
-from comment_service.models import Config
-from comment_service.events import create_producer, create_consumers
-from comment_service.postgres import create_db_repository
-from comment_service.redis import create_redis_repository
+from comment_service.models.config import Config
+from comment_service.events.service import create_producer, create_consumers
+from comment_service.postgres.service import create_db_repository
+from comment_service.redis.service import create_redis_repository
+from comment_service.rpc.service import create_rpc_server
 from comment_service.service import ServiceRepository
-from comment_service.rpc import create_rpc_server
 
 
 async def main() -> None:

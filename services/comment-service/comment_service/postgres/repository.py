@@ -2,8 +2,9 @@ from typing import List
 
 from databases import Database
 
-from comment_service.events import CommentEventProducer
-from comment_service.models import CommentDBRepository, Comment, CommentCreate, CommentUpdate, ServiceException, ServiceErrorCode
+from comment_service.events.producer import CommentEventProducer
+from comment_service.models.exceptions import ServiceException, ServiceErrorCode
+from comment_service.models.service import CommentDBRepository, Comment, CommentCreate, CommentUpdate
 
 
 class ServiceDBRepository(CommentDBRepository):

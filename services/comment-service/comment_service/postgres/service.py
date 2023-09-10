@@ -3,8 +3,9 @@ from typing import Type
 
 from databases import Database
 
-from comment_service.models import Config, CommentDBRepository
-from comment_service.events import CommentEventProducer
+from comment_service.models.config import Config, CommentDBRepository
+from comment_service.models.service import CommentDBRepository
+from comment_service.events.producer import CommentEventProducer
 from comment_service.postgres.repository import ServiceDBRepository
 
 

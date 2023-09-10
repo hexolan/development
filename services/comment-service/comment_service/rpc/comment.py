@@ -5,7 +5,8 @@ from typing import Type
 from google.protobuf import empty_pb2
 from grpc import RpcContext, StatusCode
 
-from comment_service.models import CommentRepository, ServiceException, Comment, CommentCreate, CommentUpdate
+from comment_service.models.exceptions import ServiceException
+from comment_service.models.service import CommentRepository, Comment, CommentCreate, CommentUpdate
 from comment_service.models.proto import comment_pb2, comment_pb2_grpc
 
 

@@ -1,6 +1,7 @@
 from aiokafka import AIOKafkaProducer
 
-from comment_service.models import Config, Comment
+from comment_service.models.config import Config
+from comment_service.models.service import Comment
 from comment_service.models.proto import comment_pb2
 
 

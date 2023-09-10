@@ -5,8 +5,8 @@ from google.protobuf import message
 from aiokafka import AIOKafkaConsumer
 from aiokafka.structs import ConsumerRecord
 
-from auth_service.models.config import Config
-from auth_service.models.service import AuthDBRepository
+from comment_service.models.config import Config
+from comment_service.models.service import CommentDBRepository
 
 
 class EventConsumer:
@@ -15,26 +15,26 @@ class EventConsumer:
     Attributes:
         CONSUMER_TOPIC: The topic to consume events from.
         CONSUMER_EVENT_TYPE (Type[message.Message]): The protobuf class type of the event msgs (used for deserialisation).
-        _db_repo (Type[AuthDBRepository]): The repository interface for modifying data.
+        _db_repo (Type[CommentDBRepository]): The repository interface for modifying data.
         _consumer (aiokafka.AIOKafkaConsumer): The underlying Kafka instance.
         
     """
     CONSUMER_TOPIC: str
     CONSUMER_EVENT_TYPE: Type[message.Message]
 
-    def __init__(self, config: Config, db_repo: Type[AuthDBRepository]) -> None:
+    def __init__(self, config: Config, db_repo: Type[CommentDBRepository]) -> None:
         """Initialise the event consumer.
         
         Args:
             config (Config): The app configuration instance (to access brokers list).
-            db_repo (Type[AuthDBRepository]): The repository interface for updating data.
+            db_repo (Type[CommentDBRepository]): The repository interface for updating data.
 
         """
         self._db_repo = db_repo
         self._consumer = AIOKafkaConsumer(
             self.CONSUMER_TOPIC,
             bootstrap_servers=config.kafka_brokers,
-            group_id="auth-service"
+            group_id="comment-service"
         )
 
     async def start(self) -> None:
