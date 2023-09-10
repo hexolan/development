@@ -14,7 +14,7 @@ export const store = configureStore({
     panels: panelsReducer,
     posts: postsReducer,
     users: usersReducer,
-  }
+  }, 
 });
 
 export type RootState = ReturnType<typeof store.getState>
