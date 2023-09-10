@@ -6,9 +6,9 @@ A forum application created using a microservices architecture.
 
 ## About
 
-In current form the application serves as a proof of concept containing bare-bones functionality.
+This application was created as a hobby project in spare time. In current form the application serves as a proof of concept containing bare-bones functionality. 
 
-There are definitely aspects I'd like to improve or polish further, as such at this stage the application should be considered a work-in-progress.
+There are definitely aspects that I'd like to improve or polish further, in addition to some ideas for functionality that I would like to implement at some point, as such the application should be considered a work-in-progress at this stage.
 
 ## Architecture
 
@@ -19,6 +19,8 @@ Interservice communication is handled through RPC calls (utilising [gRPC](https:
 ![Architecture](/docs/img-2.png)
 
 ## Services
+
+I used a variety of languages for writing the services as this was created as a hobby project and the architecture gave me some room to play around with.
 
 | Service | Language | Datastores | Description |
 | --- | --- | --- | --- |
