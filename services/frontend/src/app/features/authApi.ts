@@ -6,7 +6,7 @@ export interface SignInData {
 }
 
 export const authApiSlice = apiSlice.injectEndpoints({
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     signIn: builder.mutation({
       query: (data: SignInData) => ({
         url: '/v1/auth/login',
