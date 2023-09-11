@@ -8,6 +8,19 @@ from comment_service.models.service import CommentRepository, Comment, CommentCr
 
 
 class ServiceRedisRepository(CommentRepository):
+    """The Redis repository is responsible for caching
+    requests to help reduce the amount of database calls,
+    allowing for faster data access.
+    
+    If the Redis repository does not have the data cached,
+    or does not cache data for that request, then the call is
+    passed downstream to the database repository.
+
+    Attributes:
+        _conn (redis.asyncio.redis.Redis): The Redis connection.
+        _repo (CommentRepository): The next downstream repository (the DB repo).
+
+    """
     def __init__(self, redis_conn: redis.Redis, downstream_repo: Type[CommentRepository]) -> None:
         self._conn = redis_conn
         self._repo = downstream_repo

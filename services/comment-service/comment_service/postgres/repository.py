@@ -8,6 +8,17 @@ from comment_service.models.service import CommentDBRepository, Comment, Comment
 
 
 class ServiceDBRepository(CommentDBRepository):
+    """Database repository responsible for actions
+    relating to the postgres database.
+    
+    This repository will be utilised by other upstream repositories
+    or the Kafka event consumers.
+
+    Attributes:
+        _db (Database): The postgres database connection handler.
+        _event_prod (CommentEventProducer): Used to dispatch events upon execution of a CRUD action.
+
+    """
     def __init__(self, db: Database, event_producer: CommentEventProducer) -> None:
         self._db = db
         self._event_prod = event_producer
