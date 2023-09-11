@@ -9,7 +9,7 @@ export interface User {
 }
 
 type UserMap = {
-  [idKey: string]: User;
+  [userId: string]: User;
 }
 
 export interface UsersState {

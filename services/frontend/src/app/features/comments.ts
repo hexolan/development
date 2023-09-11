@@ -1,11 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export interface CommentsState {
+// todo: expand upon
+type Comment = {
+  id: string;
+  content: string;
+}
 
+type LoadedCommentsMap = {
+  [postId: string]: Array<Comment>;
+}
+
+export interface CommentsState {
+  items: LoadedCommentsMap
 }
 
 const initialState: CommentsState = {
-
+  items: {},
 }
 
 export const commentsSlice = createSlice({
