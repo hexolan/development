@@ -8,6 +8,13 @@ from comment_service.models.proto import comment_pb2
 from comment_service.models.exceptions import ServiceException, ServiceErrorCode
 
 
+# Validators
+def is_valid_comment_msg(message: str) -> bool:
+    if len(message) < 3 or len(message) > 512:
+        return False
+    return True
+
+
 # Service Models
 class Comment(BaseModel):
     id: int
@@ -43,7 +50,7 @@ class Comment(BaseModel):
 class CommentCreate(BaseModel):
     post_id: str
     author_id: str
-    message: str  # todo: validation on message
+    message: str  # todo: validation on message (wrap validator for is_valid_comment_msg)
 
     @classmethod
     def from_protobuf(cls, request: comment_pb2.CreateCommentRequest) -> "CommentCreate":
@@ -55,7 +62,7 @@ class CommentCreate(BaseModel):
 
 
 class CommentUpdate(BaseModel):
-    message: Optional[str] = None  # todo: validation on message
+    message: Optional[str] = None  # todo: validation on message (if set use validator is_valid_comment_msg)
 
     @classmethod
     def from_protobuf(cls, request: comment_pb2.UpdateCommentRequest) -> "CommentUpdate":

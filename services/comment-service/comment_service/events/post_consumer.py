@@ -18,6 +18,15 @@ class PostEventConsumer(EventConsumer):
     CONSUMER_EVENT_TYPE = post_pb2.PostEvent
 
     async def _process_event(self, event: post_pb2.PostEvent) -> None:
+        """Process a recieved event.
+
+        In response to a Post deleted event, delete any comments
+        that fall under that post.
+
+        Args:
+            event (post_pb2.PostEvent): The decoded protobuf message.
+        
+        """
         if event.type == "deleted":
             assert event.data.id != ""
             await self._db_repo.delete_post_comments(event.data.id)

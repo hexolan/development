@@ -11,17 +11,51 @@ from comment_service.models.proto import comment_pb2, comment_pb2_grpc
 
 
 class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
+    """Contains definitions for the service's RPC methods.
+    
+    Requests are converted from protobuf to business model
+    form, then directed to the service repository, where the
+    response is then translated back to protobuf.
+
+    Attributes:
+        _svc_repo (Type[CommentRepository]): The highest level service repository.
+    
+    """
     def __init__(self, svc_repo: Type[CommentRepository]) -> None:
         self._svc_repo = svc_repo
     
     def _apply_error(self, context: RpcContext, code: StatusCode, msg: str) -> None:
+        """Apply an error to a given RPC context.
+        
+        Args:
+            context (grpc.RpcContext): The context to apply the error to.
+            code (grpc.StatusCode): The gRPC status code.
+            msg (str): The error details.
+
+        """
         context.set_code(code)
         context.set_details(msg)
     
     def _apply_unknown_error(self, context: RpcContext) -> None:
+        """Apply a de facto error fallback message.
+        
+        Args:
+            context (grpc.RpcContext): The context to apply the error to.
+        
+        """
         self._apply_error(context, StatusCode.UNKNOWN, "unknown error occured")
 
     async def CreateComment(self, request: comment_pb2.CreateCommentRequest, context: RpcContext) -> comment_pb2.Comment:
+        """CreateComment RPC Call
+        
+        Args:
+            request (comment_pb2.CreateCommentRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            comment_pb2.Comment: With a succesful comment creation.
+
+        """
         # vaLidate the request inputs
         if request.post_id == "":
             self._apply_error(
@@ -71,6 +105,16 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
         return Comment.to_protobuf(comment)
 
     async def UpdateComment(self, request: comment_pb2.UpdateCommentRequest, context: RpcContext) -> comment_pb2.Comment:
+        """UpdateComment RPC Call
+        
+        Args:
+            request (comment_pb2.UpdateCommentRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            comment_pb2.Comment: The updated comment details (if succesfully updated).
+
+        """
         # vaLidate the request inputs
         if request.id == "":
             self._apply_error(
@@ -120,6 +164,16 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
         return Comment.to_protobuf(comment)
 
     async def DeleteComment(self, request: comment_pb2.DeleteCommentRequest, context: RpcContext) -> empty_pb2.Empty:
+        """DeleteComment RPC Call
+        
+        Args:
+            request (comment_pb2.DeleteCommentRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            empty_pb2.Empty: Empty protobuf response (in effect returns None).
+
+        """
         # vaLidate the request inputs
         if request.id == "":
             self._apply_error(
@@ -152,6 +206,22 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
         return empty_pb2.Empty()
 
     async def GetPostComments(self, request: comment_pb2.GetPostCommentsRequest, context: RpcContext) -> comment_pb2.PostComments:
+        """GetPostComments RPC Call
+        
+        Returns a list of comments that a post has.
+
+        TODO: 
+            Implement pagination (?after=comment_id or some effect)
+            to return more comments from a post.
+
+        Args:
+            request (comment_pb2.UpdateCommentRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            comment_pb2.PostComments: containing a list of the post's comments
+
+        """
         # vaLidate the request inputs
         if request.post_id == "":
             self._apply_error(
