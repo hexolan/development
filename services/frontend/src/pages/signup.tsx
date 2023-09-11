@@ -1,7 +1,19 @@
 import { Link } from 'react-router-dom'
+import { useForm, matchesField } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 const SignUpPage = () => {
+  const form = useForm({
+    initialValues: {
+      username: '',
+      password: '',
+      confPassword: '',
+    },
+    validate: {
+      confPassword: matchesField('password', 'The passwords do not match'),
+    },
+  })
+
   return (
     <Center h='95%'>
       <Container w='25%'>
@@ -12,10 +24,29 @@ const SignUpPage = () => {
         </Text>
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
-          <TextInput label='Username' placeholder="hexolan" required />
-          <PasswordInput label='Password' placeholder='Your password' mt='md' required />
-          <PasswordInput label='Confirm Password' placeholder='Confirm password' mt='md' required />
-          <Button color='teal' fullWidth mt='xl'>Register</Button>
+          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <TextInput 
+              label='Username'
+              placeholder="hexolan"
+              {...form.getInputProps('username')}
+              required
+            />
+            <PasswordInput 
+              label='Password'
+              placeholder='Your password'
+              mt='md'
+              {...form.getInputProps('password')}
+              required
+            />
+            <PasswordInput
+              label='Confirm Password'
+              placeholder='Confirm password'
+              mt='md'
+              {...form.getInputProps('confPassword')}
+              required
+            />
+            <Button type='submit' color='teal' mt='xl' fullWidth>Register</Button>
+          </form>
         </Paper>
       </Container>
     </Center>
