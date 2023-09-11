@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useForm, matchesField } from '@mantine/form'
+import { useForm, hasLength, matchesField } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 const SignUpPage = () => {
@@ -10,8 +10,10 @@ const SignUpPage = () => {
       confPassword: '',
     },
     validate: {
+      username: hasLength({ min: 3, max: 20 }, 'Username must be between 3 and 20 characters'),
+      password: hasLength({ min: 8 }, 'Password must have a minimum of 8 characters'),
       confPassword: matchesField('password', 'The passwords do not match'),
-    },
+    }
   })
 
   return (
@@ -29,21 +31,18 @@ const SignUpPage = () => {
               label='Username'
               placeholder="hexolan"
               {...form.getInputProps('username')}
-              required
             />
             <PasswordInput 
               label='Password'
               placeholder='Your password'
               mt='md'
               {...form.getInputProps('password')}
-              required
             />
             <PasswordInput
               label='Confirm Password'
               placeholder='Confirm password'
               mt='md'
               {...form.getInputProps('confPassword')}
-              required
             />
             <Button type='submit' color='teal' mt='xl' fullWidth>Register</Button>
           </form>
