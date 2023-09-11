@@ -1,5 +1,10 @@
 import { apiSlice } from '../api'
 
+export interface RegisterUserData {
+  username: string;
+  password: string;
+}
+
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserByName: builder.query({
@@ -20,7 +25,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: 'DELETE'
       }
     }),
+
+    registerUser: builder.mutation({
+      query: (data: RegisterUserData) => ({
+        url: '/v1/users',
+        method: 'POST',
+        body: { ...data }
+      })
+    }),
   })
 })
 
-export const { } = usersApiSlice
+export const { useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
