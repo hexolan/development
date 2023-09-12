@@ -1,12 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-export interface User {
-  id: string;
-  username: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
+import type { User } from '../types'
 
 type UserMap = {
   [userId: string]: User;

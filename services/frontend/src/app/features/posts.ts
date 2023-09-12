@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+import type { Post } from '../types'
+
 export interface PostsState {
 
 }
