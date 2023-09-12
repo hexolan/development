@@ -3,7 +3,7 @@ import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 import { useAppDispatch } from '../app/hooks'
-import { setLoggedIn } from '../app/features/auth'
+import { setSignedIn } from '../app/features/auth'
 import { useSignInMutation } from '../app/features/authApi'
 
 interface SignInFormValues {
@@ -41,12 +41,12 @@ function SignInPage() {
       .catch((error) => console.error('failed', error))
 
     dispatch(
-      setLoggedIn({
+      setSignedIn({
         token: 'abc',
         currentUser: {
           id: 'test',
           username: values.username,
-          createdAt: new Date() 
+          createdAt: new Date().toISOString()
         } 
       })
     )
