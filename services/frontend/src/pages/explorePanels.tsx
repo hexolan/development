@@ -17,13 +17,13 @@ const ExplorePanelsPage = () => {
             <ThemeIcon color='teal' variant='light' size='xl'><IconMessages /></ThemeIcon>
             <div>
               <Text weight={600}>Panel</Text>
-              <Text>The first and ergo de facto primary panel.</Text>
+              <Text>The first and therefore defacto primary panel.</Text>
               <Text color='dimmed' size='xs' mt={3}>Click to View</Text>
             </div>
           </Group>
         </Paper>
 
-        <Paper shadow="xl" radius="md" p="md" withBorder component={Link} to='/'>
+        <Paper shadow="xl" radius="md" p="md" withBorder component='a' href='https://github.com/hexolan/Panels/'>
           <Group>
             <ThemeIcon color='red' variant='light' size='xl'><IconTableOff /></ThemeIcon>
             <div>

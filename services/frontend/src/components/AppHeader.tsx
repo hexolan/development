@@ -3,7 +3,8 @@ import { Header, Button, Group, Avatar, Text, Menu, createStyles } from '@mantin
 import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
-import { useAppSelector } from '../app/hooks';
+import { useAppSelector, useAppDispatch } from '../app/hooks';
+import { setLoggedOut } from '../app/features/auth';
 
 const useStyles = createStyles({
   header: {
@@ -20,10 +21,10 @@ const useStyles = createStyles({
 function AppHeader() {
   const { classes } = useStyles();
   const currentUser = useAppSelector((state) => state.auth.currentUser)
+  const dispatch = useAppDispatch();
 
-  function signoutUser() {
-    // todo
-    console.log('need to implement')
+  const signoutUser = () => {
+    dispatch(setLoggedOut())
   }
 
   return (
@@ -51,7 +52,7 @@ function AppHeader() {
             <Menu.Dropdown>
               <Menu.Label>User Actions</Menu.Label>
               <Menu.Item icon={<IconUserEdit />} component={Link} to={'/user/' + currentUser.username}>My Profile</Menu.Item>
-              <Menu.Item color='red' icon={<IconLogout />} onClick={() => signoutUser()}>Sign Out</Menu.Item>
+              <Menu.Item color='red' icon={<IconLogout />} onClick={signoutUser}>Sign Out</Menu.Item>
             </Menu.Dropdown>
           </Menu>
         )}

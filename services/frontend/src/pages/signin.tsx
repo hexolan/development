@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
+import { useAppDispatch } from '../app/hooks'
+import { setLoggedIn } from '../app/features/auth'
+
 interface SignInFormValues {
   username: string;
   password: string;
@@ -19,10 +22,21 @@ function SignInPage() {
     }
   })
 
-  function onFormSignIn(values: SignInFormValues) {
+  const dispatch = useAppDispatch()
+  const formSignIn = (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
-    
+    dispatch(
+      setLoggedIn({
+        token: 'abc',
+        currentUser: {
+          id: 'test',
+          username: values.username,
+          createdAt: new Date() 
+        } 
+      })
+    )
+
     // attempt to sign in
     
     // set state to pending (render spinner)
@@ -42,7 +56,7 @@ function SignInPage() {
         </Text>
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
-          <form onSubmit={signinForm.onSubmit((values) => onFormSignIn(values))}>
+          <form onSubmit={signinForm.onSubmit(formSignIn)}>
             <TextInput 
               label='Username'
               placeholder="hexolan" 
