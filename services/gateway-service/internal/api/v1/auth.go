@@ -60,5 +60,11 @@ func LoginWithPassword(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "data": token})
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"data": fiber.Map{
+			"user": user,
+			"token": token,
+		},
+	})
 }
