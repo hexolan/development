@@ -22,19 +22,19 @@
 
 ``POSTGRES_USER`` (Required)
 
-- e.g. "postgres"
+* e.g. "postgres"
 
 ``POSTGRES_PASS`` (Required)
 
-- e.g. "postgres"
+* e.g. "postgres"
 
 ``POSTGRES_HOST`` (Required)
 
-- e.g. "127.0.0.1:5432"
+* e.g. "127.0.0.1:5432"
 
 ``POSTGRES_DATABASE`` (Required)
 
-- e.g. "postgres"
+* e.g. "postgres"
 
 ---
 
@@ -42,11 +42,11 @@
 
 ``REDIS_HOST`` (Required)
 
-- e.g. "127.0.0.1:6379"
+* e.g. "127.0.0.1:6379"
 
 ``REDIS_PASS`` (Required)
 
-- e.g. "redis"
+* e.g. "redis"
 
 ---
 
@@ -54,7 +54,7 @@
 
 ``KAFKA_BROKERS`` (Required)
 
-- e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"
+* e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"
 
 ---
 
@@ -62,4 +62,4 @@
 
 ``LOG_LEVEL`` (Default: "info")
 
-- i.e. "debug", "info", "warn", "error", "fatal", "panic" or "disabled"
+* i.e. "debug", "info", "warn", "error", "fatal", "panic" or "disabled"
