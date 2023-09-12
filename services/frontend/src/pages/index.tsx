@@ -1,13 +1,19 @@
 import { Text, Center, Container } from '@mantine/core'
 
+import Feed from '../components/Feed'
+
 const IndexPage = () => {
   return (
-    <Center h='100%'>
-      <Container>
-        <Text>Homepage Text</Text>
-        <Text>{import.meta.env.VITE_API_URL}</Text>
-      </Container>
-    </Center>
+    <Container>
+      <Text>Homepage Text</Text>
+      <Feed />
+      <Feed />
+      <Feed />
+      <Feed />
+      <Feed />
+      <Feed />
+      <Feed />
+    </Container>
   )
 }
 
