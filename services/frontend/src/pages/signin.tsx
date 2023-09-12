@@ -4,6 +4,7 @@ import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput
 
 import { useAppDispatch } from '../app/hooks'
 import { setLoggedIn } from '../app/features/auth'
+import { useSignInMutation } from '../app/features/authApi'
 
 interface SignInFormValues {
   username: string;
@@ -23,9 +24,22 @@ function SignInPage() {
   })
 
   const dispatch = useAppDispatch()
-  const formSignIn = (values: SignInFormValues) => {
+  const [attemptSignIn, { isLoading }] = useSignInMutation()
+
+  const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
+    
+
+    // todo: loading spinner
+    // error handling
+    // passing token to store in state
+    // etc...
+    await attemptSignIn(values)
+      .unwrap()
+      .then((payload) => console.log('success', payload))
+      .catch((error) => console.error('failed', error))
+
     dispatch(
       setLoggedIn({
         token: 'abc',
