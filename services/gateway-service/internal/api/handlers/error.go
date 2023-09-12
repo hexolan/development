@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,28 +18,36 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
     var e *fiber.Error
     if errors.As(err, &e) {
         code = e.Code
-    }
+    } else {
+		// Retrival of codes from gRPC errors.
+		status, ok := status.FromError(err)
+		if ok {
+			msg = status.Message()
 
-	// Retrival of codes from gRPC errors.
-	status, ok := status.FromError(err)
-	if ok {
-		msg = status.Message()
-
-		switch status.Code() {
-		case codes.NotFound:
-			code = fiber.StatusNotFound
-		case codes.InvalidArgument:
-			code = fiber.StatusUnprocessableEntity
-		case codes.AlreadyExists:
-			code = fiber.StatusConflict
-		case codes.PermissionDenied:
-			code = fiber.StatusUnauthorized
-		case codes.Internal:
-			code = fiber.StatusInternalServerError
-		default:
-			code = fiber.StatusBadGateway
+			switch status.Code() {
+			case codes.NotFound:
+				code = fiber.StatusNotFound
+			case codes.InvalidArgument:
+				code = fiber.StatusUnprocessableEntity
+			case codes.AlreadyExists:
+				code = fiber.StatusConflict
+			case codes.PermissionDenied:
+				code = fiber.StatusUnauthorized
+			case codes.Internal:
+				code = fiber.StatusInternalServerError
+			case codes.Unavailable:
+				code = fiber.StatusBadGateway
+				msg = "Service unavaliable for request. Please try again."
+			default:
+				code = fiber.StatusInternalServerError
+				msg = "Something went wrong."
+				log.Error(err)
+			}
+		} else {
+			msg = "Something unexpected went wrong."
+			log.Error(err)
 		}
 	}
-    
+
     return c.Status(code).JSON(fiber.Map{"status": "failure", "msg": msg})
 }

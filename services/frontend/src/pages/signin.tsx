@@ -2,17 +2,35 @@ import { Link } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
-const SignInPage = () => {
-  const form = useForm({
+interface SignInFormValues {
+  username: string;
+  password: string;
+}
+
+function SignInPage() {
+  const signinForm = useForm<SignInFormValues>({
     initialValues: {
       username: '',
       password: '',
     },
     validate: {
       username: hasLength({ min: 3, max: 20 }, 'Invalid username'),
-      password: hasLength({ min: 8 }, 'Invalid password'),
+      password: hasLength({ min: 3 }, 'Invalid password'),
     }
   })
+
+  function onFormSignIn(values: SignInFormValues) {
+    // TODO: also check that the user is not already signed in
+    // (for ability to view this form - otherwise msg and attempted redirect to homepage)
+    
+    // attempt to sign in
+    
+    // set state to pending (render spinner)
+
+    // succesful authentication -> redirection
+    
+    console.log(values)
+  }
 
   return (
     <Center h='95%'>
@@ -24,17 +42,17 @@ const SignInPage = () => {
         </Text>
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+          <form onSubmit={signinForm.onSubmit((values) => onFormSignIn(values))}>
             <TextInput 
               label='Username'
               placeholder="hexolan" 
-              {...form.getInputProps('username')}
+              {...signinForm.getInputProps('username')}
             />
             <PasswordInput 
               label='Password' 
               placeholder='Your password' 
               mt='md'
-              {...form.getInputProps('password')}
+              {...signinForm.getInputProps('password')}
             />
             <Button type='submit' color='teal' mt='xl' fullWidth>Sign In</Button>
           </form>

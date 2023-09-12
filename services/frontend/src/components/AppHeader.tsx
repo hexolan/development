@@ -21,6 +21,11 @@ function AppHeader() {
   const { classes } = useStyles();
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
+  function signoutUser() {
+    // todo
+    console.log('need to implement')
+  }
+
   return (
     <Header height={60} className={classes.header}>
       <div className={classes.headerContents}>
@@ -46,7 +51,7 @@ function AppHeader() {
             <Menu.Dropdown>
               <Menu.Label>User Actions</Menu.Label>
               <Menu.Item icon={<IconUserEdit />} component={Link} to={'/user/' + currentUser.username}>My Profile</Menu.Item>
-              <Menu.Item color='red' icon={<IconLogout />}>Sign Out</Menu.Item>
+              <Menu.Item color='red' icon={<IconLogout />} onClick={() => signoutUser()}>Sign Out</Menu.Item>
             </Menu.Dropdown>
           </Menu>
         )}
