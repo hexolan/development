@@ -6,7 +6,7 @@ A forum application created using a microservices architecture.
 
 ## About
 
-This application was created as a hobby project in spare time. In current form the application serves as a proof of concept containing bare-bones functionality. 
+This application was created as a hobby project in spare time. In current form the application serves as a proof of concept containing bare-bones functionality.
 
 There are definitely aspects that I'd like to improve or polish further, in addition to some ideas for functionality that I would like to implement at some point. As such, the application should be considered a work-in-progress at this stage.
 
@@ -40,7 +40,7 @@ For more information about configuration and deployment, please view the [docume
 
 **Acknowledgments:**
 
-* Logo Icon: [Tabler Icons](https://github.com/tabler/tabler-icons) ([MIT License](https://github.com/tabler/tabler-icons/blob/master/LICENSE)) 
+* Logo Icon: [Tabler Icons](https://github.com/tabler/tabler-icons) ([MIT License](https://github.com/tabler/tabler-icons/blob/master/LICENSE))
 * Logo Font: [Oregano](https://fonts.google.com/specimen/Oregano) ([Open Font License](https://scripts.sil.org/OFL))
 
 This repository is licensed under the [Apache License v2.0](/LICENSE).
