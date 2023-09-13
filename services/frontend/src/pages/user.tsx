@@ -11,13 +11,13 @@ function UserPage() {
 
   return (
     <Container>
-      <Tabs color="teal" radius="md" defaultValue="gallery">
+      <Tabs color="teal" radius="md" defaultValue="posts">
         <Paper withBorder shadow='md' radius='md' sx={(theme) => ({ marginTop: theme.spacing.md })}>
           <Flex>
-            <Avatar radius="md" size={128} color="lime" />
+            <Avatar radius="md" size={200} color="lime" />
             <Paper w='100%'>
               <div style={{ position: 'relative', height: '100%' }}>
-                <Center>
+                <Center h='100%'>
                   <Text weight={600} mr={3}>User:</Text>
                   <Text>{username}</Text>
                 </Center>
@@ -32,16 +32,17 @@ function UserPage() {
           </Flex>
         </Paper>
 
-        <Tabs.Panel value="gallery" pt="xs">
-          Gallery tab content
+        <Tabs.Panel value="posts" pt="xs">
+          TODO
         </Tabs.Panel>
 
-        <Tabs.Panel value="messages" pt="xs">
-          Messages tab content
+        <Tabs.Panel value="about" pt="xs">
+          Welcome to my profile.
+          TODO
         </Tabs.Panel>
 
         <Tabs.Panel value="settings" pt="xs">
-          Settings tab content
+          TODO: user and admin view only
         </Tabs.Panel>
       </Tabs>
     </Container>
