@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { AuthToken, User } from '../types'
+import { authApiSlice } from '../api/auth'
+import type { LoginResponseData } from '../api/auth'
+import type { User } from '../types'
 
 export interface AuthState {
   token: string | null;
@@ -17,18 +19,25 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setSignedIn: (state, action: PayloadAction<{ token: AuthToken, user: User }>) => {
-      console.log(action.payload)
-      const { token, user } = action.payload
-      state.token = token.access_token
-      state.currentUser = user
+    setAuthed: (state, action: PayloadAction<LoginResponseData>) => {
+      state.token = action.payload.token.access_token
+      state.currentUser = action.payload.user
     },
-    setSignedOut: (state, _action: PayloadAction) => {
+    setUnauthed: (state, _action: PayloadAction<void>) => {
       state.token = null
       state.currentUser = null
     }
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      authApiSlice.endpoints.login.matchFulfilled,
+      (state, { payload }) => {
+        state.token = payload.token.access_token
+        state.currentUser = payload.user
+      }
+    )
+  },
 })
 
-export const { setSignedIn, setSignedOut } = authSlice.actions
+export const { setAuthed, setUnauthed } = authSlice.actions
 export default authSlice.reducer

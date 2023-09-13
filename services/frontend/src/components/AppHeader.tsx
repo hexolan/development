@@ -4,7 +4,7 @@ import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { setSignedOut } from '../app/features/auth';
+import { setUnauthed } from '../app/features/auth';
 
 const useStyles = createStyles({
   header: {
@@ -24,7 +24,7 @@ function AppHeader() {
   const dispatch = useAppDispatch();
 
   const signoutUser = () => {
-    dispatch(setSignedOut())
+    dispatch(setUnauthed())
   }
 
   return (

@@ -32,6 +32,8 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 			case codes.AlreadyExists:
 				code = fiber.StatusConflict
 			case codes.PermissionDenied:
+				code = fiber.StatusForbidden
+			case codes.Unauthenticated:
 				code = fiber.StatusUnauthorized
 			case codes.Internal:
 				code = fiber.StatusInternalServerError
