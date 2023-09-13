@@ -29,7 +29,7 @@ const SignUpPage = () => {
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             <TextInput 
               label='Username'
-              placeholder="hexolan"
+              placeholder="Your username"
               {...form.getInputProps('username')}
             />
             <PasswordInput 

@@ -2,13 +2,19 @@ import { Link } from 'react-router-dom'
 import { Container, Stack, Paper, Title, Text, Anchor, Divider, ThemeIcon, Group } from '@mantine/core'
 import { IconMessages, IconTableOff } from '@tabler/icons-react'
 
+import { useAppSelector } from '../app/hooks';
+
 const ExplorePanelsPage = () => {
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+
   return (
     <Container mt={15}>
       <Title>Explore Panels</Title>
-      <Text color='dimmed' size='sm' mt={5}>
-        Alternatively you could <Anchor size='sm' component={Link} to='/panels/new'>create your own.</Anchor>
-      </Text>
+      {Boolean(currentUser) ? (
+        <Text color='dimmed' size='sm' mt={5}>
+          Alternatively you could <Anchor size='sm' component={Link} to='/panels/new'>create your own.</Anchor>
+        </Text>
+      ) : null}
       <Divider my="md" variant="dotted" />
 
       <Stack spacing='sm' align='stretch'>

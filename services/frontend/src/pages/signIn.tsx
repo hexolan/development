@@ -60,7 +60,7 @@ function SignInPage() {
           <form onSubmit={signinForm.onSubmit(formSignIn)}>
             <TextInput 
               label='Username'
-              placeholder="hexolan" 
+              placeholder="Your username" 
               {...signinForm.getInputProps('username')}
             />
             <PasswordInput 
