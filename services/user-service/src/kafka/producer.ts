@@ -1,6 +1,6 @@
 import { Kafka, Message, Producer } from "kafkajs";
 
-import { kafka_brokers } from "../config";
+import { kafkaBrokers } from "../config";
 import { IUser } from "../mongo/User";
 import { UserEvent } from "../proto/user_pb";
 import { userToProtoUser } from "../proto/convert";
@@ -11,7 +11,7 @@ class UserProducer {
   constructor() {
     const kafka = new Kafka({
       clientId: "user-service",
-      brokers: kafka_brokers,
+      brokers: kafkaBrokers,
     })
 
     this.producer = kafka.producer()

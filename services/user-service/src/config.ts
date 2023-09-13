@@ -14,7 +14,7 @@ function getKafkaBrokers(): string[] {
   }
 }
 
-const mongodb_uri = getMongoURI();
-const kafka_brokers = getKafkaBrokers();
+const mongodbUri = getMongoURI();
+const kafkaBrokers = getKafkaBrokers();
 
-export { mongodb_uri, kafka_brokers }
+export { mongodbUri, kafkaBrokers }
