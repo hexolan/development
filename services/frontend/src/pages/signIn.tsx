@@ -36,7 +36,7 @@ function SignInPage() {
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
     let authInfo = await requestSignIn(values).unwrap()
       .catch((error: Error) => console.error('failed', error) )
-    dispatch(setSignedIn(authInfo.data))
+    dispatch(setSignedIn(authInfo))
 
     // todo: loading spinner
     // error handling

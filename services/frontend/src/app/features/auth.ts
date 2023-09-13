@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 // import { useAppDispatch } from '../hooks';
 // import { SignInData, useSignInMutation } from './authApi'
-import type { User } from '../types'
+import type { AuthToken, User } from '../types'
 
 export interface AuthState {
   token: string | null;
@@ -19,10 +19,11 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setSignedIn: (state, action: PayloadAction<{ token: string, currentUser: User }>) => {
-      const { token, currentUser } = action.payload
-      state.token = token
-      state.currentUser = currentUser
+    setSignedIn: (state, action: PayloadAction<{ token: AuthToken, user: User }>) => {
+      console.log(action.payload)
+      const { token, user } = action.payload
+      state.token = token.access_token
+      state.currentUser = user
     },
     setSignedOut: (state, _action: PayloadAction) => {
       state.token = null

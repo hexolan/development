@@ -34,7 +34,7 @@ type Comment = {
 type User = {
   id: string;
   username: string;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
 }
 
