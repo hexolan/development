@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
-// import { useAppDispatch } from '../app/hooks'
-// import { signIn } from '../app/features/auth'
-// import { useSignInMutation } from '../app/features/authApi'
+import { useAppDispatch } from '../app/hooks'
+import { setSignedIn } from '../app/features/auth'
+import { useSignInMutation } from '../app/features/authApi'
 
 interface SignInFormValues {
   username: string;
@@ -12,6 +12,8 @@ interface SignInFormValues {
 }
 
 function SignInPage() {
+  const navigate = useNavigate()
+
   const signinForm = useForm<SignInFormValues>({
     initialValues: {
       username: '',
@@ -25,11 +27,16 @@ function SignInPage() {
 
   // const dispatch = useAppDispatch()
   // const [attemptSignIn, { isLoading }] = useSignInMutation()
+  
+  const dispatch = useAppDispatch()
+  const [requestSignIn] = useSignInMutation()
 
   const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
-    // await signIn(values)
+    let authInfo = await requestSignIn(values).unwrap()
+      .catch((error: Error) => console.error('failed', error) )
+    dispatch(setSignedIn(authInfo.data))
 
     // todo: loading spinner
     // error handling
@@ -60,6 +67,7 @@ function SignInPage() {
     // succesful authentication -> redirection
     
     console.log(values)
+    navigate('/')
   }
 
   return (

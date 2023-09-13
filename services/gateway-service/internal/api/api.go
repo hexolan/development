@@ -24,8 +24,15 @@ func NewAPIApp(cfg internal.Config) *fiber.App {
 
 	// Middleware
 	// todo: ratelimiting
+	// todo: CORS configuration
 	handlers.NewAuthMiddleware(cfg)
-	app.Use(cors.New())
+
+	// note from docs: Note: Using this feature is discouraged in production and it's best practice to explicitly set CORS origins via AllowOrigins.
+	app.Use(cors.New(cors.Config{
+		AllowOriginsFunc: func(origin string) bool {
+			return true
+		},	
+	}))
 	app.Use(logger.New())
 
 	// Register the routes

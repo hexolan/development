@@ -4,7 +4,7 @@ import type { RootState } from './store'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
-  credentials: 'include',
+  // credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState
 
