@@ -7,12 +7,6 @@ const IndexPage = () => {
     <Container>
       <Text>Homepage Text</Text>
       <Feed />
-      <Feed />
-      <Feed />
-      <Feed />
-      <Feed />
-      <Feed />
-      <Feed />
     </Container>
   )
 }

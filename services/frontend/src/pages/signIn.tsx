@@ -25,49 +25,26 @@ function SignInPage() {
     }
   })
 
-  // const dispatch = useAppDispatch()
-  // const [attemptSignIn, { isLoading }] = useSignInMutation()
-  
   const dispatch = useAppDispatch()
   const [requestSignIn] = useSignInMutation()
 
   const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
-    // (for ability to view this form - otherwise msg and attempted redirect to homepage)
-    let authInfo = await requestSignIn(values).unwrap()
-      .catch((error: Error) => console.error('failed', error) )
-    dispatch(setSignedIn(authInfo))
+    // status on auth state (e.g. idle, pending, authed)
 
-    // todo: loading spinner
-    // error handling
-    // passing token to store in state
-    // etc...
-    /*
-    await attemptSignIn(values)
-      .unwrap()
-      .then((payload) => console.log('success', payload))
-      .catch((error) => console.error('failed', error))
-
-    dispatch(
-      setSignedIn({
-        token: 'abc',
-        currentUser: {
-          id: 'test',
-          username: values.username,
-          createdAt: new Date().toISOString()
-        } 
-      })
-    )
-    */
-
-    // attempt to sign in
-    
     // set state to pending (render spinner)
 
+    // attempt to sign in
+    let authInfo = await requestSignIn(values).unwrap()
+      .catch(
+        (error: Error) => console.error('failed', error)
+      )
+
     // succesful authentication -> redirection
-    
-    console.log(values)
-    navigate('/')
+    if (authInfo) {  
+      dispatch(setSignedIn(authInfo))
+      navigate('/')
+    }
   }
 
   return (

@@ -27,8 +27,6 @@ function AppHeader() {
     dispatch(setSignedOut())
   }
 
-  console.log(currentUser)
-
   return (
     <Header height={60} className={classes.header}>
       <div className={classes.headerContents}>
