@@ -18,7 +18,7 @@ const SignUpPage = () => {
 
   return (
     <Center h='95%'>
-      <Container w='25%'>
+      <Container>
         <Title align='center' weight={900}>Sign Up</Title>
         <Text color='dimmed' size='sm' align='center' mt={5}>
           Already have an account?{' '}

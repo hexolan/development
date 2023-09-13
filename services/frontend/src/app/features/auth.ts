@@ -31,14 +31,6 @@ export const authSlice = createSlice({
   },
 })
 
-// const [requestSignIn, { isLoading }] = useSignInMutation()
-const [requestSignIn ] = useSignInMutation()
-export const signIn = async (data: SignInData) => {
-  let authInfo = await requestSignIn(data).unwrap()
-    .catch((error: Error) => console.error('failed', error))
-  useAppDispatch()(authSlice.actions.setSignedIn(authInfo))
-}
-
 export const { setSignedIn, setSignedOut } = authSlice.actions
 export default authSlice.reducer
 

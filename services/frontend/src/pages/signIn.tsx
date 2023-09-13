@@ -3,7 +3,7 @@ import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 // import { useAppDispatch } from '../app/hooks'
-import { signIn } from '../app/features/auth'
+// import { signIn } from '../app/features/auth'
 // import { useSignInMutation } from '../app/features/authApi'
 
 interface SignInFormValues {
@@ -29,7 +29,7 @@ function SignInPage() {
   const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
-    await signIn(values)
+    // await signIn(values)
 
     // todo: loading spinner
     // error handling
@@ -64,7 +64,7 @@ function SignInPage() {
 
   return (
     <Center h='95%'>
-      <Container w='25%'>
+      <Container>
         <Title align='center' weight={900}>Sign In</Title>
         <Text color='dimmed' size='sm' align='center' mt={5}>
           Do not have an account yet?{' '}
