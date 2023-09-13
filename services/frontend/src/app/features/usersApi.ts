@@ -14,16 +14,16 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
 
     getCurrentUser: builder.query({
-      query: {
+      query: () => ({
         url: '/v1/users/me'
-      }
+      })
     }),
 
     deleteCurrentUser: builder.mutation({
-      query: {
+      query: () => ({
         url: '/v1/users/me',
         method: 'DELETE'
-      }
+      })
     }),
 
     registerUser: builder.mutation({

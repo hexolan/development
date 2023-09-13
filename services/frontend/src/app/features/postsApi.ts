@@ -1,6 +1,6 @@
 import { apiSlice } from '../api'
 
-import type { Post } from '../types'
+// import type { Post } from '../types'
 
 interface GetPanelPostRequest {
   panelName: string;
@@ -31,12 +31,12 @@ export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelPosts: builder.query({
       query: (panelName: string) => `/v1/panels/${panelName}/posts`,
-      transformResponse: (response: Object[]) => { return response.data }, // todo (convert times to ISO strings)
+      // transformResponse: (response: Object[]) => { return response.data }, // todo (convert times to ISO strings)
     }),
 
     getPanelPost: builder.query({
       query: (req: GetPanelPostRequest) => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
-      transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
+      // transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
     }),
 
     createPanelPost: builder.mutation({
@@ -45,7 +45,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: { ...req.data },
       }),
-      transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
+      // transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
     }),
 
     updatePost: builder.mutation({
@@ -54,7 +54,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body: { ...req.data },
       }),
-      transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
+      // transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
     }),
 
     deletePost: builder.mutation({

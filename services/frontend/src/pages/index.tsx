@@ -1,4 +1,4 @@
-import { Text, Center, Container } from '@mantine/core'
+import { Text, Container } from '@mantine/core'
 
 import Feed from '../components/Feed'
 

@@ -17,7 +17,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
     }),
 
     createPostComment: builder.mutation({
-      query: (postId: string, data: CreateCommentData) => ({
+      query: ({postId, data}: {postId: string, data: CreateCommentData}) => ({
         url: `/v1/posts/${postId}/comments`,
         method: 'POST',
         body: { ...data }
@@ -25,7 +25,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
     }),
 
     updatePostComment: builder.mutation({
-      query: (postId: string, commentId: string, data: UpdateCommentData) => ({
+      query: ({postId, commentId, data}: {postId: string, commentId: string, data: UpdateCommentData}) => ({
         url: `/v1/posts/${postId}/comments/${commentId}`,
         method: 'PATCH',
         body: { ...data }
@@ -33,7 +33,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
     }),
 
     deletePostComment: builder.mutation({
-      query: (postId: string, commentId: string) => ({
+      query: ({ postId, commentId }: { postId: string, commentId: string }) => ({
         url: `/v1/posts/${postId}/comments/${commentId}`,
         method: 'DELETE'
       })

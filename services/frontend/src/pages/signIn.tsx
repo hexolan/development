@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
-import { useAppDispatch } from '../app/hooks'
-import { setSignedIn } from '../app/features/auth'
-import { useSignInMutation } from '../app/features/authApi'
+// import { useAppDispatch } from '../app/hooks'
+import { signIn } from '../app/features/auth'
+// import { useSignInMutation } from '../app/features/authApi'
 
 interface SignInFormValues {
   username: string;
@@ -23,18 +23,19 @@ function SignInPage() {
     }
   })
 
-  const dispatch = useAppDispatch()
-  const [attemptSignIn, { isLoading }] = useSignInMutation()
+  // const dispatch = useAppDispatch()
+  // const [attemptSignIn, { isLoading }] = useSignInMutation()
 
   const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
     // (for ability to view this form - otherwise msg and attempted redirect to homepage)
-    
+    await signIn(values)
 
     // todo: loading spinner
     // error handling
     // passing token to store in state
     // etc...
+    /*
     await attemptSignIn(values)
       .unwrap()
       .then((payload) => console.log('success', payload))
@@ -50,6 +51,7 @@ function SignInPage() {
         } 
       })
     )
+    */
 
     // attempt to sign in
     
