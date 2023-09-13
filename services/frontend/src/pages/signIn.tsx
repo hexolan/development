@@ -29,21 +29,22 @@ function SignInPage() {
   const [attemptLogin, { isLoading }] = useLoginMutation()
   const formSignIn = async (values: SignInFormValues) => {
     // TODO: also check that the user is not already signed in
-    // status on auth state (e.g. idle, pending, authed)
+    
+    // todo: status on auth state (e.g. idle, pending, authed)
+    // from this... displaying a spinner when pending
 
-    // attempt to sign in
-    console.log(isLoading)
-    let authInfo = await attemptLogin(values).unwrap()
-    .catch(
+    // Attempt to authenticate the user.
+    let authInfo = await attemptLogin(values).unwrap().catch(
       (error) => {
-        console.error('failed', error)
-        setErrorMsg('Error: ' + error.data.msg)
+        // todo: proper error handling
+        // errors with no data returned (e.g. API offline - go to Uh oh page)
+        setErrorMsg(error.data.msg)
       }
     )
-    console.log(isLoading)
 
-    // succesful authentication -> redirection
+    // Check if authentication was succesful.
     if (authInfo) {
+      // Redirect to homepage.
       navigate('/')
     }
   }
@@ -57,7 +58,6 @@ function SignInPage() {
           <Anchor size='sm' component={Link} to='/signup'>Sign up</Anchor> instead.
         </Text>
 
-        <Text>{errorMsg}</Text>
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
           <form onSubmit={signinForm.onSubmit(formSignIn)}>
@@ -65,14 +65,17 @@ function SignInPage() {
               label='Username'
               placeholder="Your username" 
               {...signinForm.getInputProps('username')}
-            />
+              />
             <PasswordInput 
               label='Password' 
               placeholder='Your password' 
-              mt='md'
+              my='md'
               {...signinForm.getInputProps('password')}
             />
-            <Button type='submit' color='teal' mt='xl' fullWidth>Sign In</Button>
+
+            {errorMsg !== '' ? <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text> : null}
+
+            <Button type='submit' color='teal' fullWidth>Sign In</Button>
           </form>
         </Paper>
       </Container>
