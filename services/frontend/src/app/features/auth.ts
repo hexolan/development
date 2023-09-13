@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-// import { useAppDispatch } from '../hooks';
-// import { SignInData, useSignInMutation } from './authApi'
 import type { AuthToken, User } from '../types'
 
 export interface AuthState {
@@ -32,31 +30,5 @@ export const authSlice = createSlice({
   },
 })
 
-// const [requestSignIn, { isLoading }] = useSignInMutation()
-/*
-
-export const signIn = async (data: SignInData) => {
-  const [requestSignIn] = useSignInMutation()
-  let authInfo = await requestSignIn(data).unwrap()
-    .catch((error: Error) => console.error('failed', error))
-  useAppDispatch()(authSlice.actions.setSignedIn(authInfo))
-}
-*/
-
 export const { setSignedIn, setSignedOut } = authSlice.actions
 export default authSlice.reducer
-
-/*
-  try {
-    let tokenPayload = JSON.parse(atob(token.split('.')[1]))
-    state.token = token
-    state.currentUser = {
-      'id': tokenPayload['sub'],
-      'username': 'test',
-      'createdAt': new Date()
-    }
-  } catch {
-    state.token = null
-    state.currentUser = null
-  }
-*/

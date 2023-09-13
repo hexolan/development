@@ -7,6 +7,11 @@ export interface SignInData {
   password: string;
 }
 
+export interface RawAuthResponse {
+  data: AuthResponseData;
+  detail: string;
+}
+
 export interface AuthResponseData {
   token: AuthToken
   user: User
@@ -14,14 +19,14 @@ export interface AuthResponseData {
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    signIn: builder.mutation<object, SignInData>({
+    signIn: builder.mutation<AuthResponseData, SignInData>({
       query: (data: SignInData) => ({
         url: '/v1/auth/login',
         method: 'POST',
         body: { ...data }
       }),
-      transformResponse: (response) => {
-        return response.data as AuthResponseData
+      transformResponse: (response: RawAuthResponse) => {
+        return response.data
       }
     }),
   })
