@@ -1,17 +1,19 @@
-function HomepagePost() {
-  return (
-    <div>
-      <h1>Title: temporary</h1>
-      <span>Panel: PANEL | Created by: CREATED BY</span>
-      <p>Test</p>
-    </div>
-  )
-}
+import FeedPost from './FeedPost';
+import type { Post } from '../app/types'
 
 function Feed() {
+  let testPost = {
+    id: 'testing',
+    panelId: 'test',
+    authorId: 'test',
+    title: 'test',
+    content: 'test',
+    createdAt: 'test'
+  } as Post
+
   return (
     <div>
-      <HomepagePost />
+      <FeedPost post={testPost} />
     </div>
   )
 }

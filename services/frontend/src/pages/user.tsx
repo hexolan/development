@@ -1,5 +1,5 @@
 import { Container, Center, Paper, Flex, Avatar, Text, Tabs } from '@mantine/core'
-import { IconMessageCircle, IconSettings } from '@tabler/icons-react';
+import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom'
 
 type UserPageParams = {
@@ -22,9 +22,9 @@ function UserPage() {
                   <Text>{username}</Text>
                 </Center>
 
-                <Tabs.List style={{ position: 'absolute', bottom: 0 }}>
+                <Tabs.List style={{ position: 'absolute', bottom: 0, width: '100%' }} grow>
                   <Tabs.Tab value="posts" icon={<IconMessageCircle size="0.8rem" />}>Posts</Tabs.Tab>
-                  <Tabs.Tab value="about" icon={<IconMessageCircle size="0.8rem" />}>About</Tabs.Tab>
+                  <Tabs.Tab value="about" icon={<IconAddressBook size="0.8rem" />}>About</Tabs.Tab>
                   <Tabs.Tab value="settings" icon={<IconSettings size="0.8rem" />}>Settings</Tabs.Tab>
                 </Tabs.List>
               </div>
