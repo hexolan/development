@@ -29,14 +29,14 @@ export interface UpdatePostData {
 
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPanelPosts: builder.query({
-      query: (panelName: string) => `/v1/panels/${panelName}/posts`,
-      // transformResponse: (response: Object[]) => { return response.data }, // todo (convert times to ISO strings)
-    }),
-
     getPanelPost: builder.query({
       query: (req: GetPanelPostRequest) => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
       // transformResponse: (response: Post) => { return response.data },  // todo: return as post (same as above)
+    }),
+
+    getPanelPosts: builder.query({
+      query: (panelName: string) => `/v1/panels/${panelName}/posts`,
+      // transformResponse: (response: Object[]) => { return response.data }, // todo (convert times to ISO strings)
     }),
 
     createPanelPost: builder.mutation({
