@@ -5,17 +5,13 @@ import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 import { useLoginMutation } from '../app/api/auth'
-
-interface SignInFormValues {
-  username: string;
-  password: string;
-}
+import type { LoginRequest } from '../app/api/auth'
 
 function SignInPage() {
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
-  const signinForm = useForm<SignInFormValues>({
+  const loginForm = useForm<LoginRequest>({
     initialValues: {
       username: '',
       password: '',
@@ -26,19 +22,24 @@ function SignInPage() {
     }
   })
 
-  const [attemptLogin, { isLoading }] = useLoginMutation()
-  const formSignIn = async (values: SignInFormValues) => {
+  const [login, { isLoading }] = useLoginMutation()
+  const submitLoginForm = async (values: LoginRequest) => {
     // TODO: also check that the user is not already signed in
     
     // todo: status on auth state (e.g. idle, pending, authed)
     // from this... displaying a spinner when pending
 
     // Attempt to authenticate the user.
-    let authInfo = await attemptLogin(values).unwrap().catch(
+    let authInfo = await login(values).unwrap().catch(
       (error) => {
         // todo: proper error handling
         // errors with no data returned (e.g. API offline - go to Uh oh page)
-        setErrorMsg(error.data.msg)
+        if (!error.data) {
+          console.log(error)
+          setErrorMsg('unable to access api')
+        } else {
+          setErrorMsg(error.data.msg)
+        }
       }
     )
 
@@ -60,22 +61,22 @@ function SignInPage() {
 
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
-          <form onSubmit={signinForm.onSubmit(formSignIn)}>
+          <form onSubmit={loginForm.onSubmit(submitLoginForm)}>
             <TextInput 
               label='Username'
               placeholder="Your username" 
-              {...signinForm.getInputProps('username')}
+              {...loginForm.getInputProps('username')}
               />
             <PasswordInput 
               label='Password' 
               placeholder='Your password' 
               my='md'
-              {...signinForm.getInputProps('password')}
+              {...loginForm.getInputProps('password')}
             />
 
-            {errorMsg !== '' ? <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text> : null}
+            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
 
-            <Button type='submit' color='teal' fullWidth>Sign In</Button>
+            <Button type='submit' color='teal' fullWidth>Login</Button>
           </form>
         </Paper>
       </Container>

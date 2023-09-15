@@ -1,9 +1,19 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength, matchesField } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
+import { useRegisterUserMutation } from '../app/api/users'
+
+type RegistrationFormValues = {
+  username: string;
+  password: string;
+  confPassword: string;
+}
+
 const SignUpPage = () => {
-  const form = useForm({
+  const navigate = useNavigate()
+
+  const registrationForm = useForm <RegistrationFormValues>({
     initialValues: {
       username: '',
       password: '',
@@ -16,6 +26,24 @@ const SignUpPage = () => {
     }
   })
 
+  const [registerUser, { isLoading }] = useRegisterUserMutation()
+  const submitRegistrationForm = async (values: RegistrationFormValues) => {
+    let req = {username: values.username, password: values.password}
+    let authInfo = await registerUser(req).unwrap().catch(
+      (error) => {
+        // todo: proper error handling
+        // errors with no data returned (e.g. API offline - go to Uh oh page)
+        console.log(error)
+      }
+    )
+
+    // Check if authentication was succesful.
+    if (authInfo) {
+      // Redirect to homepage.
+      navigate('/')
+    }
+  }
+
   return (
     <Center h='95%'>
       <Container>
@@ -26,24 +54,25 @@ const SignUpPage = () => {
         </Text>
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+          <form onSubmit={registrationForm.onSubmit(submitRegistrationForm)}>
             <TextInput 
               label='Username'
               placeholder="Your username"
-              {...form.getInputProps('username')}
+              {...registrationForm.getInputProps('username')}
             />
             <PasswordInput 
               label='Password'
               placeholder='Your password'
               mt='md'
-              {...form.getInputProps('password')}
+              {...registrationForm.getInputProps('password')}
             />
             <PasswordInput
               label='Confirm Password'
               placeholder='Confirm password'
               mt='md'
-              {...form.getInputProps('confPassword')}
+              {...registrationForm.getInputProps('confPassword')}
             />
+
             <Button type='submit' color='teal' mt='xl' fullWidth>Register</Button>
           </form>
         </Paper>

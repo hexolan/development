@@ -1,6 +1,7 @@
 import { apiSlice } from '../api'
+import type { LoginResponseData } from './auth';
 
-export interface RegisterUserData {
+type RegisterUserRequest = {
   username: string;
   password: string;
 }
@@ -26,11 +27,11 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    registerUser: builder.mutation({
-      query: (data: RegisterUserData) => ({
+    registerUser: builder.mutation<LoginResponseData, RegisterUserRequest>({
+      query: req => ({
         url: '/v1/users',
         method: 'POST',
-        body: { ...data }
+        body: { ...req }
       })
     }),
   })
