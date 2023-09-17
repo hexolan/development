@@ -1,12 +1,12 @@
-import React from 'react'
-import { AppShell } from '@mantine/core'
+import { ReactNode, Suspense } from 'react'
+import { AppShell, Progress } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 
 import AppNavbar from './AppNavbar'
 import AppHeader from './AppHeader'
 
 interface AppLayoutProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 function AppLayout(props: AppLayoutProps) {
@@ -14,9 +14,11 @@ function AppLayout(props: AppLayoutProps) {
     <AppShell
       navbar={<AppNavbar />} 
       header={<AppHeader />}
-      padding='md'
+      padding='xs'
     >
-      {props?.children ? props.children : <Outlet /> }
+      <Suspense fallback={<Progress color="lime" radius="xs" value={100} striped animate />}>
+        {props?.children ? props.children : <Outlet /> }
+      </Suspense>
     </AppShell>
   );
 }

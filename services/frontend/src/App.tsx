@@ -1,5 +1,4 @@
 import { lazy } from 'react'
-
 import { MantineProvider } from '@mantine/core'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
@@ -57,11 +56,9 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  // todo: change fallback element to Loading component
-  // todo: create a loading component
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
-      <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+      <RouterProvider router={router} />
     </MantineProvider>
   );
 }
