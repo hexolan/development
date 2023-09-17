@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
 
 import { authApiSlice } from '../api/auth'
 import { usersApiSlice } from '../api/users'
@@ -19,7 +18,7 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUnauthed: (state, _action: PayloadAction<void>) => {
+    setUnauthed: state => {
       state.accessToken = null
       state.currentUser = null
     }
