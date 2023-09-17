@@ -1,3 +1,5 @@
+import { lazy } from 'react'
+
 import { MantineProvider } from '@mantine/core'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
@@ -5,13 +7,13 @@ import AppLayout from './components/AppLayout'
 import Homepage from './pages/Home'
 import ErrorPage from './pages/Error'
 
-import SignInPage from './pages/SignIn'
-import SignUpPage from './pages/SignUp'
-import UserPage from './pages/User'
-import PanelPage from './pages/Panel'
-import ExplorePanelsPage from './pages/ExplorePanels'
-import NewPanelPage from './pages/NewPanel'
-import PostPage from './pages/Post'
+const SignInPage = lazy(() => import('./pages/SignIn'))
+const SignUpPage = lazy(() => import('./pages/SignUp'))
+const UserPage = lazy(() => import('./pages/User'))
+const PanelPage = lazy(() => import('./pages/Panel'))
+const ExplorePanelsPage = lazy(() => import('./pages/ExplorePanels'))
+const NewPanelPage = lazy(() => import('./pages/NewPanel'))
+const PostPage = lazy(() => import('./pages/Post'))
 
 const router = createBrowserRouter([
   {
