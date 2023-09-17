@@ -3,15 +3,15 @@ import { MantineProvider } from '@mantine/core'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from './components/AppLayout'
-import Homepage from './pages/Home'
 import ErrorPage from './pages/Error'
 
+const Homepage = lazy(() => import('./pages/Home'))
 const SignInPage = lazy(() => import('./pages/SignIn'))
 const SignUpPage = lazy(() => import('./pages/SignUp'))
 const UserPage = lazy(() => import('./pages/User'))
-const PanelPage = lazy(() => import('./pages/Panel'))
 const ExplorePanelsPage = lazy(() => import('./pages/ExplorePanels'))
 const NewPanelPage = lazy(() => import('./pages/NewPanel'))
+const PanelPage = lazy(() => import('./pages/Panel'))
 const PostPage = lazy(() => import('./pages/Post'))
 
 const router = createBrowserRouter([
@@ -36,16 +36,16 @@ const router = createBrowserRouter([
         element: <UserPage />,
       },
       {
-        path: '/panel/:panelName',
-        element: <PanelPage />,
-      },
-      {
         path: '/panels',
         element: <ExplorePanelsPage />,
       },
       {
         path: '/panels/new',
         element: <NewPanelPage />,
+      },
+      {
+        path: '/panel/:panelName',
+        element: <PanelPage />,
       },
       {
         path: '/panel/:panelName/:postId',
