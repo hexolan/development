@@ -14,7 +14,7 @@ function AppLayout(props: AppLayoutProps) {
     <AppShell
       navbar={<AppNavbar />} 
       header={<AppHeader />}
-      padding='xs'
+      padding={0}
     >
       <Suspense fallback={<Progress color="lime" radius="xs" value={100} striped animate />}>
         {props?.children ? props.children : <Outlet /> }

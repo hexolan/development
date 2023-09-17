@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core'
+import { Container, Text } from '@mantine/core'
 import { useParams } from 'react-router-dom'
 
 type PostPageParams = {
@@ -10,7 +10,9 @@ function PostPage() {
   const { panelName, postId } = useParams<PostPageParams>();
 
   return (
-    <Text>Post - {panelName} - {postId}</Text>
+    <Container mt='xl'>
+      <Text>Post - {panelName} - {postId}</Text>
+    </Container>
   )
 }
 

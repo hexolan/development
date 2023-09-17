@@ -4,7 +4,7 @@ import Feed from '../components/Feed'
 
 const Homepage = () => {
   return (
-    <Container>
+    <Container mt='xl'>
       <Text>Homepage Text</Text>
       <Feed />
     </Container>

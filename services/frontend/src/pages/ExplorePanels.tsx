@@ -8,7 +8,7 @@ const ExplorePanelsPage = () => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   return (
-    <Container mt={15}>
+    <Container mt='xl'>
       <Title>Explore Panels</Title>
       {Boolean(currentUser) ? (
         <Text color='dimmed' size='sm' mt={5}>

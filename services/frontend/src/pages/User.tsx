@@ -10,7 +10,7 @@ function UserPage() {
   const { username } = useParams<UserPageParams>();
 
   return (
-    <Container>
+    <Container mt='xl'>
       <Tabs color="teal" radius="md" defaultValue="posts">
         <Paper withBorder shadow='md' radius='md' sx={(theme) => ({ marginTop: theme.spacing.md })}>
           <Flex>

@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core'
+import { Container, Text } from '@mantine/core'
 import { useParams } from 'react-router-dom'
 
 import { useGetPanelPostsQuery } from '../app/api/posts'
@@ -21,7 +21,7 @@ function PanelPage() {
   }
 
   return (
-    <>
+    <Container mt='xl'>
       <Text>Panel - {panelName}</Text>
       <div>
         <Text>Posts:</Text>
@@ -32,7 +32,7 @@ function PanelPage() {
           })
         }
       </div>
-    </>
+    </Container>
   )
 }
 
