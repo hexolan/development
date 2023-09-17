@@ -65,7 +65,7 @@ const SignUpPage = () => {
           <form onSubmit={registrationForm.onSubmit(submitRegistrationForm)}>
             <TextInput 
               label='Username'
-              placeholder="Your username"
+              placeholder='Your username'
               {...registrationForm.getInputProps('username')}
             />
             <PasswordInput 
@@ -81,7 +81,7 @@ const SignUpPage = () => {
               {...registrationForm.getInputProps('confPassword')}
             />
 
-            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+            {errorMsg !== '' && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
 
             <Button type='submit' color='teal' fullWidth>Register</Button>
           </form>

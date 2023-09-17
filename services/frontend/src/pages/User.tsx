@@ -11,10 +11,10 @@ function UserPage() {
 
   return (
     <Container mt='xl'>
-      <Tabs color="teal" radius="md" defaultValue="posts">
+      <Tabs color='teal' radius='md' defaultValue='posts'>
         <Paper withBorder shadow='md' radius='md' sx={(theme) => ({ marginTop: theme.spacing.md })}>
           <Flex>
-            <Avatar radius="md" size={200} color="lime" />
+            <Avatar radius='md' size={200} color='lime' />
             <Paper w='100%'>
               <div style={{ position: 'relative', height: '100%' }}>
                 <Center h='100%'>
@@ -23,25 +23,25 @@ function UserPage() {
                 </Center>
 
                 <Tabs.List style={{ position: 'absolute', bottom: 0, width: '100%' }} grow>
-                  <Tabs.Tab value="posts" icon={<IconMessageCircle size="0.8rem" />}>Posts</Tabs.Tab>
-                  <Tabs.Tab value="about" icon={<IconAddressBook size="0.8rem" />}>About</Tabs.Tab>
-                  <Tabs.Tab value="settings" icon={<IconSettings size="0.8rem" />}>Settings</Tabs.Tab>
+                  <Tabs.Tab value='posts' icon={<IconMessageCircle size='0.8rem' />}>Posts</Tabs.Tab>
+                  <Tabs.Tab value='about' icon={<IconAddressBook size='0.8rem' />}>About</Tabs.Tab>
+                  <Tabs.Tab value='settings' icon={<IconSettings size='0.8rem' />}>Settings</Tabs.Tab>
                 </Tabs.List>
               </div>
             </Paper>
           </Flex>
         </Paper>
 
-        <Tabs.Panel value="posts" pt="xs">
+        <Tabs.Panel value='posts' pt='xs'>
           TODO
         </Tabs.Panel>
 
-        <Tabs.Panel value="about" pt="xs">
+        <Tabs.Panel value='about' pt='xs'>
           Welcome to my profile.
           TODO
         </Tabs.Panel>
 
-        <Tabs.Panel value="settings" pt="xs">
+        <Tabs.Panel value='settings' pt='xs'>
           TODO: user and admin view only
         </Tabs.Panel>
       </Tabs>

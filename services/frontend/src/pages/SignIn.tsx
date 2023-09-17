@@ -64,7 +64,7 @@ function SignInPage() {
           <form onSubmit={loginForm.onSubmit(submitLoginForm)}>
             <TextInput 
               label='Username'
-              placeholder="Your username" 
+              placeholder='Your username'
               {...loginForm.getInputProps('username')}
               />
             <PasswordInput 
@@ -74,7 +74,7 @@ function SignInPage() {
               {...loginForm.getInputProps('password')}
             />
 
-            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+            {errorMsg !== '' && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
 
             <Button type='submit' color='teal' fullWidth>Login</Button>
           </form>
