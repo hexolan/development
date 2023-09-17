@@ -1,34 +1,42 @@
 import { apiSlice } from '../api'
 
-import type { CreateCommentData, UpdateCommentData } from '../types/comments'
+import type {
+  GetPostCommentsRequest,
+  CreatePostCommentRequest,
+  UpdatePostCommentRequest,
+  DeletePostCommentRequest
+} from '../types/comments'
+import type { Comment } from '../types/common'
+
+// todo: transforming all comment responses
 
 export const commentsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPostComments: builder.query({
-      query: (postId: string) => ({
-        url: `/v1/posts/${postId}/comments`
+    getPostComments: builder.query<Comment[], GetPostCommentsRequest>({
+      query: data => ({
+        url: `/v1/posts/${data.postId}/comments`
       })
     }),
 
-    createPostComment: builder.mutation({
-      query: ({postId, data}: {postId: string, data: CreateCommentData}) => ({
-        url: `/v1/posts/${postId}/comments`,
+    createPostComment: builder.mutation<Comment, CreatePostCommentRequest>({
+      query: req => ({
+        url: `/v1/posts/${req.postId}/comments`,
         method: 'POST',
-        body: { ...data }
+        body: { ...req.data }
       })
     }),
 
-    updatePostComment: builder.mutation({
-      query: ({postId, commentId, data}: {postId: string, commentId: string, data: UpdateCommentData}) => ({
-        url: `/v1/posts/${postId}/comments/${commentId}`,
+    updatePostComment: builder.mutation<Comment, UpdatePostCommentRequest>({
+      query: req => ({
+        url: `/v1/posts/${req.postId}/comments/${req.commentId}`,
         method: 'PATCH',
-        body: { ...data }
+        body: { ...req.data }
       })
     }),
 
-    deletePostComment: builder.mutation({
-      query: ({ postId, commentId }: { postId: string, commentId: string }) => ({
-        url: `/v1/posts/${postId}/comments/${commentId}`,
+    deletePostComment: builder.mutation<null, DeletePostCommentRequest>({
+      query: req => ({
+        url: `/v1/posts/${req.postId}/comments/${req.commentId}`,
         method: 'DELETE'
       })
     })
