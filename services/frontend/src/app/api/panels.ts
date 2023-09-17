@@ -1,14 +1,6 @@
 import { apiSlice } from '../api'
 
-export interface CreatePanelData {
-  name: string;
-  description: string;
-}
-
-export interface UpdatePanelData {
-  name?: string;
-  description?: string;
-}
+import { CreatePanelData, UpdatePanelData } from '../types/panels'
 
 export const panelsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

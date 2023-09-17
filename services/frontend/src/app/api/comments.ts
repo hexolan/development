@@ -1,12 +1,6 @@
 import { apiSlice } from '../api'
 
-export interface CreateCommentData {
-  content: string
-}
-
-export interface UpdateCommentData {
-  content?: string;
-}
+import type { CreateCommentData, UpdateCommentData } from '../types/comments'
 
 export const commentsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

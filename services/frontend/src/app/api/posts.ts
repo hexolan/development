@@ -2,97 +2,17 @@ import type { EntityState } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../api'
 
-import postsAdapter from '../features/posts';
-import type { Post } from '../types'
-
-type RawPost = {
-  id: string;
-  panel_id: string;
-  author_id: string;
-  title: string;
-  content: string;
-  created_at: {
-    seconds: number;
-    nanos?: number;
-  };
-  updated_at?: {
-    seconds: number;
-    nanos?: number;
-  };
-}
-
-type GetPanelPostRequest = {
-  panelName: string;
-  postId: string;
-}
-
-type RawGetPanelPostResponse = {
-  status: string;
-  msg?: string;
-  data?: RawPost;
-}
-
-type GetPanelPostsRequest = {
-  panelName: string;
-}
-
-type RawGetPanelPostsResponse = {
-  status: string;
-  msg?: string;
-  data?: {
-    posts: RawPost[];
-  };
-}
-
-type CreatePanelPostRequest = {
-  panelName: string;
-  data: CreatePostData;
-}
-
-type CreatePostData = {
-  title: string;
-  content: string;
-}
-
-type RawCreatePanelPostResponse = {
-  status: string;
-  msg?: string;
-  data?: RawPost;
-}
-
-type UpdatePostRequest = {
-  postId: string;
-  data: UpdatePostData;
-}
-
-type UpdatePostData = {
-  title?: string;
-  content?: string;
-}
-
-type RawUpdatePostResponse = {
-  status: string;
-  msg?: string;
-  data?: RawPost;
-}
-
-type DeletePostRequest = {
-  postId: string;
-}
-
-type RawDeletePostResponse = {
-  status: string;
-  msg: string;
-}
-
-type ProtoTimestamp = {
-  seconds: number;
-  nanos?: number;
-}
-
-const convertPBTimestamp = (timestamp: ProtoTimestamp): string => {
-  return new Date(timestamp.seconds * 1000).toISOString()
-}
+import postsAdapter from '../features/posts'
+import { convertRawTimestamp } from '../types/api'
+import type { Post } from '../types/common'
+import type {
+  RawPost,
+  GetPanelPostRequest, RawGetPanelPostResponse,
+  GetPanelPostsRequest, RawGetPanelPostsResponse,
+  CreatePanelPostRequest, RawCreatePanelPostResponse,
+  UpdatePostRequest, RawUpdatePostResponse,
+  DeletePostRequest, RawDeletePostResponse
+} from '../types/posts'
 
 const convertRawPost = (rawPost: RawPost): Post => ({
   id: rawPost.id,
@@ -100,8 +20,8 @@ const convertRawPost = (rawPost: RawPost): Post => ({
   authorId: rawPost.author_id,
   title: rawPost.title,
   content: rawPost.content,
-  createdAt: convertPBTimestamp(rawPost.created_at),
-  updatedAt: (rawPost.updated_at ? convertPBTimestamp(rawPost.updated_at) : undefined),
+  createdAt: convertRawTimestamp(rawPost.created_at),
+  updatedAt: (rawPost.updated_at ? convertRawTimestamp(rawPost.updated_at) : undefined),
 })
 
 export const postsApiSlice = apiSlice.injectEndpoints({
@@ -164,7 +84,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         url: `/v1/posts/${req.postId}`,
         method: 'DELETE',
       }),
-      transformResponse: (response: RawDeletePostResponse, _meta, arg) => { // todo: try with { arg }: { arg: string }
+      transformResponse: (response: RawDeletePostResponse, _meta, arg) => {
         // todo: invalidate post
         console.log(arg)
         return response.msg

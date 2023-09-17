@@ -1,10 +1,10 @@
-type AuthToken = {
+export type AuthToken = {
   token_type: string;
   access_token: string;
   expires_in: number;
 }
 
-type Panel = {
+export type Panel = {
   id: string;
   name: string;
   description: string;
@@ -12,7 +12,7 @@ type Panel = {
   updatedAt?: string;
 }
 
-type Post = {
+export type Post = {
   id: string;
   panelId: string;
   authorId: string;
@@ -22,7 +22,7 @@ type Post = {
   updatedAt?: string;
 }
 
-type Comment = {
+export type Comment = {
   id: string;
   postId: string;
   authorId: string;
@@ -31,11 +31,9 @@ type Comment = {
   updatedAt?: string;
 }
 
-type User = {
+export type User = {
   id: string;
   username: string;
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type { AuthToken, Panel, Post, Comment, User }

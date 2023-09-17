@@ -1,5 +1,5 @@
-import { Container, Text } from '@mantine/core'
 import { useParams } from 'react-router-dom'
+import { Container, Text } from '@mantine/core'
 
 type PostPageParams = {
   panelName: string;

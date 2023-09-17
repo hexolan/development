@@ -1,8 +1,8 @@
-import { Container, Text } from '@mantine/core'
 import { useParams } from 'react-router-dom'
+import { Container, Text } from '@mantine/core'
 
-import { useGetPanelPostsQuery } from '../app/api/posts'
 import FeedPost from '../components/FeedPost'
+import { useGetPanelPostsQuery } from '../app/api/posts'
 
 type PanelPageParams = {
   panelName: string;

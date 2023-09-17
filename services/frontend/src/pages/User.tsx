@@ -1,6 +1,6 @@
+import { useParams } from 'react-router-dom'
 import { Container, Center, Paper, Flex, Avatar, Text, Tabs } from '@mantine/core'
 import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-react';
-import { useParams } from 'react-router-dom'
 
 type UserPageParams = {
   username: string;

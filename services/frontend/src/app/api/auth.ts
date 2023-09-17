@@ -1,22 +1,6 @@
 import { apiSlice } from '../api'
 
-import type { AuthToken, User } from '../types'
-
-export type LoginRequest = {
-  username: string;
-  password: string;
-}
-
-export type RawLoginResponse = {
-  status: string;
-  msg?: string;
-  data?: LoginResponseData;
-}
-
-export type LoginResponseData = {
-  token: AuthToken
-  user: User
-}
+import type { LoginRequest, RawLoginResponse, LoginResponseData } from '../types/auth'
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
