@@ -34,7 +34,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    deletePostComment: builder.mutation<null, DeletePostCommentRequest>({
+    deletePostComment: builder.mutation<void, DeletePostCommentRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}/comments/${req.commentId}`,
         method: 'DELETE'

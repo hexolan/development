@@ -31,8 +31,8 @@ const SignUpPage = () => {
 
   const [registerUser] = useRegisterUserMutation()
   const submitRegistrationForm = async (values: RegistrationFormValues) => {
-    let req = {username: values.username, password: values.password}
-    let authInfo = await registerUser(req).unwrap().catch(
+    const req = {username: values.username, password: values.password}
+    const authInfo = await registerUser(req).unwrap().catch(
       (error) => {
         // todo: proper error handling
         // errors with no data returned (e.g. API offline - go to Uh oh page)

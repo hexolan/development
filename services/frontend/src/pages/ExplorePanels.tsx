@@ -10,7 +10,7 @@ const ExplorePanelsPage = () => {
   return (
     <Container mt='xl'>
       <Title>Explore Panels</Title>
-      {Boolean(currentUser) ? (
+      {currentUser ? (
         <Text color='dimmed' size='sm' mt={5}>
           Alternatively you could <Anchor size='sm' component={Link} to='/panels/new'>create your own.</Anchor>
         </Text>

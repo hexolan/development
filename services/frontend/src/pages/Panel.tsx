@@ -26,7 +26,7 @@ function PanelPage() {
       <div>
         <Text>Posts:</Text>
         {
-          Object.values(data.entities).map((post, _index) => {
+          Object.values(data.entities).map(post => {
             if (post === undefined) { return post }
             return <FeedPost key={post.id} post={post} />
           })

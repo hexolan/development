@@ -30,7 +30,7 @@ function SignInPage() {
     // from this... displaying a spinner when pending
 
     // Attempt to authenticate the user.
-    let authInfo = await login(values).unwrap().catch(
+    const authInfo = await login(values).unwrap().catch(
       (error) => {
         // todo: proper error handling
         // errors with no data returned (e.g. API offline - go to Uh oh page)

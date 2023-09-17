@@ -2,7 +2,7 @@ import FeedPost from './FeedPost';
 import type { Post } from '../app/types/common'
 
 function Feed() {
-  let testPost = {
+  const testPost = {
     id: 'testing',
     panelId: 'test',
     authorId: 'test',
@@ -10,6 +10,7 @@ function Feed() {
     content: 'test',
     createdAt: 'test'
   } as Post
+  // todo: remove after
 
   return (
     <div>
