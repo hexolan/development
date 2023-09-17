@@ -1,4 +1,4 @@
-import type { Post } from '../app/types'
+import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post }: { post: Post }) => (
   <div>

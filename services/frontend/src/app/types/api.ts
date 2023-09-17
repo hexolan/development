@@ -1,3 +1,9 @@
+export type RawResponse = {
+  status: string;
+  msg?: string;
+  data?: Object;
+}
+
 export type RawTimestamp = {
   seconds: number;
   nanos?: number;

@@ -1,3 +1,4 @@
+import type { RawResponse } from './api';
 import type { AuthToken, User } from './common'
 
 export type LoginRequest = {
@@ -5,9 +6,7 @@ export type LoginRequest = {
   password: string;
 }
 
-export type RawLoginResponse = {
-  status: string;
-  msg?: string;
+export type RawLoginResponse = RawResponse & {
   data?: LoginResponseData;
 }
 

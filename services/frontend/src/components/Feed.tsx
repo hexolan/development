@@ -1,5 +1,5 @@
 import FeedPost from './FeedPost';
-import type { Post } from '../app/types'
+import type { Post } from '../app/types/common'
 
 function Feed() {
   let testPost = {

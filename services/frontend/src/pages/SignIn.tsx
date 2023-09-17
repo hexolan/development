@@ -5,7 +5,7 @@ import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
 import { useLoginMutation } from '../app/api/auth'
-import type { LoginRequest } from '../app/api/auth'
+import type { LoginRequest } from '../app/types/auth'
 
 function SignInPage() {
   const [errorMsg, setErrorMsg] = useState('')
