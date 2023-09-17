@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength, matchesField } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
@@ -11,9 +13,10 @@ type RegistrationFormValues = {
 }
 
 const SignUpPage = () => {
+  const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
-  const registrationForm = useForm <RegistrationFormValues>({
+  const registrationForm = useForm<RegistrationFormValues>({
     initialValues: {
       username: '',
       password: '',
@@ -33,7 +36,12 @@ const SignUpPage = () => {
       (error) => {
         // todo: proper error handling
         // errors with no data returned (e.g. API offline - go to Uh oh page)
-        console.log(error)
+        if (!error.data) {
+          console.log(error)
+          setErrorMsg('unable to access api')
+        } else {
+          setErrorMsg(error.data.msg)
+        }
       }
     )
 
@@ -63,17 +71,19 @@ const SignUpPage = () => {
             <PasswordInput 
               label='Password'
               placeholder='Your password'
-              mt='md'
+              my='md'
               {...registrationForm.getInputProps('password')}
             />
             <PasswordInput
               label='Confirm Password'
               placeholder='Confirm password'
-              mt='md'
+              my='md'
               {...registrationForm.getInputProps('confPassword')}
             />
 
-            <Button type='submit' color='teal' mt='xl' fullWidth>Register</Button>
+            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+
+            <Button type='submit' color='teal' fullWidth>Register</Button>
           </form>
         </Paper>
       </Container>

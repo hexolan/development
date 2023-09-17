@@ -1,5 +1,5 @@
 import { apiSlice } from '../api'
-import type { LoginResponseData } from './auth';
+import type { RawLoginResponse, LoginResponseData } from './auth';
 
 type RegisterUserRequest = {
   username: string;
@@ -32,7 +32,10 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url: '/v1/users',
         method: 'POST',
         body: { ...req }
-      })
+      }),
+      transformResponse: (response: RawLoginResponse) => {
+        return response.data as LoginResponseData
+      }
     }),
   })
 })
