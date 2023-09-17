@@ -2,7 +2,6 @@ import { Text } from '@mantine/core'
 import { useParams } from 'react-router-dom'
 
 import { useGetPanelPostsQuery } from '../app/api/posts'
-import type { GetPanelPostsRequest } from '../app/api/posts'
 import FeedPost from '../components/FeedPost'
 
 type PanelPageParams = {
@@ -11,9 +10,12 @@ type PanelPageParams = {
 
 function PanelPage() {
   const { panelName } = useParams<PanelPageParams>();
+  if (panelName === undefined) {
+    throw Error('panel name not provided')
+  }
 
   // Load the panel posts.
-  const { data } = useGetPanelPostsQuery({ panelName: panelName } as GetPanelPostsRequest)
+  const { data } = useGetPanelPostsQuery({ panelName: panelName })
   if (data === undefined) {
     return <Text>Loading...</Text>
   }

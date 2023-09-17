@@ -1,20 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-export interface PanelsState {
+import type { Panel } from '../types'
 
-}
-
-const initialState: PanelsState = {
-
-}
-
-export const panelsSlice = createSlice({
-  name: 'panels',
-  initialState,
-  reducers: {
-
-  },
+const panelsAdapter = createEntityAdapter<Panel>({
+  selectId: (panel) => panel.id
 })
 
-export const { } = panelsSlice.actions
-export default panelsSlice.reducer
+export default panelsAdapter

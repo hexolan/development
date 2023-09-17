@@ -22,7 +22,7 @@ function SignInPage() {
     }
   })
 
-  const [login, { isLoading }] = useLoginMutation()
+  const [login] = useLoginMutation()
   const submitLoginForm = async (values: LoginRequest) => {
     // TODO: also check that the user is not already signed in
     

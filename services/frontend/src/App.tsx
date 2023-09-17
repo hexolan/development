@@ -2,15 +2,16 @@ import { MantineProvider } from '@mantine/core'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from './components/AppLayout'
-import IndexPage from './pages/index'
-import SignInPage from './pages/signIn'
-import SignUpPage from './pages/signUp'
-import UserPage from './pages/user'
-import PanelPage from './pages/panel'
-import ExplorePanelsPage from './pages/explorePanels'
-import NewPanelPage from './pages/newPanel'
-import PostPage from './pages/post'
-import ErrorPage from './pages/error'
+import Homepage from './pages/Home'
+import ErrorPage from './pages/Error'
+
+import SignInPage from './pages/SignIn'
+import SignUpPage from './pages/SignUp'
+import UserPage from './pages/User'
+import PanelPage from './pages/Panel'
+import ExplorePanelsPage from './pages/ExplorePanels'
+import NewPanelPage from './pages/NewPanel'
+import PostPage from './pages/Post'
 
 const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <IndexPage />,
+        element: <Homepage />,
       },
       {
         path: '/signin',
@@ -54,6 +55,8 @@ const router = createBrowserRouter([
 ])
 
 function App() {
+  // todo: change fallback element to Loading component
+  // todo: create a loading component
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />

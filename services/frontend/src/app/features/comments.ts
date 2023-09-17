@@ -1,26 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
 import type { Comment } from '../types'
 
-type CommentsMap = {
-  [postId: string]: Array<Comment>;
-}
-
-export interface CommentsState {
-  items: CommentsMap
-}
-
-const initialState: CommentsState = {
-  items: {},
-}
-
-export const commentsSlice = createSlice({
-  name: 'comments',
-  initialState,
-  reducers: {
-
-  },
+const commentsAdapter = createEntityAdapter<Comment>({
+  selectId: (comment) => comment.id
 })
 
-export const { } = commentsSlice.actions
-export default commentsSlice.reducer
+export default commentsAdapter

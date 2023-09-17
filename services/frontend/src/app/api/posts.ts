@@ -21,22 +21,22 @@ type RawPost = {
   };
 }
 
-interface GetPanelPostRequest {
+type GetPanelPostRequest = {
   panelName: string;
   postId: string;
 }
 
-export type RawGetPanelPostResponse = {
+type RawGetPanelPostResponse = {
   status: string;
   msg?: string;
   data?: RawPost;
 }
 
-export type GetPanelPostsRequest = {
+type GetPanelPostsRequest = {
   panelName: string;
 }
 
-export type RawGetPanelPostsResponse = {
+type RawGetPanelPostsResponse = {
   status: string;
   msg?: string;
   data?: {
@@ -44,63 +44,65 @@ export type RawGetPanelPostsResponse = {
   };
 }
 
-export type CreatePanelPostRequest = {
+type CreatePanelPostRequest = {
   panelName: string;
   data: CreatePostData;
 }
 
-export type CreatePostData = {
+type CreatePostData = {
   title: string;
   content: string;
 }
 
-export type RawCreatePanelPostResponse = {
+type RawCreatePanelPostResponse = {
   status: string;
   msg?: string;
   data?: RawPost;
 }
 
-export type UpdatePostRequest = {
+type UpdatePostRequest = {
   postId: string;
   data: UpdatePostData;
 }
 
-export type UpdatePostData = {
+type UpdatePostData = {
   title?: string;
   content?: string;
 }
 
-export type RawUpdatePostResponse = {
+type RawUpdatePostResponse = {
   status: string;
   msg?: string;
   data?: RawPost;
 }
 
-export type DeletePostRequest = {
+type DeletePostRequest = {
   postId: string;
 }
 
-export type RawDeletePostResponse = {
+type RawDeletePostResponse = {
   status: string;
   msg: string;
 }
 
-const convertRawPost = (rawPost: RawPost): Post => {
-  let updatedAt = undefined
-  if (rawPost.updated_at) {
-    updatedAt = new Date(rawPost.updated_at.seconds * 1000).toISOString()
-  }
-
-  return {
-    id: rawPost.id,
-    panelId: rawPost.panel_id,
-    authorId: rawPost.author_id,
-    title: rawPost.title,
-    content: rawPost.content,
-    createdAt: new Date(rawPost.created_at.seconds * 1000).toISOString(),
-    updatedAt: updatedAt,
-  }
+type ProtoTimestamp = {
+  seconds: number;
+  nanos?: number;
 }
+
+const convertPBTimestamp = (timestamp: ProtoTimestamp): string => {
+  return new Date(timestamp.seconds * 1000).toISOString()
+}
+
+const convertRawPost = (rawPost: RawPost): Post => ({
+  id: rawPost.id,
+  panelId: rawPost.panel_id,
+  authorId: rawPost.author_id,
+  title: rawPost.title,
+  content: rawPost.content,
+  createdAt: convertPBTimestamp(rawPost.created_at),
+  updatedAt: (rawPost.updated_at ? convertPBTimestamp(rawPost.updated_at) : undefined),
+})
 
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

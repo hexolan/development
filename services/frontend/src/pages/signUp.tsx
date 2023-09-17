@@ -29,7 +29,7 @@ const SignUpPage = () => {
     }
   })
 
-  const [registerUser, { isLoading }] = useRegisterUserMutation()
+  const [registerUser] = useRegisterUserMutation()
   const submitRegistrationForm = async (values: RegistrationFormValues) => {
     let req = {username: values.username, password: values.password}
     let authInfo = await registerUser(req).unwrap().catch(

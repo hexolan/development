@@ -2,7 +2,7 @@ import { Text, Container } from '@mantine/core'
 
 import Feed from '../components/Feed'
 
-const IndexPage = () => {
+const Homepage = () => {
   return (
     <Container>
       <Text>Homepage Text</Text>
@@ -11,4 +11,4 @@ const IndexPage = () => {
   )
 }
 
-export default IndexPage
+export default Homepage
