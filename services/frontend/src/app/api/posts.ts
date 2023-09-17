@@ -1,8 +1,8 @@
-import { createEntityAdapter } from '@reduxjs/toolkit'
 import type { EntityState } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../api'
 
+import postsAdapter from '../features/posts';
 import type { Post } from '../types'
 
 interface GetPanelPostRequest {
@@ -23,7 +23,9 @@ export type GetPanelPostsRequest = {
 export type RawGetPanelPostsResponse = {
   status: string;
   msg?: string;
-  data?: Post[];
+  data?: {
+    posts: Post[];
+  };
 }
 
 export type CreatePanelPostRequest = {
@@ -73,10 +75,6 @@ export type RawDeletePostResponse = {
   msg: string;
 }
 
-const postsAdapter = createEntityAdapter<Post>({
-  selectId: (post) => post.id
-})
-
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelPost: builder.query<EntityState<Post>, GetPanelPostRequest>({
@@ -91,7 +89,8 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       query: req => `/v1/panels/${req.panelName}/posts`,
       transformResponse: (response: RawGetPanelPostsResponse) => {
         // todo: map all response posts onto post objects
-        return postsAdapter.setAll(postsAdapter.getInitialState(), response.data as Post[])
+        // console.log(response)
+        return postsAdapter.setAll(postsAdapter.getInitialState(), response.data?.posts as Post[])
       }
     }),
 
