@@ -1,7 +1,7 @@
 export type RawResponse = {
   status: string;
   msg?: string;
-  data?: Object;
+  data?: object;
 }
 
 export type RawTimestamp = {

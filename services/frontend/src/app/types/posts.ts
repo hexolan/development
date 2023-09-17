@@ -1,4 +1,4 @@
-import { RawTimestamp } from './api'
+import type { RawResponse, RawTimestamp } from './api';
 
 export type RawPost = {
   id: string;
@@ -15,9 +15,7 @@ export type GetPanelPostRequest = {
   postId: string;
 }
 
-export type RawGetPanelPostResponse = {
-  status: string;
-  msg?: string;
+export type RawGetPanelPostResponse = RawResponse & {
   data?: RawPost;
 }
 
@@ -25,9 +23,7 @@ export type GetPanelPostsRequest = {
   panelName: string;
 }
 
-export type RawGetPanelPostsResponse = {
-  status: string;
-  msg?: string;
+export type RawGetPanelPostsResponse = RawResponse & {
   data?: {
     posts: RawPost[];
   };
@@ -43,9 +39,7 @@ export type CreatePostData = {
   content: string;
 }
 
-export type RawCreatePanelPostResponse = {
-  status: string;
-  msg?: string;
+export type RawCreatePanelPostResponse = RawResponse & {
   data?: RawPost;
 }
 
@@ -57,9 +51,7 @@ export type UpdatePostRequest = {
   };
 }
 
-export type RawUpdatePostResponse = {
-  status: string;
-  msg?: string;
+export type RawUpdatePostResponse = RawResponse & {
   data?: RawPost;
 }
 
