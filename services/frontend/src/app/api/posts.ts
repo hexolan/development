@@ -5,6 +5,22 @@ import { apiSlice } from '../api'
 import postsAdapter from '../features/posts';
 import type { Post } from '../types'
 
+type RawPost = {
+  id: string;
+  panel_id: string;
+  author_id: string;
+  title: string;
+  content: string;
+  created_at: {
+    seconds: number;
+    nanos?: number;
+  };
+  updated_at?: {
+    seconds: number;
+    nanos?: number;
+  };
+}
+
 interface GetPanelPostRequest {
   panelName: string;
   postId: string;
@@ -13,7 +29,7 @@ interface GetPanelPostRequest {
 export type RawGetPanelPostResponse = {
   status: string;
   msg?: string;
-  data?: Post;
+  data?: RawPost;
 }
 
 export type GetPanelPostsRequest = {
@@ -24,7 +40,7 @@ export type RawGetPanelPostsResponse = {
   status: string;
   msg?: string;
   data?: {
-    posts: Post[];
+    posts: RawPost[];
   };
 }
 
@@ -41,13 +57,7 @@ export type CreatePostData = {
 export type RawCreatePanelPostResponse = {
   status: string;
   msg?: string;
-  data?: Post;
-}
-
-export type RawCreatePostResponse = {
-  status: string;
-  msg?: string;
-  data?: Post;
+  data?: RawPost;
 }
 
 export type UpdatePostRequest = {
@@ -63,7 +73,7 @@ export type UpdatePostData = {
 export type RawUpdatePostResponse = {
   status: string;
   msg?: string;
-  data?: Post;
+  data?: RawPost;
 }
 
 export type DeletePostRequest = {
@@ -75,22 +85,45 @@ export type RawDeletePostResponse = {
   msg: string;
 }
 
+const convertRawPost = (rawPost: RawPost): Post => {
+  let updatedAt = undefined
+  if (rawPost.updated_at) {
+    updatedAt = new Date(rawPost.updated_at.seconds * 1000).toISOString()
+  }
+
+  return {
+    id: rawPost.id,
+    panelId: rawPost.panel_id,
+    authorId: rawPost.author_id,
+    title: rawPost.title,
+    content: rawPost.content,
+    createdAt: new Date(rawPost.created_at.seconds * 1000).toISOString(),
+    updatedAt: updatedAt,
+  }
+}
+
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelPost: builder.query<EntityState<Post>, GetPanelPostRequest>({
       query: req => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
       transformResponse: (response: RawGetPanelPostResponse) => {
-        // todo: map response post onto post object (convert times to ISO strings)
-        return postsAdapter.setOne(postsAdapter.getInitialState(), response.data as Post)
+        if (response.data === undefined) { 
+          return postsAdapter.getInitialState()
+        }
+
+        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
     }),
 
     getPanelPosts: builder.query<EntityState<Post>, GetPanelPostsRequest>({
       query: req => `/v1/panels/${req.panelName}/posts`,
       transformResponse: (response: RawGetPanelPostsResponse) => {
-        // todo: map all response posts onto post objects
-        // console.log(response)
-        return postsAdapter.setAll(postsAdapter.getInitialState(), response.data?.posts as Post[])
+        if (response.data === undefined) {
+          return postsAdapter.getInitialState()
+        }
+
+        const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
+        return postsAdapter.setAll(postsAdapter.getInitialState(), posts)
       }
     }),
 
@@ -101,8 +134,11 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data },
       }),
       transformResponse: (response: RawCreatePanelPostResponse) => {
-        // todo: map response post onto post object (convert times to ISO strings)
-        return postsAdapter.setOne(postsAdapter.getInitialState(), response.data as Post)
+        if (response.data === undefined) {
+          return postsAdapter.getInitialState()
+        }
+
+        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
     }),
 
@@ -113,8 +149,11 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data },
       }),
       transformResponse: (response: RawUpdatePostResponse) => {
-        // todo: map response post onto post object (convert times to ISO strings)
-        return postsAdapter.setOne(postsAdapter.getInitialState(), response.data as Post)
+        if (response.data === undefined) {
+          return postsAdapter.getInitialState()
+        }
+
+        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
     }),
 
