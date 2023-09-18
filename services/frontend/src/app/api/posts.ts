@@ -1,8 +1,9 @@
 import type { EntityState } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../api'
-import postsAdapter from '../features/posts'
-import { convertRawTimestamp } from '../types/api'
+import { postsAdapter } from '../features/posts'
+import { convertRawPost } from '../types/posts'
+
 import type { Post } from '../types/common'
 import type {
   RawPost,
@@ -12,16 +13,6 @@ import type {
   UpdatePostRequest, RawUpdatePostResponse,
   DeletePostRequest, RawDeletePostResponse
 } from '../types/posts'
-
-const convertRawPost = (rawPost: RawPost): Post => ({
-  id: rawPost.id,
-  panelId: rawPost.panel_id,
-  authorId: rawPost.author_id,
-  title: rawPost.title,
-  content: rawPost.content,
-  createdAt: convertRawTimestamp(rawPost.created_at),
-  updatedAt: (rawPost.updated_at ? convertRawTimestamp(rawPost.updated_at) : undefined),
-})
 
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -83,7 +74,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         url: `/v1/posts/${req.postId}`,
         method: 'DELETE',
       }),
-      transformResponse: (response: RawDeletePostResponse, _meta, arg) => {
+      transformResponse: (response: RawDeletePostResponse, _meta, arg: DeletePostRequest) => {
         // todo: invalidate post
         console.log(arg)
         return response.msg

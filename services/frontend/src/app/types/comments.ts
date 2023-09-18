@@ -1,4 +1,16 @@
+import { convertRawTimestamp } from './api';
+
+import type { Comment } from './common';
 import type { RawResponse, RawTimestamp } from './api';
+
+export const convertRawComment = (rawComment: RawComment): Comment => ({
+  id: rawComment.id,
+  postId: rawComment.post_id,
+  authorId: rawComment.author_id,
+  message: rawComment.message,
+  createdAt: convertRawTimestamp(rawComment.created_at),
+  updatedAt: (rawComment.updated_at ? convertRawTimestamp(rawComment.updated_at) : undefined),
+})
 
 export type RawComment = {
   id: string;
@@ -56,4 +68,9 @@ export type DeleteCommentRequest = {
 
 export type DeletePostCommentRequest = DeleteCommentRequest & {
   postId: string;
+}
+
+export type RawDeletePostCommentResponse = {
+  status: string;
+  msg: string;
 }

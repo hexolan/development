@@ -1,27 +1,17 @@
 import type { EntityState } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../api'
-import commentsAdapter from '../features/comments'
+import { commentsAdapter } from '../features/comments'
+import { convertRawComment } from '../types/comments'
+
+import type { Comment } from '../types/common'
 import type {
   RawComment,
   GetPostCommentsRequest, RawGetPostCommentsResponse,
   CreatePostCommentRequest, RawCreatePostCommentResponse,
   UpdatePostCommentRequest, RawUpdatePostCommentResponse,
-  DeletePostCommentRequest
+  DeletePostCommentRequest, RawDeletePostCommentResponse
 } from '../types/comments'
-import { convertRawTimestamp } from '../types/api'
-import type { Comment } from '../types/common'
-
-// todo: transforming all comment responses
-
-const convertRawComment = (rawComment: RawComment): Comment => ({
-  id: rawComment.id,
-  postId: rawComment.post_id,
-  authorId: rawComment.author_id,
-  message: rawComment.message,
-  createdAt: convertRawTimestamp(rawComment.created_at),
-  updatedAt: (rawComment.updated_at ? convertRawTimestamp(rawComment.updated_at) : undefined),
-})
 
 export const commentsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -67,13 +57,17 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    deletePostComment: builder.mutation<void, DeletePostCommentRequest>({
+    deletePostComment: builder.mutation<string, DeletePostCommentRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}/comments/${req.commentId}`,
         method: 'DELETE'
-      })
+      }),
+      transformResponse: (response: RawDeletePostCommentResponse, _meta, arg: DeletePostCommentRequest) => {
+        // todo: invalidate comment
+        console.log(arg)
+        return response.msg
+      }
     })
-    // todo: transforming response of deleting comment
   })
 })
 

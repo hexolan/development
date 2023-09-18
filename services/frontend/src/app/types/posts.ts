@@ -1,4 +1,17 @@
-import type { RawResponse, RawTimestamp } from './api';
+import { convertRawTimestamp } from './api'
+
+import type { Post } from './common'
+import type { RawResponse, RawTimestamp } from './api'
+
+export const convertRawPost = (rawPost: RawPost): Post => ({
+  id: rawPost.id,
+  panelId: rawPost.panel_id,
+  authorId: rawPost.author_id,
+  title: rawPost.title,
+  content: rawPost.content,
+  createdAt: convertRawTimestamp(rawPost.created_at),
+  updatedAt: (rawPost.updated_at ? convertRawTimestamp(rawPost.updated_at) : undefined),
+})
 
 export type RawPost = {
   id: string;
