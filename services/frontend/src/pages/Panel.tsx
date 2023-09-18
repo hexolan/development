@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { Container, Text } from '@mantine/core'
 
 import FeedPost from '../components/FeedPost'
+import LoadingBar from '../components/LoadingBar'
 import { useGetPanelPostsQuery } from '../app/api/posts'
 
 type PanelPageParams = {
@@ -17,7 +18,7 @@ function PanelPage() {
   // Load the panel posts.
   const { data } = useGetPanelPostsQuery({ panelName: panelName })
   if (data === undefined) {
-    return <Text>Loading...</Text>
+    return <LoadingBar />
   }
 
   return (

@@ -3,6 +3,7 @@ import { MantineProvider } from '@mantine/core'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from './components/AppLayout'
+import LoadingBar from './components/LoadingBar'
 import ErrorPage from './pages/Error'
 
 const Homepage = lazy(() => import('./pages/Home'))
@@ -58,7 +59,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} fallbackElement={<LoadingBar />} />
     </MantineProvider>
   );
 }

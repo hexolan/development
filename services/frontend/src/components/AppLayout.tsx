@@ -1,9 +1,10 @@
 import { ReactNode, Suspense } from 'react'
-import { AppShell, Progress } from '@mantine/core'
+import { AppShell } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 
 import AppNavbar from './AppNavbar'
 import AppHeader from './AppHeader'
+import LoadingBar from './LoadingBar'
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -16,7 +17,7 @@ function AppLayout(props: AppLayoutProps) {
       header={<AppHeader />}
       padding={0}
     >
-      <Suspense fallback={<Progress color="lime" radius="xs" value={100} striped animate />}>
+      <Suspense fallback={<LoadingBar />}>
         {props?.children ? props.children : <Outlet /> }
       </Suspense>
     </AppShell>
