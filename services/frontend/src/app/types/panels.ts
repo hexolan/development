@@ -1,7 +1,7 @@
 import { convertRawTimestamp } from './api';
 
 import type { Panel } from './common';
-import type { RawTimestamp } from './api';
+import type { RawResponse, RawTimestamp } from './api';
 
 export const convertRawPanel = (rawPanel: RawPanel): Panel => ({
   id: rawPanel.id,
@@ -19,12 +19,29 @@ export type RawPanel = {
   updated_at?: RawTimestamp;
 }
 
-export type CreatePanelData = {
+export type RawPanelResponse = RawResponse & {
+  data?: RawPanel;
+}
+
+export type GetPanelByNameRequest = {
+  name: string;
+}
+
+export type CreatePanelRequest = {
   name: string;
   description: string;
+}
+
+export type UpdatePanelRequest = {
+  name: string;
+  data: UpdatePanelData;
 }
 
 export type UpdatePanelData = {
   name?: string;
   description?: string;
+}
+
+export type DeletePanelRequest = {
+  name: string;
 }
