@@ -5,7 +5,7 @@ import Feed from '../components/Feed'
 const Homepage = () => {
   return (
     <Container mt='xl'>
-      <Text>Homepage Text</Text>
+      <Text>todo: complete homepage</Text>
       <Feed />
     </Container>
   )

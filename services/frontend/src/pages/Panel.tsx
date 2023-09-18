@@ -23,21 +23,15 @@ function PanelPage() {
 
   return (
     <>
-      <Paper px="xl" py={rem(50)} shadow='xl' sx={{ borderBottom: '1px' }}>
-        <Text size='lg'>Panel</Text>
+      <Paper px="xl" py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
+        <Text size='lg'>{panelName}</Text>
         <Text size='sm' color='dimmed'>This is the panel description</Text>
       </Paper>
       <Container mt='xl'>
-        <Text>Panel - {panelName}</Text>
-        <div>
-          <Text>Posts:</Text>
-          {
-            Object.values(data.entities).map(post => {
-              if (post === undefined) { return post }
-              return <FeedPost key={post.id} post={post} />
-            })
-          }
-        </div>
+        {Object.values(data.entities).map(post => {
+          if (post === undefined) { return post }
+          return <FeedPost key={post.id} post={post} />
+        })}
       </Container>
     </>
   )

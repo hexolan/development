@@ -1,7 +1,6 @@
 import type { EntityState } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../api'
-
 import postsAdapter from '../features/posts'
 import { convertRawTimestamp } from '../types/api'
 import type { Post } from '../types/common'

@@ -4,7 +4,7 @@ export type RawComment = {
   id: string;
   post_id: string;
   author_id: string;
-  content: string;
+  message: string;
   created_at: RawTimestamp;
   updated_at?: RawTimestamp;
 }
@@ -21,7 +21,7 @@ export type RawGetPostCommentsResponse = RawResponse & {
 }
 
 export type CreateCommentData = {
-  content: string;
+  message: string;
 }
 
 export type CreatePostCommentRequest = {
@@ -34,20 +34,26 @@ export type RawCreatePostCommentResponse = RawResponse & {
 }
 
 export type UpdateCommentData = {
-  content?: string;
+  message?: string;
 }
 
-export type UpdatePostCommentRequest = {
-  postId: string;
+export type UpdateCommentRequest = {
   commentId: string;
   data: UpdateCommentData;
+}
+
+export type UpdatePostCommentRequest = UpdateCommentRequest & {
+  postId: string;
 }
 
 export type RawUpdatePostCommentResponse = RawResponse & {
   data?: RawComment;
 }
 
-export type DeletePostCommentRequest = {
-  postId: string;
+export type DeleteCommentRequest = {
   commentId: string;
+}
+
+export type DeletePostCommentRequest = DeleteCommentRequest & {
+  postId: string;
 }
