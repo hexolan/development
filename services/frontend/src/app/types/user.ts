@@ -1,7 +1,7 @@
 import { convertRawTimestamp } from './api';
 
 import type { User } from './common';
-import type { RawTimestamp } from './api';
+import type { RawResponse, RawTimestamp } from './api';
 
 export const convertRawUser = (rawUser: RawUser): User => ({
   id: rawUser.id,
@@ -15,6 +15,14 @@ export type RawUser = {
   username: string;
   created_at: RawTimestamp;
   updated_at?: RawTimestamp;
+}
+
+export type RawUserResponse = RawResponse & {
+  data?: RawUser;
+}
+
+export type GetUserByNameRequest = {
+  username: string;
 }
 
 export type RegisterUserRequest = {

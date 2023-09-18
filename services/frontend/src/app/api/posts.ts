@@ -19,9 +19,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     getPanelPost: builder.query<EntityState<Post>, GetPanelPostRequest>({
       query: req => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
       transformResponse: (response: RawGetPanelPostResponse) => {
-        if (response.data === undefined) { 
-          return postsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
@@ -30,9 +28,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     getPanelPosts: builder.query<EntityState<Post>, GetPanelPostsRequest>({
       query: req => `/v1/panels/${req.panelName}/posts`,
       transformResponse: (response: RawGetPanelPostsResponse) => {
-        if (response.data === undefined) {
-          return postsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid posts response') }
 
         const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
         return postsAdapter.setAll(postsAdapter.getInitialState(), posts)
@@ -46,9 +42,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data },
       }),
       transformResponse: (response: RawCreatePanelPostResponse) => {
-        if (response.data === undefined) {
-          return postsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
@@ -61,9 +55,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data },
       }),
       transformResponse: (response: RawUpdatePostResponse) => {
-        if (response.data === undefined) {
-          return postsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }

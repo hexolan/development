@@ -1,24 +1,35 @@
+import type { EntityState } from '@reduxjs/toolkit'
+
 import { apiSlice } from '../api'
+import { usersAdapter } from '../features/users'
+import { convertRawUser } from '../types/user'
 import { convertRawLoginData } from '../types/auth'
 
-import type { RegisterUserRequest } from '../types/user'
+import type { User } from '../types/common'
 import type { RawLoginResponse, LoginData } from '../types/auth'
+import type { GetUserByNameRequest, RawUserResponse, RegisterUserRequest } from '../types/user'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUserByName: builder.query({
-      query: (username: string) => ({
-        url: `/v1/users/${username}`
-      })
+    getUserByName: builder.query<EntityState<User>, GetUserByNameRequest>({
+      query: req => ({ url: `/v1/users/${req.username}` }),
+      transformResponse: (response: RawUserResponse) => {
+        if (response.data === undefined) { throw Error('invalid user response') }
+
+        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+      }
     }),
 
-    getCurrentUser: builder.query({
-      query: () => ({
-        url: '/v1/users/me'
-      })
+    getCurrentUser: builder.query<EntityState<User>, void>({
+      query: () => ({ url: '/v1/users/me' }),
+      transformResponse: (response: RawUserResponse) => {
+        if (response.data === undefined) { throw Error('invalid user response') }
+
+        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+      }
     }),
 
-    deleteCurrentUser: builder.mutation({
+    deleteCurrentUser: builder.mutation<void, void>({
       query: () => ({
         url: '/v1/users/me',
         method: 'DELETE'

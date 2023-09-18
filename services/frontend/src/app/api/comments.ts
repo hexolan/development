@@ -18,9 +18,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
     getPostComments: builder.query<EntityState<Comment>, GetPostCommentsRequest>({
       query: data => ({ url: `/v1/posts/${data.postId}/comments` }),
       transformResponse: (response: RawGetPostCommentsResponse) => {
-        if (response.data === undefined) {
-          return commentsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid comments response') }
 
         const comments = response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
         return commentsAdapter.setAll(commentsAdapter.getInitialState(), comments)
@@ -34,9 +32,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data }
       }),
       transformResponse: (response: RawCreatePostCommentResponse) => {
-        if (response.data === undefined) {
-          return commentsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid comment response') }
 
         return commentsAdapter.setOne(commentsAdapter.getInitialState(), convertRawComment(response.data))
       }
@@ -49,9 +45,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
         body: { ...req.data }
       }),
       transformResponse: (response: RawUpdatePostCommentResponse) => {
-        if (response.data === undefined) {
-          return commentsAdapter.getInitialState()
-        }
+        if (response.data === undefined) { throw Error('invalid comment response') }
 
         return commentsAdapter.setOne(commentsAdapter.getInitialState(), convertRawComment(response.data))
       }
