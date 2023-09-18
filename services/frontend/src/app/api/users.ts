@@ -30,8 +30,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: { ...req }
       }),
-      transformResponse: (response: RawLoginResponse) => {
-        return response.data as LoginResponseData
+      transformResponse: (response: RawLoginResponse): LoginResponseData => {
+        if (response.data === undefined) { throw Error('invalid registration response') }
+
+        return {
+          token: response.data.token,
+          user: response.data.user
+        }
       }
     }),
   })
