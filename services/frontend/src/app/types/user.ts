@@ -1,4 +1,14 @@
+import { convertRawTimestamp } from './api';
+
+import type { User } from './common';
 import type { RawTimestamp } from './api';
+
+export const convertRawUser = (rawUser: RawUser): User => ({
+  id: rawUser.id,
+  username: rawUser.username,
+  createdAt: convertRawTimestamp(rawUser.created_at),
+  updatedAt: (rawUser.updated_at ? convertRawTimestamp(rawUser.updated_at) : undefined),
+})
 
 export type RawUser = {
   id: string;

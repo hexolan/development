@@ -1,7 +1,8 @@
 import { apiSlice } from '../api'
+import { convertRawLoginData } from '../types/auth'
 
 import type { RegisterUserRequest } from '../types/user'
-import type { RawLoginResponse, LoginResponseData } from '../types/auth'
+import type { RawLoginResponse, LoginData } from '../types/auth'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,19 +25,16 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    registerUser: builder.mutation<LoginResponseData, RegisterUserRequest>({
+    registerUser: builder.mutation<LoginData, RegisterUserRequest>({
       query: req => ({
         url: '/v1/users',
         method: 'POST',
         body: { ...req }
       }),
-      transformResponse: (response: RawLoginResponse): LoginResponseData => {
+      transformResponse: (response: RawLoginResponse) => {
         if (response.data === undefined) { throw Error('invalid registration response') }
 
-        return {
-          token: response.data.token,
-          user: response.data.user
-        }
+        return convertRawLoginData(response.data)
       }
     }),
   })

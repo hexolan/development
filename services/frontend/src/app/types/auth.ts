@@ -1,16 +1,29 @@
-import type { RawResponse } from './api';
+import { convertRawUser } from './user'
+
+import type { RawUser } from './user'
+import type { RawResponse } from './api'
 import type { AuthToken, User } from './common'
+
+export const convertRawLoginData = (data: RawLoginData): LoginData => ({
+  token: data.token,
+  user: convertRawUser(data.user)
+})
 
 export type LoginRequest = {
   username: string;
   password: string;
 }
 
-export type RawLoginResponse = RawResponse & {
-  data?: LoginResponseData;
+type RawLoginData = {
+  token: AuthToken,
+  user: RawUser
 }
 
-export type LoginResponseData = {
+export type RawLoginResponse = RawResponse & {
+  data?: RawLoginData;
+}
+
+export type LoginData = {
   token: AuthToken
   user: User
 }
