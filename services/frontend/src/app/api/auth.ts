@@ -1,20 +1,21 @@
 import { apiSlice } from '../api'
-import { convertRawLoginData } from '../types/auth'
+import { convertRawAuthData } from '../types/auth'
 
-import type { LoginRequest, RawLoginResponse, LoginData } from '../types/auth'
+import type { AuthData } from '../types/common'
+import type { LoginRequest, RawAuthResponse } from '../types/auth'
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<LoginData, LoginRequest>({
+    login: builder.mutation<AuthData, LoginRequest>({
       query: data => ({
         url: '/v1/auth/login',
         method: 'POST',
         body: { ...data }
       }),
-      transformResponse: (response: RawLoginResponse) => {
+      transformResponse: (response: RawAuthResponse) => {
         if (response.data === undefined) { throw Error('invalid login response') }
 
-        return convertRawLoginData(response.data)
+        return convertRawAuthData(response.data)
       },
     }),
   })

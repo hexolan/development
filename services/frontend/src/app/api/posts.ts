@@ -6,19 +6,18 @@ import { convertRawPost } from '../types/posts'
 
 import type { Post } from '../types/common'
 import type {
-  RawPost,
-  GetPanelPostRequest, RawGetPanelPostResponse,
-  GetPanelPostsRequest, RawGetPanelPostsResponse,
-  CreatePanelPostRequest, RawCreatePanelPostResponse,
-  UpdatePostRequest, RawUpdatePostResponse,
-  DeletePostRequest, RawDeletePostResponse
+  RawPost, RawPostResponse, RawPostsResponse,
+  GetPanelPostRequest, GetPanelPostsRequest,
+  UpdatePostRequest,
+  DeletePostRequest,
+  CreatePostRequest
 } from '../types/posts'
 
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelPost: builder.query<EntityState<Post>, GetPanelPostRequest>({
       query: req => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
-      transformResponse: (response: RawGetPanelPostResponse) => {
+      transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
@@ -27,7 +26,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
 
     getPanelPosts: builder.query<EntityState<Post>, GetPanelPostsRequest>({
       query: req => `/v1/panels/${req.panelName}/posts`,
-      transformResponse: (response: RawGetPanelPostsResponse) => {
+      transformResponse: (response: RawPostsResponse) => {
         if (response.data === undefined) { throw Error('invalid posts response') }
 
         const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
@@ -35,13 +34,13 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    createPanelPost: builder.mutation<EntityState<Post>, CreatePanelPostRequest>({
+    createPanelPost: builder.mutation<EntityState<Post>, CreatePostRequest>({
       query: req => ({
         url: `/v1/panels/${req.panelName}`,
         method: 'POST',
         body: { ...req.data },
       }),
-      transformResponse: (response: RawCreatePanelPostResponse) => {
+      transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
@@ -54,7 +53,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body: { ...req.data },
       }),
-      transformResponse: (response: RawUpdatePostResponse) => {
+      transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
         return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
@@ -66,8 +65,9 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         url: `/v1/posts/${req.postId}`,
         method: 'DELETE',
       }),
-      transformResponse: (response: RawDeletePostResponse, _meta, arg: DeletePostRequest) => {
+      transformResponse: (response: void, _meta, arg: DeletePostRequest) => {
         // todo: invalidate post
+        // todo: get msg from response (generic msg response in types/api)
         console.log(arg)
         return response.msg
       }
@@ -75,4 +75,5 @@ export const postsApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-export const { useGetPanelPostsQuery, useGetPanelPostQuery, useCreatePanelPostMutation, useUpdatePostMutation, useDeletePostMutation } = postsApiSlice
+// todo: redo these:
+// export const { useGetPanelPostsQuery, useGetPanelPostQuery, useCreatePanelPostMutation, useUpdatePostMutation, useDeletePostMutation } = postsApiSlice

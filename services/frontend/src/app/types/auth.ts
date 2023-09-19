@@ -11,17 +11,17 @@ export type LoginRequest = {
 }
 
 // API Responses
-type RawLoginData = {
+type RawAuthData = {
   token: AuthToken,
   user: RawUser
 }
 
-export type RawLoginResponse = RawResponse & {
-  data?: RawLoginData;
+export type RawAuthResponse = RawResponse & {
+  data?: RawAuthData;
 }
 
 // API Response Conversion
-export const convertRawLoginData = (data: RawLoginData): AuthData => ({
+export const convertRawAuthData = (data: RawAuthData): AuthData => ({
   token: data.token,
   user: convertRawUser(data.user)
 })

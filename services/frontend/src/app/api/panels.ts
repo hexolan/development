@@ -5,12 +5,12 @@ import { panelsAdapter } from '../features/panels'
 import { convertRawPanel } from '../types/panels'
 
 import type { Panel } from '../types/common'
-import type { 
-  GetPanelByNameRequest, 
-  CreatePanelRequest, 
-  UpdatePanelRequest, 
-  DeletePanelRequest, 
-  RawPanelResponse
+import type {
+  RawPanelResponse,
+  GetPanelByIdRequest, GetPanelByNameRequest,
+  UpdatePanelByIdRequest, UpdatePanelByNameRequest,
+  DeletePanelByIdRequest, DeletePanelByNameRequest,
+  CreatePanelRequest
 } from '../types/panels'
 
 // todo: create type GetPanelByIdRequest
@@ -37,7 +37,20 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    updatePanel: builder.mutation<EntityState<Panel>, UpdatePanelRequest>({
+    updatePanelById: builder.mutation<EntityState<Panel>, UpdatePanelByIdRequest>({
+      query: req => ({
+        url: `/v1/panels/id/${req.id}`,
+        method: 'PATCH',
+        body: { ...req.data }
+      }),
+      transformResponse: (response: RawPanelResponse) => {
+        if (response.data === undefined) { throw Error('invalid panel response') }
+
+        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+      }
+    }),
+
+    updatePanelByName: builder.mutation<EntityState<Panel>, UpdatePanelByNameRequest>({
       query: req => ({
         url: `/v1/panels/name/${req.name}`,
         method: 'PATCH',
@@ -50,9 +63,16 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    deletePanel: builder.mutation<void, DeletePanelRequest>({
+    deletePanelById: builder.mutation<void, DeletePanelByIdRequest>({
       query: req => ({
-        url: `/v1/panels/name/${req.name}`,
+        url: `/v1/panels/id/${req.id}`,
+        method: 'DELETE'
+      })
+    }),
+
+    deletePanelByName: builder.mutation<void, DeletePanelByNameRequest>({
+      query: req => ({
+        url: `/v1/panels/id/${req.name}`,
         method: 'DELETE'
       })
     }),
@@ -72,4 +92,5 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-export const { useGetPanelByIdQuery, useGetPanelByNameQuery, useUpdatePanelMutation, useDeletePanelMutation, useCreatePanelMutation } = panelsApiSlice
+// todo: redo these:
+// export const { useGetPanelByIdQuery, useGetPanelByNameQuery, useUpdatePanelMutation, useDeletePanelMutation, useCreatePanelMutation } = panelsApiSlice

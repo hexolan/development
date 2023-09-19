@@ -3,17 +3,15 @@ import type { EntityState } from '@reduxjs/toolkit'
 import { apiSlice } from '../api'
 import { usersAdapter } from '../features/users'
 import { convertRawUser } from '../types/user'
-import { convertRawLoginData } from '../types/auth'
+import { convertRawAuthData } from '../types/auth'
 
-import type { User } from '../types/common'
-import type { RawLoginResponse, LoginData } from '../types/auth'
+import type { User, AuthData } from '../types/common'
+import type { RawAuthResponse } from '../types/auth'
 import type {
-  GetUserByIdRequest,
-  GetUserByNameRequest,
-  DeleteUserByIdRequest,
-  DeleteUserByNameRequest,
-  RegisterUserRequest,
-  RawUserResponse
+  RawUserResponse,
+  GetUserByIdRequest, GetUserByNameRequest,
+  DeleteUserByIdRequest, DeleteUserByNameRequest,
+  RegisterUserRequest
 } from '../types/user'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
@@ -66,19 +64,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    registerUser: builder.mutation<LoginData, RegisterUserRequest>({
+    registerUser: builder.mutation<AuthData, RegisterUserRequest>({
       query: req => ({
         url: '/v1/users',
         method: 'POST',
         body: { ...req }
       }),
-      transformResponse: (response: RawLoginResponse) => {
+      transformResponse: (response: RawAuthResponse) => {
         if (response.data === undefined) { throw Error('invalid registration response') }
 
-        return convertRawLoginData(response.data)
+        return convertRawAuthData(response.data)
       }
     }),
   })
 })
 
-export const { useGetUserByIdQuery, useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
+// todo: redo these:
+// export const { useGetUserByIdQuery, useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
