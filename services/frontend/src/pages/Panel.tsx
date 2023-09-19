@@ -9,6 +9,9 @@ type PanelPageParams = {
   panelName: string;
 }
 
+// todo: get panel
+// then call a get panel posts by panel id query
+
 function PanelPage() {
   const { panelName } = useParams<PanelPageParams>();
   if (panelName === undefined) {

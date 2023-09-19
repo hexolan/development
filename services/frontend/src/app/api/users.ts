@@ -9,10 +9,21 @@ import type { User } from '../types/common'
 import type { RawLoginResponse, LoginData } from '../types/auth'
 import type { GetUserByNameRequest, RawUserResponse, RegisterUserRequest } from '../types/user'
 
+// TODO: create type GetUserByIdRequest
+// todo: implement deleteUserById and deleteUserByUsername methods
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getUserById: builder.query<EntityState<User>, GetUserByIdRequest>({
+      query: req => ({ url: `/v1/users/id/${req.id}` }),
+      transformResponse: (response: RawUserResponse) => {
+        if (response.data === undefined) { throw Error('invalid user response') }
+
+        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+      }
+    }),
+
     getUserByName: builder.query<EntityState<User>, GetUserByNameRequest>({
-      query: req => ({ url: `/v1/users/${req.username}` }),
+      query: req => ({ url: `/v1/users/username/${req.username}` }),
       transformResponse: (response: RawUserResponse) => {
         if (response.data === undefined) { throw Error('invalid user response') }
 
@@ -51,4 +62,4 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-export const { useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
+export const { useGetUserByIdQuery, useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
