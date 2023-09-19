@@ -17,6 +17,21 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1.Patch("/:name", handlers.AuthMiddleware, v1.UpdatePanelByName) // todo: check permissions
 	panelV1.Delete("/:name", handlers.AuthMiddleware, v1.DeletePanelByName) // todo: check permissions
 
+	// implement functionality for methods:
+	// v1.GetPanelById
+	// v1.UpdatePanelById
+	// v1.DeletePanelById
+
+	// try both: (idea 1 probably more safe)
+	// Result: USERNAME base-36 = 2412767791238 base-10
+	// at ~2.5 trillion there may be a conflict with a panel id being "USERNAME"
+	// * idea 1:
+	// /panels/id/:id
+	// /panels/name/:name
+	// * idea 2:
+	// /panels/:id
+	// /panels/name/:name
+
 	// Post Service Routes
 	postV1 := apiV1.Group("/posts")
 	postV1.Patch("/:id", handlers.AuthMiddleware, v1.UpdatePost) // todo: check permissions
@@ -32,6 +47,27 @@ func RegisterRoutes(app *fiber.App) {
 	userV1.Get("/me", handlers.AuthMiddleware, v1.GetCurrentUser)
 	userV1.Get("/:username", handlers.AuthMiddleware, v1.GetUserByUsername)
 	userV1.Delete("/delete", handlers.AuthMiddleware, v1.DeleteCurrentUser)
+
+
+	// implement methods (and functionality for):
+	// v1.GetUserById
+	// v1.DeleteUserById
+
+	// try both: (idea 1 probably more safe for use with all)
+	// * idea 1:
+	// /users/id/:id
+	// /users/username/:username
+	// * idea 2:
+	// /users/:id
+	// /users/username/:username
+
+	// note to self:
+	// for initial release - no updating user
+	// > when i've made changes to remove all app logic from frontend
+	// >> allow for updating user
+	// >> but implement 1 week..ish cooldown on changing usernames (inside user service)
+	// >> seperate user registration into a seperate 'registration' service (to defer logic from this server)
+	// >> also remove conversion in frontend (and do all conversion to frontend safe here incl. ISO strings for dates if provided and JS safe names such as panelId instead of panel_id)
 
 	// Auth Service Routes
 	// todo: changing passwords

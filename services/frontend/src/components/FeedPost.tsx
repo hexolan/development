@@ -6,6 +6,12 @@ const FeedPost = ({ post }: { post: Post }) => {
   const panelName = "todoFetchPanel"  // post.panelId
   const authorName = "todoFetchAuthor"  // post.authorId
 
+  // const { panelData } = useGetPanelByIdQuery({ panelName: panelName })
+  // const { authorData } = useGetPanelPostsQuery({ panelName: panelName })
+  // if (!panelData || !authorData) {
+  //
+  // }
+
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder>
       <Stack align="flex-start" spacing={1}>

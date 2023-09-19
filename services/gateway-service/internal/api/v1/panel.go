@@ -31,6 +31,11 @@ func CreatePanel(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "data": panel})
 }
 
+func GetPanelById(c *fiber.Ctx) error {
+	// TODO: implement all ID methods
+	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
+}
+
 func GetPanelByName(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -43,6 +48,11 @@ func GetPanelByName(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "data": panel})
+}
+
+func UpdatePanelById(c *fiber.Ctx) error {
+	// TODO: implement all ID methods
+	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
 }
 
 func UpdatePanelByName(c *fiber.Ctx) error {
@@ -64,6 +74,11 @@ func UpdatePanelByName(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "data": panel})
+}
+
+func DeletePanelById(c *fiber.Ctx) error {
+	// TODO: implement all ID methods
+	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
 }
 
 func DeletePanelByName(c *fiber.Ctx) error {

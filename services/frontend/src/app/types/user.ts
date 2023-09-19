@@ -6,14 +6,14 @@ import type { RawResponse, RawTimestamp } from './api';
 export const convertRawUser = (rawUser: RawUser): User => ({
   id: rawUser.id,
   username: rawUser.username,
-  createdAt: convertRawTimestamp(rawUser.created_at),
+  createdAt: (rawUser.created_at ? convertRawTimestamp(rawUser.created_at) : undefined),
   updatedAt: (rawUser.updated_at ? convertRawTimestamp(rawUser.updated_at) : undefined),
 })
 
 export type RawUser = {
   id: string;
   username: string;
-  created_at: RawTimestamp;
+  created_at?: RawTimestamp;
   updated_at?: RawTimestamp;
 }
 

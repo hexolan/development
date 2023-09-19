@@ -13,7 +13,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       }),
       transformResponse: (response: RawLoginResponse) => {
         if (response.data === undefined) { throw Error('invalid login response') }
-        
+
         return convertRawLoginData(response.data)
       },
     }),
