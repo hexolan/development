@@ -1,9 +1,16 @@
+// Auth
+export type AuthData = {
+  token: AuthToken;
+  user: User;
+}
+
 export type AuthToken = {
   token_type: string;
   access_token: string;
   expires_in: number;
 }
 
+// Panel
 export type Panel = {
   id: string;
   name: string;
@@ -12,6 +19,7 @@ export type Panel = {
   updatedAt?: string;
 }
 
+// Post
 export type Post = {
   id: string;
   panelId: string;
@@ -22,6 +30,7 @@ export type Post = {
   updatedAt?: string;
 }
 
+// Comment
 export type Comment = {
   id: string;
   postId: string;
@@ -31,6 +40,7 @@ export type Comment = {
   updatedAt?: string;
 }
 
+// User
 export type User = {
   id: string;
   username: string;

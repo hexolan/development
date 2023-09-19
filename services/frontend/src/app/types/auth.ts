@@ -2,18 +2,15 @@ import { convertRawUser } from './user'
 
 import type { RawUser } from './user'
 import type { RawResponse } from './api'
-import type { AuthToken, User } from './common'
+import type { AuthData, AuthToken } from './common'
 
-export const convertRawLoginData = (data: RawLoginData): LoginData => ({
-  token: data.token,
-  user: convertRawUser(data.user)
-})
-
+// API Request Paramaters
 export type LoginRequest = {
   username: string;
   password: string;
 }
 
+// API Responses
 type RawLoginData = {
   token: AuthToken,
   user: RawUser
@@ -23,7 +20,8 @@ export type RawLoginResponse = RawResponse & {
   data?: RawLoginData;
 }
 
-export type LoginData = {
-  token: AuthToken
-  user: User
-}
+// API Response Conversion
+export const convertRawLoginData = (data: RawLoginData): AuthData => ({
+  token: data.token,
+  user: convertRawUser(data.user)
+})

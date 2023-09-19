@@ -3,16 +3,39 @@ import { convertRawTimestamp } from './api'
 import type { Post } from './common'
 import type { RawResponse, RawTimestamp } from './api'
 
-export const convertRawPost = (rawPost: RawPost): Post => ({
-  id: rawPost.id,
-  panelId: rawPost.panel_id,
-  authorId: rawPost.author_id,
-  title: rawPost.title,
-  content: rawPost.content,
-  createdAt: convertRawTimestamp(rawPost.created_at),
-  updatedAt: (rawPost.updated_at ? convertRawTimestamp(rawPost.updated_at) : undefined),
-})
+// Request Data
+export type CreatePostData = {
+  title: string;
+  content: string;
+}
 
+export type UpdatePostData = Partial<CreatePostData>
+
+// API Request Paramaters
+export type GetPanelPostRequest = {
+  panelName: string;
+  postId: string;
+}
+
+export type GetPanelPostsRequest = {
+  panelName: string;
+}
+
+export type UpdatePostRequest = {
+  postId: string;
+  data: UpdatePostData;
+}
+
+export type DeletePostRequest = {
+  postId: string;
+}
+
+export type CreatePostRequest = {
+  panelName: string;
+  data: CreatePostData;
+}
+
+// API Responses
 export type RawPost = {
   id: string;
   panel_id: string;
@@ -23,56 +46,23 @@ export type RawPost = {
   updated_at?: RawTimestamp;
 }
 
-export type GetPanelPostRequest = {
-  panelName: string;
-  postId: string;
-}
-
-export type RawGetPanelPostResponse = RawResponse & {
+export type RawPostResponse = RawResponse & {
   data?: RawPost;
 }
 
-export type GetPanelPostsRequest = {
-  panelName: string;
-}
-
-export type RawGetPanelPostsResponse = RawResponse & {
+export type RawPostsResponse = RawResponse & {
   data?: {
     posts: RawPost[];
   };
 }
 
-export type CreatePanelPostRequest = {
-  panelName: string;
-  data: CreatePostData;
-}
-
-export type CreatePostData = {
-  title: string;
-  content: string;
-}
-
-export type RawCreatePanelPostResponse = RawResponse & {
-  data?: RawPost;
-}
-
-export type UpdatePostRequest = {
-  postId: string;
-  data: {
-    title?: string;
-    content?: string;
-  };
-}
-
-export type RawUpdatePostResponse = RawResponse & {
-  data?: RawPost;
-}
-
-export type DeletePostRequest = {
-  postId: string;
-}
-
-export type RawDeletePostResponse = {
-  status: string;
-  msg: string;
-}
+// API Response Conversion
+export const convertRawPost = (rawPost: RawPost): Post => ({
+  id: rawPost.id,
+  panelId: rawPost.panel_id,
+  authorId: rawPost.author_id,
+  title: rawPost.title,
+  content: rawPost.content,
+  createdAt: convertRawTimestamp(rawPost.created_at),
+  updatedAt: (rawPost.updated_at ? convertRawTimestamp(rawPost.updated_at) : undefined),
+})

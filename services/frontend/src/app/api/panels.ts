@@ -5,7 +5,13 @@ import { panelsAdapter } from '../features/panels'
 import { convertRawPanel } from '../types/panels'
 
 import type { Panel } from '../types/common'
-import type { GetPanelByNameRequest, CreatePanelRequest, UpdatePanelRequest, DeletePanelRequest, RawPanelResponse } from '../types/panels'
+import type { 
+  GetPanelByNameRequest, 
+  CreatePanelRequest, 
+  UpdatePanelRequest, 
+  DeletePanelRequest, 
+  RawPanelResponse
+} from '../types/panels'
 
 // todo: create type GetPanelByIdRequest
 // todo: seperate deletePanel into deleteById and updateByName

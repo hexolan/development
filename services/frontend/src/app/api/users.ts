@@ -7,10 +7,15 @@ import { convertRawLoginData } from '../types/auth'
 
 import type { User } from '../types/common'
 import type { RawLoginResponse, LoginData } from '../types/auth'
-import type { GetUserByNameRequest, RawUserResponse, RegisterUserRequest } from '../types/user'
+import type {
+  GetUserByIdRequest,
+  GetUserByNameRequest,
+  DeleteUserByIdRequest,
+  DeleteUserByNameRequest,
+  RegisterUserRequest,
+  RawUserResponse
+} from '../types/user'
 
-// TODO: create type GetUserByIdRequest
-// todo: implement deleteUserById and deleteUserByUsername methods
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserById: builder.query<EntityState<User>, GetUserByIdRequest>({
@@ -38,6 +43,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
         return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
       }
+    }),
+
+    deleteUserById: builder.mutation<void, DeleteUserByIdRequest>({
+      query: req => ({
+        url: `/v1/users/id/${req.id}'`,
+        method: 'DELETE'
+      })
+    }),
+
+    deleteUserByName: builder.mutation<void, DeleteUserByNameRequest>({
+      query: req => ({
+        url: `/v1/users/username/${req.username}`,
+        method: 'DELETE'
+      })
     }),
 
     deleteCurrentUser: builder.mutation<void, void>({
