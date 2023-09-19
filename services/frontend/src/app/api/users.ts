@@ -79,5 +79,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-// todo: redo these:
-// export const { useGetUserByIdQuery, useGetUserByNameQuery, useGetCurrentUserQuery, useDeleteCurrentUserMutation, useRegisterUserMutation } = usersApiSlice
+export const { 
+  useGetUserByIdQuery, useGetUserByNameQuery, useGetCurrentUserQuery, 
+  useDeleteUserByIdMutation, useDeleteUserByNameMutation, useDeleteCurrentUserMutation, 
+  useRegisterUserMutation 
+} = usersApiSlice

@@ -13,10 +13,6 @@ import type {
   CreatePanelRequest
 } from '../types/panels'
 
-// todo: create type GetPanelByIdRequest
-// todo: seperate deletePanel into deleteById and updateByName
-// todo: seperate updatePanel into updateById and deleteByName
-// todo: rename any references to the mutations/query in other files
 export const panelsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelById: builder.query<EntityState<Panel>, GetPanelByIdRequest>({
@@ -92,5 +88,9 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-// todo: redo these:
-// export const { useGetPanelByIdQuery, useGetPanelByNameQuery, useUpdatePanelMutation, useDeletePanelMutation, useCreatePanelMutation } = panelsApiSlice
+export const { 
+  useGetPanelByIdQuery, useGetPanelByNameQuery,
+  useUpdatePanelByIdMutation, useUpdatePanelByNameMutation,
+  useDeletePanelByIdMutation, useDeletePanelByNameMutation,
+  useCreatePanelMutation 
+} = panelsApiSlice

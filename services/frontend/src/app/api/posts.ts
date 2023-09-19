@@ -34,19 +34,6 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    createPanelPost: builder.mutation<EntityState<Post>, CreatePostRequest>({
-      query: req => ({
-        url: `/v1/panels/${req.panelName}`,
-        method: 'POST',
-        body: { ...req.data },
-      }),
-      transformResponse: (response: RawPostResponse) => {
-        if (response.data === undefined) { throw Error('invalid post response') }
-
-        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
-      }
-    }),
-
     updatePost: builder.mutation<EntityState<Post>, UpdatePostRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}`,
@@ -60,20 +47,26 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    deletePost: builder.mutation<string, DeletePostRequest>({
+    deletePost: builder.mutation<void, DeletePostRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}`,
         method: 'DELETE',
+      })
+    }),
+
+    createPanelPost: builder.mutation<EntityState<Post>, CreatePostRequest>({
+      query: req => ({
+        url: `/v1/panels/${req.panelName}`,
+        method: 'POST',
+        body: { ...req.data },
       }),
-      transformResponse: (response: void, _meta, arg: DeletePostRequest) => {
-        // todo: invalidate post
-        // todo: get msg from response (generic msg response in types/api)
-        console.log(arg)
-        return response.msg
+      transformResponse: (response: RawPostResponse) => {
+        if (response.data === undefined) { throw Error('invalid post response') }
+
+        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
       }
     }),
   })
 })
 
-// todo: redo these:
-// export const { useGetPanelPostsQuery, useGetPanelPostQuery, useCreatePanelPostMutation, useUpdatePostMutation, useDeletePostMutation } = postsApiSlice
+export const { useGetPanelPostQuery, useGetPanelPostsQuery, useUpdatePostMutation, useDeletePostMutation, useCreatePanelPostMutation } = postsApiSlice

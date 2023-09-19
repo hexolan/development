@@ -38,17 +38,11 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
-    deletePostComment: builder.mutation<string, DeletePostCommentRequest>({
+    deletePostComment: builder.mutation<void, DeletePostCommentRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}/comments/${req.id}`,
         method: 'DELETE'
-      }),
-      transformResponse: (response: void, _meta, arg: DeletePostCommentRequest) => {
-        // todo: invalidate comment
-        // todo: get msg from response (generic msg response in types/api)
-        console.log(arg)
-        return response.msg
-      }
+      })
     }),
 
     createPostComment: builder.mutation<EntityState<Comment>, CreatePostCommentRequest>({
@@ -66,5 +60,9 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-// todo: redo these:
-// export const { useGetPostCommentsQuery, useCreatePostCommentMutation, useUpdatePostCommentMutation, useDeletePostCommentMutation } = commentsApiSlice
+export const {
+  useGetPostCommentsQuery,
+  useUpdatePostCommentMutation,
+  useDeletePostCommentMutation,
+  useCreatePostCommentMutation
+} = commentsApiSlice
