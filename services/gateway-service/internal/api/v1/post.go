@@ -20,6 +20,48 @@ func getPostById(postId string) (*postv1.Post, error) {
 	)
 }
 
+func GetPanelPost(c *fiber.Ctx) error {
+	// Get the panel ID from name.
+	panelId, err := getPanelIDFromName(c.Params("panel_name"))
+	if err != nil {
+		return err
+	}
+
+	// Make the request for the panel post
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	post, err := rpc.Svcs.GetPostSvc().GetPanelPost(
+		ctx,
+		&postv1.GetPanelPostRequest{Id: c.Params("id"), PanelId: panelId},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": post})
+}
+
+func GetPanelPosts(c *fiber.Ctx) error {
+	// Get the panel ID from name.
+	panelId, err := getPanelIDFromName(c.Params("panel_name"))
+	if err != nil {
+		return err
+	}
+
+	// Make the request for panel posts
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	posts, err := rpc.Svcs.GetPostSvc().GetPanelPosts(
+		ctx,
+		&postv1.GetPanelPostsRequest{PanelId: panelId},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": posts})
+}
+
 func UpdatePost(c *fiber.Ctx) error {
 	// todo: check permissions to update the post
 
@@ -92,46 +134,4 @@ func CreatePanelPost(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "data": post})
-}
-
-func GetPanelPost(c *fiber.Ctx) error {
-	// Get the panel ID from name.
-	panelId, err := getPanelIDFromName(c.Params("panel_name"))
-	if err != nil {
-		return err
-	}
-
-	// Make the request for the panel post
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	post, err := rpc.Svcs.GetPostSvc().GetPanelPost(
-		ctx,
-		&postv1.GetPanelPostRequest{Id: c.Params("id"), PanelId: panelId},
-	)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(fiber.Map{"status": "success", "data": post})
-}
-
-func GetPanelPosts(c *fiber.Ctx) error {
-	// Get the panel ID from name.
-	panelId, err := getPanelIDFromName(c.Params("panel_name"))
-	if err != nil {
-		return err
-	}
-
-	// Make the request for panel posts
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	posts, err := rpc.Svcs.GetPostSvc().GetPanelPosts(
-		ctx,
-		&postv1.GetPanelPostsRequest{PanelId: panelId},
-	)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(fiber.Map{"status": "success", "data": posts})
 }

@@ -69,4 +69,9 @@ export const postsApiSlice = apiSlice.injectEndpoints({
   })
 })
 
-export const { useGetPanelPostQuery, useGetPanelPostsQuery, useUpdatePostMutation, useDeletePostMutation, useCreatePanelPostMutation } = postsApiSlice
+export const { 
+  useGetPanelPostQuery, useGetPanelPostsQuery,
+  useUpdatePostMutation, 
+  useDeletePostMutation, 
+  useCreatePanelPostMutation
+} = postsApiSlice
