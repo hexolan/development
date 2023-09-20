@@ -13,18 +13,18 @@ const FeedPost = ({ post }: { post: Post }) => {
     } else if (!data) {
       return 'Error loading panel'
     } else {
-      return data.entities[post.panelId].name
+      return data.name
     }
   }
 
   const getAuthorName = () => {
-    const { authorData, isLoadingAuthor } = useGetUserByIdQuery({ id: post.authorId })
-    if (isLoadingAuthor) {
+    const { data, isLoading } = useGetUserByIdQuery({ id: post.authorId })
+    if (isLoading) {
       return 'Loading...'
-    } else if (!authorData) {
+    } else if (!data) {
       return 'Error loading author' // todo
     } else {
-      return authorData.entities[post.authorId].username
+      return data.username
     }
   }
 

@@ -3,14 +3,6 @@ import { convertRawTimestamp } from './api';
 import type { Comment } from './common';
 import type { RawResponse, RawTimestamp } from './api';
 
-/*
-  RawComment, RawCommentResponse, RawCommentsResponse,
-  GetPostCommentsRequest,
-  UpdateCommentRequest,
-  DeleteCommentRequest,
-  CreateCommentRequest
-*/
-
 // Request Data
 type CreateCommentData = {
   message: string;

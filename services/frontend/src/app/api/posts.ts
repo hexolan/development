@@ -52,7 +52,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
 
     createPanelPost: builder.mutation<Post, CreatePostRequest>({
       query: req => ({
-        url: `/v1/panels/${req.panelName}`,
+        url: `/v1/panels/name/${req.panelName}`,
         method: 'POST',
         body: { ...req.data },
       }),
