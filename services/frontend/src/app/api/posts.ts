@@ -1,7 +1,4 @@
-import type { EntityState } from '@reduxjs/toolkit'
-
 import { apiSlice } from '../api'
-import { postsAdapter } from '../features/posts'
 import { convertRawPost } from '../types/posts'
 
 import type { Post } from '../types/common'
@@ -15,26 +12,25 @@ import type {
 
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPanelPost: builder.query<EntityState<Post>, GetPanelPostRequest>({
+    getPanelPost: builder.query<Post, GetPanelPostRequest>({
       query: req => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
       transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
-        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
+        return convertRawPost(response.data)
       }
     }),
 
-    getPanelPosts: builder.query<EntityState<Post>, GetPanelPostsRequest>({
+    getPanelPosts: builder.query<Post[], GetPanelPostsRequest>({
       query: req => `/v1/panels/${req.panelName}/posts`,
       transformResponse: (response: RawPostsResponse) => {
         if (response.data === undefined) { throw Error('invalid posts response') }
 
-        const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
-        return postsAdapter.setAll(postsAdapter.getInitialState(), posts)
+        return response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
       }
     }),
 
-    updatePost: builder.mutation<EntityState<Post>, UpdatePostRequest>({
+    updatePost: builder.mutation<Post, UpdatePostRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}`,
         method: 'PATCH',
@@ -43,7 +39,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
-        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
+        return convertRawPost(response.data)
       }
     }),
 
@@ -54,7 +50,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    createPanelPost: builder.mutation<EntityState<Post>, CreatePostRequest>({
+    createPanelPost: builder.mutation<Post, CreatePostRequest>({
       query: req => ({
         url: `/v1/panels/${req.panelName}`,
         method: 'POST',
@@ -63,7 +59,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
-        return postsAdapter.setOne(postsAdapter.getInitialState(), convertRawPost(response.data))
+        return convertRawPost(response.data)
       }
     }),
   })

@@ -1,7 +1,4 @@
-import type { EntityState } from '@reduxjs/toolkit'
-
 import { apiSlice } from '../api'
-import { usersAdapter } from '../features/users'
 import { convertRawUser } from '../types/user'
 import { convertRawAuthData } from '../types/auth'
 
@@ -16,30 +13,30 @@ import type {
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUserById: builder.query<EntityState<User>, GetUserByIdRequest>({
+    getUserById: builder.query<User, GetUserByIdRequest>({
       query: req => ({ url: `/v1/users/id/${req.id}` }),
       transformResponse: (response: RawUserResponse) => {
         if (response.data === undefined) { throw Error('invalid user response') }
 
-        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+        return convertRawUser(response.data)
       }
     }),
 
-    getUserByName: builder.query<EntityState<User>, GetUserByNameRequest>({
+    getUserByName: builder.query<User, GetUserByNameRequest>({
       query: req => ({ url: `/v1/users/username/${req.username}` }),
       transformResponse: (response: RawUserResponse) => {
         if (response.data === undefined) { throw Error('invalid user response') }
 
-        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+        return convertRawUser(response.data)
       }
     }),
 
-    getCurrentUser: builder.query<EntityState<User>, void>({
+    getCurrentUser: builder.query<User, void>({
       query: () => ({ url: '/v1/users/me' }),
       transformResponse: (response: RawUserResponse) => {
         if (response.data === undefined) { throw Error('invalid user response') }
 
-        return usersAdapter.setOne(usersAdapter.getInitialState(), convertRawUser(response.data))
+        return convertRawUser(response.data)
       }
     }),
 

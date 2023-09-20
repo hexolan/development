@@ -1,7 +1,4 @@
-import type { EntityState } from '@reduxjs/toolkit'
-
 import { apiSlice } from '../api'
-import { panelsAdapter } from '../features/panels'
 import { convertRawPanel } from '../types/panels'
 
 import type { Panel } from '../types/common'
@@ -15,25 +12,25 @@ import type {
 
 export const panelsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPanelById: builder.query<EntityState<Panel>, GetPanelByIdRequest>({
+    getPanelById: builder.query<Panel, GetPanelByIdRequest>({
       query: req => ({ url: `/v1/panels/id/${req.id}` }),
       transformResponse: (response: RawPanelResponse) => {
         if (response.data === undefined) { throw Error('invalid panel response') }
 
-        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+        return convertRawPanel(response.data)
       }
     }),
 
-    getPanelByName: builder.query<EntityState<Panel>, GetPanelByNameRequest>({
+    getPanelByName: builder.query<Panel, GetPanelByNameRequest>({
       query: req => ({ url: `/v1/panels/name/${req.name}` }),
       transformResponse: (response: RawPanelResponse) => {
         if (response.data === undefined) { throw Error('invalid panel response') }
 
-        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+        return convertRawPanel(response.data)
       }
     }),
 
-    updatePanelById: builder.mutation<EntityState<Panel>, UpdatePanelByIdRequest>({
+    updatePanelById: builder.mutation<Panel, UpdatePanelByIdRequest>({
       query: req => ({
         url: `/v1/panels/id/${req.id}`,
         method: 'PATCH',
@@ -42,11 +39,11 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPanelResponse) => {
         if (response.data === undefined) { throw Error('invalid panel response') }
 
-        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+        return convertRawPanel(response.data)
       }
     }),
 
-    updatePanelByName: builder.mutation<EntityState<Panel>, UpdatePanelByNameRequest>({
+    updatePanelByName: builder.mutation<Panel, UpdatePanelByNameRequest>({
       query: req => ({
         url: `/v1/panels/name/${req.name}`,
         method: 'PATCH',
@@ -55,7 +52,7 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPanelResponse) => {
         if (response.data === undefined) { throw Error('invalid panel response') }
 
-        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+        return convertRawPanel(response.data)
       }
     }),
 
@@ -73,7 +70,7 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    createPanel: builder.mutation<EntityState<Panel>, CreatePanelRequest>({
+    createPanel: builder.mutation<Panel, CreatePanelRequest>({
       query: req => ({
         url: '/v1/panels',
         method: 'POST',
@@ -82,7 +79,7 @@ export const panelsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPanelResponse) => {
         if (response.data === undefined) { throw Error('invalid panel response') }
 
-        return panelsAdapter.setOne(panelsAdapter.getInitialState(), convertRawPanel(response.data))
+        return convertRawPanel(response.data)
       }
     }),
   })

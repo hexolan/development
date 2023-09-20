@@ -1,7 +1,4 @@
-import type { EntityState } from '@reduxjs/toolkit'
-
 import { apiSlice } from '../api'
-import { commentsAdapter } from '../features/comments'
 import { convertRawComment } from '../types/comments'
 
 import type { Comment } from '../types/common'
@@ -15,17 +12,16 @@ import type {
 
 export const commentsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPostComments: builder.query<EntityState<Comment>, GetPostCommentsRequest>({
+    getPostComments: builder.query<Comment[], GetPostCommentsRequest>({
       query: data => ({ url: `/v1/posts/${data.postId}/comments` }),
       transformResponse: (response: RawCommentsResponse) => {
         if (response.data === undefined) { throw Error('invalid comments response') }
 
-        const comments = response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
-        return commentsAdapter.setAll(commentsAdapter.getInitialState(), comments)
+        return response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
       }
     }),
 
-    updatePostComment: builder.mutation<EntityState<Comment>, UpdatePostCommentRequest>({
+    updatePostComment: builder.mutation<Comment, UpdatePostCommentRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}/comments/${req.id}`,
         method: 'PATCH',
@@ -34,7 +30,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawCommentResponse) => {
         if (response.data === undefined) { throw Error('invalid comment response') }
 
-        return commentsAdapter.setOne(commentsAdapter.getInitialState(), convertRawComment(response.data))
+        return convertRawComment(response.data)
       }
     }),
 
@@ -45,7 +41,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    createPostComment: builder.mutation<EntityState<Comment>, CreatePostCommentRequest>({
+    createPostComment: builder.mutation<Comment, CreatePostCommentRequest>({
       query: req => ({
         url: `/v1/posts/${req.postId}/comments`,
         method: 'POST',
@@ -54,7 +50,7 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawCommentResponse) => {
         if (response.data === undefined) { throw Error('invalid comment response') }
 
-        return commentsAdapter.setOne(commentsAdapter.getInitialState(), convertRawComment(response.data))
+        return convertRawComment(response.data)
       }
     }),
   })
