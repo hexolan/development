@@ -19,9 +19,9 @@ type userSignupForm struct {
 func getUserById(id string) (*userv1.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	user, err := rpc.Svcs.GetUserSvc().GetUserById(
+	user, err := rpc.Svcs.GetUserSvc().GetUser(
 		ctx,
-		&userv1.GetUserById{Id: id},
+		&userv1.GetUserByIdRequest{Id: id},
 	)
 
 	return user, err
@@ -82,9 +82,9 @@ func DeleteUserById(c *fiber.Ctx) error {
 	
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetUserSvc().DeleteUserById(
+	_, err := rpc.Svcs.GetUserSvc().DeleteUser(
 		ctx,
-		&postv1.DeleteUserByIdRequest{Id: c.Params("id")},
+		&userv1.DeleteUserByIdRequest{Id: c.Params("id")},
 	)
 	if err != nil {
 		return err
@@ -100,7 +100,7 @@ func DeleteUserByUsername(c *fiber.Ctx) error {
 	defer cancel()
 	_, err := rpc.Svcs.GetUserSvc().DeleteUserByName(
 		ctx,
-		&postv1.DeleteUserByNameRequest{Username: c.Params("username")},
+		&userv1.DeleteUserByNameRequest{Username: c.Params("username")},
 	)
 	if err != nil {
 		return err

@@ -27,7 +27,7 @@ func getPanelIDFromName(panelName string) (string, error) {
 func GetPanelById(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	panel, err := rpc.Svcs.GetPanelSvc().GetPanelById(
+	panel, err := rpc.Svcs.GetPanelSvc().GetPanel(
 		ctx,
 		&panelv1.GetPanelByIdRequest{Id: c.Params("id")},
 	)
@@ -62,7 +62,7 @@ func UpdatePanelById(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	panel, err := rpc.Svcs.GetPanelSvc().UpdatePanelById(
+	panel, err := rpc.Svcs.GetPanelSvc().UpdatePanel(
 		ctx, 
 		&panelv1.UpdatePanelByIdRequest{Id: c.Params("id"), Data: patchData},
 	)
@@ -99,7 +99,7 @@ func DeletePanelById(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetPanelSvc().DeletePanelById(
+	_, err := rpc.Svcs.GetPanelSvc().DeletePanel(
 		ctx,
 		&panelv1.DeletePanelByIdRequest{Id: c.Params("id")},
 	)
