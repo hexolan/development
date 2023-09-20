@@ -43,10 +43,10 @@ func RegisterRoutes(app *fiber.App) {
 	// v1.GetUserById
 	// v1.DeleteUserById
 	// v1.DeleteUserByUsername
-	userV1.Get("/id/:id", handlers.AuthMiddleware, v1.GetUserById)
+	userV1.Get("/id/:id", v1.GetUserById)
 	userV1.Delete("/id/:id", handlers.AuthMiddleware, v1.DeleteUserById)
 
-	userV1.Get("/username/:username", handlers.AuthMiddleware, v1.GetUserByUsername)
+	userV1.Get("/username/:username", v1.GetUserByUsername)
 	userV1.Delete("/username/:username", handlers.AuthMiddleware, v1.DeleteUserByUsername)
 	
 	userV1.Get("/me", handlers.AuthMiddleware, v1.GetCurrentUser)
