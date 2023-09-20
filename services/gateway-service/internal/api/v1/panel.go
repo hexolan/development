@@ -25,8 +25,17 @@ func getPanelIDFromName(panelName string) (string, error) {
 }
 
 func GetPanelById(c *fiber.Ctx) error {
-	// TODO: implement all ID methods
-	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	panel, err := rpc.Svcs.GetPanelSvc().GetPanelById(
+		ctx,
+		&panelv1.GetPanelByIdRequest{Id: c.Params("id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": panel})
 }
 
 func GetPanelByName(c *fiber.Ctx) error {
@@ -44,8 +53,24 @@ func GetPanelByName(c *fiber.Ctx) error {
 }
 
 func UpdatePanelById(c *fiber.Ctx) error {
-	// TODO: implement all ID methods
-	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
+	// todo: check user can update panels
+
+	patchData := new(panelv1.PanelMutable)
+	if err := c.BodyParser(patchData); err != nil {
+		fiber.NewError(fiber.StatusBadRequest, "malformed request")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	panel, err := rpc.Svcs.GetPanelSvc().UpdatePanelById(
+		ctx, 
+		&panelv1.UpdatePanelByIdRequest{Id: c.Params("id"), Data: patchData},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": panel})
 }
 
 func UpdatePanelByName(c *fiber.Ctx) error {
@@ -70,8 +95,19 @@ func UpdatePanelByName(c *fiber.Ctx) error {
 }
 
 func DeletePanelById(c *fiber.Ctx) error {
-	// TODO: implement all ID methods
-	return fiber.NewError(fiber.StatusUnimplemented, "TODO")
+	// todo: check user can delete panels
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	_, err := rpc.Svcs.GetPanelSvc().DeletePanelById(
+		ctx,
+		&panelv1.DeletePanelByIdRequest{Id: c.Params("id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "msg": "panel deleted"})
 }
 
 func DeletePanelByName(c *fiber.Ctx) error {

@@ -14,7 +14,7 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1 := apiV1.Group("/panels")
 	panelV1.Post("/", v1.CreatePanel) // todo: check permissions
 
-	// implement functionality for methods:
+	// test functionality of new methods:
 	// v1.GetPanelById
 	// v1.UpdatePanelById
 	// v1.DeletePanelById
@@ -39,7 +39,7 @@ func RegisterRoutes(app *fiber.App) {
 	userV1 := apiV1.Group("/users")
 	userV1.Post("/", v1.UserSignup)
 
-	// implement methods (and functionality for):
+	// test functionality of new methods:
 	// v1.GetUserById
 	// v1.DeleteUserById
 	// v1.DeleteUserByUsername

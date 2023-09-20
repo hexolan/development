@@ -16,6 +16,17 @@ type userSignupForm struct {
 	Password string
 }
 
+func getUserById(id string) (*userv1.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	user, err := rpc.Svcs.GetUserSvc().GetUserById(
+		ctx,
+		&userv1.GetUserById{Id: id},
+	)
+
+	return user, err
+}
+
 func getUserByUsername(username string) (*userv1.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -25,6 +36,15 @@ func getUserByUsername(username string) (*userv1.User, error) {
 	)
 
 	return user, err
+}
+
+func GetUserById(c *fiber.Ctx) error {
+	user, err := getUserById(c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": user})
 }
 
 func GetUserByUsername(c *fiber.Ctx) error {
@@ -57,14 +77,46 @@ func GetCurrentUser(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "data": user})
 }
 
+func DeleteUserById(c *fiber.Ctx) error {
+	// todo: check permissions to delete user
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	_, err := rpc.Svcs.GetUserSvc().DeleteUserById(
+		ctx,
+		&postv1.DeleteUserByIdRequest{Id: c.Params("id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "msg": "user deleted"})
+}
+
+func DeleteUserByUsername(c *fiber.Ctx) error {
+	// todo: check permissions to delete user
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	_, err := rpc.Svcs.GetUserSvc().DeleteUserByName(
+		ctx,
+		&postv1.DeleteUserByNameRequest{Username: c.Params("username")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "msg": "user deleted"})
+}
+
 func DeleteCurrentUser(c *fiber.Ctx) error {
-	// access token claims
+	// View access token claims
 	tokenClaims, err := handlers.GetTokenClaims(c)
 	if err != nil {
 		return err
 	}
 
-	// make RPC call
+	// RPC call
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err = rpc.Svcs.GetUserSvc().DeleteUser(

@@ -27,7 +27,9 @@ func NewAPIApp(cfg internal.Config) *fiber.App {
 	// todo: CORS configuration
 	handlers.NewAuthMiddleware(cfg)
 
-	// note from docs: Note: Using this feature is discouraged in production and it's best practice to explicitly set CORS origins via AllowOrigins.
+	// note from docs: 
+	// Note: Using this feature is discouraged in production and it's best practice to explicitly set CORS origins via AllowOrigins.
+	// todo: change back before release (with cors TODO cors configuration above - include credentials is not enabled so even going back to old way would work)
 	app.Use(cors.New(cors.Config{
 		AllowOriginsFunc: func(origin string) bool {
 			return true
