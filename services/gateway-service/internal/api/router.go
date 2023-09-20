@@ -18,6 +18,9 @@ func RegisterRoutes(app *fiber.App) {
 	// v1.GetPanelById
 	// v1.UpdatePanelById
 	// v1.DeletePanelById
+	// todo: modify associated routes 
+	// (e.g. posts can route through panel name or panel id)
+	// ... or remove dependence on panel entirely (and just updated DOM url to reflect the panel its on)
 	panelV1.Get("/id/:id", v1.GetPanelById)
 	panelV1.Patch("/id/:id", handlers.AuthMiddleware, v1.UpdatePanelById) // todo: check permissions
 	panelV1.Delete("/id/:id", handlers.AuthMiddleware, v1.DeletePanelById) // todo: check permissions

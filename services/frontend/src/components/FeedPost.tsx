@@ -13,7 +13,7 @@ const FeedPost = ({ post }: { post: Post }) => {
     } else if (!data) {
       return 'Error loading panel'
     } else {
-      return data.entities[data.ids[0]].name
+      return data.entities[post.panelId].name
     }
   }
 
@@ -24,7 +24,7 @@ const FeedPost = ({ post }: { post: Post }) => {
     } else if (!authorData) {
       return 'Error loading author' // todo
     } else {
-      return authorData.entities[0].username
+      return authorData.entities[post.authorId].username
     }
   }
 
