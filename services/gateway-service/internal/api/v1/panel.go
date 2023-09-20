@@ -10,12 +10,21 @@ import (
 	"github.com/hexolan/panels/gateway-service/internal/rpc/panelv1"
 )
 
-func getPanelIDFromName(panelName string) (string, error) {
+func getPanelById(id string) (*panelv1.Panel, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	return rpc.Svcs.GetPanelSvc().GetPanel(
+		ctx,
+		&panelv1.GetPanelByIdRequest{Id: id},
+	)
+}
+
+func getPanelIDFromName(name string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	panel, err := rpc.Svcs.GetPanelSvc().GetPanelByName(
 		ctx,
-		&panelv1.GetPanelByNameRequest{Name: panelName},
+		&panelv1.GetPanelByNameRequest{Name: name},
 	)
 	if err != nil {
 		return "", err
@@ -25,12 +34,7 @@ func getPanelIDFromName(panelName string) (string, error) {
 }
 
 func GetPanelById(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	panel, err := rpc.Svcs.GetPanelSvc().GetPanel(
-		ctx,
-		&panelv1.GetPanelByIdRequest{Id: c.Params("id")},
-	)
+	panel, err := getPanelById(c.Params("id"))
 	if err != nil {
 		return err
 	}

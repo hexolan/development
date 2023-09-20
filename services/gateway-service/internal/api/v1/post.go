@@ -20,7 +20,22 @@ func getPostById(postId string) (*postv1.Post, error) {
 	)
 }
 
-func GetPanelPost(c *fiber.Ctx) error {
+func GetPanelPostFromId(c *fiber.Ctx) error {
+	// Make the request for the panel post
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	post, err := rpc.Svcs.GetPostSvc().GetPanelPost(
+		ctx,
+		&postv1.GetPanelPostRequest{Id: c.Params("id"), PanelId: c.Params("panel_id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": post})
+}
+
+func GetPanelPostFromName(c *fiber.Ctx) error {
 	// Get the panel ID from name.
 	panelId, err := getPanelIDFromName(c.Params("panel_name"))
 	if err != nil {
@@ -41,7 +56,22 @@ func GetPanelPost(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "data": post})
 }
 
-func GetPanelPosts(c *fiber.Ctx) error {
+func GetPanelPostsFromId(c *fiber.Ctx) error {
+	// Make the request for panel posts
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	posts, err := rpc.Svcs.GetPostSvc().GetPanelPosts(
+		ctx,
+		&postv1.GetPanelPostsRequest{PanelId: c.Params("panel_id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": posts})
+}
+
+func GetPanelPostsFromName(c *fiber.Ctx) error {
 	// Get the panel ID from name.
 	panelId, err := getPanelIDFromName(c.Params("panel_name"))
 	if err != nil {
@@ -99,7 +129,44 @@ func DeletePost(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "msg": "post deleted"})
 }
 
-func CreatePanelPost(c *fiber.Ctx) error {
+func CreatePanelPostFromId(c *fiber.Ctx) error {
+	// Parse the body data
+	newPost := new(postv1.PostMutable)
+	if err := c.BodyParser(newPost); err != nil {
+		fiber.NewError(fiber.StatusBadRequest, "malformed request")
+	}
+
+	// Get the panel ID from provided panel name
+	panel, err := getPanelById(c.Params("panel_id"))
+	if err != nil {
+		return err
+	}
+
+	// access token claims
+	tokenClaims, err := handlers.GetTokenClaims(c)
+	if err != nil {
+		return err
+	}
+
+	// make rpc call
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	post, err := rpc.Svcs.GetPostSvc().CreatePost(
+		ctx,
+		&postv1.CreatePostRequest{
+			PanelId: panel.Id,
+			UserId: tokenClaims.Subject,
+			Data: newPost,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": post})
+}
+
+func CreatePanelPostFromName(c *fiber.Ctx) error {
 	// Parse the body data
 	newPost := new(postv1.PostMutable)
 	if err := c.BodyParser(newPost); err != nil {

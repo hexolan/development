@@ -7,6 +7,18 @@ import (
 	"github.com/hexolan/panels/gateway-service/internal/api/handlers"
 )
 
+// todo: test functionality of new methods:
+// v1.GetPanelById
+// v1.UpdatePanelById
+// v1.DeletePanelById
+// v1.GetUserById
+// v1.DeleteUserById
+// v1.DeleteUserByUsername
+// v1.GetPanelPostsFromId
+// v1.CreatePanelPostFromId
+
+// maybe remove requirement of panel for individual posts entirely (and just update DOM url to reflect the panel its on)
+
 func RegisterRoutes(app *fiber.App) {
 	apiV1 := app.Group("/v1")
 
@@ -14,13 +26,6 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1 := apiV1.Group("/panels")
 	panelV1.Post("/", v1.CreatePanel) // todo: check permissions
 
-	// test functionality of new methods:
-	// v1.GetPanelById
-	// v1.UpdatePanelById
-	// v1.DeletePanelById
-	// todo: modify associated routes 
-	// (e.g. posts can route through panel name or panel id)
-	// ... or remove dependence on panel entirely (and just updated DOM url to reflect the panel its on)
 	panelV1.Get("/id/:id", v1.GetPanelById)
 	panelV1.Patch("/id/:id", handlers.AuthMiddleware, v1.UpdatePanelById) // todo: check permissions
 	panelV1.Delete("/id/:id", handlers.AuthMiddleware, v1.DeletePanelById) // todo: check permissions
@@ -33,19 +38,20 @@ func RegisterRoutes(app *fiber.App) {
 	postV1 := apiV1.Group("/posts")
 	postV1.Patch("/:id", handlers.AuthMiddleware, v1.UpdatePost) // todo: check permissions
 	postV1.Delete("/:id", handlers.AuthMiddleware, v1.DeletePost) // todo: check permissions
+
+	panelV1.Get("/id/:panel_id/posts", v1.GetPanelPostsFromId)
+	panelV1.Get("/name/:panel_name/posts", v1.GetPanelPostsFromName)
 	
-	panelV1.Post("/:panel_name", v1.CreatePanelPost)
-	panelV1.Get("/:panel_name/posts", v1.GetPanelPosts)
-	panelV1.Get("/:panel_name/posts/:id", v1.GetPanelPost)
+	panelV1.Get("/id/:panel_id/posts/:id", v1.GetPanelPostFromId)
+	panelV1.Get("/name/:panel_name/posts/:id", v1.GetPanelPostFromName)
+	
+	panelV1.Post("/id/:panel_id", handlers.AuthMiddleware, v1.CreatePanelPostFromId)
+	panelV1.Post("/name/:panel_name", handlers.AuthMiddleware, v1.CreatePanelPostFromName)
 
 	// User Service Routes
 	userV1 := apiV1.Group("/users")
 	userV1.Post("/", v1.UserSignup)
 
-	// test functionality of new methods:
-	// v1.GetUserById
-	// v1.DeleteUserById
-	// v1.DeleteUserByUsername
 	userV1.Get("/id/:id", v1.GetUserById)
 	userV1.Delete("/id/:id", handlers.AuthMiddleware, v1.DeleteUserById)
 
