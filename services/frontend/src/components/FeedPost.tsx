@@ -6,25 +6,30 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post }: { post: Post }) => {
-  let panelName = '';
-  const { panelData, isLoadingPanel } = useGetPanelByIdQuery({ id: post.panelId })
-  if (!panelData) {
-    panelName = ''
-  } else if (isLoadingPanel) {
-    panelName = 'Loading...' // todo: spinner
-  } else {
-    panelName = 'panel/' + panelData.entities[0].name
+  const getPanelName = () => {
+    const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
+    if (isLoading) {
+      return 'Loading...'
+    } else if (!data) {
+      return 'Error loading panel'
+    } else {
+      return data.entities[data.ids[0]].name
+    }
   }
-  
-  let authorName = '';
-  const { authorData, isLoadingAuthor } = useGetUserByIdQuery({ id: post.authorId })
-  if (!authorData) {
-    authorName = ''
-  } else if (isLoadingAuthor) {
-    authorName = 'Loading...'
-  } else {
-    authorName = authorData.entities[0].username
+
+  const getAuthorName = () => {
+    const { authorData, isLoadingAuthor } = useGetUserByIdQuery({ id: post.authorId })
+    if (isLoadingAuthor) {
+      return 'Loading...'
+    } else if (!authorData) {
+      return 'Error loading author' // todo
+    } else {
+      return authorData.entities[0].username
+    }
   }
+
+  const panelName = getPanelName()
+  const authorName = getAuthorName()
 
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder>
