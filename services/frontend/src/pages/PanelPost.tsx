@@ -1,9 +1,9 @@
 import { useParams, useOutletContext } from 'react-router-dom'
-import { Container, Text } from '@mantine/core'
 
-import LoadingBar from '../components/LoadingBar';
-import { useGetPanelPostQuery } from '../app/api/posts';
-import type { PanelContext } from '../components/PanelLayout';
+import PagePost from '../components/PagePost'
+import LoadingBar from '../components/LoadingBar'
+import { useGetPanelPostQuery } from '../app/api/posts'
+import type { PanelContext } from '../components/PanelLayout'
 
 type PanelPostPageParams = {
   panelName: string;
@@ -11,12 +11,11 @@ type PanelPostPageParams = {
 }
 
 function PanelPostPage() {
+  const { panel } = useOutletContext<PanelContext>()
   const { postId } = useParams<PanelPostPageParams>();
   if (postId === undefined) { throw Error('post id not provided') }
 
-  const { panel } = useOutletContext<PanelContext>()
-
-
+  // Fetch the post
   const { data, isLoading } = useGetPanelPostQuery({ panelId: panel.id, postId: postId })
   if (isLoading) {
     return <LoadingBar />;
@@ -24,11 +23,7 @@ function PanelPostPage() {
     throw Error('Post not found!')  // todo: extract exact error msg (as it may not just be a 404)
   }
 
-  return (
-    <Container mt='xl'>
-      <Text>Post - {data.title}</Text>
-    </Container>
-  )
+  return <PagePost post={data} />
 }
 
 export default PanelPostPage
