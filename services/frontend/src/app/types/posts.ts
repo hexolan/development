@@ -13,7 +13,7 @@ export type UpdatePostData = Partial<CreatePostData>
 
 // API Request Paramaters
 export type GetPanelPostRequest = {
-  panelName: string;
+  panelId: string;
   postId: string;
 }
 
