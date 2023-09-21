@@ -13,7 +13,7 @@ import type {
 export const postsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getPanelPost: builder.query<Post, GetPanelPostRequest>({
-      query: req => ({ url: `/v1/panels/${req.panelName}/posts/${req.postId}` }),
+      query: req => ({ url: `/v1/panels/name/${req.panelName}/posts/${req.postId}` }),
       transformResponse: (response: RawPostResponse) => {
         if (response.data === undefined) { throw Error('invalid post response') }
 
@@ -22,7 +22,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     }),
 
     getPanelPosts: builder.query<Post[], GetPanelPostsRequest>({
-      query: req => `/v1/panels/${req.panelName}/posts`,
+      query: req => `/v1/panels/name/${req.panelName}/posts`,
       transformResponse: (response: RawPostsResponse) => {
         if (response.data === undefined) { throw Error('invalid posts response') }
 

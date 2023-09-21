@@ -31,7 +31,7 @@ function PanelPage() {
         <Text size='sm' color='dimmed'>This is the panel description</Text>
       </Paper>
       <Container mt='xl'>
-        {Object.values(data.entities).map(post => {
+        {Object.values(data).map(post => {
           if (post === undefined) { return post }
           return <FeedPost key={post.id} post={post} />
         })}

@@ -6,37 +6,45 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post }: { post: Post }) => {
-  const getPanelName = () => {
+  const getPanelElement = () => {
     const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
     if (isLoading) {
-      return 'Loading...'
+      return <Text color='dimmed' size='xs'>Loading...</Text> // todo: change this
     } else if (!data) {
-      return 'Error loading panel'
+      return <Text color='red' size='xs'>Error Loading Panel Data</Text> // todo: change this
     } else {
-      return data.name
+      return <Text color='dimmed' size='xs'>{'panel/' + data.name}</Text>
     }
   }
 
-  const getAuthorName = () => {
+  const getAuthorElement = () => {
     const { data, isLoading } = useGetUserByIdQuery({ id: post.authorId })
     if (isLoading) {
-      return 'Loading...'
+      return null
     } else if (!data) {
-      return 'Error loading author' // todo
+      <Text color='red' size='xs'>Error Loading Author Data</Text> // todo: change this
     } else {
-      return data.username
+      return (
+        <Badge 
+          pl={0} 
+          color='teal'
+          leftSection={<Avatar size={24} color='green' radius='xl' mr={5} alt={'Created by ' + data.username} />}
+        >
+          {'user/' + data.username}
+        </Badge>
+      )
     }
   }
 
-  const panelName = getPanelName()
-  const authorName = getAuthorName()
+  const panelElement = getPanelElement()
+  const authorElement = getAuthorElement()
 
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder>
       <Stack align="flex-start" spacing={1}>
-        <Badge color='teal' pl={0} leftSection={<Avatar size={24} color='green' radius='xl' mr={5} alt={'Created by ' + authorName} />}>{'user/' + authorName}</Badge>
+        {authorElement}
         <Text>{post.title}</Text>
-        <Text color='dimmed' size='xs'>{'panel/' + panelName}</Text>
+        {panelElement}
         <Text size='sm' truncate>{post.content}</Text>
       </Stack>
     </Paper>
