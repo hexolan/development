@@ -15,10 +15,13 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
     getPostComments: builder.query<Comment[], GetPostCommentsRequest>({
       query: data => ({ url: `/v1/posts/${data.postId}/comments` }),
       transformResponse: (response: RawCommentsResponse) => {
-        if (response.data === undefined) { throw Error('invalid comments response') }
+        if (response.data === undefined) {
+          throw Error('invalid comments response')
+        } else if (!response.data.comments) {
+          return []
+        }
 
-        const comments = response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
-        return (comments ? comments : [])
+        return response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
       }
     }),
 

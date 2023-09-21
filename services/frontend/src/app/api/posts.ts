@@ -24,10 +24,13 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     getPanelPosts: builder.query<Post[], GetPanelPostsRequest>({
       query: req => `/v1/panels/name/${req.panelName}/posts`,
       transformResponse: (response: RawPostsResponse) => {
-        if (response.data === undefined) { throw Error('invalid posts response') }
+        if (response.data === undefined) {
+          throw Error('invalid posts response')
+        } else if (!response.data.posts) {
+          return []
+        }
 
-        const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
-        return (posts ? posts : [])
+        return response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
       }
     }),
 
