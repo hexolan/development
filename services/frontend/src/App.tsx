@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         element: <PanelPage />,
       },
       {
-        path: '/panel/:panelName/:postId',
+        path: '/panel/:panelName/post/:postId',
         element: <PostPage />,
       }
     ]

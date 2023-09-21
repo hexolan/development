@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { Paper, Container, Text, rem } from '@mantine/core'
+import { Paper, Container, Stack, Text, rem } from '@mantine/core'
 
 import FeedPost from '../components/FeedPost'
 import LoadingBar from '../components/LoadingBar'
@@ -31,10 +31,12 @@ function PanelPage() {
         <Text size='sm' color='dimmed'>This is the panel description</Text>
       </Paper>
       <Container mt='xl'>
-        {Object.values(data).map(post => {
-          if (post === undefined) { return post }
-          return <FeedPost key={post.id} post={post} />
-        })}
+        <Stack spacing='md'>
+          {Object.values(data).map(post => {
+            if (post === undefined) { return post }
+            return <FeedPost key={post.id} post={post} />
+          })}
+        </Stack>
       </Container>
     </>
   )
