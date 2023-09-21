@@ -50,7 +50,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/panel/:panelName/post/:postId',
-        element: <PostPage />,
+        element: <PostPage />,  // todo: surround with panel page layout (rearange this) - panel layout (with header cotaining panel details) - child index page and this as another child page
       }
     ]
   }

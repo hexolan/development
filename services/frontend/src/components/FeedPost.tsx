@@ -7,8 +7,9 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 
 import type { Post } from '../app/types/common'
 
-const FeedPost = ({ post, hidePanel }: { post: Post, showPanel: boolean | undefined }) => {
+const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefined }) => {
   // todo: wireframe loaders
+  // todo: show createdAt timestamp? (not priority)
   const loadPanelData = () => {
     const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
     if (isLoading) {

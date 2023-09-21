@@ -26,7 +26,7 @@ function PanelPage() {
     return <LoadingBar />
   } else if (!data) {
     // reminder to self: sometimes data error detail does not exist (e.g. connection refused to api / api offline)
-    return <p>TODO: error page</p>
+    throw Error('failed to load panel.... XYZ')  // todo: this
   }
 
   return (
@@ -40,7 +40,6 @@ function PanelPage() {
       <Container mt='xl'>
         <Stack spacing='md'>
           {Object.values(data).map(post => {
-            if (post === undefined) { return post }
             return <FeedPost key={post.id} post={post} hidePanel={true} />
           })}
         </Stack>
