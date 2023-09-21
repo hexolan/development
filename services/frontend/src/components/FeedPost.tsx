@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Paper, Stack, Badge, Text, ThemeIcon } from '@mantine/core'
+import { Paper, Box, Stack, Badge, Text, ThemeIcon } from '@mantine/core'
 import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
@@ -88,12 +88,14 @@ const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefi
   const { authorElement } = loadAuthorData()
 
   return (
-    <Paper shadow="xl" radius="lg" p="lg" withBorder component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'}>
+    <Paper shadow="xl" radius="lg" p="lg" withBorder >
       {panelElement} {authorElement} 
       <Stack align="flex-start" mt={2} spacing={1}>
-        <Text weight={600} lineClamp={1}>{post.title}</Text>
-        <Text size='sm' lineClamp={2}>{post.content}</Text>
-        <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
+        <Box component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Text weight={600} lineClamp={1}>{post.title}</Text>
+          <Text size='sm' lineClamp={2}>{post.content}</Text>
+          <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
+        </Box>
       </Stack>
     </Paper>
   )

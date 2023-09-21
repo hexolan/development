@@ -24,8 +24,7 @@ function PanelLayout() {
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    // todo: extract err msg
-    throw Error('Panel not found!')
+    throw Error('Panel not found!')  // todo: extract exact error msg (as it may not just be a 404)
   }
 
   return (
@@ -37,7 +36,7 @@ function PanelLayout() {
         {/* todo: new panel button here (on right side, opposite side, of two elems above */}
       </Paper>
       <Container mt='xl'>
-        <Suspense fallback={<LoadingBar />}>
+        <Suspense>
           <Outlet context={{panel: data}} />
         </Suspense>
       </Container>
