@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Paper, Stack, Avatar, Badge, Text, ThemeIcon } from '@mantine/core'
+import { Paper, Stack, Badge, Text, ThemeIcon } from '@mantine/core'
 import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
@@ -87,8 +87,8 @@ const FeedPost = ({ post }: { post: Post }) => {
         <div>
         {authorElement} {panelElement}
         </div>
-        <Text>{post.title}</Text>
-        <Text size='sm' truncate>{post.content}</Text>
+        <Text lineClamp={1}>{post.title}</Text>
+        <Text size='sm' color='dimmed' lineClamp={2}>{post.content}</Text>
       </Stack>
     </Paper>
   )
