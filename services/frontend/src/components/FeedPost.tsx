@@ -91,8 +91,9 @@ const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefi
     <Paper shadow="xl" radius="lg" p="lg" withBorder component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'}>
       {panelElement} {authorElement} 
       <Stack align="flex-start" mt={2} spacing={1}>
-        <Text lineClamp={1}>{post.title}</Text>
-        <Text size='sm' color='dimmed' lineClamp={2}>{post.content}</Text>
+        <Text weight={600} lineClamp={1}>{post.title}</Text>
+        <Text size='sm' lineClamp={2}>{post.content}</Text>
+        <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
       </Stack>
     </Paper>
   )
