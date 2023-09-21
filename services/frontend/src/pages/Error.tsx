@@ -4,8 +4,8 @@ import { Title, Text, Button, Center, Container, Group, rem } from '@mantine/cor
 const ErrorPage = () => {
   const error = useRouteError()
 
-  let title: string = 'Uh, oh!'
-  let subTitle: string = 'Something went wrong.'
+  let title = 'Uh, oh!'
+  let subTitle = 'Something went wrong.'
   if (isRouteErrorResponse(error)) {
     title = `Error ${error.status}`
     subTitle = error.statusText

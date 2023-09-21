@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Paper, Stack, Avatar, Badge, Text } from '@mantine/core'
+import { Paper, Stack, Avatar, Badge, Text, ThemeIcon, rem } from '@mantine/core'
+import { IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
 import { useGetPanelByIdQuery } from '../app/api/panels'
@@ -7,11 +8,12 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post }: { post: Post }) => {
+  // todo: wireframe loaders
   const loadPanelData = () => {
     const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
     if (isLoading) {
       return {
-        panelElement: <Text color='dimmed' size='xs'>Loading...</Text>, // todo: change this
+        panelElement: null,
         panelName: undefined
       }
     } else if (!data) {
@@ -21,7 +23,17 @@ const FeedPost = ({ post }: { post: Post }) => {
       }
     } else {
       return {
-        panelElement: <Text color='dimmed' size='xs'>{'panel/' + data.name}</Text>,
+        panelElement: (
+          <Badge
+            pl={0}
+            color='orange'
+            leftSection={<ThemeIcon color='orange' size={24} radius='xl' mr={5}><IconMessages size={12} /></ThemeIcon>}
+            component={Link}
+            to={`/panel/${data.name}`}
+          >
+            {`panel/${data.name}`}
+          </Badge>
+        ),
         panelName: data.name
       }
     }
@@ -63,9 +75,10 @@ const FeedPost = ({ post }: { post: Post }) => {
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'}>
       <Stack align="flex-start" spacing={1}>
-        {authorElement}
+        <div>
+        {authorElement} {panelElement}
+        </div>
         <Text>{post.title}</Text>
-        {panelElement}
         <Text size='sm' truncate>{post.content}</Text>
       </Stack>
     </Paper>

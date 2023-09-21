@@ -12,6 +12,8 @@ type PanelPageParams = {
 // todo: get panel
 // then call a get panel posts by panel id query
 
+// todo: make posts nice by changing shadow effect on hover
+
 function PanelPage() {
   const { panelName } = useParams<PanelPageParams>();
   if (panelName === undefined) {
@@ -19,9 +21,12 @@ function PanelPage() {
   }
 
   // Load the panel posts.
-  const { data } = useGetPanelPostsQuery({ panelName: panelName })
-  if (data === undefined) {
+  const { data, isLoading } = useGetPanelPostsQuery({ panelName: panelName })
+  if (isLoading) {
     return <LoadingBar />
+  } else if (!data) {
+    // reminder to self: sometimes data error detail does not exist (e.g. connection refused to api / api offline)
+    return <p>TODO: error page</p>
   }
 
   return (
@@ -29,6 +34,8 @@ function PanelPage() {
       <Paper px="xl" py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
         <Text size='lg'>{panelName}</Text>
         <Text size='sm' color='dimmed'>This is the panel description</Text>
+
+        {/* todo: new panel button here (on right side, opposite side, of two elems above */}
       </Paper>
       <Container mt='xl'>
         <Stack spacing='md'>
