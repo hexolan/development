@@ -5,12 +5,17 @@ import { IconUser, IconMessages } from '@tabler/icons-react'
 import { useGetUserByIdQuery } from '../app/api/users'
 import { useGetPanelByIdQuery } from '../app/api/panels'
 
-import type { Post } from '../app/types/common'
+import type { Post, Panel } from '../app/types/common'
 
-const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefined }) => {
-  // todo: wireframe loaders
-  // todo: show createdAt timestamp? (not priority)
+const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo: Panel | undefined }) => {
   const loadPanelData = () => {
+    if (panelInfo) {
+      return {
+        panelElement: null, // element is hidden (as the post is on a panel page)
+        panelName: panelInfo.name
+      }
+    }
+
     const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
     if (isLoading) {
       return {
@@ -23,32 +28,27 @@ const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefi
         panelName: null
       }
     } else {
-      let panelElement = null
-      if (!hidePanel) {
-        panelElement = (
+      return {
+        panelElement: (
           <Badge
-            pl={0}
-            color='orange'
-            leftSection={
+          pl={0}
+          color='orange'
+          leftSection={
               <ThemeIcon color='orange' size={24} radius='xl' mr={5}>
                 <IconMessages size={12} />
               </ThemeIcon>
             }
             component={Link}
             to={`/panel/${data.name}`}
-          >
+            >
             {`panel/${data.name}`}
           </Badge>
-        )
-      }
-
-      return {
-        panelElement: panelElement,
+        ),
         panelName: data.name
       }
     }
   }
-
+  
   const loadAuthorData = () => {
     const { data, isLoading } = useGetUserByIdQuery({ id: post.authorId })
     if (isLoading) {
@@ -62,7 +62,6 @@ const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefi
         authorName: null
       }
     } else {
-      // leftSection={<Avatar size={24} color='green' radius='xl' mr={5} alt={`Created by ${data.username}`} />}
       return {
         authorElement: (
           <Badge 
@@ -84,9 +83,11 @@ const FeedPost = ({ post, hidePanel }: { post: Post, hidePanel: boolean | undefi
     }
   }
 
+  // todo: wireframe loaders
+  // todo: show createdAt timestamp? (not priority)
   const { panelElement, panelName } = loadPanelData()
   const { authorElement } = loadAuthorData()
-
+  
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder >
       {panelElement} {authorElement} 

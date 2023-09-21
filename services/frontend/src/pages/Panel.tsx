@@ -9,7 +9,7 @@ function PanelPage() {
 
   return (
     <Stack spacing='md'>
-      <PanelPostFeed panelId={panel.id} />
+      <PanelPostFeed panel={panel} />
     </Stack>
   )
 }
