@@ -7,7 +7,7 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 
 import type { Post } from '../app/types/common'
 
-const FeedPost = ({ post }: { post: Post }) => {
+const FeedPost = ({ post, hidePanel }: { post: Post, showPanel: boolean | undefined }) => {
   // todo: wireframe loaders
   const loadPanelData = () => {
     const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
@@ -22,8 +22,9 @@ const FeedPost = ({ post }: { post: Post }) => {
         panelName: null
       }
     } else {
-      return {
-        panelElement: (
+      let panelElement = null
+      if (!hidePanel) {
+        panelElement = (
           <Badge
             pl={0}
             color='orange'
@@ -37,7 +38,11 @@ const FeedPost = ({ post }: { post: Post }) => {
           >
             {`panel/${data.name}`}
           </Badge>
-        ),
+        )
+      }
+
+      return {
+        panelElement: panelElement,
         panelName: data.name
       }
     }
@@ -83,10 +88,8 @@ const FeedPost = ({ post }: { post: Post }) => {
 
   return (
     <Paper shadow="xl" radius="lg" p="lg" withBorder component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'}>
-      <Stack align="flex-start" spacing={1}>
-        <div>
-        {authorElement} {panelElement}
-        </div>
+      {panelElement} {authorElement} 
+      <Stack align="flex-start" mt={2} spacing={1}>
         <Text lineClamp={1}>{post.title}</Text>
         <Text size='sm' color='dimmed' lineClamp={2}>{post.content}</Text>
       </Stack>

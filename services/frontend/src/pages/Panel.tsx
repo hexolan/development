@@ -41,7 +41,7 @@ function PanelPage() {
         <Stack spacing='md'>
           {Object.values(data).map(post => {
             if (post === undefined) { return post }
-            return <FeedPost key={post.id} post={post} />
+            return <FeedPost key={post.id} post={post} hidePanel={true} />
           })}
         </Stack>
       </Container>
