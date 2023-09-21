@@ -1,18 +1,13 @@
 import { useParams } from 'react-router-dom'
 import { Paper, Container, Stack, Text, rem } from '@mantine/core'
 
-import FeedPost from '../components/FeedPost'
 import LoadingBar from '../components/LoadingBar'
-import { useGetPanelPostsQuery } from '../app/api/posts'
+import PanelPostFeed from '../components/PanelPostFeed'
+import { useGetPanelByNameQuery } from '../app/api/panels'
 
 type PanelPageParams = {
   panelName: string;
 }
-
-// todo: get panel
-// then call a get panel posts by panel id query
-
-// todo: make posts nice by changing shadow effect on hover
 
 function PanelPage() {
   const { panelName } = useParams<PanelPageParams>();
@@ -20,28 +15,25 @@ function PanelPage() {
     throw Error('panel name not provided')
   }
 
-  // Load the panel posts.
-  const { data, isLoading } = useGetPanelPostsQuery({ panelName: panelName })
+  const { data, isLoading } = useGetPanelByNameQuery({ name: panelName })
   if (isLoading) {
-    return <LoadingBar />
+    return <LoadingBar />;
   } else if (!data) {
-    // reminder to self: sometimes data error detail does not exist (e.g. connection refused to api / api offline)
-    throw Error('failed to load panel.... XYZ')  // todo: this
+    // todo: extract err msg
+    throw Error('Panel not found!')
   }
 
   return (
     <>
       <Paper px="xl" py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
-        <Text size='lg'>{panelName}</Text>
-        <Text size='sm' color='dimmed'>This is the panel description</Text>
+        <Text size='lg'>{data.name}</Text>
+        <Text size='sm' color='dimmed'>{data.description}</Text>
 
         {/* todo: new panel button here (on right side, opposite side, of two elems above */}
       </Paper>
       <Container mt='xl'>
         <Stack spacing='md'>
-          {Object.values(data).map(post => {
-            return <FeedPost key={post.id} post={post} hidePanel={true} />
-          })}
+          <PanelPostFeed panelId={data.id} />
         </Stack>
       </Container>
     </>

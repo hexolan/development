@@ -22,7 +22,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     }),
 
     getPanelPosts: builder.query<Post[], GetPanelPostsRequest>({
-      query: req => `/v1/panels/name/${req.panelName}/posts`,
+      query: req => `/v1/panels/id/${req.panelId}/posts`,
       transformResponse: (response: RawPostsResponse) => {
         if (response.data === undefined) {
           throw Error('invalid posts response')

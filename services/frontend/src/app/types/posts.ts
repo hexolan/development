@@ -18,7 +18,7 @@ export type GetPanelPostRequest = {
 }
 
 export type GetPanelPostsRequest = {
-  panelName: string;
+  panelId: string;
 }
 
 export type UpdatePostRequest = {
