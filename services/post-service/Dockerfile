@@ -9,9 +9,6 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/post-service ./cmd/post-service
 
-# For Docker healthchecking
-RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.19/grpc_health_probe-linux-amd64 && chmod +x /bin/grpc_health_probe
-
 # Runtime environment (for minifying image size)
 FROM gcr.io/distroless/static-debian12
 
