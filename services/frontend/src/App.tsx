@@ -7,13 +7,18 @@ import LoadingBar from './components/LoadingBar'
 import ErrorPage from './pages/Error'
 
 const Homepage = lazy(() => import('./pages/Home'))
+
 const SignInPage = lazy(() => import('./pages/SignIn'))
 const SignUpPage = lazy(() => import('./pages/SignUp'))
+
 const UserPage = lazy(() => import('./pages/User'))
+
 const ExplorePanelsPage = lazy(() => import('./pages/ExplorePanels'))
 const NewPanelPage = lazy(() => import('./pages/NewPanel'))
+
+const PanelLayout = lazy(() => import('./components/PanelLayout'))
 const PanelPage = lazy(() => import('./pages/Panel'))
-const PostPage = lazy(() => import('./pages/Post'))
+const PanelPostPage = lazy(() => import('./pages/PanelPost'))
 
 const router = createBrowserRouter([
   {
@@ -46,12 +51,18 @@ const router = createBrowserRouter([
       },
       {
         path: '/panel/:panelName',
-        element: <PanelPage />,
+        element: <PanelLayout />,
+        children: [
+          {
+            index: true,
+            element: <PanelPage />,
+          },
+          {
+            path: '/panel/:panelName/post/:postId',
+            element: <PanelPostPage />,
+          }
+        ],
       },
-      {
-        path: '/panel/:panelName/post/:postId',
-        element: <PostPage />,  // todo: surround with panel page layout (rearange this) - panel layout (with header cotaining panel details) - child index page and this as another child page
-      }
     ]
   }
 ])

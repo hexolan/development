@@ -1,42 +1,16 @@
-import { useParams } from 'react-router-dom'
-import { Paper, Container, Stack, Text, rem } from '@mantine/core'
+import { useOutletContext } from 'react-router-dom'
+import { Stack } from '@mantine/core'
 
-import LoadingBar from '../components/LoadingBar'
 import PanelPostFeed from '../components/PanelPostFeed'
-import { useGetPanelByNameQuery } from '../app/api/panels'
-
-type PanelPageParams = {
-  panelName: string;
-}
+import type { PanelContext } from '../components/PanelLayout'
 
 function PanelPage() {
-  const { panelName } = useParams<PanelPageParams>();
-  if (panelName === undefined) {
-    throw Error('panel name not provided')
-  }
-
-  const { data, isLoading } = useGetPanelByNameQuery({ name: panelName })
-  if (isLoading) {
-    return <LoadingBar />;
-  } else if (!data) {
-    // todo: extract err msg
-    throw Error('Panel not found!')
-  }
+  const { panel } = useOutletContext<PanelContext>()
 
   return (
-    <>
-      <Paper px="xl" py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
-        <Text size='lg'>{data.name}</Text>
-        <Text size='sm' color='dimmed'>{data.description}</Text>
-
-        {/* todo: new panel button here (on right side, opposite side, of two elems above */}
-      </Paper>
-      <Container mt='xl'>
-        <Stack spacing='md'>
-          <PanelPostFeed panelId={data.id} />
-        </Stack>
-      </Container>
-    </>
+    <Stack spacing='md'>
+      <PanelPostFeed panelId={panel.id} />
+    </Stack>
   )
 }
 
