@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Paper, Stack, Avatar, Badge, Text, ThemeIcon, rem } from '@mantine/core'
-import { IconMessages } from '@tabler/icons-react'
+import { Paper, Stack, Avatar, Badge, Text, ThemeIcon } from '@mantine/core'
+import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
 import { useGetPanelByIdQuery } from '../app/api/panels'
@@ -27,7 +27,11 @@ const FeedPost = ({ post }: { post: Post }) => {
           <Badge
             pl={0}
             color='orange'
-            leftSection={<ThemeIcon color='orange' size={24} radius='xl' mr={5}><IconMessages size={12} /></ThemeIcon>}
+            leftSection={
+              <ThemeIcon color='orange' size={24} radius='xl' mr={5}>
+                <IconMessages size={12} />
+              </ThemeIcon>
+            }
             component={Link}
             to={`/panel/${data.name}`}
           >
@@ -52,12 +56,17 @@ const FeedPost = ({ post }: { post: Post }) => {
         authorName: null
       }
     } else {
+      // leftSection={<Avatar size={24} color='green' radius='xl' mr={5} alt={`Created by ${data.username}`} />}
       return {
         authorElement: (
           <Badge 
             pl={0}
             color='teal'
-            leftSection={<Avatar size={24} color='green' radius='xl' mr={5} alt={`Created by ${data.username}`} />}
+            leftSection={
+              <ThemeIcon color='teal' size={24} radius='xl' mr={5}>
+                <IconUser size={12} />
+              </ThemeIcon>
+            }
             component={Link}
             to={`/user/${data.username}`}
           >
