@@ -26,7 +26,8 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawPostsResponse) => {
         if (response.data === undefined) { throw Error('invalid posts response') }
 
-        return response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
+        const posts = response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
+        return (posts ? posts : [])
       }
     }),
 

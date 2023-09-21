@@ -17,7 +17,8 @@ export const commentsApiSlice = apiSlice.injectEndpoints({
       transformResponse: (response: RawCommentsResponse) => {
         if (response.data === undefined) { throw Error('invalid comments response') }
 
-        return response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
+        const comments = response.data.comments.map<Comment>((rawComment: RawComment) => convertRawComment(rawComment))
+        return (comments ? comments : [])
       }
     }),
 

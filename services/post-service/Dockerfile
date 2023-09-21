@@ -12,9 +12,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/post-service ./cmd/po
 # Runtime environment (for minifying image size)
 FROM gcr.io/distroless/static-debian12
 
-COPY --from=build /bin/grpc_health_probe .
-HEALTHCHECK CMD ["./grpc_health_probe", "-addr=127.0.0.1:9090"]
-
 COPY --from=build /bin/post-service .
 EXPOSE 9090
 CMD ["./post-service"]
