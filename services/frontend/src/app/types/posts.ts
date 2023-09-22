@@ -17,6 +17,10 @@ export type GetPanelPostRequest = {
   postId: string;
 }
 
+export type GetUserPostsRequest = {
+  userId: string;
+}
+
 export type GetPanelPostsRequest = {
   panelId: string;
 }

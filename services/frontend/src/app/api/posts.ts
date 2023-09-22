@@ -5,6 +5,7 @@ import type { Post } from '../types/common'
 import type {
   RawPost, RawPostResponse, RawPostsResponse,
   GetPanelPostRequest, GetPanelPostsRequest,
+  GetUserPostsRequest,
   UpdatePostRequest,
   DeletePostRequest,
   CreatePostRequest
@@ -18,6 +19,19 @@ export const postsApiSlice = apiSlice.injectEndpoints({
         if (response.data === undefined) { throw Error('invalid post response') }
 
         return convertRawPost(response.data)
+      }
+    }),
+
+    getUserPosts: builder.query<Post[], GetUserPostsRequest>({
+      query: req => `/v1/users/id/${req.userId}/posts`,
+      transformResponse: (response: RawPostsResponse) => {
+        if (response.data === undefined) {
+          throw Error('invalid posts response')
+        } else if (!response.data.posts) {
+          return []
+        }
+
+        return response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
       }
     }),
 
