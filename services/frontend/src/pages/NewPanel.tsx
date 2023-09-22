@@ -22,12 +22,12 @@ const NewPanelPage = () => {
           <form onSubmit={(values) => console.log(values)}>
             <TextInput 
               label='Name'
-              placeholder="e.g. music, programming, football"
+              placeholder='e.g. music, programming, football'
               {...form.getInputProps('name')}
             />
             <Textarea
               label='Description'
-              placeholder="e.g. The place to talk about all things music related..."
+              placeholder='e.g. The place to talk about all things music related...'
               mt={6}
               {...form.getInputProps('description')}
             />

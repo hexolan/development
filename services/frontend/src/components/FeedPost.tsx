@@ -89,9 +89,9 @@ const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo: Panel | undefine
   const { authorElement } = loadAuthorData()
   
   return (
-    <Paper shadow="xl" radius="lg" p="lg" withBorder >
+    <Paper shadow='xl' radius='lg' p='lg' withBorder>
       {panelElement} {authorElement} 
-      <Stack align="flex-start" mt={2} spacing={1}>
+      <Stack align='flex-start' mt={2} spacing={1}>
         <Box component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
           <Text weight={600} lineClamp={1}>{post.title}</Text>
           <Text size='sm' lineClamp={2}>{post.content}</Text>

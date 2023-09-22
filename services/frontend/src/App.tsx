@@ -19,6 +19,7 @@ const NewPanelPage = lazy(() => import('./pages/NewPanel'))
 const PanelLayout = lazy(() => import('./components/PanelLayout'))
 const PanelPage = lazy(() => import('./pages/Panel'))
 const PanelPostPage = lazy(() => import('./pages/PanelPost'))
+const NewPanelPostPage = lazy(() => import('./pages/NewPanelPost'))
 
 const router = createBrowserRouter([
   {
@@ -43,11 +44,16 @@ const router = createBrowserRouter([
       },
       {
         path: '/panels',
-        element: <ExplorePanelsPage />,
-      },
-      {
-        path: '/panels/new',
-        element: <NewPanelPage />,
+        children: [
+          {
+            index: true,
+            element: <ExplorePanelsPage />,
+          },
+          {
+            path: '/panels/new',
+            element: <NewPanelPage />,
+          },
+        ]
       },
       {
         path: '/panel/:panelName',
@@ -60,6 +66,10 @@ const router = createBrowserRouter([
           {
             path: '/panel/:panelName/post/:postId',
             element: <PanelPostPage />,
+          },
+          {
+            path: '/panel/:panelName/posts/new',
+            element: <NewPanelPostPage />,
           }
         ],
       },
