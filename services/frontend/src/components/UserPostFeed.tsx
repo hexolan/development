@@ -1,13 +1,13 @@
 import { Center, Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
-import { useGetPanelPostsQuery } from '../app/api/posts'
-import { Panel } from '../app/types/common'
+import { useGetUserPostsQuery } from '../app/api/posts'
+import { User } from '../app/types/common'
 
-function PanelPostFeed({ panel }: { panel: Panel }) {
-  if (!panel) { return null }
+function UserPostFeed({ user }: { user: User }) {
+  if (!user) { return null }
 
-  const { data, isLoading } = useGetPanelPostsQuery({ panelId: panel.id })
+  const { data, isLoading } = useGetUserPostsQuery({ userId: user.id })
   if (isLoading) {
     return (
       <Center>
@@ -34,10 +34,10 @@ function PanelPostFeed({ panel }: { panel: Panel }) {
   return (
     <>
       {Object.values(data).map(post => {
-        return <FeedPost key={post.id} post={post} panelInfo={panel} />
+        return <FeedPost key={post.id} post={post} />
       })}
     </>
   )
 }
 
-export default PanelPostFeed
+export default UserPostFeed

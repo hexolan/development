@@ -1,13 +1,16 @@
 import { useOutletContext } from 'react-router-dom'
-import { Text } from '@mantine/core'
+import { Stack } from '@mantine/core'
 
+import UserPostFeed from '../components/UserPostFeed'
 import type { UserContext } from '../components/UserLayout'
 
 function UserPage() {
   const { user } = useOutletContext<UserContext>()
 
   return (
-    <Text>{user.username}</Text>
+    <Stack spacing='md'>
+      <UserPostFeed user={user} />
+    </Stack>
   )
 }
 

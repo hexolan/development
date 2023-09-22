@@ -7,7 +7,7 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 
 import type { Post, Panel } from '../app/types/common'
 
-const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo: Panel | undefined }) => {
+const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo?: Panel }) => {
   const loadPanelData = () => {
     if (panelInfo) {
       return {
