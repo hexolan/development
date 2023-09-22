@@ -21,18 +21,29 @@ function PanelLayout() {
     throw Error('panel name not provided')
   }
   
-  let newPanelButton = null
+  let newPostButton = null
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
-  const { data, isLoading } = useGetPanelByNameQuery({ name: panelName })
+  // const { data, isLoading } = useGetPanelByNameQuery({ name: panelName })
+  const { data, error, isLoading } = useGetPanelByNameQuery({ name: panelName })
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    throw Error('Panel not found!')  // todo: extract exact error msg (as it may not just be a 404)
-  } else {
-    if (currentUser) {
-      newPanelButton = <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>
+    if (error) {
+      // todo: extract exact error msg (as it may not just be a 404)
+      // https://redux-toolkit.js.org/rtk-query/usage/error-handling
+      // todo: custom transform for error response (to return type)
+      if (!error.data) {
+        throw Error('Failed to access the API')
+      } else {
+        throw Error(error.data.msg)
+      }
     }
+
+    throw Error('Unknown error occured')
+  } else if (currentUser) {
+    // data was succesfully fetched. provide a new post button if the user is authenticated
+    newPostButton = <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>
   }
   
   return (
@@ -45,13 +56,13 @@ function PanelLayout() {
               <Text size='sm' color='dimmed'>{data.description}</Text>
             </Box>
 
-            {newPanelButton}
+            {newPostButton}
           </Group>
         </Container>
       </Paper>
       <Container mt='xl'>
         <Suspense>
-          <Outlet context={{panel: data}} />
+          <Outlet context={{panel: data} satisfies PanelContext} />
         </Suspense>
       </Container>
     </>
