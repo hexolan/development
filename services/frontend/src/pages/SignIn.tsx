@@ -14,7 +14,7 @@ function SignInPage() {
   // Ensure the user isn't authenticated already
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   if (currentUser) {
-    navigate('/')
+    throw new Error('You are already authenticated.')
   }
 
   const [errorMsg, setErrorMsg] = useState('')
@@ -29,13 +29,8 @@ function SignInPage() {
     }
   })
 
-  const [login] = useLoginMutation()
+  const [login, { isLoading }] = useLoginMutation()
   const submitLoginForm = async (values: LoginRequest) => {
-    // TODO: also check that the user is not already signed in
-    
-    // todo: status on auth state (e.g. idle, pending, authed)
-    // from this... displaying a spinner when pending
-
     // Attempt to authenticate the user.
     const authInfo = await login(values).unwrap().catch(
       (error) => {
@@ -79,9 +74,9 @@ function SignInPage() {
               {...loginForm.getInputProps('password')}
             />
 
-            {errorMsg !== '' && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
 
-            <Button type='submit' color='teal' fullWidth>Login</Button>
+            <Button type='submit' color='teal' disabled={isLoading} fullWidth>Login</Button>
           </form>
         </Paper>
       </Container>

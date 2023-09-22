@@ -19,7 +19,7 @@ const SignUpPage = () => {
   // Ensure the user isn't authenticated already
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   if (currentUser) {
-    navigate('/')
+    throw new Error('You are already authenticated.')
   }
 
   const [errorMsg, setErrorMsg] = useState('')
@@ -36,13 +36,11 @@ const SignUpPage = () => {
     }
   })
 
-  const [registerUser] = useRegisterUserMutation()
+  const [registerUser, { isLoading }] = useRegisterUserMutation()
   const submitRegistrationForm = async (values: RegistrationFormValues) => {
     const req = {username: values.username, password: values.password}
     const authInfo = await registerUser(req).unwrap().catch(
       (error) => {
-        // todo: proper error handling
-        // errors with no data returned (e.g. API offline - go to Uh oh page)
         if (!error.data) {
           console.log(error)
           setErrorMsg('Unable to access api')
@@ -88,9 +86,9 @@ const SignUpPage = () => {
               {...registrationForm.getInputProps('confPassword')}
             />
 
-            {errorMsg !== '' && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
 
-            <Button type='submit' color='teal' fullWidth>Register</Button>
+            <Button type='submit' color='teal' disabled={isLoading} fullWidth>Register</Button>
           </form>
         </Paper>
       </Container>

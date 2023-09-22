@@ -1,7 +1,15 @@
 import { useForm, hasLength } from '@mantine/form'
 import { Stack, Paper, Text, TextInput, Textarea, Button } from '@mantine/core'
 
+import { useAppSelector } from '../app/hooks'
+
 const NewPanelPostPage = () => {
+  // Ensure the user is authenticated
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  if (currentUser === null) {
+    throw new Error('You must be authenticated to create posts')
+  }
+
   const createPostForm = useForm({
     initialValues: {
       title: '',
