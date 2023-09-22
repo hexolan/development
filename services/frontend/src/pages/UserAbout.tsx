@@ -3,12 +3,12 @@ import { Text } from '@mantine/core'
 
 import type { UserContext } from '../components/UserLayout'
 
-function UserPage() {
+function UserAboutPage() {
   const { user } = useOutletContext<UserContext>()
 
   return (
-    <Text>{user.username}</Text>
+    <Text>About {user.username}</Text>
   )
 }
 
-export default UserPage
+export default UserAboutPage

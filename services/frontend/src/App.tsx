@@ -11,7 +11,9 @@ const Homepage = lazy(() => import('./pages/Home'))
 const SignInPage = lazy(() => import('./pages/SignIn'))
 const SignUpPage = lazy(() => import('./pages/SignUp'))
 
+const UserLayout = lazy(() => import('./components/UserLayout'))
 const UserPage = lazy(() => import('./pages/User'))
+const UserAboutPage = lazy(() => import('./pages/UserAbout'))
 
 const ExplorePanelsPage = lazy(() => import('./pages/ExplorePanels'))
 const NewPanelPage = lazy(() => import('./pages/NewPanel'))
@@ -40,7 +42,17 @@ const router = createBrowserRouter([
       },
       {
         path: '/user/:username',
-        element: <UserPage />,
+        element: <UserLayout />,
+        children: [
+          {
+            index: true,
+            element: <UserPage />,
+          },
+          {
+            path: '/user/:username/about',
+            element: <UserAboutPage />,
+          },
+        ],
       },
       {
         path: '/panels',
