@@ -5,13 +5,14 @@ import { IconUser, IconMessages } from '@tabler/icons-react'
 import { useGetUserByIdQuery } from '../app/api/users'
 import { useGetPanelByIdQuery } from '../app/api/panels'
 
-import type { Post, Panel } from '../app/types/common'
+import type { Post, Panel, User } from '../app/types/common'
 
-const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo?: Panel }) => {
+const FeedPost = ({ post, panelInfo, authorInfo }: { post: Post, panelInfo?: Panel, authorInfo?: User }) => {
   const loadPanelData = () => {
     if (panelInfo) {
+      // element is hidden (as the post is on a panel page)
       return {
-        panelElement: null, // element is hidden (as the post is on a panel page)
+        panelElement: null,
         panelName: panelInfo.name
       }
     }
@@ -50,6 +51,14 @@ const FeedPost = ({ post, panelInfo }: { post: Post, panelInfo?: Panel }) => {
   }
   
   const loadAuthorData = () => {
+    if (authorInfo) {
+      // element is hidden (as the post is on a user page)
+      return {
+        authorElement: null,
+        authorName: undefined
+      }
+    }
+
     const { data, isLoading } = useGetUserByIdQuery({ id: post.authorId })
     if (isLoading) {
       return {
