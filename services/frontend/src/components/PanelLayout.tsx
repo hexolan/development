@@ -23,26 +23,22 @@ function PanelLayout() {
   
   let newPostButton = null
   const currentUser = useAppSelector((state) => state.auth.currentUser)
-
-  // const { data, isLoading } = useGetPanelByNameQuery({ name: panelName })
   const { data, error, isLoading } = useGetPanelByNameQuery({ name: panelName })
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    if (error) {
-      // todo: extract exact error msg (as it may not just be a 404)
-      // https://redux-toolkit.js.org/rtk-query/usage/error-handling
-      // todo: custom transform for error response (to return type)
-      if (!error.data) {
-        throw Error('Failed to access the API')
-      } else {
-        throw Error(error.data.msg)
-      }
+    // todo: custom transform for error response (to have a return type - to stop these linter errors)
+    // https://redux-toolkit.js.org/rtk-query/usage/error-handling
+    if (!error) {
+      throw Error('Unknown error occured')
+    } else if (!error.data) {
+      throw Error('Failed to access the API')
+    } else {
+      throw Error(error.data.msg)
     }
-
-    throw Error('Unknown error occured')
   } else if (currentUser) {
-    // data was succesfully fetched. provide a new post button if the user is authenticated
+    // panel info was succesfully fetched.
+    // provide a 'new post' button if the user is authenticated
     newPostButton = <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>
   }
   

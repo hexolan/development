@@ -31,17 +31,23 @@ function UserLayout() {
     throw Error('username not provided')
   }
 
-  const { data, isLoading } = useGetUserByNameQuery({ username: username })
+  const { data, error, isLoading } = useGetUserByNameQuery({ username: username })
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    throw Error('User not found!')
+    if (!error) {
+      throw Error('Unknown error occured')
+    } else if (!error.data) {
+      throw Error('Failed to access the API')
+    } else {
+      throw Error(error.data.msg)
+    }
   }
 
   return (
     <Container mt='xl'>
       <Tabs color='teal' radius='md' value={currentTab} onTabChange={(tab) => navigate(`/user/${data.username}${tab === 'posts' ? '' : `/${tab}`}`)}>
-        <Paper withBorder shadow='md' radius='md' sx={(theme) => ({ marginTop: theme.spacing.md })}>
+        <Paper shadow='md' radius='md' mt='md' withBorder>
           <Flex>
             <Avatar radius='md' size={200} color='lime' />
             <Paper w='100%'>
@@ -51,7 +57,7 @@ function UserLayout() {
                   <Text>{data.username}</Text>
                 </Center>
 
-                <Tabs.List style={{ position: 'absolute', bottom: 0, width: '100%' }} grow>
+                <Tabs.List pos='absolute' bottom={0} w='100%' grow>
                   <Tabs.Tab value='posts' icon={<IconMessageCircle size='0.8rem' />}>Posts</Tabs.Tab>
                   <Tabs.Tab value='about' icon={<IconAddressBook size='0.8rem' />}>About</Tabs.Tab>
                   <Tabs.Tab value='settings' icon={<IconSettings size='0.8rem' />}>Settings</Tabs.Tab>

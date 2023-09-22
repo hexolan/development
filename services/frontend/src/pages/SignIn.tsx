@@ -35,8 +35,7 @@ function SignInPage() {
     const authInfo = await login(values).unwrap().catch(
       (error) => {
         if (!error.data) {
-          console.log(error)
-          setErrorMsg('Unable to access api')
+          setErrorMsg('Failed to access the API')
         } else {
           setErrorMsg(error.data.msg)
         }

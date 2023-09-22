@@ -16,13 +16,20 @@ function PanelPostPage() {
   if (postId === undefined) { throw Error('post id not provided') }
 
   // Fetch the post
-  const { data, isLoading } = useGetPanelPostQuery({ panelId: panel.id, postId: postId })
+  const { data, error, isLoading } = useGetPanelPostQuery({ panelId: panel.id, postId: postId })
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    throw Error('Post not found!')  // todo: extract exact error msg (as it may not just be a 404)
+    if (!error) {
+      throw Error('Unknown error occured')
+    } else if (!error.data) {
+      throw Error('Failed to access the API')
+    } else {
+      throw Error(error.data.msg)
+    }
   }
 
+  // todo: PostComments
   return <PagePost post={data} />
 }
 

@@ -42,8 +42,7 @@ const SignUpPage = () => {
     const authInfo = await registerUser(req).unwrap().catch(
       (error) => {
         if (!error.data) {
-          console.log(error)
-          setErrorMsg('Unable to access api')
+          setErrorMsg('Failed to access the API')
         } else {
           setErrorMsg(error.data.msg)
         }

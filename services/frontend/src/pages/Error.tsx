@@ -17,9 +17,9 @@ const ErrorPage = () => {
     <Center h='100%'>
       <Container>
         <Title
+          align='center'
+          weight={800}
           sx={(theme) => ({
-            textAlign: 'center',
-            fontWeight: 900,
             fontSize: rem(38),
             [theme.fn.smallerThan('sm')]: {
               fontSize: rem(32),
@@ -28,16 +28,7 @@ const ErrorPage = () => {
         >
           {title}
         </Title>
-        <Text 
-          size='lg'
-          color='dimmed'
-          sx={(theme) => ({
-            maxWidth: rem(500),
-            textAlign: 'center',
-            marginTop: theme.spacing.xl,
-            marginBottom: `calc(${theme.spacing.xl} * 1.5)`,
-          })}
-        >
+        <Text size='lg' color='dimmed' maw={rem(250)} align='center' my='xl'>
           {subTitle}
         </Text>
 
