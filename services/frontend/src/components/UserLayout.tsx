@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Container, Center, Paper, Flex, Avatar, Text, Tabs } from '@mantine/core'
+import { Container, Box, Center, Paper, Flex, Avatar, Text, Tabs } from '@mantine/core'
 import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-react'
 
 import LoadingBar from './LoadingBar';
@@ -45,7 +45,7 @@ function UserLayout() {
           <Flex>
             <Avatar radius='md' size={200} color='lime' />
             <Paper w='100%'>
-              <div style={{ position: 'relative', height: '100%' }}>
+              <Box h='100%' pos='relative'>
                 <Center h='100%'>
                   <Text weight={600} mr={3}>User:</Text>
                   <Text>{data.username}</Text>
@@ -56,7 +56,7 @@ function UserLayout() {
                   <Tabs.Tab value='about' icon={<IconAddressBook size='0.8rem' />}>About</Tabs.Tab>
                   <Tabs.Tab value='settings' icon={<IconSettings size='0.8rem' />}>Settings</Tabs.Tab>
                 </Tabs.List>
-              </div>
+              </Box>
             </Paper>
           </Flex>
         </Paper>
