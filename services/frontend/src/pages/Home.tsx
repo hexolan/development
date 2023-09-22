@@ -1,9 +1,11 @@
-import { Text, Container } from '@mantine/core'
+import { Container, Title, Text, Divider } from '@mantine/core'
 
 const Homepage = () => {
   return (
     <Container mt='xl'>
-      <Text>todo: complete homepage</Text>
+      <Title>Feed</Title>
+      <Divider my="md" variant="dotted" />
+      <Text>todo</Text>
     </Container>
   )
 }

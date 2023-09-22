@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength, matchesField } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
+import { useAppSelector } from '../app/hooks'
 import { useRegisterUserMutation } from '../app/api/users'
 
 type RegistrationFormValues = {
@@ -13,9 +14,15 @@ type RegistrationFormValues = {
 }
 
 const SignUpPage = () => {
-  const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
+  
+  // Ensure the user isn't authenticated already
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  if (currentUser) {
+    navigate('/')
+  }
 
+  const [errorMsg, setErrorMsg] = useState('')
   const registrationForm = useForm<RegistrationFormValues>({
     initialValues: {
       username: '',
@@ -38,7 +45,7 @@ const SignUpPage = () => {
         // errors with no data returned (e.g. API offline - go to Uh oh page)
         if (!error.data) {
           console.log(error)
-          setErrorMsg('unable to access api')
+          setErrorMsg('Unable to access api')
         } else {
           setErrorMsg(error.data.msg)
         }

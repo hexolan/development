@@ -4,13 +4,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
 
+import { useAppSelector } from '../app/hooks'
 import { useLoginMutation } from '../app/api/auth'
 import type { LoginRequest } from '../app/types/auth'
 
 function SignInPage() {
-  const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
+  // Ensure the user isn't authenticated already
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  if (currentUser) {
+    navigate('/')
+  }
+
+  const [errorMsg, setErrorMsg] = useState('')
   const loginForm = useForm<LoginRequest>({
     initialValues: {
       username: '',
@@ -32,11 +39,9 @@ function SignInPage() {
     // Attempt to authenticate the user.
     const authInfo = await login(values).unwrap().catch(
       (error) => {
-        // todo: proper error handling
-        // errors with no data returned (e.g. API offline - go to Uh oh page)
         if (!error.data) {
           console.log(error)
-          setErrorMsg('unable to access api')
+          setErrorMsg('Unable to access api')
         } else {
           setErrorMsg(error.data.msg)
         }
