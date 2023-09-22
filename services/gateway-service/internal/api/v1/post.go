@@ -56,6 +56,42 @@ func GetPanelPostFromName(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "data": post})
 }
 
+func GetUserPostsFromId(c *fiber.Ctx) error {
+	// Make the request for user posts
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	posts, err := rpc.Svcs.GetPostSvc().GetUserPosts(
+		ctx,
+		&postv1.GetUserPostsRequest{UserId: c.Params("user_id")},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": posts})
+}
+
+func GetUserPostsFromUsername(c *fiber.Ctx) error {
+	// Get the user ID from username.
+	user, err := getUserByUsername(c.Params("username"))
+	if err != nil {
+		return err
+	}
+
+	// Make the request for user posts
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	posts, err := rpc.Svcs.GetPostSvc().GetUserPosts(
+		ctx,
+		&postv1.GetUserPostsRequest{UserId: user.Id},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": posts})
+}
+
 func GetPanelPostsFromId(c *fiber.Ctx) error {
 	// Make the request for panel posts
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

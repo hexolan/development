@@ -21,9 +21,13 @@ import (
 
 func RegisterRoutes(app *fiber.App) {
 	apiV1 := app.Group("/v1")
+	panelV1 := apiV1.Group("/panels")
+	postV1 := apiV1.Group("/posts")
+	userV1 := apiV1.Group("/users")
+	authV1 := apiV1.Group("/auth")
+	commentV1 := postV1.Group("/:post_id/comments")
 
 	// Panel Service Routes
-	panelV1 := apiV1.Group("/panels")
 	panelV1.Post("/", v1.CreatePanel) // todo: check permissions
 
 	panelV1.Get("/id/:id", v1.GetPanelById)
@@ -35,9 +39,12 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1.Delete("/name/:name", handlers.AuthMiddleware, v1.DeletePanelByName) // todo: check permissions
 
 	// Post Service Routes
-	postV1 := apiV1.Group("/posts")
 	postV1.Patch("/:id", handlers.AuthMiddleware, v1.UpdatePost) // todo: check permissions
 	postV1.Delete("/:id", handlers.AuthMiddleware, v1.DeletePost) // todo: check permissions
+
+	// todo: implement routes GetUserPostsFromId, GetUserPostsFromUsername
+	userV1.Get("/id/:user_id/posts", v1.GetUserPostsFromId)
+	userV1.Get("/username/:username/posts", v1.GetUserPostsFromUsername)
 
 	panelV1.Get("/id/:panel_id/posts", v1.GetPanelPostsFromId)
 	panelV1.Get("/name/:panel_name/posts", v1.GetPanelPostsFromName)
@@ -49,7 +56,6 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1.Post("/name/:panel_name", handlers.AuthMiddleware, v1.CreatePanelPostFromName)
 
 	// User Service Routes
-	userV1 := apiV1.Group("/users")
 	userV1.Post("/", v1.UserSignup)
 
 	userV1.Get("/id/:id", v1.GetUserById)
@@ -62,11 +68,9 @@ func RegisterRoutes(app *fiber.App) {
 	userV1.Delete("/me", handlers.AuthMiddleware, v1.DeleteCurrentUser)
 	
 	// Auth Service Routes
-	authV1 := apiV1.Group("/auth")
 	authV1.Post("/login", v1.LoginWithPassword)
 
 	// Comment Service Routes
-	commentV1 := postV1.Group("/:post_id/comments")
 	commentV1.Get("/", v1.GetPostComments)
 	commentV1.Post("/", handlers.AuthMiddleware, v1.CreateComment)
 	commentV1.Patch("/:id", handlers.AuthMiddleware, v1.UpdateComment) // todo: check permissions
