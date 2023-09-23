@@ -1,4 +1,4 @@
-import { apiSlice } from '../api'
+import { apiSlice } from '../features/api'
 import { convertRawComment } from '../types/comments'
 
 import type { Comment } from '../types/common'

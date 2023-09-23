@@ -6,6 +6,7 @@ import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-
 import LoadingBar from './LoadingBar';
 import { User } from '../app/types/common';
 import { useGetUserByNameQuery } from '../app/api/users';
+import type { ErrorResponse } from '../app/types/api';
 
 export type UserContext = {
   user: User
@@ -37,10 +38,15 @@ function UserLayout() {
   } else if (!data) {
     if (!error) {
       throw Error('Unknown error occured')
-    } else if (!error.data) {
-      throw Error('Failed to access the API')
+    } else if ('data' in error) {
+      const errResponse = error.data as ErrorResponse
+      if (errResponse.msg) {
+        throw Error(errResponse.msg)
+      } else {
+        throw Error('Unexpected API error occured')
+      }
     } else {
-      throw Error(error.data.msg)
+      throw Error('Failed to access the API')
     }
   }
 

@@ -1,4 +1,4 @@
-import { apiSlice } from '../api'
+import { apiSlice } from '../features/api'
 import { convertRawPanel } from '../types/panels'
 
 import type { Panel } from '../types/common'

@@ -4,6 +4,11 @@ export type RawResponse = {
   data?: object;
 }
 
+export type ErrorResponse = RawResponse & {
+  msg: string;
+  data?: null;
+}
+
 export type RawTimestamp = {
   seconds: number;
   nanos?: number;

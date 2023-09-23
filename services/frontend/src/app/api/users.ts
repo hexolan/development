@@ -1,4 +1,4 @@
-import { apiSlice } from '../api'
+import { apiSlice } from '../features/api'
 import { convertRawUser } from '../types/user'
 import { convertRawAuthData } from '../types/auth'
 

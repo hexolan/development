@@ -6,6 +6,7 @@ import LoadingBar from '../components/LoadingBar'
 import { useAppSelector } from '../app/hooks'
 import { useGetPanelByNameQuery } from '../app/api/panels'
 import type { Panel } from '../app/types/common'
+import type { ErrorResponse } from '../app/types/api'
 
 export type PanelContext = {
   panel: Panel
@@ -27,14 +28,17 @@ function PanelLayout() {
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {
-    // todo: custom transform for error response (to have a return type - to stop these linter errors)
-    // https://redux-toolkit.js.org/rtk-query/usage/error-handling
     if (!error) {
       throw Error('Unknown error occured')
-    } else if (!error.data) {
-      throw Error('Failed to access the API')
+    } else if ('data' in error) {
+      const errResponse = error.data as ErrorResponse
+      if (errResponse.msg) {
+        throw Error(errResponse.msg)
+      } else {
+        throw Error('Unexpected API error occured')
+      }
     } else {
-      throw Error(error.data.msg)
+      throw Error('Failed to access the API')
     }
   } else if (currentUser) {
     // panel info was succesfully fetched.

@@ -4,6 +4,7 @@ import PagePost from '../components/PagePost'
 import LoadingBar from '../components/LoadingBar'
 import { useGetPanelPostQuery } from '../app/api/posts'
 import type { PanelContext } from '../components/PanelLayout'
+import type { ErrorResponse } from '../app/types/api'
 
 type PanelPostPageParams = {
   panelName: string;
@@ -22,10 +23,15 @@ function PanelPostPage() {
   } else if (!data) {
     if (!error) {
       throw Error('Unknown error occured')
-    } else if (!error.data) {
-      throw Error('Failed to access the API')
+    } else if ('data' in error) {
+      const errResponse = error.data as ErrorResponse
+      if (errResponse.msg) {
+        throw Error(errResponse.msg)
+      } else {
+        throw Error('Unexpected API error occured')
+      }
     } else {
-      throw Error(error.data.msg)
+      throw Error('Failed to access the API')
     }
   }
 
