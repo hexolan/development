@@ -138,6 +138,10 @@ func (r postCacheRepo) DeletePost(ctx context.Context, id internal.PostId) error
 	return err
 }
 
+func (r postCacheRepo) GetFeedPosts(ctx context.Context) ([]*internal.Post, error) {
+	return r.repo.GetFeedPosts(ctx)
+}
+
 func (r postCacheRepo) GetUserPosts(ctx context.Context, userId string) ([]*internal.Post, error) {
 	return r.repo.GetUserPosts(ctx, userId)
 }

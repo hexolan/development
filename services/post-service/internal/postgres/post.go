@@ -120,6 +120,35 @@ func (r postDatabaseRepo) DeletePost(ctx context.Context, id internal.PostId) er
 	return nil
 }
 
+func (r postDatabaseRepo) GetFeedPosts(ctx context.Context) ([]*internal.Post, error) {
+	// todo: pagination
+	rows, err := r.db.Query(ctx, "SELECT id, panel_id, author_id, title, content, created_at, updated_at FROM posts ORDER BY created_at DESC LIMIT 25")
+    if err != nil {
+		if strings.Contains(err.Error(), "failed to connect to") {
+			return nil, internal.WrapServiceError(err, internal.ConnectionErrorCode, "failed to connect to database")
+		}
+		log.Error().Err(err).Msg("unaccounted error whilst getting posts")
+		return nil, internal.WrapServiceError(err, internal.UnknownErrorCode, "failed to get posts")
+	}
+
+	posts := []*internal.Post{}
+	for rows.Next() {
+		var post internal.Post
+		err := rows.Scan(&post.Id, &post.PanelId, &post.AuthorId, &post.Title, &post.Content, &post.CreatedAt, &post.UpdatedAt)
+		if err != nil {
+			return nil, internal.WrapServiceError(err, internal.UnknownErrorCode, "failed to scan posts")
+		}
+		posts = append(posts, &post)
+	}
+
+	if rows.Err() != nil {
+		log.Error().Err(err).Msg("query error whilst retrieving posts")
+		return nil, internal.WrapServiceError(err, internal.UnknownErrorCode, "failed to get posts")
+	}
+
+	return posts, nil
+}
+
 func (r postDatabaseRepo) GetUserPosts(ctx context.Context, userId string) ([]*internal.Post, error) {
 	// todo: pagination
 	rows, err := r.db.Query(ctx, "SELECT id, panel_id, author_id, title, content, created_at, updated_at FROM posts WHERE author_id=$1 ORDER BY created_at DESC LIMIT 25", userId)

@@ -81,6 +81,10 @@ func (srv postService) DeletePost(ctx context.Context, id internal.PostId) error
 	return err
 }
 
+func (srv postService) GetFeedPosts(ctx context.Context) ([]*internal.Post, error) {
+	return srv.repo.GetFeedPosts(ctx)
+}
+
 func (srv postService) GetUserPosts(ctx context.Context, userId string) ([]*internal.Post, error) {
 	return srv.repo.GetUserPosts(ctx, userId)
 }

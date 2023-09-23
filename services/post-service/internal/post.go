@@ -64,6 +64,7 @@ type PostRepository interface {
     UpdatePost(ctx context.Context, id PostId, data PostUpdate) (*Post, error)
     DeletePost(ctx context.Context, id PostId) error
 
+    GetFeedPosts(ctx context.Context) ([]*Post, error)
     GetUserPosts(ctx context.Context, userId string) ([]*Post, error)
     GetPanelPosts(ctx context.Context, panelId string) ([]*Post, error)
 }

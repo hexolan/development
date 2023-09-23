@@ -131,10 +131,8 @@ func (svr *postServer) DeletePost(ctx context.Context, request *pb.DeletePostReq
 }
 
 func (svr *postServer) GetFeedPosts(ctx context.Context, request *pb.GetFeedPostsRequest) (*pb.FeedPosts, error) {
-	// todo: adjust to return newest posts
-
 	// Get the posts
-	posts, err := svr.service.GetPanelPosts(ctx, "1")
+	posts, err := svr.service.GetFeedPosts(ctx)
 	if err != nil {
 		return nil, err
 	}
