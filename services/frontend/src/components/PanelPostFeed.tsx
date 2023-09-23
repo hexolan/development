@@ -2,7 +2,7 @@ import { Center, Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
 import { useGetPanelPostsQuery } from '../app/api/posts'
-import { Panel } from '../app/types/common'
+import type { Panel } from '../app/types/common'
 
 function PanelPostFeed({ panel }: { panel: Panel }) {
   const { data, isLoading } = useGetPanelPostsQuery({ panelId: panel.id })

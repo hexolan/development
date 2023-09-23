@@ -6,7 +6,7 @@ const Homepage = () => {
   return (
     <Container mt='xl'>
       <Title>Feed</Title>
-      <Divider my="md" variant="dotted" />
+      <Divider my='md' variant='dotted' />
       <Stack my='lg' spacing='md'>
         <HomePostFeed />
       </Stack>

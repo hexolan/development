@@ -15,10 +15,10 @@ const ExplorePanelsPage = () => {
           Alternatively you could <Anchor size='sm' component={Link} to='/panels/new'>create your own.</Anchor>
         </Text>
       ) : null}
-      <Divider my="md" variant="dotted" />
+      <Divider my='md' variant='dotted' />
 
       <Stack spacing='sm' align='stretch'>
-        <Paper shadow="xl" radius="md" p="md" withBorder component={Link} to='/panel/Panel'>
+        <Paper shadow='xl' radius='md' p='md' withBorder component={Link} to='/panel/Panel'>
           <Group>
             <ThemeIcon color='teal' variant='light' size='xl'><IconMessages /></ThemeIcon>
             <div>
@@ -29,7 +29,7 @@ const ExplorePanelsPage = () => {
           </Group>
         </Paper>
 
-        <Paper shadow="xl" radius="md" p="md" withBorder component='a' href='https://github.com/hexolan/Panels/'>
+        <Paper shadow='xl' radius='md' p='md' withBorder component='a' href='https://github.com/hexolan/Panels/'>
           <Group>
             <ThemeIcon color='red' variant='light' size='xl'><IconTableOff /></ThemeIcon>
             <div>

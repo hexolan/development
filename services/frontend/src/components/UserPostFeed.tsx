@@ -2,7 +2,7 @@ import { Center, Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
 import { useGetUserPostsQuery } from '../app/api/posts'
-import { User } from '../app/types/common'
+import type { User } from '../app/types/common'
 
 function UserPostFeed({ user }: { user: User }) {
   const { data, isLoading } = useGetUserPostsQuery({ userId: user.id })

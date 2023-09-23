@@ -1,6 +1,8 @@
 import { useParams, useOutletContext } from 'react-router-dom'
+import { Divider } from '@mantine/core'
 
 import PagePost from '../components/PagePost'
+import PostComments from '../components/PostComments'
 import LoadingBar from '../components/LoadingBar'
 import { useGetPanelPostQuery } from '../app/api/posts'
 import type { PanelContext } from '../components/PanelLayout'
@@ -35,8 +37,13 @@ function PanelPostPage() {
     }
   }
 
-  // todo: PostComments
-  return <PagePost post={data} />
+  return (
+    <>
+      <PagePost post={data} />
+      <Divider my='lg' variant='dotted' />
+      <PostComments post={data} />
+    </>
+  )
 }
 
 export default PanelPostPage
