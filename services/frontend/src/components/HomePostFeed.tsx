@@ -1,11 +1,10 @@
 import { Center, Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
-import { useGetPanelPostsQuery } from '../app/api/posts'
+import { useGetFeedPostsQuery } from '../app/api/posts'
 
 function HomePostFeed() {
-  // todo: adjust used route
-  const { data, isLoading } = useGetPanelPostsQuery({ panelId: '1' })
+  const { data, isLoading } = useGetFeedPostsQuery()
   if (isLoading) {
     return (
       <Center>

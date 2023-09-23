@@ -22,6 +22,19 @@ export const postsApiSlice = apiSlice.injectEndpoints({
       }
     }),
 
+    getFeedPosts: builder.query<Post[], void>({
+      query: () => '/v1/posts/feed',
+      transformResponse: (response: RawPostsResponse) => {
+        if (response.data === undefined) {
+          throw Error('invalid posts response')
+        } else if (!response.data.posts) {
+          return []
+        }
+
+        return response.data.posts.map<Post>((rawPost: RawPost) => convertRawPost(rawPost))
+      }
+    }),
+
     getUserPosts: builder.query<Post[], GetUserPostsRequest>({
       query: req => `/v1/users/id/${req.userId}/posts`,
       transformResponse: (response: RawPostsResponse) => {
@@ -84,10 +97,11 @@ export const postsApiSlice = apiSlice.injectEndpoints({
 })
 
 export const { 
-  useGetPanelPostQuery, 
+  useGetPanelPostQuery,
+  useGetFeedPostsQuery,
   useGetUserPostsQuery,
   useGetPanelPostsQuery,
-  useUpdatePostMutation, 
-  useDeletePostMutation, 
+  useUpdatePostMutation,
+  useDeletePostMutation,
   useCreatePanelPostMutation
 } = postsApiSlice
