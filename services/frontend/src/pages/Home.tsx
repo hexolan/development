@@ -1,11 +1,15 @@
-import { Container, Title, Text, Divider } from '@mantine/core'
+import { Container, Title, Stack, Divider } from '@mantine/core'
+
+import HomePostFeed from '../components/HomePostFeed'
 
 const Homepage = () => {
   return (
     <Container mt='xl'>
       <Title>Feed</Title>
       <Divider my="md" variant="dotted" />
-      <Text>todo</Text>
+      <Stack my='lg' spacing='md'>
+        <HomePostFeed />
+      </Stack>
     </Container>
   )
 }

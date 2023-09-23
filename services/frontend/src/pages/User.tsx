@@ -8,7 +8,7 @@ function UserPage() {
   const { user } = useOutletContext<UserContext>()
 
   return (
-    <Stack mt='lg' spacing='md'>
+    <Stack my='lg' spacing='md'>
       <UserPostFeed user={user} />
     </Stack>
   )

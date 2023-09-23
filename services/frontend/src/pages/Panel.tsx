@@ -8,7 +8,7 @@ function PanelPage() {
   const { panel } = useOutletContext<PanelContext>()
 
   return (
-    <Stack spacing='md'>
+    <Stack my='lg' spacing='md'>
       <PanelPostFeed panel={panel} />
     </Stack>
   )
