@@ -5,8 +5,6 @@ import { useGetPanelPostsQuery } from '../app/api/posts'
 import { Panel } from '../app/types/common'
 
 function PanelPostFeed({ panel }: { panel: Panel }) {
-  if (!panel) { return null }
-
   const { data, isLoading } = useGetPanelPostsQuery({ panelId: panel.id })
   if (isLoading) {
     return (

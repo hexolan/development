@@ -5,8 +5,6 @@ import { useGetUserPostsQuery } from '../app/api/posts'
 import { User } from '../app/types/common'
 
 function UserPostFeed({ user }: { user: User }) {
-  if (!user) { return null }
-
   const { data, isLoading } = useGetUserPostsQuery({ userId: user.id })
   if (isLoading) {
     return (

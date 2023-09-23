@@ -7,100 +7,74 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 import type { Post, Panel, User } from '../app/types/common'
 
 const FeedPost = ({ post, panelInfo, authorInfo }: { post: Post, panelInfo?: Panel, authorInfo?: User }) => {
-  const loadPanelData = () => {
-    if (panelInfo) {
-      // element is hidden (as the post is on a panel page)
-      return {
-        panelElement: null,
-        panelName: panelInfo.name
-      }
-    }
-
-    const { data, isLoading } = useGetPanelByIdQuery({ id: post.panelId })
-    if (isLoading) {
-      return {
-        panelElement: null,
-        panelName: undefined
-      }
-    } else if (!data) {
-      return {
-        panelElement: <Text color='red' size='xs'>Error Loading Panel Data</Text>, // todo: change this
-        panelName: null
-      }
+  // todo: if I have to call useGetPanelByIdQuery and useGetUserByIdQuery each time,
+  // change the above panelInfo and authorInfo to hidePanel and hideAuthor bools and clean up mess below
+  
+  // Load Panel Attributes
+  const panelAttrs = { element: <></>, name: ''}
+  const { data: panelData, isLoading: panelIsLoading } = useGetPanelByIdQuery({ id: post.panelId })
+  if (!panelInfo) {
+    if (panelIsLoading) {
+      panelAttrs.element = <></>
+    } else if (!panelData) {
+      panelAttrs.element = <Text color='red' size='xs'>Error Loading Panel Data</Text>
     } else {
-      return {
-        panelElement: (
-          <Badge
+      panelAttrs.name = panelData.name
+      panelAttrs.element = (
+        <Badge
           pl={0}
           color='orange'
           leftSection={
-              <ThemeIcon color='orange' size={24} radius='xl' mr={5}>
-                <IconMessages size={12} />
-              </ThemeIcon>
-            }
-            component={Link}
-            to={`/panel/${data.name}`}
-            >
-            {`panel/${data.name}`}
-          </Badge>
-        ),
-        panelName: data.name
-      }
+            <ThemeIcon color='orange' size={24} radius='xl' mr={5}>
+              <IconMessages size={12} />
+            </ThemeIcon>
+          }
+          component={Link}
+          to={`/panel/${panelData.name}`}
+        >
+          {`panel/${panelData.name}`}
+        </Badge>
+      )
     }
+  } else {
+    panelAttrs.name = panelInfo.name
   }
   
-  const loadAuthorData = () => {
-    if (authorInfo) {
-      // element is hidden (as the post is on a user page)
-      return {
-        authorElement: null,
-        authorName: undefined
-      }
-    }
-
-    const { data, isLoading } = useGetUserByIdQuery({ id: post.authorId })
-    if (isLoading) {
-      return {
-        authorElement: null,
-        authorName: undefined
-      }
-    } else if (!data) {
-      return {
-        authorElement: <Text color='red' size='xs'>Error Loading Author Data</Text>, // todo: change this
-        authorName: null
-      }
+  // Load Author Attributes
+  const authorAttrs = { element: <></> }
+  const { data: authorData, isLoading: authorIsLoading } = useGetUserByIdQuery({ id: post.authorId })
+  if (!authorInfo) {
+    if (authorIsLoading) {
+      authorAttrs.element = <></>
+    } else if (!authorData) {
+      authorAttrs.element = <Text color='red' size='xs'>Error Loading Author Data</Text>
     } else {
-      return {
-        authorElement: (
-          <Badge 
-            pl={0}
-            color='teal'
-            leftSection={
-              <ThemeIcon color='teal' size={24} radius='xl' mr={5}>
-                <IconUser size={12} />
-              </ThemeIcon>
-            }
-            component={Link}
-            to={`/user/${data.username}`}
-          >
-            {`user/${data.username}`}
-          </Badge>
-        ),
-        authorName: data.username
-      }
+      authorAttrs.element = (
+        <Badge
+          pl={0}
+          color='teal'
+          leftSection={
+            <ThemeIcon color='teal' size={24} radius='xl' mr={5}>
+              <IconUser size={12} />
+            </ThemeIcon>
+          }
+          component={Link}
+          to={`/user/${authorData.username}`}
+        >
+          {`user/${authorData.username}`}
+        </Badge>
+      )
     }
   }
+
 
   // todo: wireframe loaders
   // todo: show createdAt timestamp? (not priority)
-  const { panelElement, panelName } = loadPanelData()
-  const { authorElement } = loadAuthorData()
-  
   return (
     <Paper shadow='xl' radius='lg' p='lg' withBorder>
-      {panelElement} {authorElement} 
+      {panelAttrs.element} {authorAttrs.element} 
       <Stack align='flex-start' mt={2} spacing={1}>
-        <Box component={Link} to={panelName ? `/panel/${panelName}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Box component={Link} to={panelAttrs.name ? `/panel/${panelAttrs.name}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
           <Text weight={600} lineClamp={1}>{post.title}</Text>
           <Text size='sm' lineClamp={2}>{post.content}</Text>
           <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
