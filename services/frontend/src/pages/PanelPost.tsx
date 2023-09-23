@@ -3,7 +3,9 @@ import { Divider } from '@mantine/core'
 
 import PagePost from '../components/PagePost'
 import PostComments from '../components/PostComments'
+import CreateComment from '../components/CreateComment'
 import LoadingBar from '../components/LoadingBar'
+import { useAppSelector } from '../app/hooks'
 import { useGetPanelPostQuery } from '../app/api/posts'
 import type { PanelContext } from '../components/PanelLayout'
 import type { ErrorResponse } from '../app/types/api'
@@ -17,6 +19,8 @@ function PanelPostPage() {
   const { panel } = useOutletContext<PanelContext>()
   const { postId } = useParams<PanelPostPageParams>();
   if (postId === undefined) { throw Error('post id not provided') }
+
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   // Fetch the post
   const { data, error, isLoading } = useGetPanelPostQuery({ panelId: panel.id, postId: postId })
@@ -41,6 +45,7 @@ function PanelPostPage() {
     <>
       <PagePost post={data} />
       <Divider my='xl' variant='none' />
+      { currentUser && <CreateComment post={data} /> }
       <PostComments post={data} />
     </>
   )
