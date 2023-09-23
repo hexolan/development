@@ -130,6 +130,18 @@ func (svr *postServer) DeletePost(ctx context.Context, request *pb.DeletePostReq
 	return &emptypb.Empty{}, nil
 }
 
+func (svr *postServer) GetFeedPosts(ctx context.Context, request *pb.GetFeedPostsRequest) (*pb.FeedPosts, error) {
+	// todo: adjust to return newest posts
+
+	// Get the posts
+	posts, err := svr.service.GetPanelPosts(ctx, "1")
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.FeedPosts{Posts: pb.PostsToProto(posts)}, nil
+}
+
 func (svr *postServer) GetUserPosts(ctx context.Context, request *pb.GetUserPostsRequest) (*pb.UserPosts, error) {
 	// Ensure the required args are provided
 	if request.GetUserId() == "" {

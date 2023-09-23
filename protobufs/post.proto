@@ -15,6 +15,7 @@ service PostService {
 
     rpc DeletePost(DeletePostRequest) returns (google.protobuf.Empty) {}
 
+    rpc GetFeedPosts(GetFeedPostsRequest) returns (FeedPosts) {}
     rpc GetUserPosts(GetUserPostsRequest) returns (UserPosts) {}
     rpc GetPanelPosts(GetPanelPostsRequest) returns (PanelPosts) {}
 }
@@ -59,6 +60,14 @@ message UpdatePostRequest {
 
 message DeletePostRequest {
     string id = 1;
+}
+
+message GetFeedPostsRequest {
+
+}
+
+message FeedPosts {
+    repeated Post posts = 1;
 }
 
 message GetUserPostsRequest {

@@ -20,6 +20,21 @@ func getPostById(postId string) (*postv1.Post, error) {
 	)
 }
 
+func GetFeedPosts(c *fiber.Ctx) error {
+	// Make the request for feed posts
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	posts, err := rpc.Svcs.GetPostSvc().GetFeedPosts(
+		ctx,
+		&postv1.GetFeedPostsRequest{},
+	)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "data": posts})
+}
+
 func GetPanelPostFromId(c *fiber.Ctx) error {
 	// Make the request for the panel post
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)

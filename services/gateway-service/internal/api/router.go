@@ -39,10 +39,10 @@ func RegisterRoutes(app *fiber.App) {
 	panelV1.Delete("/name/:name", handlers.AuthMiddleware, v1.DeletePanelByName) // todo: check permissions
 
 	// Post Service Routes
+	postV1.Get("/feed", v1.GetFeedPosts)
 	postV1.Patch("/:id", handlers.AuthMiddleware, v1.UpdatePost) // todo: check permissions
 	postV1.Delete("/:id", handlers.AuthMiddleware, v1.DeletePost) // todo: check permissions
 
-	// todo: implement routes GetUserPostsFromId, GetUserPostsFromUsername
 	userV1.Get("/id/:user_id/posts", v1.GetUserPostsFromId)
 	userV1.Get("/username/:username/posts", v1.GetUserPostsFromUsername)
 

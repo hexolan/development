@@ -84,6 +84,20 @@ class DeletePostRequest(_message.Message):
     def __init__(self, id: _Optional[str]=...) -> None:
         ...
 
+class GetFeedPostsRequest(_message.Message):
+    __slots__ = []
+
+    def __init__(self) -> None:
+        ...
+
+class FeedPosts(_message.Message):
+    __slots__ = ['posts']
+    POSTS_FIELD_NUMBER: _ClassVar[int]
+    posts: _containers.RepeatedCompositeFieldContainer[Post]
+
+    def __init__(self, posts: _Optional[_Iterable[_Union[Post, _Mapping]]]=...) -> None:
+        ...
+
 class GetUserPostsRequest(_message.Message):
     __slots__ = ['user_id']
     USER_ID_FIELD_NUMBER: _ClassVar[int]

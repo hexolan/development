@@ -28,6 +28,7 @@ type PostServiceClient interface {
 	GetPanelPost(ctx context.Context, in *GetPanelPostRequest, opts ...grpc.CallOption) (*Post, error)
 	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*Post, error)
 	DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetFeedPosts(ctx context.Context, in *GetFeedPostsRequest, opts ...grpc.CallOption) (*FeedPosts, error)
 	GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*UserPosts, error)
 	GetPanelPosts(ctx context.Context, in *GetPanelPostsRequest, opts ...grpc.CallOption) (*PanelPosts, error)
 }
@@ -85,6 +86,15 @@ func (c *postServiceClient) DeletePost(ctx context.Context, in *DeletePostReques
 	return out, nil
 }
 
+func (c *postServiceClient) GetFeedPosts(ctx context.Context, in *GetFeedPostsRequest, opts ...grpc.CallOption) (*FeedPosts, error) {
+	out := new(FeedPosts)
+	err := c.cc.Invoke(ctx, "/panels.post.v1.PostService/GetFeedPosts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *postServiceClient) GetUserPosts(ctx context.Context, in *GetUserPostsRequest, opts ...grpc.CallOption) (*UserPosts, error) {
 	out := new(UserPosts)
 	err := c.cc.Invoke(ctx, "/panels.post.v1.PostService/GetUserPosts", in, out, opts...)
@@ -112,6 +122,7 @@ type PostServiceServer interface {
 	GetPanelPost(context.Context, *GetPanelPostRequest) (*Post, error)
 	UpdatePost(context.Context, *UpdatePostRequest) (*Post, error)
 	DeletePost(context.Context, *DeletePostRequest) (*emptypb.Empty, error)
+	GetFeedPosts(context.Context, *GetFeedPostsRequest) (*FeedPosts, error)
 	GetUserPosts(context.Context, *GetUserPostsRequest) (*UserPosts, error)
 	GetPanelPosts(context.Context, *GetPanelPostsRequest) (*PanelPosts, error)
 	mustEmbedUnimplementedPostServiceServer()
@@ -135,6 +146,9 @@ func (UnimplementedPostServiceServer) UpdatePost(context.Context, *UpdatePostReq
 }
 func (UnimplementedPostServiceServer) DeletePost(context.Context, *DeletePostRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
+}
+func (UnimplementedPostServiceServer) GetFeedPosts(context.Context, *GetFeedPostsRequest) (*FeedPosts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFeedPosts not implemented")
 }
 func (UnimplementedPostServiceServer) GetUserPosts(context.Context, *GetUserPostsRequest) (*UserPosts, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserPosts not implemented")
@@ -245,6 +259,24 @@ func _PostService_DeletePost_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_GetFeedPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFeedPostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetFeedPosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/panels.post.v1.PostService/GetFeedPosts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetFeedPosts(ctx, req.(*GetFeedPostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PostService_GetUserPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserPostsRequest)
 	if err := dec(in); err != nil {
@@ -307,6 +339,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePost",
 			Handler:    _PostService_DeletePost_Handler,
+		},
+		{
+			MethodName: "GetFeedPosts",
+			Handler:    _PostService_GetFeedPosts_Handler,
 		},
 		{
 			MethodName: "GetUserPosts",

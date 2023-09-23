@@ -439,6 +439,91 @@ func (x *DeletePostRequest) GetId() string {
 	return ""
 }
 
+type GetFeedPostsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetFeedPostsRequest) Reset() {
+	*x = GetFeedPostsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_post_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetFeedPostsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFeedPostsRequest) ProtoMessage() {}
+
+func (x *GetFeedPostsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_post_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFeedPostsRequest.ProtoReflect.Descriptor instead.
+func (*GetFeedPostsRequest) Descriptor() ([]byte, []int) {
+	return file_post_proto_rawDescGZIP(), []int{7}
+}
+
+type FeedPosts struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Posts []*Post `protobuf:"bytes,1,rep,name=posts,proto3" json:"posts,omitempty"`
+}
+
+func (x *FeedPosts) Reset() {
+	*x = FeedPosts{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_post_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *FeedPosts) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FeedPosts) ProtoMessage() {}
+
+func (x *FeedPosts) ProtoReflect() protoreflect.Message {
+	mi := &file_post_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FeedPosts.ProtoReflect.Descriptor instead.
+func (*FeedPosts) Descriptor() ([]byte, []int) {
+	return file_post_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *FeedPosts) GetPosts() []*Post {
+	if x != nil {
+		return x.Posts
+	}
+	return nil
+}
+
 type GetUserPostsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -450,7 +535,7 @@ type GetUserPostsRequest struct {
 func (x *GetUserPostsRequest) Reset() {
 	*x = GetUserPostsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_post_proto_msgTypes[7]
+		mi := &file_post_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -463,7 +548,7 @@ func (x *GetUserPostsRequest) String() string {
 func (*GetUserPostsRequest) ProtoMessage() {}
 
 func (x *GetUserPostsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_post_proto_msgTypes[7]
+	mi := &file_post_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -476,7 +561,7 @@ func (x *GetUserPostsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserPostsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserPostsRequest) Descriptor() ([]byte, []int) {
-	return file_post_proto_rawDescGZIP(), []int{7}
+	return file_post_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetUserPostsRequest) GetUserId() string {
@@ -497,7 +582,7 @@ type UserPosts struct {
 func (x *UserPosts) Reset() {
 	*x = UserPosts{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_post_proto_msgTypes[8]
+		mi := &file_post_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -510,7 +595,7 @@ func (x *UserPosts) String() string {
 func (*UserPosts) ProtoMessage() {}
 
 func (x *UserPosts) ProtoReflect() protoreflect.Message {
-	mi := &file_post_proto_msgTypes[8]
+	mi := &file_post_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -523,7 +608,7 @@ func (x *UserPosts) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserPosts.ProtoReflect.Descriptor instead.
 func (*UserPosts) Descriptor() ([]byte, []int) {
-	return file_post_proto_rawDescGZIP(), []int{8}
+	return file_post_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UserPosts) GetPosts() []*Post {
@@ -544,7 +629,7 @@ type GetPanelPostsRequest struct {
 func (x *GetPanelPostsRequest) Reset() {
 	*x = GetPanelPostsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_post_proto_msgTypes[9]
+		mi := &file_post_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -557,7 +642,7 @@ func (x *GetPanelPostsRequest) String() string {
 func (*GetPanelPostsRequest) ProtoMessage() {}
 
 func (x *GetPanelPostsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_post_proto_msgTypes[9]
+	mi := &file_post_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -570,7 +655,7 @@ func (x *GetPanelPostsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPanelPostsRequest.ProtoReflect.Descriptor instead.
 func (*GetPanelPostsRequest) Descriptor() ([]byte, []int) {
-	return file_post_proto_rawDescGZIP(), []int{9}
+	return file_post_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetPanelPostsRequest) GetPanelId() string {
@@ -591,7 +676,7 @@ type PanelPosts struct {
 func (x *PanelPosts) Reset() {
 	*x = PanelPosts{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_post_proto_msgTypes[10]
+		mi := &file_post_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -604,7 +689,7 @@ func (x *PanelPosts) String() string {
 func (*PanelPosts) ProtoMessage() {}
 
 func (x *PanelPosts) ProtoReflect() protoreflect.Message {
-	mi := &file_post_proto_msgTypes[10]
+	mi := &file_post_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -617,7 +702,7 @@ func (x *PanelPosts) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PanelPosts.ProtoReflect.Descriptor instead.
 func (*PanelPosts) Descriptor() ([]byte, []int) {
-	return file_post_proto_rawDescGZIP(), []int{10}
+	return file_post_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PanelPosts) GetPosts() []*Post {
@@ -640,7 +725,7 @@ type PostEvent struct {
 func (x *PostEvent) Reset() {
 	*x = PostEvent{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_post_proto_msgTypes[11]
+		mi := &file_post_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -653,7 +738,7 @@ func (x *PostEvent) String() string {
 func (*PostEvent) ProtoMessage() {}
 
 func (x *PostEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_post_proto_msgTypes[11]
+	mi := &file_post_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -666,7 +751,7 @@ func (x *PostEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostEvent.ProtoReflect.Descriptor instead.
 func (*PostEvent) Descriptor() ([]byte, []int) {
-	return file_post_proto_rawDescGZIP(), []int{11}
+	return file_post_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PostEvent) GetType() string {
@@ -734,7 +819,12 @@ var file_post_proto_rawDesc = []byte{
 	0x76, 0x31, 0x2e, 0x50, 0x6f, 0x73, 0x74, 0x4d, 0x75, 0x74, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x04,
 	0x64, 0x61, 0x74, 0x61, 0x22, 0x23, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x50, 0x6f,
 	0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x2e, 0x0a, 0x13, 0x47, 0x65, 0x74,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x15, 0x0a, 0x13, 0x47, 0x65, 0x74,
+	0x46, 0x65, 0x65, 0x64, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x22, 0x37, 0x0a, 0x09, 0x46, 0x65, 0x65, 0x64, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x2a, 0x0a,
+	0x05, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70,
+	0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x6f,
+	0x73, 0x74, 0x52, 0x05, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x2e, 0x0a, 0x13, 0x47, 0x65, 0x74,
 	0x55, 0x73, 0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x37, 0x0a, 0x09, 0x55, 0x73, 0x65,
@@ -752,7 +842,7 @@ var file_post_proto_rawDesc = []byte{
 	0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65,
 	0x12, 0x28, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14,
 	0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e,
-	0x50, 0x6f, 0x73, 0x74, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0xa1, 0x04, 0x0a, 0x0b, 0x50,
+	0x50, 0x6f, 0x73, 0x74, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0xf3, 0x04, 0x0a, 0x0b, 0x50,
 	0x6f, 0x73, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x47, 0x0a, 0x0a, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x12, 0x21, 0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c,
 	0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
@@ -776,18 +866,23 @@ var file_post_proto_rawDesc = []byte{
 	0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x44, 0x65, 0x6c, 0x65,
 	0x74, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x55, 0x73,
-	0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x23, 0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73,
-	0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x46, 0x65,
+	0x65, 0x64, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x23, 0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73,
+	0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x46, 0x65, 0x65, 0x64,
 	0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x70,
-	0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x73,
-	0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x0d, 0x47, 0x65, 0x74,
-	0x50, 0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x24, 0x2e, 0x70, 0x61, 0x6e,
-	0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x50,
-	0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x1a, 0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76,
-	0x31, 0x2e, 0x50, 0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x00, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x46, 0x65,
+	0x65, 0x64, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x0c, 0x47, 0x65, 0x74,
+	0x55, 0x73, 0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x23, 0x2e, 0x70, 0x61, 0x6e, 0x65,
+	0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x55, 0x73,
+	0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19,
+	0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e,
+	0x55, 0x73, 0x65, 0x72, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x00, 0x12, 0x53, 0x0a, 0x0d, 0x47,
+	0x65, 0x74, 0x50, 0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x12, 0x24, 0x2e, 0x70,
+	0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65,
+	0x74, 0x50, 0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x61, 0x6e, 0x65, 0x6c, 0x73, 0x2e, 0x70, 0x6f, 0x73, 0x74,
+	0x2e, 0x76, 0x31, 0x2e, 0x50, 0x61, 0x6e, 0x65, 0x6c, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x22, 0x00,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -802,7 +897,7 @@ func file_post_proto_rawDescGZIP() []byte {
 	return file_post_proto_rawDescData
 }
 
-var file_post_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_post_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_post_proto_goTypes = []interface{}{
 	(*Post)(nil),                  // 0: panels.post.v1.Post
 	(*PostMutable)(nil),           // 1: panels.post.v1.PostMutable
@@ -811,41 +906,46 @@ var file_post_proto_goTypes = []interface{}{
 	(*GetPanelPostRequest)(nil),   // 4: panels.post.v1.GetPanelPostRequest
 	(*UpdatePostRequest)(nil),     // 5: panels.post.v1.UpdatePostRequest
 	(*DeletePostRequest)(nil),     // 6: panels.post.v1.DeletePostRequest
-	(*GetUserPostsRequest)(nil),   // 7: panels.post.v1.GetUserPostsRequest
-	(*UserPosts)(nil),             // 8: panels.post.v1.UserPosts
-	(*GetPanelPostsRequest)(nil),  // 9: panels.post.v1.GetPanelPostsRequest
-	(*PanelPosts)(nil),            // 10: panels.post.v1.PanelPosts
-	(*PostEvent)(nil),             // 11: panels.post.v1.PostEvent
-	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 13: google.protobuf.Empty
+	(*GetFeedPostsRequest)(nil),   // 7: panels.post.v1.GetFeedPostsRequest
+	(*FeedPosts)(nil),             // 8: panels.post.v1.FeedPosts
+	(*GetUserPostsRequest)(nil),   // 9: panels.post.v1.GetUserPostsRequest
+	(*UserPosts)(nil),             // 10: panels.post.v1.UserPosts
+	(*GetPanelPostsRequest)(nil),  // 11: panels.post.v1.GetPanelPostsRequest
+	(*PanelPosts)(nil),            // 12: panels.post.v1.PanelPosts
+	(*PostEvent)(nil),             // 13: panels.post.v1.PostEvent
+	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 15: google.protobuf.Empty
 }
 var file_post_proto_depIdxs = []int32{
-	12, // 0: panels.post.v1.Post.created_at:type_name -> google.protobuf.Timestamp
-	12, // 1: panels.post.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 0: panels.post.v1.Post.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: panels.post.v1.Post.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: panels.post.v1.CreatePostRequest.data:type_name -> panels.post.v1.PostMutable
 	1,  // 3: panels.post.v1.UpdatePostRequest.data:type_name -> panels.post.v1.PostMutable
-	0,  // 4: panels.post.v1.UserPosts.posts:type_name -> panels.post.v1.Post
-	0,  // 5: panels.post.v1.PanelPosts.posts:type_name -> panels.post.v1.Post
-	0,  // 6: panels.post.v1.PostEvent.data:type_name -> panels.post.v1.Post
-	2,  // 7: panels.post.v1.PostService.CreatePost:input_type -> panels.post.v1.CreatePostRequest
-	3,  // 8: panels.post.v1.PostService.GetPost:input_type -> panels.post.v1.GetPostRequest
-	4,  // 9: panels.post.v1.PostService.GetPanelPost:input_type -> panels.post.v1.GetPanelPostRequest
-	5,  // 10: panels.post.v1.PostService.UpdatePost:input_type -> panels.post.v1.UpdatePostRequest
-	6,  // 11: panels.post.v1.PostService.DeletePost:input_type -> panels.post.v1.DeletePostRequest
-	7,  // 12: panels.post.v1.PostService.GetUserPosts:input_type -> panels.post.v1.GetUserPostsRequest
-	9,  // 13: panels.post.v1.PostService.GetPanelPosts:input_type -> panels.post.v1.GetPanelPostsRequest
-	0,  // 14: panels.post.v1.PostService.CreatePost:output_type -> panels.post.v1.Post
-	0,  // 15: panels.post.v1.PostService.GetPost:output_type -> panels.post.v1.Post
-	0,  // 16: panels.post.v1.PostService.GetPanelPost:output_type -> panels.post.v1.Post
-	0,  // 17: panels.post.v1.PostService.UpdatePost:output_type -> panels.post.v1.Post
-	13, // 18: panels.post.v1.PostService.DeletePost:output_type -> google.protobuf.Empty
-	8,  // 19: panels.post.v1.PostService.GetUserPosts:output_type -> panels.post.v1.UserPosts
-	10, // 20: panels.post.v1.PostService.GetPanelPosts:output_type -> panels.post.v1.PanelPosts
-	14, // [14:21] is the sub-list for method output_type
-	7,  // [7:14] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	0,  // 4: panels.post.v1.FeedPosts.posts:type_name -> panels.post.v1.Post
+	0,  // 5: panels.post.v1.UserPosts.posts:type_name -> panels.post.v1.Post
+	0,  // 6: panels.post.v1.PanelPosts.posts:type_name -> panels.post.v1.Post
+	0,  // 7: panels.post.v1.PostEvent.data:type_name -> panels.post.v1.Post
+	2,  // 8: panels.post.v1.PostService.CreatePost:input_type -> panels.post.v1.CreatePostRequest
+	3,  // 9: panels.post.v1.PostService.GetPost:input_type -> panels.post.v1.GetPostRequest
+	4,  // 10: panels.post.v1.PostService.GetPanelPost:input_type -> panels.post.v1.GetPanelPostRequest
+	5,  // 11: panels.post.v1.PostService.UpdatePost:input_type -> panels.post.v1.UpdatePostRequest
+	6,  // 12: panels.post.v1.PostService.DeletePost:input_type -> panels.post.v1.DeletePostRequest
+	7,  // 13: panels.post.v1.PostService.GetFeedPosts:input_type -> panels.post.v1.GetFeedPostsRequest
+	9,  // 14: panels.post.v1.PostService.GetUserPosts:input_type -> panels.post.v1.GetUserPostsRequest
+	11, // 15: panels.post.v1.PostService.GetPanelPosts:input_type -> panels.post.v1.GetPanelPostsRequest
+	0,  // 16: panels.post.v1.PostService.CreatePost:output_type -> panels.post.v1.Post
+	0,  // 17: panels.post.v1.PostService.GetPost:output_type -> panels.post.v1.Post
+	0,  // 18: panels.post.v1.PostService.GetPanelPost:output_type -> panels.post.v1.Post
+	0,  // 19: panels.post.v1.PostService.UpdatePost:output_type -> panels.post.v1.Post
+	15, // 20: panels.post.v1.PostService.DeletePost:output_type -> google.protobuf.Empty
+	8,  // 21: panels.post.v1.PostService.GetFeedPosts:output_type -> panels.post.v1.FeedPosts
+	10, // 22: panels.post.v1.PostService.GetUserPosts:output_type -> panels.post.v1.UserPosts
+	12, // 23: panels.post.v1.PostService.GetPanelPosts:output_type -> panels.post.v1.PanelPosts
+	16, // [16:24] is the sub-list for method output_type
+	8,  // [8:16] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_post_proto_init() }
@@ -939,7 +1039,7 @@ func file_post_proto_init() {
 			}
 		}
 		file_post_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetUserPostsRequest); i {
+			switch v := v.(*GetFeedPostsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -951,7 +1051,7 @@ func file_post_proto_init() {
 			}
 		}
 		file_post_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserPosts); i {
+			switch v := v.(*FeedPosts); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -963,7 +1063,7 @@ func file_post_proto_init() {
 			}
 		}
 		file_post_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetPanelPostsRequest); i {
+			switch v := v.(*GetUserPostsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -975,7 +1075,7 @@ func file_post_proto_init() {
 			}
 		}
 		file_post_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PanelPosts); i {
+			switch v := v.(*UserPosts); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -987,6 +1087,30 @@ func file_post_proto_init() {
 			}
 		}
 		file_post_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetPanelPostsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_post_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PanelPosts); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_post_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PostEvent); i {
 			case 0:
 				return &v.state
@@ -1006,7 +1130,7 @@ func file_post_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_post_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
