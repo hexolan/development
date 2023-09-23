@@ -1,4 +1,4 @@
-import { Center, Text } from '@mantine/core'
+import { Center, Loader, Text } from '@mantine/core'
 
 import Comment from './Comment'
 import { useGetPostCommentsQuery } from '../app/api/comments'
@@ -9,23 +9,15 @@ function PostComments({ post }: { post: Post }) {
   if (isLoading) {
     return (
       <Center>
-        <Text>Loading Comments...</Text>
+        <Loader color='dark' size='sm' />
       </Center>
     )
   } else if (!data) {
-    return (
-      <Center>
-        <Text color='red'>Failed to Load Comments</Text>
-      </Center>
-    )
+    return <Text color='red' align='center'>Failed to Load Comments</Text>
   }
 
   if (!data.length) {
-    return (
-      <Center>
-        <Text>No Comments</Text>
-      </Center>
-    )
+    return <Text align='center'>No Comments</Text>
   }
 
   return (

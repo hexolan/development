@@ -1,4 +1,4 @@
-import { Center, Text } from '@mantine/core'
+import { Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
 import { useGetUserPostsQuery } from '../app/api/posts'
@@ -7,26 +7,14 @@ import type { User } from '../app/types/common'
 function UserPostFeed({ user }: { user: User }) {
   const { data, isLoading } = useGetUserPostsQuery({ userId: user.id })
   if (isLoading) {
-    return (
-      <Center>
-        <Text>Loading Posts...</Text>
-      </Center>
-    )
+    return <Text align='center'>Loading Posts...</Text>
   } else if (!data) {
-    return (
-      <Center>
-        <Text color='red'>Failed to Load Posts</Text>
-      </Center>
-    )
+    return <Text align='center' color='red'>Failed to Load Posts</Text>
   }
 
   // Check that there are posts.
   if (!data.length) {
-    return (
-      <Center>
-        <Text>No Posts Found!</Text>
-      </Center>
-    )
+    return <Text align='center'>No Posts Found!</Text>
   }
 
   return (
