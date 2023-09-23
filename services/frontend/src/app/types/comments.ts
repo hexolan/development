@@ -53,7 +53,7 @@ export type RawCommentResponse = RawResponse & {
 
 export type RawCommentsResponse = RawResponse & {
   data?: {
-    comments: RawComment[];  // todo: verify this is the key
+    comments: RawComment[];
   };
 }
 

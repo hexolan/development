@@ -1,4 +1,4 @@
-import { Center, Loader, Text } from '@mantine/core'
+import { Stack, Center, Loader, Text } from '@mantine/core'
 
 import Comment from './Comment'
 import { useGetPostCommentsQuery } from '../app/api/comments'
@@ -17,15 +17,15 @@ function PostComments({ post }: { post: Post }) {
   }
 
   if (!data.length) {
-    return <Text align='center'>No Comments</Text>
+    return null
   }
 
   return (
-    <>
+    <Stack mb='lg' spacing='sm'>
       {Object.values(data).map(comment => {
         return <Comment key={comment.id} comment={comment} />
       })}
-    </>
+    </Stack>
   )
 }
 

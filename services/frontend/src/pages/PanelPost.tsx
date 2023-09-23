@@ -40,7 +40,7 @@ function PanelPostPage() {
   return (
     <>
       <PagePost post={data} />
-      <Divider my='lg' variant='dotted' />
+      <Divider my='xl' variant='none' />
       <PostComments post={data} />
     </>
   )

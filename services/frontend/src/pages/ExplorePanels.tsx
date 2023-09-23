@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { IconMessages, IconTableOff } from '@tabler/icons-react'
-import { Container, Stack, Paper, Title, Text, Anchor, Divider, ThemeIcon, Group } from '@mantine/core'
+import { Container, Stack, Paper, Box, Title, Text, Anchor, Divider, ThemeIcon, Group } from '@mantine/core'
 
 import { useAppSelector } from '../app/hooks'
 
@@ -21,11 +21,11 @@ const ExplorePanelsPage = () => {
         <Paper shadow='xl' radius='md' p='md' withBorder component={Link} to='/panel/Panel'>
           <Group>
             <ThemeIcon color='teal' variant='light' size='xl'><IconMessages /></ThemeIcon>
-            <div>
+            <Box>
               <Text weight={600}>Panel</Text>
               <Text>The first and therefore defacto primary panel.</Text>
               <Text color='dimmed' size='xs' mt={3}>Click to View</Text>
-            </div>
+            </Box>
           </Group>
         </Paper>
 

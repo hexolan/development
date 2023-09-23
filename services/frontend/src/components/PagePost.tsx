@@ -9,7 +9,7 @@ const PagePost = ({ post }: { post: Post }) => {
   const { data } = useGetUserByIdQuery({ id: post.authorId })
 
   return (
-    <Paper shadow='xl' radius='lg' p='lg' withBorder>
+    <Paper shadow='lg' radius='lg' p='lg' withBorder>
       {data && (
         <Badge
           pl={0}
