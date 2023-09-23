@@ -71,11 +71,11 @@ class GetPostCommentsRequest(_message.Message):
         ...
 
 class PostComments(_message.Message):
-    __slots__ = ['data']
-    DATA_FIELD_NUMBER: _ClassVar[int]
-    data: _containers.RepeatedCompositeFieldContainer[Comment]
+    __slots__ = ['comments']
+    COMMENTS_FIELD_NUMBER: _ClassVar[int]
+    comments: _containers.RepeatedCompositeFieldContainer[Comment]
 
-    def __init__(self, data: _Optional[_Iterable[_Union[Comment, _Mapping]]]=...) -> None:
+    def __init__(self, comments: _Optional[_Iterable[_Union[Comment, _Mapping]]]=...) -> None:
         ...
 
 class CommentEvent(_message.Message):

@@ -49,7 +49,7 @@ message GetPostCommentsRequest {
 }
 
 message PostComments {
-    repeated Comment data = 1;
+    repeated Comment comments = 1;
 }
 
 // Kafka Event Schema

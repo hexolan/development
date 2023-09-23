@@ -243,4 +243,4 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
             return
         
         # convert to protobuf
-        return comment_pb2.PostComments(data=[Comment.to_protobuf(comment) for comment in comments])
+        return comment_pb2.PostComments(comments=[Comment.to_protobuf(comment) for comment in comments])
