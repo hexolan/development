@@ -4,7 +4,6 @@ import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
 import { useGetPanelByIdQuery } from '../app/api/panels'
-
 import type { Post, Panel, User } from '../app/types/common'
 
 const FeedPost = ({ post, panelInfo, authorInfo }: { post: Post, panelInfo?: Panel, authorInfo?: User }) => {

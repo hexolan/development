@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { IconMessages, IconTableOff } from '@tabler/icons-react'
 import { Container, Stack, Paper, Title, Text, Anchor, Divider, ThemeIcon, Group } from '@mantine/core'
 
-import { useAppSelector } from '../app/hooks';
+import { useAppSelector } from '../app/hooks'
 
 const ExplorePanelsPage = () => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)

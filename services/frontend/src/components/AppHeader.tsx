@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { Header, Flex, Button, Group, Avatar, Text, Menu, createStyles } from '@mantine/core'
+import { Header, Flex, Button, Group, Avatar, Text, Menu } from '@mantine/core'
 import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
-import { useAppSelector, useAppDispatch } from '../app/hooks';
-import { setUnauthed } from '../app/features/auth';
+import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { setUnauthed } from '../app/features/auth'
 
 function AppHeader() {
   const currentUser = useAppSelector((state) => state.auth.currentUser)

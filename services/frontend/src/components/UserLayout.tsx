@@ -1,12 +1,12 @@
-import { Suspense } from 'react';
+import { Suspense } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Container, Box, Center, Paper, Flex, Avatar, Text, Tabs } from '@mantine/core'
 import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-react'
 
-import LoadingBar from './LoadingBar';
-import { User } from '../app/types/common';
-import { useGetUserByNameQuery } from '../app/api/users';
-import type { ErrorResponse } from '../app/types/api';
+import LoadingBar from './LoadingBar'
+import { User } from '../app/types/common'
+import { useGetUserByNameQuery } from '../app/api/users'
+import type { ErrorResponse } from '../app/types/api'
 
 export type UserContext = {
   user: User
