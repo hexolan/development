@@ -1,25 +1,12 @@
 import { Link } from 'react-router-dom'
-import { Header, Button, Group, Avatar, Text, Menu, createStyles } from '@mantine/core'
+import { Header, Flex, Button, Group, Avatar, Text, Menu, createStyles } from '@mantine/core'
 import { IconChevronDown, IconUserEdit, IconLogout } from '@tabler/icons-react'
 
 import panelsLogo from '../assets/logo.svg'
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { setUnauthed } from '../app/features/auth';
 
-const useStyles = createStyles({
-  header: {
-    padding: 20
-  },
-  headerContents: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: '100%',
-  }
-})
-
 function AppHeader() {
-  const { classes } = useStyles();
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   const dispatch = useAppDispatch();
 
@@ -28,8 +15,8 @@ function AppHeader() {
   }
 
   return (
-    <Header height={60} className={classes.header}>
-      <div className={classes.headerContents}>
+    <Header height={60} p={20}>
+      <Flex justify='space-between' align='center' h='100%'>
         <Link to='/'>
           <img src={panelsLogo} height={30} alt='Panels Logo' />
         </Link>
@@ -56,7 +43,7 @@ function AppHeader() {
             </Menu.Dropdown>
           </Menu>
         )}
-      </div>
+      </Flex>
     </Header>
   )
 }
