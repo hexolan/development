@@ -11,6 +11,7 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   const [modifying, setModifying] = useState(false)
+  const [editedMessage, setEditedMessage] = useState(comment.message)
 
   // fetching comment author info
   const { data } = useGetUserByIdQuery({ id: comment.authorId })
@@ -29,7 +30,7 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
           <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
           {modifying ? (
             <Box w='90%'>
-              <Textarea size='xs' w='100%' radius='lg' variant='filled' value={comment.message} />
+              <Textarea size='xs' w='100%' radius='lg' variant='filled' value={editedMessage} onChange={(event) => setEditedMessage(event.currentTarget.value)} />
             </Box>
           ) : (
             <Box>
