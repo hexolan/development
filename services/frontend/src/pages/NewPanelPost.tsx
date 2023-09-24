@@ -1,5 +1,5 @@
 import { useForm, hasLength } from '@mantine/form'
-import { Stack, Paper, Text, TextInput, Textarea, Button } from '@mantine/core'
+import { Stack, Paper, TextInput, Textarea, Button } from '@mantine/core'
 
 import { useAppSelector } from '../app/hooks'
 
@@ -16,16 +16,14 @@ const NewPanelPostPage = () => {
       content: '',
     },
     validate: {
-      title: hasLength({ min: 3, max: 20 }, 'Title must be between X and Y characters'),  // todo: change min and max
-      content: hasLength({ min: 3, max: 512 }, 'Content must be between X and Y characters'),  // todo: change min and max
+      title: hasLength({ min: 3, max: 512 }, 'Title must be between 3 and 512 characters'),
+      content: hasLength({ min: 3, max: 2048 }, 'Content must be between 3 and 2048 characters'),
     }
   })
 
   return (
     <Paper shadow='md' radius='md' p='lg' withBorder>
       <Stack>
-        <Text size='xl' weight={500} align='center'>New Post</Text>
-
         <form onSubmit={(values) => console.log(values)}>
           <TextInput 
             label='Title'

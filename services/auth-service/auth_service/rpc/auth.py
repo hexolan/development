@@ -78,6 +78,14 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             )
             return
 
+        if len(request.password) < 8:
+            self._apply_error(
+                context,
+                code=StatusCode.INVALID_ARGUMENT,
+                details="invalid password"
+            )
+            return
+
         # Attempt to authenticate the user
         try:
             token = await self._svc_repo.auth_with_password(request.user_id, request.password)
@@ -117,6 +125,14 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
                 details="password not provided"
+            )
+            return
+
+        if len(request.password) < 8:
+            self._apply_error(
+                context,
+                code=StatusCode.INVALID_ARGUMENT,
+                details="password must be at least 8 characters"
             )
             return
 

@@ -30,7 +30,7 @@ const SignUpPage = () => {
       confPassword: '',
     },
     validate: {
-      username: hasLength({ min: 3, max: 20 }, 'Username must be between 3 and 20 characters'),
+      username: hasLength({ min: 3, max: 32 }, 'Username must be between 3 and 32 characters'),
       password: hasLength({ min: 8 }, 'Password must have a minimum of 8 characters'),
       confPassword: matchesField('password', 'Confirmation password does not match'),
     }

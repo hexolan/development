@@ -24,8 +24,8 @@ function SignInPage() {
       password: '',
     },
     validate: {
-      username: hasLength({ min: 3, max: 20 }, 'Invalid username'),
-      password: hasLength({ min: 3 }, 'Invalid password'),
+      username: hasLength({ min: 3, max: 32 }, 'Invalid username'),
+      password: hasLength({ min: 8 }, 'Invalid password'),
     }
   })
 
