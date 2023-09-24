@@ -205,6 +205,41 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
 
         return empty_pb2.Empty()
 
+    async def GetComment(self, request: comment_pb2.GetCommentRequest, context: RpcContext) -> comment_pb2.PostComments:
+        """GetComment RPC Call
+        
+        Returns a comment by comment id.
+
+        Args:
+            request (comment_pb2.GetCommentRequest): The request parameters.
+            context (grpc.RpcContext): The context of the RPC call.
+
+        Returns:
+            comment_pb2.Comment: The located comment
+
+        """
+        # vaLidate the request inputs
+        if request.id == "":
+            self._apply_error(
+                context,
+                code=StatusCode.INVALID_ARGUMENT,
+                msg="comment id not provided"
+            )
+            return
+        
+        # attempt to get the comment
+        try:
+            comment = await self._svc_repo.get_comment(request.id)
+        except ServiceException as err:
+            err.apply_to_rpc(context)
+            return
+        except Exception:
+            logging.error(traceback.format_exc())
+            self._apply_unknown_error(context)
+            return
+
+        return comment
+
     async def GetPostComments(self, request: comment_pb2.GetPostCommentsRequest, context: RpcContext) -> comment_pb2.PostComments:
         """GetPostComments RPC Call
         

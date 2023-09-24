@@ -62,6 +62,14 @@ class DeleteCommentRequest(_message.Message):
     def __init__(self, id: _Optional[str]=...) -> None:
         ...
 
+class GetCommentRequest(_message.Message):
+    __slots__ = ['id']
+    ID_FIELD_NUMBER: _ClassVar[int]
+    id: str
+
+    def __init__(self, id: _Optional[str]=...) -> None:
+        ...
+
 class GetPostCommentsRequest(_message.Message):
     __slots__ = ['post_id']
     POST_ID_FIELD_NUMBER: _ClassVar[int]

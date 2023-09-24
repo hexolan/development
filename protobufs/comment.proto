@@ -10,6 +10,7 @@ service CommentService {
     rpc UpdateComment(UpdateCommentRequest) returns (Comment) {}
     rpc DeleteComment(DeleteCommentRequest) returns (google.protobuf.Empty) {}
     
+    rpc GetComment(GetCommentRequest) returns (Comment) {}
     rpc GetPostComments(GetPostCommentsRequest) returns (PostComments) {}
 }
 
@@ -41,6 +42,10 @@ message UpdateCommentRequest {
 }
 
 message DeleteCommentRequest {
+    string id = 1;
+}
+
+message GetCommentRequest {
     string id = 1;
 }
 

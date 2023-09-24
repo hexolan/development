@@ -73,6 +73,9 @@ class CommentUpdate(BaseModel):
 
 # Repository Interfaces
 class CommentRepository:
+    async def get_comment(self, comment_id: int) -> Comment:
+        raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
+
     async def get_post_comments(self, post_id: str) -> List[Comment]:
         raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
     
@@ -87,9 +90,6 @@ class CommentRepository:
 
 
 class CommentDBRepository(CommentRepository):
-    async def get_comment(self, comment_id: int) -> Comment:
-        raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
-
     async def delete_post_comments(self, post_id: str) -> None:
         raise ServiceException("unimplemented internal repository method", ServiceErrorCode.SERVICE_ERROR)
     

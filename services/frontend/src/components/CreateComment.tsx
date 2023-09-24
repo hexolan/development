@@ -36,7 +36,7 @@ const CreateComment = ({ post, addNewComment }: { post: Post, addNewComment: (co
       message: '',
     },
     validate: {
-      message: hasLength({ min: 3, max: 2048 }, 'Message must be between 3 and 2048 characters'),
+      message: hasLength({ min: 3, max: 512 }, 'Message must be between 3 and 512 characters'),
     }
   })
 
