@@ -4,11 +4,11 @@ import type { Comment } from './common';
 import type { RawResponse, RawTimestamp } from './api';
 
 // Request Data
-type CreateCommentData = {
+export type CreateCommentData = {
   message: string;
 }
 
-type UpdateCommentData = Partial<CreateCommentData>
+export type UpdateCommentData = Partial<CreateCommentData>
 
 // API Request Paramaters
 export type GetPostCommentsRequest = {

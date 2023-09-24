@@ -65,7 +65,7 @@ function SignInPage() {
               label='Username'
               placeholder='Your username'
               {...loginForm.getInputProps('username')}
-              />
+            />
             <PasswordInput 
               label='Password' 
               placeholder='Your password' 

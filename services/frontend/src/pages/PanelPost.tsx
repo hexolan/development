@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
-import { Divider } from '@mantine/core'
+import { Box, Stack, Divider } from '@mantine/core'
 
 import PagePost from '../components/PagePost'
+import CommentsFeed from '../components/CommentsFeed'
 import PostComments from '../components/PostComments'
 import CreateComment from '../components/CreateComment'
 import LoadingBar from '../components/LoadingBar'
@@ -9,6 +11,7 @@ import { useAppSelector } from '../app/hooks'
 import { useGetPanelPostQuery } from '../app/api/posts'
 import type { PanelContext } from '../components/PanelLayout'
 import type { ErrorResponse } from '../app/types/api'
+import type { Comment } from '../app/types/common'
 
 type PanelPostPageParams = {
   panelName: string;
@@ -19,6 +22,11 @@ function PanelPostPage() {
   const { panel } = useOutletContext<PanelContext>()
   const { postId } = useParams<PanelPostPageParams>();
   if (postId === undefined) { throw Error('post id not provided') }
+
+  const [newComments, setNewComments] = useState<Comment[]>([])
+  const addNewComment = (comment: Comment) => {
+    setNewComments(newComments.concat([comment]))
+  }
 
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
@@ -42,12 +50,15 @@ function PanelPostPage() {
   }
 
   return (
-    <>
+    <Box mb='lg'>
       <PagePost post={data} />
       <Divider my='xl' variant='none' />
-      { currentUser && <CreateComment post={data} /> }
-      <PostComments post={data} />
-    </>
+      <Stack spacing='sm'>
+        { currentUser && <CreateComment post={data} addNewComment={addNewComment} /> }
+        <CommentsFeed comments={newComments} />
+        <PostComments post={data} />
+      </Stack>
+    </Box>
   )
 }
 

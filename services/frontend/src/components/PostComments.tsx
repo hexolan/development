@@ -1,6 +1,6 @@
-import { Stack, Center, Loader, Text } from '@mantine/core'
+import { Center, Loader, Text } from '@mantine/core'
 
-import Comment from './Comment'
+import CommentsFeed from './CommentsFeed'
 import { useGetPostCommentsQuery } from '../app/api/comments'
 import type { Post } from '../app/types/common'
 
@@ -20,13 +20,7 @@ function PostComments({ post }: { post: Post }) {
     return null
   }
 
-  return (
-    <Stack mb='lg' spacing='sm'>
-      {Object.values(data).map(comment => {
-        return <Comment key={comment.id} comment={comment} />
-      })}
-    </Stack>
-  )
+  return <CommentsFeed comments={data} />
 }
 
 export default PostComments
