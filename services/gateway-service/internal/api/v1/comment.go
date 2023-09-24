@@ -14,7 +14,7 @@ import (
 func getComment(id string) (*commentv1.Comment, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	comment, err := rpc.Svcs.GetUserSvc().GetUser(
+	comment, err := rpc.Svcs.GetCommentSvc().GetComment(
 		ctx,
 		&commentv1.GetCommentRequest{Id: id},
 	)
@@ -94,7 +94,7 @@ func DeleteComment(c *fiber.Ctx) error {
 	// Delete the comment
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetCommentSvc().DeleteComment(
+	_, err = rpc.Svcs.GetCommentSvc().DeleteComment(
 		ctx,
 		&commentv1.DeleteCommentRequest{Id: c.Params("id")},
 	)
