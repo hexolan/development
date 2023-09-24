@@ -6,17 +6,19 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class User(_message.Message):
-    __slots__ = ['id', 'username', 'created_at', 'updated_at']
+    __slots__ = ['id', 'username', 'is_admin', 'created_at', 'updated_at']
     ID_FIELD_NUMBER: _ClassVar[int]
     USERNAME_FIELD_NUMBER: _ClassVar[int]
+    IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     UPDATED_AT_FIELD_NUMBER: _ClassVar[int]
     id: str
     username: str
+    is_admin: bool
     created_at: _timestamp_pb2.Timestamp
     updated_at: _timestamp_pb2.Timestamp
 
-    def __init__(self, id: _Optional[str]=..., username: _Optional[str]=..., created_at: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]]=..., updated_at: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]]=...) -> None:
+    def __init__(self, id: _Optional[str]=..., username: _Optional[str]=..., is_admin: bool=..., created_at: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]]=..., updated_at: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]]=...) -> None:
         ...
 
 class UserMutable(_message.Message):

@@ -44,6 +44,7 @@ export type Comment = {
 export type User = {
   id: string;
   username: string;
+  isAdmin: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
