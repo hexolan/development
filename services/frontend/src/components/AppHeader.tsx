@@ -22,14 +22,14 @@ function AppHeader() {
         </Link>
         {!currentUser ? (
           <Button color='teal' component={Link} to='/signin'>Sign In</Button>
-        ):(
+        ) : (
           <Menu>
             <Menu.Target>
               <Button color='teal' variant='outline'>
                 <Group spacing={7}>
                   <Avatar color='teal' radius='xl' size={25} />
                   <Text weight={500} size='sm' sx={{ lineHeight: 1 }} mr={3}>
-                    {currentUser?.username}
+                    {currentUser.username}
                   </Text>
                   <IconChevronDown size={20} />
                 </Group>
