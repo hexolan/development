@@ -66,7 +66,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="user not provided"
+                msg="user not provided"
             )
             return
 
@@ -74,7 +74,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="password not provided"
+                msg="password not provided"
             )
             return
 
@@ -82,7 +82,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="invalid password"
+                msg="invalid password"
             )
             return
 
@@ -116,7 +116,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="user id not provided"
+                msg="user id not provided"
             )
             return
         
@@ -124,7 +124,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="password not provided"
+                msg="password not provided"
             )
             return
 
@@ -132,7 +132,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="password must be at least 8 characters"
+                msg="password must be at least 8 characters"
             )
             return
 
@@ -166,7 +166,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             self._apply_error(
                 context,
                 code=StatusCode.INVALID_ARGUMENT,
-                details="user id not provided"
+                msg="user id not provided"
             )
             return
         
