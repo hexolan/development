@@ -10,8 +10,7 @@ import type { Comment } from "../app/types/common"
 const FeedComment = ({ comment }: { comment: Comment }) => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
-  const [modifying, setModifying] = useState(false)
-  const [editedMessage, setEditedMessage] = useState(comment.message)
+  const [editedMessage, setEditedMessage] = useState<string | undefined>(undefined)
 
   // fetching comment author info
   const { data } = useGetUserByIdQuery({ id: comment.authorId })
@@ -28,7 +27,7 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
       <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
         <Group w='100%'>
           <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
-          {modifying ? (
+          {editedMessage ? (
             <Box w='90%'>
               <Textarea size='xs' w='100%' radius='lg' variant='filled' value={editedMessage} onChange={(event) => setEditedMessage(event.currentTarget.value)} />
             </Box>
@@ -47,8 +46,8 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
             <Menu.Dropdown>
               <Menu.Label>Comment Options</Menu.Label>
               {currentUser.id == comment.authorId && (
-                modifying ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setModifying(false)}>Stop Modifying</Menu.Item>
-                : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
+                editedMessage ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setEditedMessage(undefined)}>Stop Modifying</Menu.Item>
+                : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setEditedMessage(comment.message)}>Modify</Menu.Item>
               )}
               <Menu.Item color='red' icon={<IconTrash size={14} />}>Delete</Menu.Item>
             </Menu.Dropdown>
