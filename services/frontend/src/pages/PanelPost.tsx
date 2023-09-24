@@ -25,7 +25,7 @@ function PanelPostPage() {
 
   const [newComments, setNewComments] = useState<Comment[]>([])
   const addNewComment = (comment: Comment) => {
-    setNewComments(newComments.concat([comment]))
+    setNewComments([comment].concat(newComments))
   }
 
   const currentUser = useAppSelector((state) => state.auth.currentUser)
