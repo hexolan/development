@@ -11,6 +11,17 @@ import (
 	"github.com/hexolan/panels/gateway-service/internal/rpc/commentv1"
 )
 
+func getComment(id string) (*commentv1.Comment, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	comment, err := rpc.Svcs.GetUserSvc().GetUser(
+		ctx,
+		&commentv1.GetCommentRequest{Id: id},
+	)
+
+	return comment, err
+}
+
 func GetPostComments(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -26,7 +37,20 @@ func GetPostComments(c *fiber.Ctx) error {
 }
 
 func UpdateComment(c *fiber.Ctx) error {
-	// todo: check if user has permissions to update the comment
+	// check if user has permissions to update the comment
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+
+	comment, err := getComment(c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	if (comment.AuthorId != currentUser.Id) {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to update that comment")
+	}
 
 	// Parse the body data
 	updatedComment := new(commentv1.CommentMutable)
@@ -37,7 +61,7 @@ func UpdateComment(c *fiber.Ctx) error {
 	// Update the comment
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	comment, err := rpc.Svcs.GetCommentSvc().UpdateComment(
+	comment, err = rpc.Svcs.GetCommentSvc().UpdateComment(
 		ctx,
 		&commentv1.UpdateCommentRequest{
 			Id: c.Params("id"),
@@ -52,8 +76,22 @@ func UpdateComment(c *fiber.Ctx) error {
 }
 
 func DeleteComment(c *fiber.Ctx) error {
-	// todo: check if user has permissions to delete the comment
+	// check if user has permissions to delete the comment
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	comment, err := getComment(c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	if (comment.AuthorId != currentUser.Id && !currentUser.IsAdmin) {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to delete that comment")
+	}
+
+	// Delete the comment
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := rpc.Svcs.GetCommentSvc().DeleteComment(
