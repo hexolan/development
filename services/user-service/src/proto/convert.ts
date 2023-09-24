@@ -12,7 +12,7 @@ export function userToProtoUser(user: IUser): ProtoUser {
   return new ProtoUser({
     id: user._id.toString(),
     username: user.username,
-    isAdmin: user.isAdmin,
+    isAdmin: (user.isAdmin ? user.isAdmin : false),
     createdAt: timeToProtoTimestamp(user.createdAt),
     updatedAt: timeToProtoTimestamp(user.updatedAt)
   });
