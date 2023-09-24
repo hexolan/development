@@ -20,7 +20,7 @@ function PanelPostFeed({ panel }: { panel: Panel }) {
   return (
     <>
       {Object.values(data).map(post => {
-        return <FeedPost key={post.id} post={post} panelInfo={panel} />
+        return <FeedPost key={post.id} post={post} hidePanel={true} />
       })}
     </>
   )

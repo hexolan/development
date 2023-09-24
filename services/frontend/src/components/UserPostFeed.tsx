@@ -20,7 +20,7 @@ function UserPostFeed({ user }: { user: User }) {
   return (
     <>
       {Object.values(data).map(post => {
-        return <FeedPost key={post.id} post={post} authorInfo={user} />
+        return <FeedPost key={post.id} post={post} hideAuthor={true} />
       })}
     </>
   )
