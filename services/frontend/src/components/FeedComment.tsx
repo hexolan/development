@@ -3,7 +3,7 @@ import { IconMessage } from '@tabler/icons-react'
 
 import type { Comment } from "../app/types/common"
 
-const CommentComponent = ({ comment }: { comment: Comment }) => (
+const FeedComment = ({ comment }: { comment: Comment }) => (
   // todo: fetching comment author
   <Paper shadow='sm' radius='md' p='md' withBorder>
     <Group>
@@ -16,4 +16,4 @@ const CommentComponent = ({ comment }: { comment: Comment }) => (
   </Paper>
 )
 
-export default CommentComponent
+export default FeedComment

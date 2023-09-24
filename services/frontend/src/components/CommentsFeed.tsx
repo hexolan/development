@@ -1,13 +1,13 @@
 import { Stack } from '@mantine/core'
 
-import CommentComponent from './Comment'
+import FeedComment from './FeedComment'
 import type { Comment } from '../app/types/common'
 
 function CommentsFeed({ comments }: { comments: Comment[] }) {
   return (
     <Stack spacing='sm'>
       {Object.values(comments).map(comment => {
-        return <CommentComponent key={comment.id} comment={comment} />
+        return <FeedComment key={comment.id} comment={comment} />
       })}
     </Stack>
   )
