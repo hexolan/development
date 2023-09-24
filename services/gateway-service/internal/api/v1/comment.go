@@ -26,13 +26,13 @@ func GetPostComments(c *fiber.Ctx) error {
 }
 
 func UpdateComment(c *fiber.Ctx) error {
+	// todo: check if user has permissions to update the comment
+
 	// Parse the body data
 	updatedComment := new(commentv1.CommentMutable)
 	if err := c.BodyParser(updatedComment); err != nil {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
 	}
-
-	// todo: check user can update comment
 
 	// Update the comment
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -52,7 +52,7 @@ func UpdateComment(c *fiber.Ctx) error {
 }
 
 func DeleteComment(c *fiber.Ctx) error {
-	// todo: check user can delete comment
+	// todo: check if user has permissions to delete the comment
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()

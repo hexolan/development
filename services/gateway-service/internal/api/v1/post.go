@@ -144,16 +144,31 @@ func GetPanelPostsFromName(c *fiber.Ctx) error {
 }
 
 func UpdatePost(c *fiber.Ctx) error {
-	// todo: check permissions to update the post
+	// check if user has permissions to update the post
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	post, err := getPostById(c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	if (post.AuthorId != currentUser.Id) {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to update that post")
+	}
+
+	// form patch data for update request
 	patchData := new(postv1.PostMutable)
 	if err := c.BodyParser(patchData); err != nil {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
 	}
 
+	// update the post
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	post, err := rpc.Svcs.GetPostSvc().UpdatePost(
+	post, err = rpc.Svcs.GetPostSvc().UpdatePost(
 		ctx,
 		&postv1.UpdatePostRequest{Id: c.Params("id"), Data: patchData},
 	)
@@ -165,11 +180,25 @@ func UpdatePost(c *fiber.Ctx) error {
 }
 
 func DeletePost(c *fiber.Ctx) error {
-	// todo: check permissions to delete the post
+	// check if user has permissions to delete the post
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+
+	post, err := getPostById(c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	if (post.AuthorId != currentUser.Id && !currentUser.IsAdmin) {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to delete that post")
+	}
 	
+	// delete the post
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetPostSvc().DeletePost(
+	_, err = rpc.Svcs.GetPostSvc().DeletePost(
 		ctx,
 		&postv1.DeletePostRequest{Id: c.Params("id")},
 	)

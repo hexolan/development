@@ -16,6 +16,17 @@ type userSignupForm struct {
 	Password string
 }
 
+func getCurrentUser(c *fiber.Ctx) (*userv1.User, error) {
+	// access token claims
+	tokenClaims, err := handlers.GetTokenClaims(c)
+	if err != nil {
+		return nil, err
+	}
+
+	// fetch current user
+	return getUserById(tokenClaims.Subject)
+}
+
 func getUserById(id string) (*userv1.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -57,19 +68,7 @@ func GetUserByUsername(c *fiber.Ctx) error {
 }
 
 func GetCurrentUser(c *fiber.Ctx) error {
-	// access token claims
-	tokenClaims, err := handlers.GetTokenClaims(c)
-	if err != nil {
-		return err
-	}
-
-	// make RPC call
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	user, err := rpc.Svcs.GetUserSvc().GetUser(
-		ctx,
-		&userv1.GetUserByIdRequest{Id: tokenClaims.Subject},
-	)
+	user, err := getCurrentUser(c)
 	if err != nil {
 		return err
 	}
@@ -78,11 +77,21 @@ func GetCurrentUser(c *fiber.Ctx) error {
 }
 
 func DeleteUserById(c *fiber.Ctx) error {
-	// todo: check permissions to delete user
+	// get current user info
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+
+	// check current user has permission to delete user
+	if currentUser.Id != c.Params("id") && !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to delete that user")
+	}
 	
+	// delete the user
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetUserSvc().DeleteUser(
+	_, err = rpc.Svcs.GetUserSvc().DeleteUser(
 		ctx,
 		&userv1.DeleteUserByIdRequest{Id: c.Params("id")},
 	)
@@ -94,11 +103,21 @@ func DeleteUserById(c *fiber.Ctx) error {
 }
 
 func DeleteUserByUsername(c *fiber.Ctx) error {
-	// todo: check permissions to delete user
+	// get current user info
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+
+	// check current user has permission to delete user
+	if currentUser.Id != c.Params("id") && !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to delete that user")
+	}
 	
+	// delete the user
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetUserSvc().DeleteUserByName(
+	_, err = rpc.Svcs.GetUserSvc().DeleteUserByName(
 		ctx,
 		&userv1.DeleteUserByNameRequest{Username: c.Params("username")},
 	)

@@ -57,8 +57,19 @@ func GetPanelByName(c *fiber.Ctx) error {
 }
 
 func UpdatePanelById(c *fiber.Ctx) error {
-	// todo: check user can update panels
+	// check user can update panels
+	// todo: implement panel 'managers' feature (probably at the same time as moving this logic out of the gateway service)
+	//	currently only 'admin' users can delete/update panels
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	if !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to update that panel")
+	}
+
+	// update the panel
 	patchData := new(panelv1.PanelMutable)
 	if err := c.BodyParser(patchData); err != nil {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
@@ -78,8 +89,17 @@ func UpdatePanelById(c *fiber.Ctx) error {
 }
 
 func UpdatePanelByName(c *fiber.Ctx) error {
-	// todo: check user can update panels
+	// check user can update panels
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	if !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to update that panel")
+	}
+
+	// update the panel
 	patchData := new(panelv1.PanelMutable)
 	if err := c.BodyParser(patchData); err != nil {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
@@ -99,11 +119,20 @@ func UpdatePanelByName(c *fiber.Ctx) error {
 }
 
 func DeletePanelById(c *fiber.Ctx) error {
-	// todo: check user can delete panels
+	// check user can delete panels
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	if !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to delete that panel")
+	}
+
+	// delete the panel
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetPanelSvc().DeletePanel(
+	_, err = rpc.Svcs.GetPanelSvc().DeletePanel(
 		ctx,
 		&panelv1.DeletePanelByIdRequest{Id: c.Params("id")},
 	)
@@ -115,11 +144,20 @@ func DeletePanelById(c *fiber.Ctx) error {
 }
 
 func DeletePanelByName(c *fiber.Ctx) error {
-	// todo: check user can delete panels
+	// check user can delete panels
+	currentUser, err := getCurrentUser(c)
+	if err != nil {
+		return err
+	}
 
+	if !currentUser.IsAdmin {
+		return fiber.NewError(fiber.StatusForbidden, "no permissions to update that panel")
+	}
+
+	// delete the panel
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	_, err := rpc.Svcs.GetPanelSvc().DeletePanelByName(
+	_, err = rpc.Svcs.GetPanelSvc().DeletePanelByName(
 		ctx,
 		&panelv1.DeletePanelByNameRequest{Name: c.Params("name")},
 	)
@@ -131,8 +169,6 @@ func DeletePanelByName(c *fiber.Ctx) error {
 }
 
 func CreatePanel(c *fiber.Ctx) error {
-	// todo: check user can create panels
-
 	newPanel := new(panelv1.PanelMutable)
 	if err := c.BodyParser(newPanel); err != nil {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
