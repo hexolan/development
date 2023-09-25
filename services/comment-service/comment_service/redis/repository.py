@@ -31,6 +31,9 @@ class ServiceRedisRepository(CommentRepository):
         except Exception:
             pass
 
+    async def get_comment(self, comment_id: str) -> Comment:
+        return await self._repo.get_comment(comment_id)
+
     async def get_post_comments(self, post_id: str) -> List[Comment]:
         post_id = post_id.lower()
 

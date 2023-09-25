@@ -1,16 +1,51 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useForm, hasLength } from '@mantine/form'
 import { Paper, Group, Box, ThemeIcon, Text, ActionIcon, Menu, Textarea, Flex } from '@mantine/core'
 import { IconMessage, IconMenu2, IconTrash, IconPencil, IconPencilCancel } from '@tabler/icons-react'
 
 import { useAppSelector } from '../app/hooks'
 import { useGetUserByIdQuery } from '../app/api/users'
+import { useUpdatePostCommentMutation } from '../app/api/comments'
 import type { Comment } from "../app/types/common"
+import type { UpdateCommentData } from '../app/types/comments'
 
 const FeedComment = ({ comment }: { comment: Comment }) => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
-  const [editedMessage, setEditedMessage] = useState<string | undefined>(undefined)
+  const [modifying, setModifying] = useState<boolean>(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const commentForm = useForm<UpdateCommentData>({
+    initialValues: {
+      message: comment.message,
+    },
+    validate: {
+      message: hasLength({ min: 3, max: 512 }, 'Message must be between 3 and 512 characters'),
+    }
+  })
+  
+  const [updateComment, { isLoading }] = useUpdatePostCommentMutation()
+  const submitCommentForm = async (values: UpdateCommentData) => {
+    const commentInfo = await updateComment({
+      id: comment.id,
+      postId: comment.postId,
+      data: values
+    }).unwrap().catch(
+      (error) => {
+        if (!error.data) {
+          setErrorMsg('Failed to access the API')
+        } else {
+          setErrorMsg(error.data.msg)
+        }
+      }
+    )
+
+    // display the updated comment
+    if (commentInfo) {
+      comment = commentInfo
+      setModifying(false)
+    }
+  }
 
   // fetching comment author info
   const { data } = useGetUserByIdQuery({ id: comment.authorId })
@@ -27,9 +62,14 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
       <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
         <Group w='100%'>
           <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
-          {editedMessage ? (
+          {modifying ? (
             <Box w='90%'>
-              <Textarea size='xs' w='100%' radius='lg' variant='filled' value={editedMessage} onChange={(event) => setEditedMessage(event.currentTarget.value)} />
+              <form onSubmit={commentForm.onSubmit(submitCommentForm)}>
+                <Textarea size='xs' w='100%' radius='lg' variant='filled' error={errorMsg} {...commentForm.getInputProps('message')} />
+                <ActionIcon type='submit' radius='lg' color='teal' variant='outline' size='xl' aria-label='Update Comment' disabled={isLoading}>
+                  <IconPencil />
+                </ActionIcon>
+              </form>
             </Box>
           ) : (
             <Box>
@@ -46,8 +86,8 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
             <Menu.Dropdown>
               <Menu.Label>Comment Options</Menu.Label>
               {currentUser.id == comment.authorId && (
-                editedMessage ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setEditedMessage(undefined)}>Stop Modifying</Menu.Item>
-                : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setEditedMessage(comment.message)}>Modify</Menu.Item>
+                modifying ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setModifying(false)}>Stop Modifying</Menu.Item>
+                : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
               )}
               <Menu.Item color='red' icon={<IconTrash size={14} />}>Delete</Menu.Item>
             </Menu.Dropdown>
