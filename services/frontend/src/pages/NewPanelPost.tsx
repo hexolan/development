@@ -39,7 +39,7 @@ const NewPanelPostPage = () => {
 
     // redirect to post page if post was created
     if (postInfo) {
-      navigate(`/panel/${panel.name}/posts/${postInfo.id}`)
+      navigate(`/panel/${panel.name}/post/${postInfo.id}`)
     }
   }
 
