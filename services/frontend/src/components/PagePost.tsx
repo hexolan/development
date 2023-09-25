@@ -19,6 +19,7 @@ const ModifyPostForm = ({
   setPost: React.Dispatch<Post>,
   setModifying: React.Dispatch<boolean>
 }) => {
+  const [errorMsg, setErrorMsg] = useState('')
   const updatePostForm = useForm<UpdatePostData>({
     initialValues: {
       title: post.title,
@@ -36,10 +37,15 @@ const ModifyPostForm = ({
       id: post.id,
       data: values
     }).unwrap().then((postInfo) => {
+      setErrorMsg('')
       setPost(postInfo)
       setModifying(false)
     }).catch((error) => {
-      console.log(error)  // todo: error handling
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
     })
   }
 
@@ -58,6 +64,8 @@ const ModifyPostForm = ({
           {...updatePostForm.getInputProps('content')}
         />
 
+        {errorMsg && <Text color='red' align='center'>{'Error: ' + errorMsg}</Text>}
+
         <Button type='submit' variant='outline' color='teal' disabled={isLoading} fullWidth>
           Update Post
         </Button>
@@ -73,12 +81,16 @@ const PagePostItem = ({ post, setPost }: { post: Post, setPost: React.Dispatch<P
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   
   const [deletePost] = useDeletePostMutation()
+  const [errorMsg, setErrorMsg] = useState('')
   const submitDeletePost = async () => {
-    // todo: change type to just take id: (to auto invalidate post by id - or experiment with RTK query tags)
     await deletePost({ id: post.id }).unwrap().then(() => {
       navigate('/')
     }).catch((error) => {
-      console.log(error)  // todo: error handling
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
     })
   }
   
@@ -127,6 +139,8 @@ const PagePostItem = ({ post, setPost }: { post: Post, setPost: React.Dispatch<P
           <Text size='xs' color='dimmed' mt={3}>Created {post.createdAt}</Text>
         </Stack>
       )}
+
+      {errorMsg && <Text color='red' align='center' size='xs' mt='md'>{'Error: ' + errorMsg}</Text>}
     </Paper>
   )
 }
