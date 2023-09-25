@@ -47,24 +47,20 @@ const ModifiableFeedComment = ({ comment, authorElement, setSelf, isAuthor }: { 
 
   const [updateComment, { isLoading }] = useUpdatePostCommentMutation()
   const submitUpdateComment = async (values: UpdateCommentData) => {
-    const commentInfo = await updateComment({
+    await updateComment({
       id: comment.id,
       postId: comment.postId,
       data: values
-    }).unwrap().catch(
-      (error) => {
-        if (!error.data) {
-          setErrorMsg('Failed to access the API')
-        } else {
-          setErrorMsg(error.data.msg)
-        }
-      }
-    )
-    // display the updated comment
-    if (commentInfo) {
+    }).unwrap().then((commentInfo) => {
       setSelf(commentInfo)
       setModifying(false)
-    }
+    }).catch((error) => {
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
+    })
   }
   
   const [deleteComment] = useDeletePostCommentMutation()

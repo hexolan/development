@@ -10,10 +10,8 @@ function HomePostFeed() {
     return <SkeletonPostFeed />
   } else if (!data) {
     return <Text align='center' color='red'>Failed to Load Posts</Text>
-  }
-
-  // Check that there are posts.
-  if (!data.length) {
+  } else if (!data.length) {
+    // Check that there are posts.
     return <Text align='center'>No Posts Found!</Text>
   }
 

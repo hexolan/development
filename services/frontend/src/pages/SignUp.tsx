@@ -38,22 +38,19 @@ const SignUpPage = () => {
 
   const [registerUser, { isLoading }] = useRegisterUserMutation()
   const submitRegistrationForm = async (values: RegistrationFormValues) => {
-    const req = {username: values.username, password: values.password}
-    const authInfo = await registerUser(req).unwrap().catch(
-      (error) => {
-        if (!error.data) {
-          setErrorMsg('Failed to access the API')
-        } else {
-          setErrorMsg(error.data.msg)
-        }
-      }
-    )
-
-    // Check if authentication was succesful.
-    if (authInfo) {
+    await registerUser({
+      username: values.username,
+      password: values.password
+    }).unwrap().then(() => {
       // Redirect to homepage.
       navigate('/')
-    }
+    }).catch((error) => {
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
+    })
   }
 
   return (

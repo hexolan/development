@@ -8,10 +8,12 @@ import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boolean, hideAuthor?: boolean }) => {
   // fetch panel info
-  let panelElement: React.ReactNode = <Skeleton height={8} mt={6} width='20%' radius='xl' />
-  const { data: panelData } = useGetPanelByIdQuery({ id: post.panelId })
+  let panelElement: React.ReactNode = null
+  const { data: panelData, isLoading: panelIsLoading } = useGetPanelByIdQuery({ id: post.panelId })
   if (!hidePanel) {
-    if (!panelData) {
+    if (panelIsLoading) {
+      panelElement = <Skeleton height={8} mt={6} width='20%' radius='xl' />
+    } else if (!panelData) {
       panelElement = <Text color='red' size='xs'>Error Loading Panel Data</Text>
     } else {
       panelElement = (
@@ -30,15 +32,15 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
         </Badge>
       )
     }
-  } else {
-    panelElement = null
   }
   
   // fetch author info
-  let authorElement: React.ReactNode = <Skeleton height={8} mt={6} width='20%' radius='xl' />
-  const { data: authorData } = useGetUserByIdQuery({ id: post.authorId })
+  let authorElement: React.ReactNode = null
+  const { data: authorData, isLoading: authorIsLoading } = useGetUserByIdQuery({ id: post.authorId })
   if (!hideAuthor) {
-    if (!authorData) {
+    if (authorIsLoading) {
+      authorElement = <Skeleton height={8} mt={6} width='20%' radius='xl' />
+    } else if (!authorData) {
       authorElement = <Text color='red' size='xs'>Error Loading Author Data</Text>
     } else {
       authorElement = (
@@ -57,8 +59,6 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
         </Badge>
       )
     }
-  } else {
-    authorElement = null
   }
 
   return (

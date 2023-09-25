@@ -11,10 +11,8 @@ function PanelPostFeed({ panel }: { panel: Panel }) {
     return <SkeletonPostFeed />
   } else if (!data) {
     return <Text align='center'>Failed to Load Posts</Text>
-  }
-
-  // Check that there are posts.
-  if (!data.length) {
+  } else if (!data.length) {
+    // Check that there are posts.
     return <Text align='center'>No Posts Found!</Text>
   }
 

@@ -32,11 +32,11 @@ const ExplorePanelsPage = () => {
         <Paper shadow='xl' radius='md' p='md' withBorder component='a' href='https://github.com/hexolan/Panels/'>
           <Group>
             <ThemeIcon color='red' variant='light' size='xl'><IconTableOff /></ThemeIcon>
-            <div>
+            <Box>
               <Text weight={600}>Note</Text>
               <Text>This page is exemplary as this feature is currently unimplemented.</Text>
               <Text color='dimmed' size='xs' mt={3}>Planned Functionality</Text>
-            </div>
+            </Box>
           </Group>
         </Paper>
       </Stack>

@@ -32,21 +32,16 @@ function SignInPage() {
   const [login, { isLoading }] = useLoginMutation()
   const submitLoginForm = async (values: LoginRequest) => {
     // Attempt to authenticate the user.
-    const authInfo = await login(values).unwrap().catch(
-      (error) => {
-        if (!error.data) {
-          setErrorMsg('Failed to access the API')
-        } else {
-          setErrorMsg(error.data.msg)
-        }
-      }
-    )
-
-    // Check if authentication was succesful.
-    if (authInfo) {
+    await login(values).unwrap().then(() => {
       // Redirect to homepage.
       navigate('/')
-    }
+    }).catch((error) => {
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
+    })
   }
 
   return (

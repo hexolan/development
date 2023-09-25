@@ -14,9 +14,7 @@ function PostCommentsFeed({ post }: { post: Post }) {
     )
   } else if (!data) {
     return <Text color='red' align='center'>Failed to Load Comments</Text>
-  }
-
-  if (!data.length) {
+  } else if (!data.length) {
     return null
   }
 
