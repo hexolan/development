@@ -12,12 +12,14 @@ import type { UpdateCommentData } from '../app/types/comments'
 
 const FeedCommentBase = ({ children, extraChildren }: { children: React.ReactNode, extraChildren?: React.ReactNode }) => (
   <Paper shadow='sm' radius='md' p='md' withBorder>
-    <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
-      <Group w='100%'>
-        <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
-        {children}
-      </Group>
+    <Flex gap='sm' w='100%' align='center' direction='row' wrap='nowrap'>
+      <Group w='100%' position='apart'>
+        <Group>
+          <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
+          {children}
+        </Group>
       {extraChildren}
+      </Group>
     </Flex>
   </Paper>
 )
@@ -100,14 +102,14 @@ const ModifiableFeedComment = ({ comment, authorElement, setSelf, isAuthor }: { 
       }
     >
       {modifying ? (
-        <Box w='90%'>
-          <form onSubmit={commentForm.onSubmit(submitUpdateComment)}>
+        <form onSubmit={commentForm.onSubmit(submitUpdateComment)}>
+          <Flex>
             <Textarea size='xs' w='100%' radius='lg' variant='filled' error={errorMsg} {...commentForm.getInputProps('message')} />
             <ActionIcon type='submit' radius='lg' color='teal' variant='outline' size='xl' aria-label='Update Comment' disabled={isLoading}>
               <IconPencil />
             </ActionIcon>
-          </form>
-        </Box>
+          </Flex>
+        </form>
       ) : (
         <Box>
           <Text size='sm'>{comment.message}</Text>
@@ -122,9 +124,11 @@ const FeedCommentItem = ({ comment, setSelf }: { comment: Comment, setSelf: Reac
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   // fetching comment author info
-  const { data } = useGetUserByIdQuery({ id: comment.authorId })
-  let authorElement = <Text color='dimmed' size='xs'>Loading Author Info...</Text>
-  if (!data) {
+  const { data, isLoading } = useGetUserByIdQuery({ id: comment.authorId })
+  let authorElement = null
+  if (isLoading) {
+    authorElement = <Text color='dimmed' size='xs'>Loading Author Info...</Text>
+  } else if (!data) {
     authorElement = <Text color='red' size='xs'>Failed to load Author Info</Text>
   } else {
     authorElement = <Text color='dimmed' size='xs' mt={3} component={Link} to={`/user/${data.username}`}>by user/{data.username}</Text>
