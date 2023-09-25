@@ -22,7 +22,6 @@ function PanelLayout() {
     throw Error('panel name not provided')
   }
   
-  let newPostButton = null
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   const { data, error, isLoading } = useGetPanelByNameQuery({ name: panelName })
   if (isLoading) {
@@ -40,10 +39,6 @@ function PanelLayout() {
     } else {
       throw Error('Failed to access the API')
     }
-  } else if (currentUser) {
-    // panel info was succesfully fetched.
-    // provide a 'new post' button if the user is authenticated
-    newPostButton = <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>
   }
   
   return (
@@ -56,7 +51,7 @@ function PanelLayout() {
               <Text size='sm' color='dimmed'>{data.description}</Text>
             </Box>
 
-            {newPostButton}
+            {(data && currentUser) && <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>}
           </Group>
         </Container>
       </Paper>

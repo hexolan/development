@@ -5,6 +5,7 @@ import { IconMessageCircle, IconAddressBook, IconSettings } from '@tabler/icons-
 
 import LoadingBar from './LoadingBar'
 import { User } from '../app/types/common'
+import { useAppSelector } from '../app/hooks'
 import { useGetUserByNameQuery } from '../app/api/users'
 import type { ErrorResponse } from '../app/types/api'
 
@@ -17,7 +18,8 @@ type UserPageParams = {
 }
 
 function UserLayout() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
   
   const { pathname } = useLocation()
   let currentTab = 'posts'
@@ -66,7 +68,7 @@ function UserLayout() {
                 <Tabs.List pos='absolute' bottom={0} w='100%' grow>
                   <Tabs.Tab value='posts' icon={<IconMessageCircle size='0.8rem' />}>Posts</Tabs.Tab>
                   <Tabs.Tab value='about' icon={<IconAddressBook size='0.8rem' />}>About</Tabs.Tab>
-                  <Tabs.Tab value='settings' icon={<IconSettings size='0.8rem' />}>Settings</Tabs.Tab>
+                  {(currentUser && (currentUser.id == data.id || currentUser.isAdmin)) && <Tabs.Tab value='settings' icon={<IconSettings size='0.8rem' />}>Settings</Tabs.Tab>}
                 </Tabs.List>
               </Box>
             </Paper>

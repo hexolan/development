@@ -11,13 +11,14 @@ const CreateComment = ({ post, addNewComment }: { post: Post, addNewComment: (co
   const [errorMsg, setErrorMsg] = useState('')
 
   const [createComment, { isLoading }] = useCreatePostCommentMutation()
-  const submitCommentForm = async (values: CreateCommentData) => {
+  const submitComment = async (values: CreateCommentData) => {
     await createComment({
       postId: post.id,
       data: values
     }).unwrap().then((comment) => {
-      // display the new comment
+      // Display the new comment
       addNewComment(comment)
+      setErrorMsg('')
     }).catch((error) => {
       if (!error.data) {
         setErrorMsg('Failed to access the API')
@@ -38,21 +39,21 @@ const CreateComment = ({ post, addNewComment }: { post: Post, addNewComment: (co
 
   return (
     <Paper shadow='sm' radius='md' p='md' withBorder>
-      <form onSubmit={commentForm.onSubmit(submitCommentForm)}>
+      <form onSubmit={commentForm.onSubmit(submitComment)}>
         <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
-            <Textarea 
-              size='xs'
-              w='100%'
-              radius='lg'
-              variant='filled'
-              placeholder='Input comment...'
-              error={errorMsg}
-              {...commentForm.getInputProps('message')}
-            />
-            
-            <ActionIcon type='submit' radius='lg' color='teal' variant='outline' size='xl' aria-label='Post Comment' disabled={isLoading}>
-              <IconWriting />
-            </ActionIcon>
+          <Textarea 
+            size='xs'
+            w='100%'
+            radius='lg'
+            variant='filled'
+            placeholder='Input comment...'
+            error={errorMsg}
+            {...commentForm.getInputProps('message')}
+          />
+          
+          <ActionIcon type='submit' radius='lg' color='teal' variant='outline' size='xl' aria-label='Post Comment' disabled={isLoading}>
+            <IconWriting />
+          </ActionIcon>
         </Flex>
       </form>
     </Paper>

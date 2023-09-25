@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 
 import { NavLink } from 'react-router-dom'
-import { Navbar, ThemeIcon, Group, Text, UnstyledButton,rem } from '@mantine/core'
+import { Navbar, ThemeIcon, Group, Text, UnstyledButton, rem } from '@mantine/core'
 import { IconTrendingUp, IconSearch, IconMessages } from '@tabler/icons-react'
 
 const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: JSX.ElementType }) => (

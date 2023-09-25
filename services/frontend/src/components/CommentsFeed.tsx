@@ -6,9 +6,7 @@ import type { Comment } from '../app/types/common'
 function CommentsFeed({ comments }: { comments: Comment[] }) {
   return (
     <Stack spacing='sm'>
-      {Object.values(comments).map(comment => {
-        return <FeedComment key={comment.id} comment={comment} />
-      })}
+      {Object.values(comments).map(comment => <FeedComment key={comment.id} comment={comment} />)}
     </Stack>
   )
 }
