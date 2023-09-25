@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Paper, Box, Stack, Badge, Text, Group, ThemeIcon } from '@mantine/core'
+import { Paper, Skeleton, Box, Stack, Badge, Text, Group, ThemeIcon } from '@mantine/core'
 import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
@@ -8,7 +8,7 @@ import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boolean, hideAuthor?: boolean }) => {
   // fetch panel info
-  let panelElement = <></>
+  let panelElement: React.ReactNode = <Skeleton height={8} mt={6} width='20%' radius='xl' />
   const { data: panelData } = useGetPanelByIdQuery({ id: post.panelId })
   if (!hidePanel) {
     if (!panelData) {
@@ -30,10 +30,12 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
         </Badge>
       )
     }
+  } else {
+    panelElement = null
   }
   
   // fetch author info
-  let authorElement = <></>
+  let authorElement: React.ReactNode = <Skeleton height={8} mt={6} width='20%' radius='xl' />
   const { data: authorData } = useGetUserByIdQuery({ id: post.authorId })
   if (!hideAuthor) {
     if (!authorData) {
@@ -55,11 +57,10 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
         </Badge>
       )
     }
+  } else {
+    authorElement = null
   }
 
-
-  // todo: wireframe loaders
-  // todo: show createdAt timestamp? (not priority)
   return (
     <Paper shadow='xl' radius='lg' p='lg' withBorder>
       <Group spacing='xs'>

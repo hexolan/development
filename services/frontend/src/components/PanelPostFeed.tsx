@@ -1,13 +1,14 @@
 import { Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
+import SkeletonPostFeed from './SkeletonPostFeed'
 import { useGetPanelPostsQuery } from '../app/api/posts'
 import type { Panel } from '../app/types/common'
 
 function PanelPostFeed({ panel }: { panel: Panel }) {
   const { data, isLoading } = useGetPanelPostsQuery({ panelId: panel.id })
   if (isLoading) {
-    return <Text align='center'>Loading Posts...</Text>
+    return <SkeletonPostFeed />
   } else if (!data) {
     return <Text align='center'>Failed to Load Posts</Text>
   }

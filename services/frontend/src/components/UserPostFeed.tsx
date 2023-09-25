@@ -1,13 +1,14 @@
 import { Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
+import SkeletonPostFeed from './SkeletonPostFeed'
 import { useGetUserPostsQuery } from '../app/api/posts'
 import type { User } from '../app/types/common'
 
 function UserPostFeed({ user }: { user: User }) {
   const { data, isLoading } = useGetUserPostsQuery({ userId: user.id })
   if (isLoading) {
-    return <Text align='center'>Loading Posts...</Text>
+    return <SkeletonPostFeed />
   } else if (!data) {
     return <Text align='center' color='red'>Failed to Load Posts</Text>
   }

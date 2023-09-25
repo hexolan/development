@@ -1,12 +1,13 @@
 import { Text } from '@mantine/core'
 
 import FeedPost from './FeedPost'
+import SkeletonPostFeed from './SkeletonPostFeed'
 import { useGetFeedPostsQuery } from '../app/api/posts'
 
 function HomePostFeed() {
   const { data, isLoading } = useGetFeedPostsQuery()
   if (isLoading) {
-    return <Text align='center'>Loading Posts...</Text>
+    return <SkeletonPostFeed />
   } else if (!data) {
     return <Text align='center' color='red'>Failed to Load Posts</Text>
   }
