@@ -21,7 +21,7 @@ func NewPostService(events producer.PostEventProducer, repo internal.PostReposit
 	}
 }
 
-func (srv postService) CreatePost(ctx context.Context, data internal.PostCreate) (*internal.Post, error) {
+func (srv postService) CreatePost(ctx context.Context, panelId string, authorId string, data internal.PostCreate) (*internal.Post, error) {
 	// Validate the data
 	err := data.Validate()
 	if err != nil {
@@ -29,7 +29,7 @@ func (srv postService) CreatePost(ctx context.Context, data internal.PostCreate)
 	}
 
 	// Create the post
-	post, err := srv.repo.CreatePost(ctx, data)
+	post, err := srv.repo.CreatePost(ctx, panelId, authorId, data)
 	
 	// Dispatch post created event
 	if err == nil {

@@ -58,7 +58,7 @@ type PostService interface {
 }
 
 type PostRepository interface {
-    CreatePost(ctx context.Context, data PostCreate) (*Post, error)
+    CreatePost(ctx context.Context, panelId string, authorId string, data PostCreate) (*Post, error)
     GetPost(ctx context.Context, id PostId) (*Post, error)
     GetPanelPost(ctx context.Context, id PostId, panelId string) (*Post, error)
     UpdatePost(ctx context.Context, id PostId, data PostUpdate) (*Post, error)

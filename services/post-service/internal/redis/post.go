@@ -64,9 +64,9 @@ func (r postCacheRepo) purgeCachedPost(ctx context.Context, id internal.PostId) 
 	}
 }
 
-func (r postCacheRepo) CreatePost(ctx context.Context, data internal.PostCreate) (*internal.Post, error) {
+func (r postCacheRepo) CreatePost(ctx context.Context, panelId string, authorId string, data internal.PostCreate) (*internal.Post, error) {
 	// Create the post (using downstream DB repo)
-	post, err := r.repo.CreatePost(ctx, data)
+	post, err := r.repo.CreatePost(ctx, panelId, authorId, data)
 	if err != nil {
 		return post, err
 	}

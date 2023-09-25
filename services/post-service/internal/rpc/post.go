@@ -27,11 +27,19 @@ func (svr *postServer) CreatePost(ctx context.Context, request *pb.CreatePostReq
 		return nil, status.Error(codes.InvalidArgument, "malformed request")
 	}
 
+	if request.GetPanelId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "panel id not provided")
+	}
+
+	if request.GetUserId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "user id not provided")
+	}
+
 	// Convert to service model
 	data := pb.PostCreateFromProto(request.GetData())
 	
 	// Pass to service method for creation
-	post, err := svr.service.CreatePost(ctx, data)
+	post, err := svr.service.CreatePost(ctx, request.GetPanelId(), request.GetUserId(), data)
 	if err != nil {
 		return nil, err
 	}

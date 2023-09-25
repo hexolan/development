@@ -24,9 +24,9 @@ func NewPostRepository(db *pgxpool.Pool) internal.PostDBRepository {
 	}
 }
 
-func (r postDatabaseRepo) CreatePost(ctx context.Context, data internal.PostCreate) (*internal.Post, error) {
+func (r postDatabaseRepo) CreatePost(ctx context.Context, panelId string, authorId string, data internal.PostCreate) (*internal.Post, error) {
 	var id internal.PostId
-	err := r.db.QueryRow(ctx, "INSERT INTO posts (title, content) VALUES ($1, $2) RETURNING id", data.Title, data.Content).Scan(&id)
+	err := r.db.QueryRow(ctx, "INSERT INTO posts (panel_id, author_id, title, content) VALUES ($1, $2, $3, $4) RETURNING id", panelId, authorId, data.Title, data.Content).Scan(&id)
 	if err != nil {
 		if strings.Contains(err.Error(), "failed to connect to") {
 			return nil, internal.WrapServiceError(err, internal.ConnectionErrorCode, "failed to connect to database")
