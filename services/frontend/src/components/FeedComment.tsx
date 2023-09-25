@@ -33,7 +33,17 @@ const StandardFeedComment = ({ comment, authorElement }: { comment: Comment, aut
   </FeedCommentBase>
 )
 
-const ModifiableFeedComment = ({ comment, authorElement, setSelf, isAuthor }: { comment: Comment, authorElement: React.ReactNode, setSelf: React.Dispatch<Comment | undefined>, isAuthor: boolean }) => {
+const ModifiableFeedComment = ({
+  comment,
+  authorElement,
+  setSelf,
+  isAuthor
+}: {
+  comment: Comment,
+  authorElement: React.ReactNode,
+  setSelf: React.Dispatch<Comment | undefined>,
+  isAuthor: boolean
+}) => {
   const [modifying, setModifying] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState('')
   const commentForm = useForm<UpdateCommentData>({
