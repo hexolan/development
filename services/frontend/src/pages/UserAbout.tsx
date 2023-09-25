@@ -1,5 +1,5 @@
 import { useOutletContext } from 'react-router-dom'
-import { Text } from '@mantine/core'
+import { Paper, Text } from '@mantine/core'
 
 import type { UserContext } from '../components/UserLayout'
 
@@ -7,7 +7,10 @@ function UserAboutPage() {
   const { user } = useOutletContext<UserContext>()
 
   return (
-    <Text>About {user.username}</Text>
+    <Paper mt='md' radius='lg' shadow='md' p='lg' withBorder>
+      <Text weight={500}>About user/{user.username}</Text>
+      <Text>Signed up at {user.createdAt}</Text>
+    </Paper>
   )
 }
 
