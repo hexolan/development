@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Paper, Box, Stack, Badge, Text, ThemeIcon } from '@mantine/core'
+import { Paper, Box, Stack, Badge, Text, Group, ThemeIcon } from '@mantine/core'
 import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
@@ -62,8 +62,10 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
   // todo: show createdAt timestamp? (not priority)
   return (
     <Paper shadow='xl' radius='lg' p='lg' withBorder>
-      {panelElement}
-      {authorElement} 
+      <Group spacing='xs'>
+        {panelElement}
+        {authorElement}
+      </Group>
       <Stack align='flex-start' mt={2} spacing={1}>
         <Box component={Link} to={panelData ? `/panel/${panelData.name}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
           <Text weight={600} lineClamp={1}>{post.title}</Text>
