@@ -13,8 +13,8 @@ export type UpdatePostData = Partial<CreatePostData>
 
 // API Request Paramaters
 export type GetPanelPostRequest = {
+  id: string;
   panelId: string;
-  postId: string;
 }
 
 export type GetUserPostsRequest = {
@@ -26,12 +26,12 @@ export type GetPanelPostsRequest = {
 }
 
 export type UpdatePostRequest = {
-  postId: string;
+  id: string;
   data: UpdatePostData;
 }
 
 export type DeletePostRequest = {
-  postId: string;
+  id: string;
 }
 
 export type CreatePostRequest = {

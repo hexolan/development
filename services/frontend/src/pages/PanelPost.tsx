@@ -31,7 +31,7 @@ function PanelPostPage() {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   // Fetch the post
-  const { data, error, isLoading } = useGetPanelPostQuery({ panelId: panel.id, postId: postId })
+  const { data, error, isLoading } = useGetPanelPostQuery({ panelId: panel.id, id: postId })
   if (isLoading) {
     return <LoadingBar />;
   } else if (!data) {

@@ -13,7 +13,7 @@ const PagePost = ({ post }: { post: Post }) => {
   const [deletePost] = useDeletePostMutation()
   const submitDeletePost = async () => {
     // todo: change type to just take id: (to auto invalidate post by id - or experiment with RTK query tags)
-    await deletePost({postId: post.id}).unwrap().then(() => {
+    await deletePost({ id: post.id }).unwrap().then(() => {
       navigate('/')
     }).catch((error) => {
       console.log(error)  // todo: error handling
