@@ -35,7 +35,7 @@ export type DeletePostRequest = {
 }
 
 export type CreatePostRequest = {
-  panelName: string;
+  panelId: string;
   data: CreatePostData;
 }
 
