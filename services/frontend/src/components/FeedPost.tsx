@@ -7,7 +7,7 @@ import { useGetPanelByIdQuery } from '../app/api/panels'
 import type { Post } from '../app/types/common'
 
 const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boolean, hideAuthor?: boolean }) => {
-  // fetch panel info
+  // Fetch panel info
   let panelElement: React.ReactNode = null
   const { data: panelData, isLoading: panelIsLoading } = useGetPanelByIdQuery({ id: post.panelId })
   if (!hidePanel) {
@@ -34,7 +34,7 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
     }
   }
   
-  // fetch author info
+  // Fetch author info
   let authorElement: React.ReactNode = null
   const { data: authorData, isLoading: authorIsLoading } = useGetUserByIdQuery({ id: post.authorId })
   if (!hideAuthor) {

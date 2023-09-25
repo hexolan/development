@@ -8,10 +8,10 @@ const NavbarButton = ({ text, page, icon }: { text: string, page: string, icon: 
   <NavLink to={page} style={{ textDecoration: 'none' }}>
     {({ isActive }) => (
       <UnstyledButton
+        p='xs'
         sx={(theme) => ({
           display: 'block',
           width: '100%',
-          padding: theme.spacing.xs,
           borderRadius: theme.radius.sm,
 
           backgroundColor: isActive ? theme.colors.gray[0] : 'inherit',
@@ -36,38 +36,19 @@ function AppNavbar() {
   return (
     <Navbar width={{ base: 300 }} p='xs'>
       <Navbar.Section py='xs'>
-        <Text
-          size='xs'
-          color='dimmed'
-          sx={(theme) => ({
-            marginLeft: theme.spacing.xs,
-            marginBottom: theme.spacing.xs,
-            fontWeight: 500,
-          })}
-        >
-          Browse
-        </Text>
+        <Text size='xs' color='dimmed' my='xs' weight={500}>Browse</Text>
         <NavbarButton text='Feed' page='/' icon={IconTrendingUp} />
         <NavbarButton text='Find Panels' page='/panels' icon={IconSearch} />
       </Navbar.Section>
 
       <Navbar.Section 
-        grow 
+        grow
+        pt='xs'
         sx={(theme) => ({
-          borderTop: `${rem(1)} solid ${theme.colors.gray[3]}`,
-          paddingTop: theme.spacing.xs
+          borderTop: `${rem(1)} solid ${theme.colors.gray[3]}`
         })}
       >
-        <Text 
-          size='xs'
-          color='dimmed'
-          sx={(theme) => ({
-            margin: theme.spacing.xs,
-            fontWeight: 500,
-          })}
-        >
-          Suggested Panels
-        </Text>
+        <Text size='xs' color='dimmed' m='xs' weight={500}>Suggested Panels</Text>
         <NavbarButton text='panel/Panel' page='/panel/Panel' icon={IconMessages} />
       </Navbar.Section>
     </Navbar>
