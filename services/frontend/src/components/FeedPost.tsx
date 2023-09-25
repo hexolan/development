@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Paper, Skeleton, Box, Stack, Badge, Text, Group, ThemeIcon } from '@mantine/core'
+import { Paper, Skeleton, Box, Badge, Text, Group, ThemeIcon } from '@mantine/core'
 import { IconUser, IconMessages } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from '../app/api/users'
@@ -67,13 +67,11 @@ const FeedPost = ({ post, hidePanel, hideAuthor }: { post: Post, hidePanel?: boo
         {panelElement}
         {authorElement}
       </Group>
-      <Stack align='flex-start' mt={2} spacing={1}>
-        <Box component={Link} to={panelData ? `/panel/${panelData.name}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Text weight={600} lineClamp={1}>{post.title}</Text>
-          <Text size='sm' lineClamp={2}>{post.content}</Text>
-          <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
-        </Box>
-      </Stack>
+      <Box component={Link} to={panelData ? `/panel/${panelData.name}/post/${post.id}` : '#'} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Text mt={3} weight={600} lineClamp={1}>{post.title}</Text>
+        <Text size='sm' lineClamp={2}>{post.content}</Text>
+        <Text size='xs' color='dimmed' mt={3}>Click to View</Text>
+      </Box>
     </Paper>
   )
 }

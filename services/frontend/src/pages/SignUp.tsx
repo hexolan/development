@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength, matchesField } from '@mantine/form'
-import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
+import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Stack, Button } from '@mantine/core'
 
 import { useAppSelector } from '../app/hooks'
 import { useRegisterUserMutation } from '../app/api/users'
@@ -64,27 +64,29 @@ const SignUpPage = () => {
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
           <form onSubmit={registrationForm.onSubmit(submitRegistrationForm)}>
-            <TextInput 
-              label='Username'
-              placeholder='Your username'
-              {...registrationForm.getInputProps('username')}
-            />
-            <PasswordInput 
-              label='Password'
-              placeholder='Your password'
-              my='md'
-              {...registrationForm.getInputProps('password')}
-            />
-            <PasswordInput
-              label='Confirm Password'
-              placeholder='Confirm password'
-              my='md'
-              {...registrationForm.getInputProps('confPassword')}
-            />
+            <Stack spacing='md'>
+              <TextInput 
+                label='Username'
+                placeholder='Your username'
+                {...registrationForm.getInputProps('username')}
+              />
 
-            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+              <PasswordInput 
+                label='Password'
+                placeholder='Your password'
+                {...registrationForm.getInputProps('password')}
+              />
 
-            <Button type='submit' color='teal' disabled={isLoading} fullWidth>Register</Button>
+              <PasswordInput
+                label='Confirm Password'
+                placeholder='Confirm password'
+                {...registrationForm.getInputProps('confPassword')}
+              />
+
+              { errorMsg && <Text color='red' align='center'>{'Error: ' + errorMsg}</Text> }
+
+              <Button type='submit' color='teal' disabled={isLoading} fullWidth>Register</Button>
+            </Stack>
           </form>
         </Paper>
       </Container>

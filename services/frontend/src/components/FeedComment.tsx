@@ -12,15 +12,13 @@ import type { UpdateCommentData } from '../app/types/comments'
 
 const FeedCommentBase = ({ children, extraChildren }: { children: React.ReactNode, extraChildren?: React.ReactNode }) => (
   <Paper shadow='sm' radius='md' p='md' withBorder>
-    <Flex gap='sm' w='100%' align='center' direction='row' wrap='nowrap'>
-      <Group w='100%' position='apart'>
-        <Group>
-          <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
-          {children}
-        </Group>
-      {extraChildren}
+    <Group w='100%' position='apart'>
+      <Group>
+        <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
+        {children}
       </Group>
-    </Flex>
+      {extraChildren}
+    </Group>
   </Paper>
 )
 

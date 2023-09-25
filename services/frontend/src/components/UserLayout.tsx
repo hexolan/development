@@ -29,7 +29,7 @@ function UserLayout() {
 
   const { username } = useParams<UserPageParams>();
   if (username === undefined) {
-    throw Error('username not provided')
+    throw Error('Username not provided')
   }
 
   const { data, error, isLoading } = useGetUserByNameQuery({ username: username })

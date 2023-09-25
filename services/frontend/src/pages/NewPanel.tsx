@@ -1,12 +1,14 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
-import { Center, Container, Paper, Title, TextInput, Textarea, Button } from '@mantine/core'
+import { Center, Container, Paper, Title, Text, TextInput, Textarea, Stack, Button } from '@mantine/core'
 
 import { useCreatePanelMutation } from '../app/api/panels'
 import type { CreatePanelData } from '../app/types/panels'
 
 const NewPanelPage = () => {
   const navigate = useNavigate()
+  const [errorMsg, setErrorMsg] = useState('')
 
   const panelForm = useForm<CreatePanelData>({
     initialValues: {
@@ -26,7 +28,11 @@ const NewPanelPage = () => {
     }).unwrap().then((panel) => {
       navigate(`/panel/${panel.name}`)
     }).catch((error) => {
-      console.log(error)  // todo: error handling
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
     })
   }
 
@@ -37,19 +43,22 @@ const NewPanelPage = () => {
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
           <form onSubmit={panelForm.onSubmit(submitPanelForm)}>
-            <TextInput 
-              label='Name'
-              placeholder='e.g. music, programming, football'
-              {...panelForm.getInputProps('name')}
-            />
-            <Textarea
-              label='Description'
-              placeholder='e.g. The place to talk about all things music related...'
-              mt={6}
-              {...panelForm.getInputProps('description')}
-            />
+            <Stack spacing='md'>
+              <TextInput 
+                label='Name'
+                placeholder='e.g. music, programming, football'
+                {...panelForm.getInputProps('name')}
+              />
+              <Textarea
+                label='Description'
+                placeholder='e.g. The place to talk about all things music related...'
+                {...panelForm.getInputProps('description')}
+              />
 
-            <Button type='submit' variant='outline' color='teal' mt='xl' disabled={isLoading} fullWidth>Create Panel</Button>
+              { errorMsg && <Text color='red' align='center'>{'Error: ' + errorMsg}</Text> }
+
+              <Button type='submit' variant='outline' color='teal' disabled={isLoading} fullWidth>Create Panel</Button>
+            </Stack>
           </form>
         </Paper>
       </Container>

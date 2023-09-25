@@ -52,10 +52,10 @@ function PanelPostPage() {
   return (
     <Box mb='lg'>
       <PagePost post={data} />
-      <Divider my='xl' variant='none' />
+      <Divider my='md' variant='none' />
       <Stack spacing='sm'>
         { currentUser && <CreateComment post={data} addNewComment={addNewComment} /> }
-        <CommentsFeed comments={newComments} />
+        { newComments.length > 0 && <CommentsFeed comments={newComments} /> }
         <PostCommentsFeed post={data} />
       </Stack>
     </Box>

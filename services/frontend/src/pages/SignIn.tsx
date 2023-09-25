@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
-import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Button } from '@mantine/core'
+import { Center, Container, Paper, Title, Text, Anchor, TextInput, PasswordInput, Stack, Button } from '@mantine/core'
 
 import { useAppSelector } from '../app/hooks'
 import { useLoginMutation } from '../app/api/auth'
@@ -56,21 +56,23 @@ function SignInPage() {
 
         <Paper withBorder shadow='md' radius='md' p={30} mt={30}>
           <form onSubmit={loginForm.onSubmit(submitLoginForm)}>
-            <TextInput 
-              label='Username'
-              placeholder='Your username'
-              {...loginForm.getInputProps('username')}
-            />
-            <PasswordInput 
-              label='Password' 
-              placeholder='Your password' 
-              my='md'
-              {...loginForm.getInputProps('password')}
-            />
+            <Stack spacing='md'>
+              <TextInput 
+                label='Username'
+                placeholder='Your username'
+                {...loginForm.getInputProps('username')}
+              />
 
-            {errorMsg && <Text color='red' align='center' mb='md'>{'Error: ' + errorMsg}</Text>}
+              <PasswordInput 
+                label='Password' 
+                placeholder='Your password' 
+                {...loginForm.getInputProps('password')}
+              />
 
-            <Button type='submit' color='teal' disabled={isLoading} fullWidth>Login</Button>
+              { errorMsg && <Text color='red' align='center'>{'Error: ' + errorMsg}</Text> }
+
+              <Button type='submit' color='teal' disabled={isLoading} fullWidth>Login</Button>
+            </Stack>
           </form>
         </Paper>
       </Container>
