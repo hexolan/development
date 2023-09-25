@@ -6,12 +6,11 @@ import { IconMessage, IconMenu2, IconTrash, IconPencil, IconPencilCancel } from 
 
 import { useAppSelector } from '../app/hooks'
 import { useGetUserByIdQuery } from '../app/api/users'
-import { useUpdatePostCommentMutation } from '../app/api/comments'
-import type { Comment } from "../app/types/common"
+import { useDeletePostCommentMutation, useUpdatePostCommentMutation } from '../app/api/comments'
+import type { Comment } from '../app/types/common'
 import type { UpdateCommentData } from '../app/types/comments'
 
-const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
-  const [comment, setComment] = useState<Comment>(providedComment)
+const FeedCommentItem = ({ comment, setSelf }: { comment: Comment, setSelf: React.Dispatch<Comment | undefined> }) => {
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   const [modifying, setModifying] = useState<boolean>(false)
@@ -24,9 +23,9 @@ const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
       message: hasLength({ min: 3, max: 512 }, 'Message must be between 3 and 512 characters'),
     }
   })
-  
+
   const [updateComment, { isLoading }] = useUpdatePostCommentMutation()
-  const submitCommentForm = async (values: UpdateCommentData) => {
+  const submitUpdateComment = async (values: UpdateCommentData) => {
     const commentInfo = await updateComment({
       id: comment.id,
       postId: comment.postId,
@@ -43,9 +42,26 @@ const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
 
     // display the updated comment
     if (commentInfo) {
-      setComment(commentInfo)
+      setSelf(commentInfo)
       setModifying(false)
     }
+  }
+
+
+  const [deleteComment] = useDeletePostCommentMutation()
+  const submitDeleteComment = async () => {
+    await deleteComment({
+      id: comment.id,
+      postId: comment.postId
+    }).unwrap().then(() => {
+      setSelf(undefined)
+    }).catch((error) => {
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
+      }
+    })
   }
 
   // fetching comment author info
@@ -66,7 +82,7 @@ const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
           <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
           {modifying ? (
             <Box w='90%'>
-              <form onSubmit={commentForm.onSubmit(submitCommentForm)}>
+              <form onSubmit={commentForm.onSubmit(submitUpdateComment)}>
                 <Textarea size='xs' w='100%' radius='lg' variant='filled' error={errorMsg} {...commentForm.getInputProps('message')} />
                 <ActionIcon type='submit' radius='lg' color='teal' variant='outline' size='xl' aria-label='Update Comment' disabled={isLoading}>
                   <IconPencil />
@@ -89,15 +105,20 @@ const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
               <Menu.Label>Comment Options</Menu.Label>
               {currentUser.id == comment.authorId && (
                 modifying ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setModifying(false)}>Stop Modifying</Menu.Item>
-                : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
+                  : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
               )}
-              <Menu.Item color='red' icon={<IconTrash size={14} />}>Delete</Menu.Item>
+              <Menu.Item color='red' icon={<IconTrash size={14} />} onClick={() => submitDeleteComment()}>Delete</Menu.Item>
             </Menu.Dropdown>
           </Menu>
         )}
       </Flex>
     </Paper>
   )
+}
+
+const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
+  const [comment, setComment] = useState<Comment | undefined>(providedComment)
+  return comment ? <FeedCommentItem comment={comment} setSelf={setComment} /> : undefined
 }
 
 export default FeedComment

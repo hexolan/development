@@ -17,6 +17,7 @@ import (
 // v1.GetPanelPostsFromId
 // v1.CreatePanelPostFromId
 
+// move into note on todo: (not high priority)
 // maybe remove requirement of panel for individual posts entirely (and just update DOM url to reflect the panel its on)
 
 func RegisterRoutes(app *fiber.App) {
