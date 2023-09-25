@@ -227,9 +227,17 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
             )
             return
         
+        if not request.id.isnumeric():
+            self._apply_error(
+                context,
+                code=StatusCode.INVALID_ARGUMENT,
+                msg="invalid comment id provided"
+            )
+            return
+
         # attempt to get the comment
         try:
-            comment = await self._svc_repo.get_comment(request.id)
+            comment = await self._svc_repo.get_comment(int(request.id))
         except ServiceException as err:
             err.apply_to_rpc(context)
             return
