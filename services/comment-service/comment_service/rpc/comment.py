@@ -246,7 +246,7 @@ class CommentServicer(comment_pb2_grpc.CommentServiceServicer):
             self._apply_unknown_error(context)
             return
 
-        return comment
+        return Comment.to_protobuf(comment)
 
     async def GetPostComments(self, request: comment_pb2.GetPostCommentsRequest, context: RpcContext) -> comment_pb2.PostComments:
         """GetPostComments RPC Call
