@@ -10,13 +10,14 @@ import { useDeletePostCommentMutation, useUpdatePostCommentMutation } from '../a
 import type { Comment } from '../app/types/common'
 import type { UpdateCommentData } from '../app/types/comments'
 
-const FeedCommentBase = ({ children }: { children: React.ReactNode }) => (
+const FeedCommentBase = ({ children, extraChildren }: { children: React.ReactNode, extraChildren?: React.ReactNode }) => (
   <Paper shadow='sm' radius='md' p='md' withBorder>
     <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
       <Group w='100%'>
         <ThemeIcon color='teal' variant='light' size='xl'><IconMessage /></ThemeIcon>
         {children}
       </Group>
+      {extraChildren}
     </Flex>
   </Paper>
 )
@@ -30,7 +31,7 @@ const StandardFeedComment = ({ comment, authorElement }: { comment: Comment, aut
   </FeedCommentBase>
 )
 
-const ModifiableFeedCommentItem = ({ comment, authorElement, setSelf, isAuthor }: { comment: Comment, authorElement: React.ReactNode, setSelf: React.Dispatch<Comment | undefined>, isAuthor: boolean }) => {
+const ModifiableFeedComment = ({ comment, authorElement, setSelf, isAuthor }: { comment: Comment, authorElement: React.ReactNode, setSelf: React.Dispatch<Comment | undefined>, isAuthor: boolean }) => {
   const [modifying, setModifying] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState('')
   const commentForm = useForm<UpdateCommentData>({
@@ -81,7 +82,23 @@ const ModifiableFeedCommentItem = ({ comment, authorElement, setSelf, isAuthor }
   }
 
   return (
-    <FeedCommentBase>
+    <FeedCommentBase
+      extraChildren={
+        <Menu>
+          <Menu.Target>
+            <ActionIcon color='teal' variant='light' radius='xl' size='xl'><IconMenu2 /></ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Comment Options</Menu.Label>
+            {isAuthor && (modifying
+              ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setModifying(false)}>Stop Modifying</Menu.Item>
+              : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
+            )}
+            <Menu.Item color='red' icon={<IconTrash size={14} />} onClick={() => submitDeleteComment()}>Delete</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      }
+    >
       {modifying ? (
         <Box w='90%'>
           <form onSubmit={commentForm.onSubmit(submitUpdateComment)}>
@@ -97,19 +114,6 @@ const ModifiableFeedCommentItem = ({ comment, authorElement, setSelf, isAuthor }
           {authorElement}
         </Box>
       )}
-      <Menu>
-        <Menu.Target>
-          <ActionIcon color='teal' variant='light' radius='xl' size='xl'><IconMenu2 /></ActionIcon>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Label>Comment Options</Menu.Label>
-          {isAuthor && (modifying
-            ? <Menu.Item icon={<IconPencilCancel size={14} />} onClick={() => setModifying(false)}>Stop Modifying</Menu.Item>
-            : <Menu.Item icon={<IconPencil size={14} />} onClick={() => setModifying(true)}>Modify</Menu.Item>
-          )}
-          <Menu.Item color='red' icon={<IconTrash size={14} />} onClick={() => submitDeleteComment()}>Delete</Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
     </FeedCommentBase>
   )
 }
@@ -128,7 +132,7 @@ const FeedCommentItem = ({ comment, setSelf }: { comment: Comment, setSelf: Reac
 
   // improve layout of editing comment (fix flexboxes)
   if (currentUser && (currentUser.id == comment.authorId || currentUser.isAdmin)) {
-    return <ModifiableFeedCommentItem comment={comment} authorElement={authorElement} isAuthor={currentUser.id == comment.authorId} setSelf={setSelf} />
+    return <ModifiableFeedComment comment={comment} authorElement={authorElement} isAuthor={currentUser.id == comment.authorId} setSelf={setSelf} />
   } else {
     return <StandardFeedComment comment={comment} authorElement={authorElement} />
   }
