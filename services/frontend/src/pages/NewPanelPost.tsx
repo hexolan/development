@@ -30,17 +30,14 @@ const NewPanelPostPage = () => {
 
   const [createPost, { isLoading }] = useCreatePanelPostMutation()
   const submitPost = async (values: CreatePostData) => {
-    const postInfo = await createPost({
+    await createPost({
       panelId: panel.id,
       data: values
-    }).unwrap().catch((error) => {
+    }).unwrap().then((post) => {
+      navigate(`/panel/${panel.name}/post/${post.id}`)
+    }).catch((error) => {
       console.log(error) // todo: error handling & displaying err msg
     })
-
-    // redirect to post page if post was created
-    if (postInfo) {
-      navigate(`/panel/${panel.name}/post/${postInfo.id}`)
-    }
   }
 
   return (
