@@ -4,7 +4,7 @@ import CommentsFeed from './CommentsFeed'
 import { useGetPostCommentsQuery } from '../app/api/comments'
 import type { Post } from '../app/types/common'
 
-function PostComments({ post }: { post: Post }) {
+function PostCommentsFeed({ post }: { post: Post }) {
   const { data, isLoading } = useGetPostCommentsQuery({ postId: post.id })
   if (isLoading) {
     return (
@@ -23,4 +23,4 @@ function PostComments({ post }: { post: Post }) {
   return <CommentsFeed comments={data} />
 }
 
-export default PostComments
+export default PostCommentsFeed

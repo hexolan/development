@@ -4,7 +4,7 @@ import { Box, Stack, Divider } from '@mantine/core'
 
 import PagePost from '../components/PagePost'
 import CommentsFeed from '../components/CommentsFeed'
-import PostComments from '../components/PostComments'
+import PostCommentsFeed from '../components/PostCommentsFeed'
 import CreateComment from '../components/CreateComment'
 import LoadingBar from '../components/LoadingBar'
 import { useAppSelector } from '../app/hooks'
@@ -56,7 +56,7 @@ function PanelPostPage() {
       <Stack spacing='sm'>
         { currentUser && <CreateComment post={data} addNewComment={addNewComment} /> }
         <CommentsFeed comments={newComments} />
-        <PostComments post={data} />
+        <PostCommentsFeed post={data} />
       </Stack>
     </Box>
   )
