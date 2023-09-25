@@ -10,7 +10,8 @@ import { useUpdatePostCommentMutation } from '../app/api/comments'
 import type { Comment } from "../app/types/common"
 import type { UpdateCommentData } from '../app/types/comments'
 
-const FeedComment = ({ comment }: { comment: Comment }) => {
+const FeedComment = ({ comment: providedComment }: { comment: Comment }) => {
+  const [comment, setComment] = useState<Comment>(providedComment)
   const currentUser = useAppSelector((state) => state.auth.currentUser)
 
   const [modifying, setModifying] = useState<boolean>(false)
@@ -42,7 +43,7 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
 
     // display the updated comment
     if (commentInfo) {
-      comment = commentInfo
+      setComment(commentInfo)
       setModifying(false)
     }
   }
@@ -56,7 +57,8 @@ const FeedComment = ({ comment }: { comment: Comment }) => {
     authorElement = <Text color='dimmed' size='xs' mt={3} component={Link} to={`/user/${data.username}`}>by user/{data.username}</Text>
   }
 
-  // todo: add functionality for 'Modify' and 'Delete' comment buttons
+  // todo: add functionality for 'Delete' comment button
+  // improve layout of editing comment (fix flexboxes)
   return (
     <Paper shadow='sm' radius='md' p='md' withBorder>
       <Flex gap='sm' align='center' direction='row' wrap='nowrap'>
