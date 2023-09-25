@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Paper, Stack, Badge, ThemeIcon, Text } from '@mantine/core'
-import { IconUser } from '@tabler/icons-react'
+import { Paper, Stack, Badge, ThemeIcon, Text, Group, Menu, ActionIcon } from '@mantine/core'
+import { IconUser, IconMenu2, IconTrash } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from "../app/api/users"
 import { Post } from "../app/types/common"
@@ -11,19 +11,31 @@ const PagePost = ({ post }: { post: Post }) => {
   return (
     <Paper shadow='lg' radius='lg' p='lg' withBorder>
       {data && (
-        <Badge
-          pl={0}
-          color='teal'
-          leftSection={
-            <ThemeIcon color='teal' size={24} radius='xl' mr={5}>
-              <IconUser size={12} />
-            </ThemeIcon>
-          }
-          component={Link}
-          to={`/user/${data.username}`}
-        >
-          {`user/${data.username}`}
-        </Badge>
+        <Group position='apart'>
+          <Badge
+            pl={0}
+            color='teal'
+            leftSection={
+              <ThemeIcon color='teal' size={24} radius='xl' mr={5}>
+                <IconUser size={12} />
+              </ThemeIcon>
+            }
+            component={Link}
+            to={`/user/${data.username}`}
+          >
+            {`user/${data.username}`}
+          </Badge>
+          {/* todo: hiding menu when not admin / not post author (+ add functionality for Deleting and Updating)*/}
+          <Menu>
+            <Menu.Target>
+              <ActionIcon color='teal' variant='light' radius='xl' size={24}><IconMenu2 size={12} /></ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Post Options</Menu.Label>
+              <Menu.Item color='red' icon={<IconTrash size={14} />}>Delete</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
       )}
       <Stack align='flex-start' mt={2} spacing={1}>
         <Text weight={600}>{post.title}</Text>

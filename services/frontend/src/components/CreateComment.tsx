@@ -12,23 +12,19 @@ const CreateComment = ({ post, addNewComment }: { post: Post, addNewComment: (co
 
   const [createComment, { isLoading }] = useCreatePostCommentMutation()
   const submitCommentForm = async (values: CreateCommentData) => {
-    const commentInfo = await createComment({
+    await createComment({
       postId: post.id,
       data: values
-    }).unwrap().catch(
-      (error) => {
-        if (!error.data) {
-          setErrorMsg('Failed to access the API')
-        } else {
-          setErrorMsg(error.data.msg)
-        }
+    }).unwrap().then((comment) => {
+      // display the new comment
+      addNewComment(comment)
+    }).catch((error) => {
+      if (!error.data) {
+        setErrorMsg('Failed to access the API')
+      } else {
+        setErrorMsg(error.data.msg)
       }
-    )
-
-    // display the new comment
-    if (commentInfo) {
-      addNewComment(commentInfo)
-    }
+    })
   }
 
   const commentForm = useForm<CreateCommentData>({
