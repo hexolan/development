@@ -1,12 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Paper, Stack, Badge, ThemeIcon, Text, Group, Menu, ActionIcon } from '@mantine/core'
 import { IconUser, IconMenu2, IconTrash } from '@tabler/icons-react'
 
 import { useGetUserByIdQuery } from "../app/api/users"
 import { Post } from "../app/types/common"
+import { useDeletePostMutation } from '../app/api/posts'
 
 const PagePost = ({ post }: { post: Post }) => {
+  const navigate = useNavigate()
   const { data } = useGetUserByIdQuery({ id: post.authorId })
+
+  const [deletePost] = useDeletePostMutation()
+  const submitDeletePost = async () => {
+    // todo: change type to just take id: (to auto invalidate post by id - or experiment with RTK query tags)
+    await deletePost({postId: post.id}).unwrap().then(() => {
+      navigate('/')
+    }).catch((error) => {
+      console.log(error)  // todo: error handling
+    })
+  }
 
   return (
     <Paper shadow='lg' radius='lg' p='lg' withBorder>
@@ -32,7 +44,7 @@ const PagePost = ({ post }: { post: Post }) => {
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>Post Options</Menu.Label>
-              <Menu.Item color='red' icon={<IconTrash size={14} />}>Delete</Menu.Item>
+              <Menu.Item color='red' icon={<IconTrash size={14} />} onClick={() => submitDeletePost()}>Delete</Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>
