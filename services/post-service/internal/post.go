@@ -34,7 +34,7 @@ type PostCreate struct {
 func (p *PostCreate) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Title, validation.Required, validation.Length(3, 512), validation.Match(regexp.MustCompile("^[^_]\\w+[^_]$"))),
+		validation.Field(&p.Title, validation.Required, validation.Length(3, 512), validation.Match(regexp.MustCompile("^[^_][\\w ]+[^_]$"))),
 		validation.Field(&p.Content, validation.Required, validation.Length(3, 2048)),
 	)
 }
@@ -47,7 +47,7 @@ type PostUpdate struct {
 func (p *PostUpdate) Validate() error {
 	return validation.ValidateStruct(
 		p,
-		validation.Field(&p.Title, validation.NilOrNotEmpty, validation.Length(3, 512), validation.Match(regexp.MustCompile("^[^_]\\w+[^_]$"))),
+		validation.Field(&p.Title, validation.NilOrNotEmpty, validation.Length(3, 512), validation.Match(regexp.MustCompile("^[^_][\\w ]+[^_]$"))),
 		validation.Field(&p.Content, validation.NilOrNotEmpty, validation.Length(3, 2048)),
 	)
 }
