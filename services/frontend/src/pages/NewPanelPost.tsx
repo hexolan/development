@@ -16,8 +16,9 @@ const NewPanelPostPage = () => {
   // Ensure the user is authenticated
   const currentUser = useAppSelector((state) => state.auth.currentUser)
   if (currentUser === null) {
-    navigate('/signin')
+    throw Error('You must be authenticated to create posts')
   }
+
   const createPostForm = useForm<CreatePostData>({
     initialValues: {
       title: '',

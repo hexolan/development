@@ -3,12 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import { useForm, hasLength } from '@mantine/form'
 import { Center, Container, Paper, Title, Text, TextInput, Textarea, Stack, Button } from '@mantine/core'
 
+import { useAppSelector } from '../app/hooks'
 import { useCreatePanelMutation } from '../app/api/panels'
 import type { CreatePanelData } from '../app/types/panels'
 
 const NewPanelPage = () => {
   const navigate = useNavigate()
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Ensure the user is authenticated
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  if (currentUser === null) {
+    throw Error('Authentication Required')
+  }
 
   const panelForm = useForm<CreatePanelData>({
     initialValues: {
@@ -49,6 +56,7 @@ const NewPanelPage = () => {
                 placeholder='e.g. music, programming, football'
                 {...panelForm.getInputProps('name')}
               />
+
               <Textarea
                 label='Description'
                 placeholder='e.g. The place to talk about all things music related...'

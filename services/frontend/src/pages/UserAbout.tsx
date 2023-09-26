@@ -8,8 +8,8 @@ function UserAboutPage() {
 
   return (
     <Paper mt='md' radius='lg' shadow='md' p='lg' withBorder>
-      <Text weight={500}>About user/{user.username}</Text>
-      <Text>Signed up at {user.createdAt}</Text>
+      <Text weight={500}>About {user.username}</Text>
+      {user.createdAt && <Text>Signed up {new Date(user.createdAt).toUTCString()}</Text>}
     </Paper>
   )
 }
