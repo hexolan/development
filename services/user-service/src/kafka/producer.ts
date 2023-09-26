@@ -22,7 +22,7 @@ class UserProducer {
       await this.producer.connect()
     } catch (error) {
       console.log("error connecting to kafka producer ", error);
-      process.exitCode = 1
+      throw error
     }
   }
 

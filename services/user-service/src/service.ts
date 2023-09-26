@@ -20,17 +20,17 @@ function isValidUsername(username: string): boolean {
 
 async function createUser(username: string): Promise<IUser> {
   if (!isValidUsername(username)) {
-    throw new ConnectError("invalid username", Code.InvalidArgument);
+    throw new ConnectError("invalid username", Code.InvalidArgument)
   }
 
-  let newUser = new User({ username: username });
+  let newUser = new User({ username: username })
 
   let user = await newUser.save().then(async (user) => {
-    await userProducer.sendCreatedEvent(user);
-    return user;
+    await userProducer.sendCreatedEvent(user)
+    return user
   }).catch((error) => {
     // todo: ensure error is a result of unique constraint violation
-    throw new ConnectError("username already exists", Code.AlreadyExists);
+    throw new ConnectError("username already exists", Code.AlreadyExists)
   });
 
   return user;
@@ -39,13 +39,13 @@ async function createUser(username: string): Promise<IUser> {
 async function getUserById(id: string): Promise<IUser> {
   // ensure id is valid
   if (!Types.ObjectId.isValid(id)) {
-    throw new ConnectError("invalid id provided", Code.InvalidArgument);
+    throw new ConnectError("invalid id provided", Code.InvalidArgument)
   }
 
   // attempt to get the user document
   let user = await User.findById(id).exec()
   if (user === null) {
-    throw new ConnectError("user not found", Code.NotFound);
+    throw new ConnectError("user not found", Code.NotFound)
   }
 
   return user
@@ -60,7 +60,7 @@ async function getUserByUsername(username: string): Promise<IUser> {
   // attempt to find the document
   let user = await User.findOne({ username: username })
   if (user === null) {
-    throw new ConnectError("user not found", Code.NotFound);
+    throw new ConnectError("user not found", Code.NotFound)
   }
 
   return user
@@ -68,7 +68,7 @@ async function getUserByUsername(username: string): Promise<IUser> {
 
 async function updateUserById(id: string, newUsername: string): Promise<IUser> {
   if (!isValidUsername(newUsername)) {
-    throw new ConnectError("invalid username value", Code.InvalidArgument);
+    throw new ConnectError("invalid username value", Code.InvalidArgument)
   }
 
   // ensure id is valid
@@ -81,15 +81,17 @@ async function updateUserById(id: string, newUsername: string): Promise<IUser> {
     id,
     { username: newUsername },
     { new: true }
-  ).catch(
-    (error) => {
-      // todo: check unique constraint violation
-      throw new ConnectError("user not found", Code.NotFound);
-    }
-  )
+  ).then(async (updatedUser: IUser) => {
+    await userProducer.sendUpdatedEvent(updatedUser)
+    return updatedUser
+  }).catch((error) => {
+    // todo: check unique constraint violation
+    console.log(error)
+    throw new ConnectError("user not found", Code.NotFound)
+  })
 
   if (updatedUser === null) {
-    throw new ConnectError("something unexpected went wrong", Code.Internal);
+    throw new ConnectError("something unexpected went wrong", Code.Internal)
   }
 
   return updatedUser;
@@ -97,7 +99,7 @@ async function updateUserById(id: string, newUsername: string): Promise<IUser> {
 
 async function updateUserByUsername(username: string, newUsername: string): Promise<IUser> {
   if (!isValidUsername(newUsername)) {
-    throw new ConnectError("invalid username value", Code.InvalidArgument);
+    throw new ConnectError("invalid username value", Code.InvalidArgument)
   }
 
   // attempt to update the user
@@ -105,15 +107,17 @@ async function updateUserByUsername(username: string, newUsername: string): Prom
     { username: username },
     { username: newUsername },
     { new: true }
-  ).catch(
-    (error) => {
-      // todo: catch username not unique error
-      throw new ConnectError("user not found", Code.NotFound);
-    }
-  )
+  ).then(async (updatedUser: IUser) => {
+    await userProducer.sendUpdatedEvent(updatedUser)
+    return updatedUser
+  }).catch((error) => {
+    // todo: catch username not unique error
+    console.log(error)
+    throw new ConnectError("user not found", Code.NotFound)
+  })
 
   if (updatedUser === null || updatedUser === undefined) {
-    throw new ConnectError("something unexpected went wrong", Code.Internal);
+    throw new ConnectError("something unexpected went wrong", Code.Internal)
   }
 
   return updatedUser;
@@ -126,16 +130,24 @@ async function deleteUserById(id: string): Promise<void> {
   }
 
   // atempt to delete the user
-  await User.findByIdAndDelete(id).catch(() => {
+  await User.findByIdAndDelete(id).then(async (user: IUser) => {
+    await userProducer.sendDeletedEvent(user)
+    return user
+  }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
-  });
+  })
 }
 
 async function deleteUserByUsername(username: string): Promise<void> {
   // attempt to delete the user
-  await User.findOneAndDelete({ username: username }).catch(() => {
+  await User.findOneAndDelete({
+    username: username
+  }).then(async (user: IUser) => {
+    await userProducer.sendDeletedEvent(user)
+    return user
+  }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
-  });
+  })
 }
 
 export { createUser, getUserById, getUserByUsername, updateUserById, updateUserByUsername, deleteUserById, deleteUserByUsername }
