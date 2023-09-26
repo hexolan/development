@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { Paper, Text, Button } from '@mantine/core'
 
-import { useAppSelector } from '../app/hooks'
+import { setUnauthed } from '../app/features/auth'
 import { useDeleteUserByIdMutation } from '../app/api/users'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
 import type { UserContext } from '../components/UserLayout'
 
 function UserSettingsPage() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const [errorMsg, setErrorMsg] = useState('')
   const { user } = useOutletContext<UserContext>()
   
@@ -19,6 +21,7 @@ function UserSettingsPage() {
   const [deleteUser, { isLoading }] = useDeleteUserByIdMutation()
   const submitDeleteAccount = async () => {
     await deleteUser({id: user.id}).unwrap().then(() => {
+      dispatch(setUnauthed())
       navigate('/')
     }).catch((error) => {
       if (!error.data) {
