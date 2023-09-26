@@ -9,7 +9,17 @@ import type { Panel } from '../app/types/common'
 import type { UpdatePanelData } from '../app/types/panels'
 import type { PanelContext } from '../components/PanelLayout'
 
-const UpdatePanelForm = ({ panel, setModifying, setErrorMsg }: { panel: Panel, setModifying: React.Dispatch<boolean>, setErrorMsg: React.Dispatch<string> }) => {
+const UpdatePanelForm = ({
+  panel,
+  setPanel,
+  setModifying,
+  setErrorMsg
+}: {
+  panel: Panel,
+  setPanel: React.Dispatch<Panel>,
+  setModifying: React.Dispatch<boolean>,
+  setErrorMsg: React.Dispatch<string>
+}) => {
   const panelForm = useForm<UpdatePanelData>({
     initialValues: {
       name: panel.name,
@@ -27,8 +37,9 @@ const UpdatePanelForm = ({ panel, setModifying, setErrorMsg }: { panel: Panel, s
       id: panel.id,
       data: values
     }).unwrap().then((panelInfo) => {
+      setErrorMsg('')
       setModifying(false)
-      console.log(panelInfo) // todo
+      setPanel(panelInfo)
     }).catch((error) => {
       if (!error.data) {
         setErrorMsg('Failed to access the API')
@@ -54,7 +65,7 @@ function PanelSettingsPage() {
   const navigate = useNavigate()
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [modifying, setModifying] = useState<boolean>(false)
-  const { panel } = useOutletContext<PanelContext>()
+  const { panel, setPanel } = useOutletContext<PanelContext>()
 
   // Check permissions
   const currentUser = useAppSelector((state) => state.auth.currentUser)
@@ -88,7 +99,7 @@ function PanelSettingsPage() {
         </Group>
       </Center>
 
-      {modifying && <UpdatePanelForm panel={panel} setModifying={setModifying} setErrorMsg={setErrorMsg} />}
+      {modifying && <UpdatePanelForm panel={panel} setPanel={setPanel} setModifying={setModifying} setErrorMsg={setErrorMsg} />}
 
       {errorMsg && <Text color='red' mt='sm'>{'Error: ' + errorMsg}</Text>}
     </Paper>

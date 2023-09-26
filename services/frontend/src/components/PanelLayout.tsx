@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Link, Outlet, useParams } from 'react-router-dom'
 import { Paper, Container, Group, Box, Text, Button, rem } from '@mantine/core'
 
@@ -9,11 +9,46 @@ import type { Panel } from '../app/types/common'
 import type { ErrorResponse } from '../app/types/api'
 
 export type PanelContext = {
-  panel: Panel
+  panel: Panel;
+  setPanel: React.Dispatch<Panel>;
 }
 
 type PanelParams = {
   panelName: string
+}
+
+const PanelLayoutComponent = ({ panel, setPanel }: { panel: Panel, setPanel: React.Dispatch<Panel> }) => {
+  const currentUser = useAppSelector((state) => state.auth.currentUser)
+  
+  return (
+    <>
+      <Paper py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
+        <Container>
+          <Group position='apart'>
+            <Box component={Link} to={`/panel/${panel.name}`} style={{ textDecoration: 'none' }}>
+              <Text size='lg' color='black'>{panel.name}</Text>
+              <Text size='sm' color='dimmed'>{panel.description}</Text>
+            </Box>
+
+            <Group spacing='sm'>
+              {currentUser && <Button size='xs' variant='filled' color='teal' component={Link} to={`/panel/${panel.name}/posts/new`}>Create Post</Button>}
+              {currentUser && currentUser.isAdmin && <Button size='xs' variant='outline' color='green' component={Link} to={`/panel/${panel.name}/settings`}>Manage Panel</Button>}
+            </Group>
+          </Group>
+        </Container>
+      </Paper>
+      <Container mt='xl'>
+        <Suspense>
+          <Outlet context={{ panel: panel, setPanel: setPanel } satisfies PanelContext} />
+        </Suspense>
+      </Container>
+    </>
+  )
+}
+
+const PanelLayoutComponentWrapper = ({ panel: initialPanel }: { panel: Panel }) => {
+  const [panel, setPanel] = useState<Panel>(initialPanel)
+  return <PanelLayoutComponent panel={panel} setPanel={setPanel} />
 }
 
 function PanelLayout() {
@@ -22,7 +57,6 @@ function PanelLayout() {
     throw Error('panel name not provided')
   }
   
-  const currentUser = useAppSelector((state) => state.auth.currentUser)
   const { data, error, isLoading } = useGetPanelByNameQuery({ name: panelName })
   if (isLoading) {
     return <LoadingBar />;
@@ -41,30 +75,7 @@ function PanelLayout() {
     }
   }
   
-  return (
-    <>
-      <Paper py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
-        <Container>
-          <Group position='apart'>
-            <Box component={Link} to={`/panel/${data.name}`} style={{ textDecoration: 'none' }}>
-              <Text size='lg' color='black'>{data.name}</Text>
-              <Text size='sm' color='dimmed'>{data.description}</Text>
-            </Box>
-
-            <Group spacing='sm'>
-              {currentUser && <Button size='xs' variant='filled' color='teal' component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>}
-              {currentUser && currentUser.isAdmin && <Button size='xs' variant='outline' color='green' component={Link} to={`/panel/${data.name}/settings`}>Manage Panel</Button>}
-            </Group>
-          </Group>
-        </Container>
-      </Paper>
-      <Container mt='xl'>
-        <Suspense>
-          <Outlet context={{panel: data} satisfies PanelContext} />
-        </Suspense>
-      </Container>
-    </>
-  )
+  return <PanelLayoutComponentWrapper panel={data} />
 }
 
 export default PanelLayout
