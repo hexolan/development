@@ -46,12 +46,15 @@ function PanelLayout() {
       <Paper py={rem(50)} shadow='md' sx={{ borderBottom: '1px' }}>
         <Container>
           <Group position='apart'>
-            <Box>
-              <Text size='lg'>{data.name}</Text>
+            <Box component={Link} to={`/panel/${data.name}`} style={{ textDecoration: 'none' }}>
+              <Text size='lg' color='black'>{data.name}</Text>
               <Text size='sm' color='dimmed'>{data.description}</Text>
             </Box>
 
-            {(data && currentUser) && <Button size='xs' variant="filled" color="teal" component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>}
+            <Group spacing='sm'>
+              {currentUser && <Button size='xs' variant='filled' color='teal' component={Link} to={`/panel/${data.name}/posts/new`}>Create Post</Button>}
+              {currentUser && currentUser.isAdmin && <Button size='xs' variant='outline' color='green' component={Link} to={`/panel/${data.name}/settings`}>Manage Panel</Button>}
+            </Group>
           </Group>
         </Container>
       </Paper>

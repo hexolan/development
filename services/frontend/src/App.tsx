@@ -21,6 +21,7 @@ const NewPanelPage = lazy(() => import('./pages/NewPanel'))
 
 const PanelLayout = lazy(() => import('./components/PanelLayout'))
 const PanelPage = lazy(() => import('./pages/Panel'))
+const PanelSettingsPage = lazy(() => import('./pages/PanelSettings'))
 const PanelPostPage = lazy(() => import('./pages/PanelPost'))
 const NewPanelPostPage = lazy(() => import('./pages/NewPanelPost'))
 
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <PanelPage />,
+          },
+          {
+            path: '/panel/:panelName/settings',
+            element: <PanelSettingsPage />,
           },
           {
             path: '/panel/:panelName/post/:postId',
