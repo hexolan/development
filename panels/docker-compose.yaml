@@ -18,6 +18,7 @@ services:
     volumes:
       - kafka-volume:/bitnami/kafka
     healthcheck:
+      # create the topics that are not auto-created (if they do not exist) as part of the healthcheck (when running with docker-compose)
       test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka:19092 --if-not-exists --create --topic panel && kafka-topics.sh --bootstrap-server kafka:19092 --if-not-exists --create --topic comment"]
       interval: 1m30s
       timeout: 30s

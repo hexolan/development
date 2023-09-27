@@ -1,4 +1,4 @@
-apiVersion: skaffold/v4beta6
+apiVersion: skaffold/v3
 kind: Config
 metadata:
   name: panels
@@ -34,13 +34,13 @@ build:
         dockerfile: Dockerfile
 manifests:
   rawYaml:
-    - manifests/jwtkeys-secret.yaml
-    - manifests/services-configmap.yaml
-    - manifest/kafka.yaml
-    - manifest/frontend.yaml
-    - manifest/auth-service.yaml
-    - manifest/gateway-service.yaml
-    - manifest/panel-service.yaml
-    - manifest/post-service.yaml
-    - manifest/user-service.yaml
-    - manifest/comment-service.yaml
+    - ./manifests/jwtkeys-secret.yaml
+    - ./manifests/services-configmap.yaml
+    - ./manifests/kafka.yaml
+    - ./manifests/frontend.yaml
+    - ./manifests/auth-service.yaml
+    - ./manifests/gateway-service.yaml
+    - ./manifests/panel-service.yaml
+    - ./manifests/post-service.yaml
+    - ./manifests/user-service.yaml
+    - ./manifests/comment-service.yaml
