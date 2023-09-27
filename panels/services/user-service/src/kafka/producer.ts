@@ -31,7 +31,7 @@ class UserProducer {
   }
 
   public async sendCreatedEvent(user: IUser): Promise<void> {
-    let event = new UserEvent({
+    const event = new UserEvent({
       type: "created",
       data: userToProtoUser(user)
     })
@@ -40,7 +40,7 @@ class UserProducer {
   }
 
   public async sendUpdatedEvent(user: IUser): Promise<void> {
-    let event = new UserEvent({
+    const event = new UserEvent({
       type: "updated",
       data: userToProtoUser(user)
     })
@@ -49,7 +49,7 @@ class UserProducer {
   }
 
   public async sendDeletedEvent(user: IUser): Promise<void> {
-    let event = new UserEvent({
+    const event = new UserEvent({
       type: "deleted",
       data: userToProtoUser(user)
     })
@@ -58,7 +58,10 @@ class UserProducer {
   }
 
   private async sendEvent(event: UserEvent): Promise<void> {
-    let msg: Message = { value: Buffer.from(event.toBinary()) }
+    const msg: Message = {
+      value: Buffer.from(event.toBinary())
+    }
+    
     await this.producer.send({
       topic: "user",
       messages: [msg]

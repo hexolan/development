@@ -156,8 +156,8 @@ func UserSignup(c *fiber.Ctx) error {
 		fiber.NewError(fiber.StatusBadRequest, "malformed request")
 	}
 	
-	// todo: defer this logic away from gateway-service in future
 	// Attempt to create the user
+	// todo: defer this logic away from gateway-service in future (potentially into seperate registration-service)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	user, err := rpc.Svcs.GetUserSvc().CreateUser(

@@ -1,16 +1,31 @@
-import { Empty } from "@bufbuild/protobuf";
-import { ConnectRouter, HandlerContext, ConnectError, Code } from "@connectrpc/connect";
+import { Empty } from "@bufbuild/protobuf"
+import { ConnectRouter, ConnectError, Code } from "@connectrpc/connect"
 
-import { createUser, getUserById, getUserByUsername, updateUserById, updateUserByUsername, deleteUserById, deleteUserByUsername } from "../service";
-import { userToProtoUser } from "../proto/convert";
-import { UserService } from "../proto/user_connect";
-import { CreateUserRequest, GetUserByIdRequest, GetUserByNameRequest, UpdateUserByIdRequest, UpdateUserByNameRequest, DeleteUserByIdRequest, DeleteUserByNameRequest, User as ProtoUser } from "../proto/user_pb";
-import { Health } from "../proto/grpc_health_connect";
-import { HealthCheckRequest, HealthCheckResponse, HealthCheckResponse_ServingStatus } from "../proto/grpc_health_pb";
+import { createUser, getUserById, getUserByUsername, updateUserById, updateUserByUsername, deleteUserById, deleteUserByUsername } from "../service"
+import { userToProtoUser } from "../proto/convert"
+import { UserService } from "../proto/user_connect"
+import { Health } from "../proto/grpc_health_connect"
+
+import {
+  HealthCheckRequest,
+  HealthCheckResponse,
+  HealthCheckResponse_ServingStatus
+} from "../proto/grpc_health_pb"
+
+import {
+  CreateUserRequest,
+  GetUserByIdRequest,
+  GetUserByNameRequest,
+  UpdateUserByIdRequest,
+  UpdateUserByNameRequest,
+  DeleteUserByIdRequest,
+  DeleteUserByNameRequest,
+  User as ProtoUser
+} from "../proto/user_pb"
 
 export default (router: ConnectRouter) => {
   router.service(UserService, {
-    async createUser(req: CreateUserRequest, context: HandlerContext): Promise<ProtoUser> {
+    async createUser(req: CreateUserRequest): Promise<ProtoUser> {
       // validate inputs
       if (req.data === undefined) {
         throw new ConnectError("no values provided", Code.InvalidArgument);
@@ -21,21 +36,21 @@ export default (router: ConnectRouter) => {
       }
 
       // attempt to create user
-      let user = await createUser(req.data.username);
+      const user = await createUser(req.data.username);
       return userToProtoUser(user);
     },
 
-    async getUser(req: GetUserByIdRequest, context: HandlerContext): Promise<ProtoUser> {
-      let user = await getUserById(req.id);
+    async getUser(req: GetUserByIdRequest): Promise<ProtoUser> {
+      const user = await getUserById(req.id);
       return userToProtoUser(user);
     },
     
-    async getUserByName(req: GetUserByNameRequest, context: HandlerContext): Promise<ProtoUser> {
-      let user = await getUserByUsername(req.username);
+    async getUserByName(req: GetUserByNameRequest): Promise<ProtoUser> {
+      const user = await getUserByUsername(req.username);
       return userToProtoUser(user);
     },
     
-    async updateUser(req: UpdateUserByIdRequest, context: HandlerContext): Promise<ProtoUser> {
+    async updateUser(req: UpdateUserByIdRequest): Promise<ProtoUser> {
       // validate inputs
       if (req.id === "") {
         throw new ConnectError("no user id provided", Code.InvalidArgument);
@@ -50,11 +65,11 @@ export default (router: ConnectRouter) => {
       }
 
       // attempt to update user
-      let user = await updateUserById(req.id, req.data.username);
+      const user = await updateUserById(req.id, req.data.username);
       return userToProtoUser(user);
     },
     
-    async updateUserByName(req: UpdateUserByNameRequest, context: HandlerContext): Promise<ProtoUser> {
+    async updateUserByName(req: UpdateUserByNameRequest): Promise<ProtoUser> {
       // validate inputs
       if (req.username === "") {
         throw new ConnectError("no username provided", Code.InvalidArgument);
@@ -69,11 +84,11 @@ export default (router: ConnectRouter) => {
       }
 
       // attempt to update user
-      let user = await updateUserByUsername(req.username, req.data.username);
+      const user = await updateUserByUsername(req.username, req.data.username);
       return userToProtoUser(user);
     },
     
-    async deleteUser(req: DeleteUserByIdRequest, context: HandlerContext): Promise<Empty> {
+    async deleteUser(req: DeleteUserByIdRequest): Promise<Empty> {
       // validate input
       if (req.id === "") {
         throw new ConnectError("no user id provided", Code.InvalidArgument);
@@ -84,7 +99,7 @@ export default (router: ConnectRouter) => {
       return new Empty();
     },
     
-    async deleteUserByName(req: DeleteUserByNameRequest, context: HandlerContext): Promise<Empty> {
+    async deleteUserByName(req: DeleteUserByNameRequest): Promise<Empty> {
       // validate input
       if (req.username === "") {
         throw new ConnectError("no username provided", Code.InvalidArgument);
@@ -98,17 +113,18 @@ export default (router: ConnectRouter) => {
 
   // Health gRPC Service
   router.service(Health, {
-    check(req: HealthCheckRequest, context: HandlerContext): HealthCheckResponse {
+    check(): HealthCheckResponse {
       const healthyResponse = new HealthCheckResponse({
         status: HealthCheckResponse_ServingStatus.SERVING,
       });
       return healthyResponse;
     },
 
-    async *watch(req: HealthCheckRequest, context: HandlerContext): AsyncGenerator<HealthCheckResponse> {
+    async *watch(req: HealthCheckRequest): AsyncGenerator<HealthCheckResponse> {
       const healthyResponse = new HealthCheckResponse({
         status: HealthCheckResponse_ServingStatus.SERVING,
       });
+      
       while (req) {
         yield healthyResponse;
         await new Promise(resolve => setTimeout(resolve, 1000));

@@ -58,8 +58,6 @@ func GetPanelByName(c *fiber.Ctx) error {
 
 func UpdatePanelById(c *fiber.Ctx) error {
 	// check user can update panels
-	// todo: implement panel 'managers' feature (probably at the same time as moving this logic out of the gateway service)
-	//	currently only 'admin' users can delete/update panels
 	currentUser, err := getCurrentUser(c)
 	if err != nil {
 		return err

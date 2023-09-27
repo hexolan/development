@@ -39,7 +39,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 				code = fiber.StatusInternalServerError
 			case codes.Unavailable:
 				code = fiber.StatusBadGateway
-				msg = "Service unavaliable for request. Please try again."
+				msg = "Service unavaliable for request."
 			default:
 				code = fiber.StatusInternalServerError
 				msg = "Something went wrong."

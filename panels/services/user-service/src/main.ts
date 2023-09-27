@@ -8,7 +8,7 @@ async function main(): Promise<void> {
   await mongoose.connect(mongodbUri);
   await userProducer.connect()
 
-  void serveRPC();
+  serveRPC();
 }
 
-void main();
+main();

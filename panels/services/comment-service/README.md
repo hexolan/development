@@ -30,7 +30,7 @@
 
 ``POSTGRES_HOST`` (Required)
 
-* e.g. "127.0.0.1:5432"
+* e.g. "localhost:5432"
 
 ``POSTGRES_DATABASE`` (Required)
 
@@ -42,7 +42,7 @@
 
 ``REDIS_HOST`` (Required)
 
-* e.g. "127.0.0.1:6379"
+* e.g. "localhost:6379"
 
 ``REDIS_PASS`` (Required)
 
@@ -54,4 +54,4 @@
 
 ``KAFKA_BROKERS`` (Required)
 
-* e.g. "127.0.0.1:9092" or "127.0.0.1:9092,127.0.0.1:9093"
+* e.g. "localhost:9092" or "localhost:9092,localhost:9093"

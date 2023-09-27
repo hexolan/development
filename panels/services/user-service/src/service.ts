@@ -5,7 +5,7 @@ import { User, IUser } from "./mongo/User";
 import userProducer from "./kafka/producer";
 
 function isValidUsername(username: string): boolean {
-  let length = username.length;
+  const length = username.length;
   if (length < 3 || length > 32) {
     return false
   }
@@ -23,12 +23,12 @@ async function createUser(username: string): Promise<IUser> {
     throw new ConnectError("invalid username", Code.InvalidArgument)
   }
 
-  let newUser = new User({ username: username })
+  const newUser = new User({ username: username })
 
-  let user = await newUser.save().then(async (user) => {
+  const user = await newUser.save().then(async (user) => {
     await userProducer.sendCreatedEvent(user)
     return user
-  }).catch((error) => {
+  }).catch(() => {
     // todo: ensure error is a result of unique constraint violation
     throw new ConnectError("username already exists", Code.AlreadyExists)
   });
@@ -43,7 +43,7 @@ async function getUserById(id: string): Promise<IUser> {
   }
 
   // attempt to get the user document
-  let user = await User.findById(id).exec()
+  const user = await User.findById(id).exec()
   if (user === null) {
     throw new ConnectError("user not found", Code.NotFound)
   }
@@ -58,7 +58,7 @@ async function getUserByUsername(username: string): Promise<IUser> {
   }
 
   // attempt to find the document
-  let user = await User.findOne({ username: username })
+  const user = await User.findOne({ username: username })
   if (user === null) {
     throw new ConnectError("user not found", Code.NotFound)
   }
@@ -81,12 +81,14 @@ async function updateUserById(id: string, newUsername: string): Promise<IUser> {
     id,
     { username: newUsername },
     { new: true }
-  ).then(async (updatedUser: IUser) => {
+  ).then(async (updatedUser) => {
+    if (!updatedUser) {
+      throw new ConnectError("something unexpected went wrong", Code.Internal)
+    }
+
     await userProducer.sendUpdatedEvent(updatedUser)
     return updatedUser
-  }).catch((error) => {
-    // todo: check unique constraint violation
-    console.log(error)
+  }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
   })
 
@@ -107,18 +109,16 @@ async function updateUserByUsername(username: string, newUsername: string): Prom
     { username: username },
     { username: newUsername },
     { new: true }
-  ).then(async (updatedUser: IUser) => {
+  ).then(async (updatedUser) => {
+    if (!updatedUser) {
+      throw new ConnectError("something unexpected went wrong", Code.Internal)
+    }
+
     await userProducer.sendUpdatedEvent(updatedUser)
     return updatedUser
-  }).catch((error) => {
-    // todo: catch username not unique error
-    console.log(error)
+  }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
   })
-
-  if (updatedUser === null || updatedUser === undefined) {
-    throw new ConnectError("something unexpected went wrong", Code.Internal)
-  }
 
   return updatedUser;
 }
@@ -130,9 +130,13 @@ async function deleteUserById(id: string): Promise<void> {
   }
 
   // atempt to delete the user
-  await User.findByIdAndDelete(id).then(async (user: IUser) => {
-    await userProducer.sendDeletedEvent(user)
-    return user
+  await User.findByIdAndDelete(id).then(async (deletedUser) => {
+    if (!deletedUser) {
+      throw new ConnectError("user not found", Code.NotFound)
+    }
+
+    await userProducer.sendDeletedEvent(deletedUser)
+    return deletedUser
   }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
   })
@@ -142,9 +146,13 @@ async function deleteUserByUsername(username: string): Promise<void> {
   // attempt to delete the user
   await User.findOneAndDelete({
     username: username
-  }).then(async (user: IUser) => {
-    await userProducer.sendDeletedEvent(user)
-    return user
+  }).then(async (deletedUser) => {
+    if (!deletedUser) {
+      throw new ConnectError("user not found", Code.NotFound)
+    }
+
+    await userProducer.sendDeletedEvent(deletedUser)
+    return deletedUser
   }).catch(() => {
     throw new ConnectError("user not found", Code.NotFound)
   })
