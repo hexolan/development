@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { BaseQueryFn } from '@reduxjs/toolkit/query'
 
+import { setUnauthed } from './auth'
 import type { RootState } from '../store'
 
 const baseQuery = fetchBaseQuery({
@@ -16,7 +18,16 @@ const baseQuery = fetchBaseQuery({
   }
 })
 
+const wrappedBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
+  const result = await baseQuery(args, api, extraOptions)
+  if ((api.getState() as RootState).auth.accessToken && result?.error?.status === 403) {
+    api.dispatch(setUnauthed())
+  }
+
+  return result
+}
+
 export const apiSlice = createApi({
-  baseQuery: baseQuery,
+  baseQuery: wrappedBaseQuery,
   endpoints: () => ({}),
 })
