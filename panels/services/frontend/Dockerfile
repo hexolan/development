@@ -1,4 +1,3 @@
-# todo: change back to node:20 after resolution of issue #49497
 FROM node:18 as build  
 WORKDIR /app
 

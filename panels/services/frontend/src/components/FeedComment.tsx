@@ -138,7 +138,6 @@ const FeedCommentItem = ({ comment, setSelf }: { comment: Comment, setSelf: Reac
     authorElement = <Text color='dimmed' size='xs' mt={3} component={Link} to={`/user/${data.username}`}>by user/{data.username}</Text>
   }
 
-  // improve layout of editing comment (fix flexboxes)
   if (currentUser && (currentUser.id == comment.authorId || currentUser.isAdmin)) {
     return <ModifiableFeedComment comment={comment} authorElement={authorElement} isAuthor={currentUser.id == comment.authorId} setSelf={setSelf} />
   } else {
