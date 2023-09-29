@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "http-basic-order-choreography-json"
+version = "0.1.0"
+description = "Basic HTTP Choreography Saga Pattern (No Broker + JSON)"
+authors = ["Declan <declan@hexolan.dev"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.103.2"
+uvicorn = {extras = ["standard"], version = "^0.23.2"}
+httpx = "^0.25.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
