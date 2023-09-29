@@ -7,15 +7,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 
-class Customer(BaseModel):
-    id: int
-    balance: int
-
-
 class OrderEventType(str, Enum):
     created = "created"
-    updated = "updated"
-    deleted = "deleted"
 
 
 class OrderEventData(BaseModel):
@@ -28,6 +21,11 @@ class OrderEventData(BaseModel):
 class OrderEvent(BaseModel):
     type: OrderEventType
     data: OrderEventData
+
+
+class Customer(BaseModel):
+    id: int
+    balance: int
 
 
 class CustomerEventType(str, Enum):
@@ -51,7 +49,7 @@ class EventDispatcher:
 
     async def dispatch(self, event: CustomerEvent) -> None:
         async with httpx.AsyncClient() as client:
-            await client.post(self.EVENT_CHANNEL, data=event.json())
+            await client.post(self.EVENT_CHANNEL, json=event.dict())
 
 
 app = FastAPI()
@@ -63,6 +61,8 @@ customers = [
 
 
 def get_customer_by_id(id: int) -> Tuple[Optional[int], Optional[Customer]]:
+    global customers
+
     for i, customer in enumerate(customers):
         if customer.id == id:
             return i, customer
@@ -70,7 +70,9 @@ def get_customer_by_id(id: int) -> Tuple[Optional[int], Optional[Customer]]:
 
 
 @app.post("/events")
-async def events_handler(event: OrderEvent) -> CustomerEvent:
+async def events_handler(event: OrderEvent):
+    global customers
+
     if event.type == OrderEventType.created:
         # todo: exper with item_id -> item price
         customer_index, customer = get_customer_by_id(event.data.customer_id)
@@ -112,4 +114,4 @@ async def events_handler(event: OrderEvent) -> CustomerEvent:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5002, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=5002, log_level="debug")

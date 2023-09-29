@@ -27,15 +27,26 @@ class OrderEvent(BaseModel):
     data: OrderEventData
 
 
+class CustomerEventType(str, Enum):
+    credit_reserved = "credit_reserved"
+    credit_exceeded = "credit_exceeded"
+
+
+class CustomerEventData(BaseModel):
+    id: int
+    order_id: int
+
+
 class CustomerEvent(BaseModel):
-    customer_id: str
+    type: CustomerEventType
+    data: CustomerEventData
 
 
 @app.post("/order")
 async def order_events_channel(event: OrderEvent) -> dict:
     async with httpx.AsyncClient() as client:
-        response = await client.post(CUSTOMER_SERVICE_EVENT_RECIEVER, data=event.json())
-        print("order event routed", response)
+        response = await client.post(CUSTOMER_SERVICE_EVENT_RECIEVER, json=event.dict())
+        print("order event routed", response.json())
 
     return {"status": "event routed"}
 
@@ -43,11 +54,11 @@ async def order_events_channel(event: OrderEvent) -> dict:
 @app.post("/customer")
 async def customer_events_channel(event: CustomerEvent) -> dict:
     async with httpx.AsyncClient() as client:
-        response = await client.post(ORDER_SERVICE_EVENT_RECIEVER, data=event.json())
-        print("customer event routed", response)
+        response = await client.post(ORDER_SERVICE_EVENT_RECIEVER, json=event.dict())
+        print("customer event routed", response.json())
     
     return {"status": "event routed"}
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5000, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=5000, log_level="debug")

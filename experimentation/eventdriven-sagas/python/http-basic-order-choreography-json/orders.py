@@ -56,33 +56,38 @@ class EventDispatcher:
         )
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(self.EVENT_CHANNEL, data=event.json())
+            response = await client.post(self.EVENT_CHANNEL, json=event.dict())
             print(response)
 
 
 app = FastAPI()
 orders = []
-order_counter = 0
+order_counter = int(0)
 event_dispatcher = EventDispatcher()
 
 
 def get_order_by_id(id: int) -> Tuple[Optional[int], Optional[Order]]:
-    for i, orders in enumerate(orders):
-        if orders.id == id:
-            return i, orders
+    global orders
+
+    for i, order in enumerate(orders):
+        if order.id == id:
+            return i, order
     return None, None
 
 
 @app.get("/order/{order_id}")
-async def fetch_order(order_id: int):
+async def fetch_order(order_id: int) -> Order:
     _, order = get_order_by_id(order_id)
-    if order:
+    if order is not None:
         return order
     raise HTTPException(status_code=404, detail="Order Not Found")
 
 
 @app.post("/order")
-async def place_order(data: PlaceOrderRequest):
+async def place_order(data: PlaceOrderRequest) -> Order:
+    global orders
+    global order_counter
+
     order_counter += 1
 
     created_order = Order(
@@ -91,7 +96,7 @@ async def place_order(data: PlaceOrderRequest):
         item_id=data.item_id,
         customer_id=data.customer_id
     )
-    orders.append(created_order)
+    orders.append(created_order.copy())
     await event_dispatcher.order_created(created_order)
 
     return created_order
@@ -99,6 +104,8 @@ async def place_order(data: PlaceOrderRequest):
 
 @app.post("/events")
 async def events_handler(event: CustomerEvent):
+    global orders
+
     index, order = get_order_by_id(event.data.order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order Not Found")
@@ -120,4 +127,4 @@ async def events_handler(event: CustomerEvent):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5001, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=5001, log_level="debug")
