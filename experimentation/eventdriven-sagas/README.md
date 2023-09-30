@@ -5,11 +5,19 @@
 ### Two Methods
 ```
 Orchestration - an orchestrator (object) tells the participants what local transactions to execute
+  > tighter coupling (+ single point of failure) - as services are coupled to the saga
 
 Choreography - each local transaction publishes domain events that trigger local transactions in other services
-    > A choreography-based saga can publish events using Aggregates and Domain Events (DDD)
+  > A choreography-based saga can publish events using Aggregates and Domain Events (DDD)
+  > services have more autonomy and independence
+  > easier to add/remove services from system without disrupting overall flow
 ```
 
+In short:
+Orchestration = centralised decision making
+Choreography = distributed decision making
+
+The two methods can be combined in different flows.
 
 ### Orchestration
 ![Orchestration src. MicroservicesIO](./research/orchestration-1.png)
@@ -72,3 +80,4 @@ An e-commerce application that uses this approach would create an order using a 
 
 - [Pattern: Saga (microservices.io) [Article/Overview]](https://microservices.io/patterns/data/saga.html)
 - [The Saga Pattern in Microservices | EDA - Part 2 (A Dev' Story) [YouTube Video]](https://www.youtube.com/watch?v=C0rGwyJkDTU)
+- [Orchestration vs Choreography [Blog Post]](https://camunda.com/blog/2023/02/orchestration-vs-choreography/)
