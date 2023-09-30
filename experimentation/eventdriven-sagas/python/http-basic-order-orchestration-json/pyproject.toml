@@ -6,6 +6,9 @@ authors = ["Declan <declan@hexolan.dev"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+fastapi = "^0.103.2"
+httpx = "^0.25.0"
+uvicorn = "^0.23.2"
 
 
 [build-system]

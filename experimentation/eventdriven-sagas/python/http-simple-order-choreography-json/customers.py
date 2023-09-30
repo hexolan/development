@@ -4,8 +4,8 @@ import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException
 
-from .schema_models import Customer
-from .schema_events import OrderEvent, OrderEventType, OrderRejectionCause, CustomerCreditEvent, CustomerCreditEventType, CustomerCreditEventData
+from test_schema.schema_models import Customer
+from test_schema.schema_events import OrderEvent, OrderEventType, OrderRejectionCause, CustomerCreditEvent, CustomerCreditEventType, CustomerCreditEventData
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ async def order_event_consumer(event: OrderEvent):
     # find customer
     index, customer = None, None
     for i, cust in enumerate(app.state.customers):
-        if customer.id == event.data.customer_id:
+        if cust.id == event.data.customer_id:
             index, customer = i, cust
 
     if not customer:

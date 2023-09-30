@@ -4,8 +4,8 @@ import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException
 
-from .schema_models import Order, OrderStatus, PlaceOrderRequest
-from .schema_events import (
+from test_schema.schema_models import Order, OrderStatus, PlaceOrderRequest
+from test_schema.schema_events import (
     OrderEvent, OrderEventType, 
     CustomerCreditEvent, CustomerCreditEventType,
     InventoryReservationEvent, InventoryReservationEventType
@@ -111,7 +111,7 @@ async def inventory_event_consumer(event: InventoryReservationEvent):
 async def review_order(id: int):
     # get order
     index, order = None, None
-    for i, orderSearch in app.state.orders:
+    for i, orderSearch in enumerate(app.state.orders):
         if orderSearch.id == id:
             index, order = i, orderSearch
 

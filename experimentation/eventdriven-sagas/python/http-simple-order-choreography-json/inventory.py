@@ -4,8 +4,8 @@ import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException
 
-from .schema_models import Inventory
-from .schema_events import OrderEvent, OrderEventType, OrderRejectionCause, InventoryReservationEvent, InventoryReservationEventType, InventoryReservationEventData
+from test_schema.schema_models import Inventory
+from test_schema.schema_events import OrderEvent, OrderEventType, OrderRejectionCause, InventoryReservationEvent, InventoryReservationEventType, InventoryReservationEventData
 
 app = FastAPI()
 
