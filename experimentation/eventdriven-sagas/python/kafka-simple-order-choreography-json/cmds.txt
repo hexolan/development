@@ -1,0 +1,5 @@
+poetry run python saga_experiment/customers/main.py
+poetry run python saga_experiment/inventory/main.py
+poetry run python saga_experiment/orders/main.py
+
+poetry run python saga_experiment/client.py
