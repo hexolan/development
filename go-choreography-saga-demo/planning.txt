@@ -1,0 +1,29 @@
+Orders:
+> Order Created Event
+> Order Updated Event
+> Order Cancelled? Event
+
+Customers:
+> Customer Created Event
+> Customer Updated Event
+> Customer Deleted Event
+
+-- Order Created Event leads to...
+--- Credit Reservation Event
+      > enum type on event (CREDIT_RESERVED, CREDIT_DENIED)
+
+-- Inventory Reservation Event leads to..
+--- (if inventory reservation event type == INVENTORY_DENIED) perform compensation transaction
+      > dispatch Credit Reservation Event (with type CREDIT_RETURNED) or something
+
+Inventory:
+> Inventory Event
+  .. reflects changes to inventory
+
+-- Credit Reservation Event leads to..
+--- Inventory Reservation Event
+      > enum type on event (INVENTORY_RESERVED, INVENTORY_DENIED)
+
+Although unused implement compensation capability (e.g. INVENTORY_RETURNED) type on reservation event
+	> actually can be used when an order is cancelled
+	> if order is pending... wait for order to be approved (or denied) before attempting to cancel an order (so the saga is not still in progress - since this is choreography not orchestrated where it can be easily interrupted)

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package inventory;
+
+message Order {
+    string id = 1;
+    string product_id = 2;
+    string customer_id = 3;
+    string status = 4;
+}
+
+message OrderEvent {
+    string type = 1;
+    Order data = 2;
+}
