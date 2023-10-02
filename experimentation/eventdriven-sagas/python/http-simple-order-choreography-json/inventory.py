@@ -18,6 +18,11 @@ async def startup_event():
     ]
 
 
+@app.get("/inventory_debug")
+def view_inventory():
+    return app.state.inventory
+
+
 @app.post("/order_event_consumer")
 async def order_event_consumer(event: OrderEvent):
     # find product inventory
@@ -33,6 +38,7 @@ async def order_event_consumer(event: OrderEvent):
     # if a pending order has been created
     if event.type == OrderEventType.created:
         # check quantity after reservation (out of stock or stock reserved)
+        print(product_inv)
         if (product_inv.quantity - 1) >= 0:
             # Item can be reserved
             product_inv.quantity -= 1
@@ -68,6 +74,7 @@ async def order_event_consumer(event: OrderEvent):
         # make sure rejection wasn't as a result of insufficient stock (otherwise i'm creating stock)
         if event.detail != OrderRejectionCause.inventory_stock:
             # rollback stock reservation as order was rejected
+            print("stock reservation rollback")
             product_inv.quantity += 1
             app.state.inventory[index] = product_inv
 

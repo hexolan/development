@@ -18,6 +18,11 @@ async def startup_event():
     ]
 
 
+@app.get("/customers_debug")
+def view_customers():
+    return app.state.customers
+
+
 @app.post("/order_event_consumer")
 async def order_event_consumer(event: OrderEvent):
     # constants
@@ -70,6 +75,7 @@ async def order_event_consumer(event: OrderEvent):
         # make sure rejection wasn't as a result of insufficient balance (otherwise i'm creating customer balance)
         if event.detail != OrderRejectionCause.customer_balance:
             # rollback reserved balance as order was rejected
+            print("credit reservation rollback")
             customer.balance += ITEM_PRICE
             app.state.customers[index] = customer
 

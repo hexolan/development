@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 
 from test_schema.schema_models import Order, OrderStatus, PlaceOrderRequest
 from test_schema.schema_events import (
-    OrderEvent, OrderEventType, 
+    OrderEvent, OrderEventType, OrderRejectionCause,
     CustomerCreditEvent, CustomerCreditEventType,
     InventoryReservationEvent, InventoryReservationEventType
 )
@@ -151,12 +151,28 @@ async def review_order(id: int):
         del app.state.pending_order_state[order.id]
 
         # Dispatch rejected event
+        # todo: add rejection detail (caused by stock? caused by customer?)
+        #   > also think about cases where both stock and credit resulted in failure (but only one processed before rejection sent out)
+        #       > this is currently the case with inventory and customer (when both fail)
+        #       * rollback is performed before inventory service has even processed evnet
+        #       * then when processed it uses the 'created' inventory to create appearence of having reserved inventory
+        #       * also making it look like no issue occured as the resultant inventory is the same as before order rejection
+        #   (in short - this current version is not safe for real world use)
+        #   > as part of rollback inventory should not be created
+
+        rejection_cause = None
+        if pending_state["inventory_approved"] == False:
+            rejection_cause = OrderRejectionCause.inventory_stock
+        elif pending_state["customer_approved"] == False:
+            rejection_cause = OrderRejectionCause.customer_balance
+
         async with httpx.AsyncClient() as client:
             await client.post(
                 "http://localhost:5000/order_event",
                 json=OrderEvent(
                     type=OrderEventType.rejected,
-                    data=order
+                    data=order,
+                    detail=rejection_cause
                 ).dict()
             )
     else:
