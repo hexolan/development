@@ -36,9 +36,9 @@ class ItemRepository:
             self._queue.task_done()
 
     async def _get_item_by_id(self, id: int) -> Optional[Item]:
-        self._app.state.metric_dbcalls += 1
+        self._app.state.metrics["db_calls"] += 1
 
-        await asyncio.sleep(.05) # simulate expensive read
+        await asyncio.sleep(.05) # Simulate expensive read
 
         query = "SELECT * FROM 'items' WHERE id = :id"
         row = await self._db.fetch_one(query=query, values={"id": id})
@@ -47,7 +47,7 @@ class ItemRepository:
         else:
             return Item(**row)
 
-    async def get_item_by_id(self, id: int) -> asyncio.Future[Optional[Item]]:
+    async def get_item_by_id(self, id: int) -> "asyncio.Future[Optional[Item]]":
         fut = self._queued_futures.get(id)
         if fut:
             return fut
@@ -60,8 +60,7 @@ class ItemRepository:
 
 @app.on_event("startup")
 async def startup_event():
-    app.state.metric_requests = 0
-    app.state.metric_dbcalls = 0
+    app.state.metrics = {"requests": 0, "db_calls": 0}
 
     app.state.item_repository = ItemRepository(app=app)
     await app.state.item_repository.connect_db()
@@ -75,19 +74,25 @@ async def shutdown_event():
 
 @app.get("/metrics")
 def view_metrics() -> dict:
-    return {
-        "requests": app.state.metric_requests,
-        "db_calls": app.state.metric_dbcalls
-    }
+    return app.state.metrics
 
 
-@app.get("/{item_id}")
-async def get_item(item_id: int) -> Item:
-    app.state.metric_requests += 1
+@app.get("/standard/{item_id}")
+async def get_item_standard(item_id: int) -> Item:
+    app.state.metrics["requests"] += 1
 
-    print(app.state.item_repository._queued_futures)
-    pending_item = await app.state.item_repository.get_item_by_id(item_id)
-    item = await pending_item
+    item = await app.state.item_repository._get_item_by_id(item_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="No item found")
+    
+    return item
+
+
+@app.get("/coalesced/{item_id}")
+async def get_item_coalesced(item_id: int) -> Item:
+    app.state.metrics["requests"] += 1
+
+    item = await (await app.state.item_repository.get_item_by_id(item_id))
     if item is None:
         raise HTTPException(status_code=404, detail="No item found")
     
