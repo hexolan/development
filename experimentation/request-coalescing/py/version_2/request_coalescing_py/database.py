@@ -12,8 +12,7 @@ class DatabaseRepo:
         self.app = app
 
     async def start_db(self) -> None:
-        self._db = Database("sqlite:///:memory:")
-        # self._db = Database("sqlite:///:memory:")
+        self._db = Database("sqlite://./test.db")
         await self._db.connect()
         
         try:
@@ -28,24 +27,10 @@ class DatabaseRepo:
     async def get_by_id(self, item_id: int) -> Optional[Item]:
         self.app.state.metrics["db_calls"] += 1
 
-        # Simulate expensive read (50ms/db read)
-        # await asyncio.sleep(.05)
-
         # Simulate expensive read (100ms)
         await asyncio.sleep(.1)
 
-        # todo: comment out once db in place
-        """
-        return Item(
-            id=item_id,
-            name=f"Item {item_id}"
-        )
-        """
-
-        row = await self._db.fetch_one(
-            query="SELECT * FROM 'items' WHERE id = :id",
-            values={"id": item_id}
-        )
+        row = await self._db.fetch_one(query="SELECT * FROM 'items' WHERE id = :id", values={"id": item_id})
         if row:
             return Item(**row)
         

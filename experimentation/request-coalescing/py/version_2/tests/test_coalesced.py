@@ -9,7 +9,8 @@ async def test_coalesced_requests(client) -> None:
 
     async def make_requests():
         for _ in range(100):
-            await client.get("/coalesced/1")
+            response = await client.get("/coalesced/1")
+            assert response.status_code == 200
 
     # Make the requests concurrently
     tasks = []
