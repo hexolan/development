@@ -7,7 +7,7 @@ from request_coalescing_py.main import app
 from request_coalescing_py.models import Item
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def anyio_backend() -> str:
     return "asyncio"
 

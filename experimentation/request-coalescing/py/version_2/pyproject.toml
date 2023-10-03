@@ -2,7 +2,7 @@
 name = "request-coalescing-py"
 version = "0.1.0"
 description = "A simple demonstration of request coalescing in asynchronous Python."
-authors = ["Declan Teevan <declan@hexolan.dev>"]
+authors = ["Declan <declan@hexolan.dev>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -19,7 +19,7 @@ asgi-lifespan = "^2.1.0"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "--capture=tee-sys --durations=0"
+addopts = "--capture=tee-sys -p no:cacheprovider"
 
 [build-system]
 requires = ["poetry-core"]

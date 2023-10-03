@@ -26,17 +26,8 @@ class CoalescingRepo:
 
     async def process_queue(self) -> None:
         while True:
-            for item_id, fut in self._queued.items():
-                fut.set_result(
-                    await self._repo.get_by_id(item_id)
-                )
-            await asyncio.sleep(0.01)
-            
-            """
-            slower?:
             item_id = await self._queue.get()
             item = await self._repo.get_by_id(item_id)
             self._queued[item_id].set_result(item)
             del self._queued[item_id]
             self._queue.task_done()
-            """
