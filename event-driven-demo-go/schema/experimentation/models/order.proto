@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "github.com/hexolan/test/protos/order;order";
+
+package project.models.order;
+
+message Order {
+    string id = 1;
+    string product_id = 2;
+    string customer_id = 3;
+    string status = 4;
+}
