@@ -4,6 +4,8 @@ rough outline/version
 
 ## Layout
 
+todo: create as generic implementation that i can suplement in other langages (e.g. rust, etc - maybe event-driven-shipping-go, etc)
+
 [diagram of project layout .... inventory service / order service -> kafka as 'event bus']
 
 ## Events

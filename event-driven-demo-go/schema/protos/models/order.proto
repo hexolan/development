@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option go_package = "github.com/hexolan/test/protos/order;order";
+option go_package = "github.com/hexolan/event-driven-demo-go/protos/order;order";
 
-package project.models.order;
+package project.order.models;
 
 message Order {
     string id = 1;

@@ -8,7 +8,7 @@ package order_service
 
 import (
 	context "context"
-	order "github.com/hexolan/test/protos/order"
+	order "github.com/hexolan/event-driven-demo-go/protos/order"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -36,7 +36,7 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 
 func (c *orderServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*order.Order, error) {
 	out := new(order.Order)
-	err := c.cc.Invoke(ctx, "/project.services.order.OrderService/GetOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/project.order.svc.OrderService/GetOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/project.services.order.OrderService/GetOrder",
+		FullMethod: "/project.order.svc.OrderService/GetOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).GetOrder(ctx, req.(*GetOrderRequest))
@@ -93,7 +93,7 @@ func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OrderService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "project.services.order.OrderService",
+	ServiceName: "project.order.svc.OrderService",
 	HandlerType: (*OrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
