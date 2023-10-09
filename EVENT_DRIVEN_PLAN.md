@@ -1,3 +1,53 @@
+# E-Commerce Application
+
+**Features**
+
+Product
+
+* Items served
+
+Warehouse
+
+- Stock keeping of each product
+
+Orders
+
+* Placed orders
+
+Shipping
+
+* Responsible for dispatching items (tracking ids for imaginary mail, etc)
+
+Notifications (sending email on order updates, etc)
+
+Payment
+
+* Handling payments. User credit, etc
+
+Users
+
+* User profiles and details
+
+
+
+**Planned Flows**
+
+<u>Place Order</u>
+
+* User places order for items in their cart (at their selected branch)
+* Order created in pending state -> *OrderCreatedEvent*
+* *OrderCreatedEvent* -> check stock of items in order 
+  * -> OrderStockEvent (type = reserved / out_of_stock)
+* *OrderStockEvent* -> reserve credit from user for order
+  * -> OrderPaymentEvent (type = success / failure)
+* *OrderPaymentEvent* (type: success) -> Order state changed to approved
+* *OrderPaymentEvent* (type: failure) -> Stock returned & order rejected
+* *OrderStockEvent* (type: out_of_stock) -> Order rejected
+
+----
+
+# Old
+
 Orders:
 > Order Created Event
 > Order Updated Event

@@ -1,6 +1,6 @@
 rough outline/version
 
-# Event Driven Demonstration (Golang)
+# Stocklet (E-Commerce Application)
 
 ## Layout
 

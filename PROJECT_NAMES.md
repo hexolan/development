@@ -1,5 +1,7 @@
 # Ideas for Project Names/Temp Names
 
+### With Meaning
+
 * Conure
   * Either a large parakeet or small parrot.
   * Potentially a good name for a messaging application?
@@ -19,4 +21,19 @@
 * Aurulent
   * Meaning gold in colour
 
+### Without Meaning
+
+* Foality
+
+* Stoclet/Stoklet
+
+* Snority
+
 * 
+
+
+
+
+## Resources
+
+* [Wordoid](https://wordoid.com/)

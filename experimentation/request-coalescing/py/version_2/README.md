@@ -28,6 +28,6 @@ The number of database queries has fallen from 1:1 with requests to 1 database c
 
 ## License and Contributing
 
-Please feel free to open pull requests containing any improvements.
+Please feel free to make pull requests containing any suggestions for improvements.
 
 This repository is open sourced under the [MIT License.](/LICENSE)
