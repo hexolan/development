@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+option go_package = "github.com/hexolan/stocklet/pkg/protos/shipping/v1;shipping_v1";
+
+package stocklet.shipping.v1;
