@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/hexolan/stocklet/internal/protos/order;order";
+option go_package = "github.com/hexolan/stocklet/pkg/protos/order";
 
 package stocklet.order.models;
 

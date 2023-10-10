@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option go_package = "github.com/hexolan/stocklet/internal/protos/order-service;order_service";
-
-package stocklet.order.service;
-
 import "models/order.proto";
+
+option go_package = "github.com/hexolan/stocklet/pkg/protos/order-service";
+
+package stocklet.order;
 
 service OrderService {
   rpc GetOrder (GetOrderRequest) returns (stocklet.order.models.Order) {}

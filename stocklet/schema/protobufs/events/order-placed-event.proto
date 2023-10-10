@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "models/order.proto";
+
+option go_package = "github.com/hexolan/stocklet/pkg/protos/order-placed-event";
+
+package stocklet.order.events.order_placed;
+
+message OrderPlaceEvent {
+    string type = 1;
+    stocklet.order.models.Order data = 2;
+}
