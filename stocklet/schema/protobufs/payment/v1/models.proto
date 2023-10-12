@@ -1,5 +1,5 @@
 syntax = "proto3";
 
-option go_package = "github.com/hexolan/stocklet/pkg/protos/payment/v1;payment_v1";
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/payment/v1;payment_v1";
 
 package stocklet.payment.v1;

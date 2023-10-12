@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/hexolan/stocklet/internal/auth"
+	"github.com/hexolan/stocklet/internal/app/auth"
 )
 
 func main() {
 	// todo: something alike
 	cfg, err := config.LoadFromEnvironment()
 	if err != nil {
-		
+
 	}
 
 	db, err := postgres.NewDatabaseConnection()

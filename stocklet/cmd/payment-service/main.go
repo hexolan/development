@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hexolan/stocklet/internal/payment-service"
+	"github.com/hexolan/stocklet/internal/app/payment"
 )
 
 func main() {

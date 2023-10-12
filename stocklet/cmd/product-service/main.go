@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hexolan/stocklet/internal/product-service"
+	"github.com/hexolan/stocklet/internal/app/product"
 )
 
 func main() {
