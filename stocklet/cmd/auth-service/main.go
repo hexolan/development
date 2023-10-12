@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/hexolan/stocklet/internal/pkg/datastore"
 	"github.com/hexolan/stocklet/internal/app/auth"
 )
 
@@ -11,7 +12,7 @@ func main() {
 
 	}
 
-	db, err := postgres.NewDatabaseConnection()
+	db, err := datastore.NewPostgresConnection()
 	if err != nil {
 
 	}

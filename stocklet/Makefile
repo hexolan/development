@@ -2,6 +2,8 @@ PROTOC_BASE := protoc -I ./schema/protobufs \
 --go_out=module=github.com/hexolan/stocklet/internal/pkg/protobuf:./internal/pkg/protobuf --go_opt=paths=import \
 --go-grpc_out=module=github.com/hexolan/stocklet/internal/pkg/protobuf:./internal/pkg/protobuf --go-grpc_opt=paths=import
 
+protoc: protoc-auth protoc-order protoc-payment protoc-product protoc-shipping protoc-user protoc-warehouse
+
 protoc-auth:
 	$(PROTOC_BASE) auth/v1/service.proto auth/v1/models.proto
 
@@ -22,5 +24,3 @@ protoc-user:
 
 protoc-warehouse:
 	$(PROTOC_BASE) warehouse/v1/service.proto warehouse/v1/models.proto
-
-protoc: protoc-auth protoc-order protoc-payment protoc-product protoc-shipping protoc-user protoc-warehouse
