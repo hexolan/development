@@ -3,6 +3,7 @@ module github.com/hexolan/stocklet
 go 1.21.1
 
 require (
+	github.com/go-chi/chi/v5 v5.0.10
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	google.golang.org/protobuf v1.31.0
 )
