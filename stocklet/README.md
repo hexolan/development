@@ -1,21 +1,34 @@
-rough outline/version
+# Stocklet
 
-# Stocklet (E-Commerce Application)
+An event driven microservice e-commerce application.
 
-## Layout
+## About
 
-organised as a monorepo
+### Layout
 
-todo: create as generic implementation that i can suplement in other langages (e.g. rust, etc - maybe event-driven-shipping-go, etc)
+current state of README: rough outline
 
-[diagram of project layout .... inventory service / order service -> kafka as 'event bus']
+... project organised as a monorepo
 
-## Events
+[diagram of project layout .... inventory service / order service -> kafka as 'event bus' ... service mesh]
+
+### Schema
+
+(maybe add additional services such as shipping service -> showing eventual consistency)
+  > in that case rename this 'project' to event-driven-go-demo (can also create an event-driven-py-demo, etc..)
+  > might be a better angle (+ add more services // warehouse service // dispatch/delivery service // mark order delivered, etc)
+  > database access services? (-> gRPC)
+    > requesting coalescing
 
 description of events (and invoked compensation transactions) + topics they are dispatched under
   > e.g. 'order.created', 'order.updated' topics
 
-## Patterns Used
+discussion on protobuf schema of events
+  > recently discovered: <https://www.asyncapi.com/> (todo: have a look into it. potentially write schemas with it. find way to integrate protobuf as it appears json-oriented)
+
+## Features
+
+maybe: description of patterns used
 
 event-driven architecture
 
@@ -24,16 +37,8 @@ description of choreography saga
 
 difference between choreography and orchestration
 
-## Schema
-
-(maybe add additional services such as shipping service -> showing eventual consistency)
-  > in that case rename this 'project' to event-driven-go-demo (can also create an event-driven-py-demo, etc..)
-  > might be a better angle (+ add more services // warehouse service // dispatch/delivery service // mark order delivered, etc)
-  > database access services? (-> gRPC)
-    > requesting coalescing
-
-discussion on protobuf schema of events
-  > recently discovered: https://www.asyncapi.com/ (todo: have a look into it. potentially write schemas with it. find way to integrate protobuf as it appears json-oriented)
+- [ ] ABC
+- [ ] DEF
 
 ## Deployment
 
@@ -42,8 +47,8 @@ how to run project
 
 tracing method?
   > some sort of request ID/transaction ID that spans all saga related events (though not needed - tracing could be performed using just order ID)
-  > https://medium.com/dzerolabs/observability-journey-understanding-logs-events-traces-and-spans-836524d63172
+  > <https://medium.com/dzerolabs/observability-journey-understanding-logs-events-traces-and-spans-836524d63172>
 
 ## License
 
-TODO
+This project is distributed under the [MIT License.](/LICENSE)

@@ -1,5 +1,9 @@
 package database
 
-func NewPostgresConnection(dsn string) (* , error) {
+import (
+	"github.com/hexolan/stocklet/internal/pkg/config"
+)
+
+func NewPGConn(conf config.PostgresConfig) (* , error) {
 
 }

@@ -4,24 +4,24 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-type Config struct {
+type ServiceConfig struct {
 	Postgres config.PostgresConfig
 	Kafka config.KafkaConfig
 }
 
-func LoadConfig() (*Config, error) {
-	postgresCfg, err := config.LoadPostgresConfig()
+func LoadServiceConfig() (*ServiceConfig, error) {
+	pgCfg, err := config.LoadPostgresConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	kafkaCfg, err := config.LoadKafkaConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return &Config{
-		Postgres: postgresCfg,
-		Kafka: kafkaCfg,
+	return &ServiceConfig{
+		Postgres: *pgCfg,
+		Kafka: *kafkaCfg,
 	}, nil
 }
