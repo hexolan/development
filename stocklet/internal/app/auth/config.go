@@ -10,18 +10,18 @@ type ServiceConfig struct {
 }
 
 func LoadServiceConfig() (*ServiceConfig, error) {
-	pgCfg, err := config.LoadPostgresConfig()
+	pgConf, err := config.LoadPostgresConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	kafkaCfg, err := config.LoadKafkaConfig()
+	kafkaConf, err := config.LoadKafkaConfig()
 	if err != nil {
 		return nil, err
 	}
 
 	return &ServiceConfig{
-		Postgres: *pgCfg,
-		Kafka: *kafkaCfg,
+		Postgres: *pgConf,
+		Kafka: *kafkaConf,
 	}, nil
 }

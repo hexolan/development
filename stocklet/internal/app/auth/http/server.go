@@ -1,4 +1,4 @@
-package auth
+package http
 
 import (
 	"time"
@@ -6,9 +6,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/hexolan/stocklet/internal/app/auth"
 )
 
-func NewRestAPI(svc AuthService) {
+func NewRestAPI(svc auth.AuthService) {
 	r := chi.NewRouter()
 	
 	// Add middleware

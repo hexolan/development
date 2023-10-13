@@ -1,28 +1,34 @@
 package main
 
 import (
-	"github.com/hexolan/stocklet/internal/app/auth"
 	"github.com/hexolan/stocklet/internal/pkg/database"
-	"github.com/hexolan/stocklet/internal/pkg/messaging"
+	"github.com/hexolan/stocklet/internal/app/auth"
+	"github.com/hexolan/stocklet/internal/app/auth/http"
+	"github.com/hexolan/stocklet/internal/app/auth/events"
 )
 
 func main() {
-	// todo: something alike
 	cfg, err := auth.LoadServiceConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	db, err := database.NewPostgresConnection()
+	db, err := database.NewPostgresConn(cfg.Postgres)
 	if err != nil {
 		panic(err)
 	}
 
+	/*
+	// todo: open kafka conn (maybe using goka or sarama directly?)
 	kafka, err := messaging.NewKafkaConnection()
 	if err != nil {
 		panic(err)
 	}
+	*/
 
-	auth.NewAuthService(db)
-
+	prod := auth.NewEventProd(cfg.Kafka)
+	svc := auth.NewAuthService(db, prod)
+	
+	http.NewRestAPI(svc)
+	go events.NewEventConsumer(svc)
 }

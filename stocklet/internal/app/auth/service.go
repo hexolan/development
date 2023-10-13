@@ -1,18 +1,21 @@
 package auth
 
 import (
-	
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // todo: change to actual types
-func NewAuthService(cfg bool) AuthService {
-	svc := authService{}
+func NewAuthService(db *pgxpool.Pool, prod EventProducer) AuthService {
+	svc := authService{
+		db: db,
+		prod: prod,
+	}
 	return svc
 }
 
 type authService struct {
-	Kafka bool
-	Postgres bool
+	db *pgxpool.Pool
+	prod EventProducer
 }
 
 type AuthService interface {
