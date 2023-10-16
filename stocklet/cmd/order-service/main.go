@@ -25,9 +25,10 @@ func main() {
 		log.Fatal().Err(err).Msg("")
 	}
 
-	// Create the service repository
-	prod := order.NewEventProd(cfg.Kafka)
-	svc := order.NewOrderService(db, prod)
+	// Create the service repositories
+	dbRepo := order.NewDBRepository(db)
+	evtRepo := order.NewEventRepository(dbRepo)
+	svc := order.NewOrderService(evtRepo)
 	
 	// Start the HTTP and Event APIs
 	go http.NewHttpAPI(svc)
