@@ -1,4 +1,4 @@
-package auth
+package order
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/config"

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	cfg, err := auth.LoadServiceConfig()
+	cfg, err := auth.NewServiceConfig()
 	if err != nil {
 		panic(err)
 	}

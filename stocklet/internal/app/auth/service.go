@@ -13,16 +13,16 @@ func NewAuthService(db *pgxpool.Pool, prod EventProducer) AuthService {
 	return svc
 }
 
-type authService struct {
-	db *pgxpool.Pool
-	prod EventProducer
-}
-
 type AuthService interface {
 	AuthUserPassword(username string, password string) (*bool, error)
 	AddMethodPassword(username string, password string) (*bool, error)
 	UpdateMethodPassword(username string, password string) (*bool, error)
 	DeleteMethodPassword(username string) (*bool, error)
+}
+
+type authService struct {
+	db *pgxpool.Pool
+	prod EventProducer
 }
 
 func (svc authService) AuthUserPassword(username string, password string) (*bool, error) {
