@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  auth-service:
+    image: stocklet/auth-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/auth.Dockerfile
+      
+  order-service:
+    image: stocklet/order-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/order.Dockerfile
+
+  payment-service:
+    image: stocklet/payment-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/payment.Dockerfile
+
+  product-service:
+    image: stocklet/product-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/product.Dockerfile
+
+  shipping-service:
+    image: stocklet/shipping-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/shipping.Dockerfile
+
+  user-service:
+    image: stocklet/user-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/user.Dockerfile
+
+  warehouse-service:
+    image: stocklet/auth-service
+    build: 
+      context: ../
+      dockerfile: ./dockerfiles/warehouse.Dockerfile
