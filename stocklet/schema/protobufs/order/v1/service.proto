@@ -3,3 +3,43 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1;order_v1";
 
 package stocklet.order.v1;
+
+import "order/v1/models.proto";
+
+
+/* Create Order */
+message CreateOrderRequestData {
+    repeated OrderItem items = 1;
+}
+
+message CreateOrderRequest {
+    string user_id = 1;
+    CreateOrderRequestData data = 2;
+}
+/* End of Create Order */
+
+/* Get Order */
+message GetOrderRequest {
+    string order_id = 1;
+    string user_id = 2;
+}
+/* End of Get Order */
+
+/* Update Order */
+message UpdateOrderRequestData {
+
+}
+
+message UpdateOrderRequest {
+    string order_id = 1;
+    string user_id = 2;
+    UpdateOrderRequestData data = 3;
+}
+/* End of Update Order */
+
+/* Delete Order */
+message DeleteOrderRequest {
+    string order_id = 1;
+    string user_id = 2;
+}
+/* End of Delete Order */

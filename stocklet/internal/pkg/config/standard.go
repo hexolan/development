@@ -16,7 +16,7 @@ func (cfg *StandardConfig) LoadStandardConfig() error {
 		return err
 	}
 
-	cfg.Postgres = pgConf
-	cfg.Kafka = kafkaConf
+	cfg.Postgres = *pgConf
+	cfg.Kafka = *kafkaConf
 	return nil
 }

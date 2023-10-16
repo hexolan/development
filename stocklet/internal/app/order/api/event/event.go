@@ -1,9 +1,9 @@
-package events
+package event
 
 import (
 	"github.com/hexolan/stocklet/internal/app/order"
 )
 
-func NewEventConsumer(svc order.OrderService) {
+func NewEventAPI(svc order.OrderRepository) {
 
 }

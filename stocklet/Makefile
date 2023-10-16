@@ -8,7 +8,7 @@ protoc-auth:
 	$(PROTOC_BASE) auth/v1/service.proto auth/v1/models.proto
 
 protoc-order:
-	$(PROTOC_BASE) order/v1/service.proto order/v1/models.proto
+	$(PROTOC_BASE) order/v1/models.proto order/v1/service.proto order/v1/events.proto
 
 protoc-payment:
 	$(PROTOC_BASE) payment/v1/service.proto payment/v1/models.proto

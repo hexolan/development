@@ -1,31 +1,24 @@
 package config
 
+import (
+	"strings"
+)
+
 type KafkaConfig struct {
-	Username string
-	Password string
-	Host string
+	Brokers []string
 }
 
 func LoadKafkaConfig() (*KafkaConfig, error) {
 	// Load configurations from env
-	username, err := requireFromEnv("KAFKA_USER")
-	if err != nil {
-		return nil, err
-	}
-	
-	password, err := requireFromEnv("KAFKA_PASS")
-	if err != nil {
-		return nil, err
-	}
-	
-	host, err := requireFromEnv("KAFKA_HOST")
+	brokersOpt, err := requireFromEnv("KAFKA_BROKERS")
 	if err != nil {
 		return nil, err
 	}
 
+	// Comma seperate the brokers
+	brokers := strings.Split(*brokersOpt, ",")
+	
 	return &KafkaConfig{
-		Username: *username,
-		Password: *password,
-		Host: *host,
+		Brokers: brokers,
 	}, nil
 }

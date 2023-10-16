@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1;order_v1";
+
+package stocklet.order.v1;
+
+enum OrderCreateEventType {
+    PAYMENT_APPROVED = 0;
+    PAYMENT_REJECTED = 1;
+
+    STOCK_RESERVED = 2;
+    STOCK_REJECTED = 3;
+}
+
+message OrderCreateEvent {
+    OrderCreateEventType type = 1;
+
+    string order_id = 2;
+    string customer_id = 3;
+}
