@@ -6,8 +6,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/logging"
 	"github.com/hexolan/stocklet/internal/pkg/database"
 	"github.com/hexolan/stocklet/internal/app/order"
-	"github.com/hexolan/stocklet/internal/app/order/api/http"
-	"github.com/hexolan/stocklet/internal/app/order/api/event"
+	"github.com/hexolan/stocklet/internal/app/order/api"
 )
 
 func main() {
@@ -19,7 +18,7 @@ func main() {
 
 	logging.ConfigureLogger()
 
-	// Open a database connection pool
+	// Open a database connection
 	db, err := database.NewPostgresConn(cfg.Postgres)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -27,10 +26,10 @@ func main() {
 
 	// Create the service repositories
 	dbRepo := order.NewDBRepository(db)
-	evtRepo := order.NewEventRepository(dbRepo)
-	svc := order.NewOrderService(evtRepo)
+	evtRepo := order.NewEventRepository(dbRepo, cfg.Kafka)
+	svc := order.NewServiceRepository(evtRepo)
 	
-	// Start the HTTP and Event APIs
-	go http.NewHttpAPI(svc)
-	event.NewEventAPI(svc)
+	// Start the HTTP and event interfaces
+	go api.NewHttpAPI(svc)
+	api.NewEventAPI(svc, cfg.Kafka)
 }

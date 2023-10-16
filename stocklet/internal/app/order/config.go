@@ -10,6 +10,7 @@ type ServiceConfig struct {
 
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{}
+	
 	err := cfg.LoadStandardConfig()
 	if err != nil {
 		return nil, err

@@ -15,24 +15,24 @@ type svcRepository struct {
 	next OrderRepository
 }
 
-func NewOrderService(next OrderRepository) OrderRepository {
+func NewServiceRepository(next OrderRepository) OrderRepository {
 	return svcRepository{
 		next: next,
 	}
 }
 
 func (svc svcRepository) GetOrder(req *order_v1.GetOrderRequest) (*order_v1.Order, error) {
-	return new(order_v1.Order), nil // todo:
+	return svc.next.GetOrder(req)
 }
 
 func (svc svcRepository) UpdateOrder(req *order_v1.UpdateOrderRequest) (*order_v1.Order, error) {
-	return new(order_v1.Order), nil // todo:
+	return svc.next.UpdateOrder(req)
 }
 
 func (svc svcRepository) DeleteOrder(req *order_v1.DeleteOrderRequest) error {
-	return nil // todo: 
+	return svc.next.DeleteOrder(req)
 }
 
 func (svc svcRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
-	return new(order_v1.Order), nil // todo:
+	return svc.next.CreateOrder(req)
 }

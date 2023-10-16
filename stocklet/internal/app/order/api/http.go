@@ -1,4 +1,4 @@
-package http
+package api
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -6,6 +6,20 @@ import (
 	"github.com/hexolan/stocklet/internal/app/order"
 	order_v1 "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1"
 )
+
+func NewHttpAPI(svc order.OrderRepository) {
+	app := fiber.New()
+
+	// todo: error middleware
+	// todo: improved json marshaller
+
+	app.Post("/", createOrderHandler(svc))
+	app.Get("/:orderId", getOrderHandler(svc))
+	app.Patch("/:orderId", updateOrderHandler(svc))
+	app.Delete("/:orderId", deleteOrderHandler(svc))
+
+	app.Listen(":3000")
+}
 
 func getOrderHandler(svc order.OrderRepository) fiber.Handler {
 	return func(c *fiber.Ctx) error {

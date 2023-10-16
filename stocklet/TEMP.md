@@ -31,6 +31,8 @@ Payment Service
   Compensationary:
   > Consume OrderWarehouseEvent
     > of type 'out_of_stock'
+  > Consume OrderShippingEvent
+    > of type 'denied'
   > Return Credit to User
 
 Warehouse Service

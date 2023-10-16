@@ -27,6 +27,6 @@ func NewKafkaProcessor(conf config.KafkaConfig, group *goka.GroupGraph) (*goka.P
 }
 
 func EnsureKafkaTopics(conf config.KafkaConfig, topics []string) error {
-	// todo
+
 	return nil
 }

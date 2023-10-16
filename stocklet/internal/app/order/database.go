@@ -25,7 +25,7 @@ func (repo dbRepository) UpdateOrder(req *order_v1.UpdateOrderRequest) (*order_v
 }
 
 func (repo dbRepository) DeleteOrder(req *order_v1.DeleteOrderRequest) error {
-	return nil  // tood
+	return nil  // todo
 }
 
 func (repo dbRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
