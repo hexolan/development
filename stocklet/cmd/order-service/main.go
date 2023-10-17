@@ -26,12 +26,9 @@ func main() {
 	}
 
 	// Ensure the required Kafka topics exist
-	err = messaging.EnsureKafkaStreamTopics(
-		cfg.Kafka, 
-		[]string{
-			string(order.TopicTestThing),
-		},
-	)
+	err = messaging.EnsureKafkaStreamTopics(cfg.Kafka, []string{
+		string(messaging.TopicTestThing), string(messaging.TopicTestThing2),
+	})
 	if err != nil {
 		// todo: check if this raises err if topic already exists
 		// may not always need to be fatal (only if conn cannot be established)

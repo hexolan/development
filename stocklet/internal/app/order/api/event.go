@@ -19,7 +19,7 @@ import (
 func NewEventAPI(svc order.OrderRepository, kafkaConf config.KafkaConfig) {
 	group := goka.DefineGroup(
 		"order-service",
-		goka.Input(order.TopicTestThing, new(codec.Bytes), topicTestThingHandler(svc)),
+		goka.Input(messaging.TopicTestThing, new(codec.Bytes), topicTestThingHandler(svc)),
 	)
 
 	processor, err := messaging.NewKafkaProcessor(kafkaConf, group)
