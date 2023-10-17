@@ -9,13 +9,18 @@ import (
 	order_v1 "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1"
 )
 
+const (
+	TopicTestThing = goka.Stream("TEST")
+	TopicTestThing2 = goka.Stream("TEST2")
+)
+
 type evtRepository struct {
 	next OrderRepository
 	prod *goka.Emitter
 }
 
 func NewEventRepository(next OrderRepository, kafkaConf config.KafkaConfig) OrderRepository {
-	prod, err := messaging.NewKafkaEmitter(kafkaConf, "order")
+	prod, err := messaging.NewKafkaEmitter(kafkaConf, TopicTestThing2)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}

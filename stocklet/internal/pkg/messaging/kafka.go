@@ -26,7 +26,19 @@ func NewKafkaProcessor(conf config.KafkaConfig, group *goka.GroupGraph) (*goka.P
 	return processor, nil
 }
 
-func EnsureKafkaTopics(conf config.KafkaConfig, topics []string) error {
+func EnsureKafkaStreamTopics(conf config.KafkaConfig, topics []string) error {
+	const TopicPartitions = 8
+
+	tm, err := goka.NewTopicManager(conf.Brokers, goka.DefaultConfig(), goka.NewTopicManagerConfig())
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to create topic manager", err)
+	}
+
+	defer tm.Close()
+
+	for _, topic := range topics {
+		err = tm.EnsureStreamExists(topic, TopicPartitions)
+	}
 
 	return nil
 }
