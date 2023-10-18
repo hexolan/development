@@ -8,6 +8,7 @@ require (
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/lovoo/goka v1.1.10
 	github.com/rs/zerolog v1.31.0
+	github.com/twmb/franz-go v1.15.0
 	google.golang.org/protobuf v1.31.0
 )
 
@@ -39,10 +40,11 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
-	github.com/pierrec/lz4/v4 v4.1.17 // indirect
+	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v1.6.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.49.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect

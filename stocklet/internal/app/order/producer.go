@@ -1,8 +1,8 @@
 package order
 
 import (
-	"github.com/lovoo/goka"
 	"github.com/rs/zerolog/log"
+	"github.com/twmb/franz-go/pkg/kgo"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
@@ -11,18 +11,13 @@ import (
 
 type evtRepository struct {
 	next OrderRepository
-	prod *goka.Emitter
+	kcl *kgo.Client
 }
 
-func NewEventRepository(next OrderRepository, kafkaConf config.KafkaConfig) OrderRepository {
-	prod, err := messaging.NewKafkaEmitter(kafkaConf, messaging.TopicTestThing2)
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
-
+func NewEventRepository(next OrderRepository, kcl *kgo.Client) OrderRepository {
 	return evtRepository{
 		next: next,
-		prod: prod,
+		kcl: kcl,
 	}
 }
 
