@@ -1,7 +1,10 @@
 package messaging
 
 import (
+	"context"
+
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/kadm"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -19,4 +22,17 @@ func NewKafkaConn(conf config.KafkaConfig, opts ...kgo.Opt) (*kgo.Client, error)
 	}
 
 	return kcl, nil
+}
+
+func EnsureKafkaTopics(kcl *kgo.Client, topics ...string) error {
+	kadmcl := kadm.NewClient(kcl)
+
+	ctx := context.Background()
+	// or something: context.WithTimeout(ctx, time.Second * 30)
+
+	// todo: check functionality
+	_, err := kadmcl.CreateTopics(ctx, -1, -1, nil, topics...)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to create topics")
+	}
 }

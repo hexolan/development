@@ -39,6 +39,7 @@ func main() {
 
 	// Ensure the required Kafka topics exist
 	// todo:
+	messaging.EnsureKafkaTopics(kcl, "abc", "def", "test1", "test2")
 
 	// Create the service repositories
 	dbRepo := order.NewDBRepository(db)
