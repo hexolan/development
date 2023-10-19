@@ -20,14 +20,14 @@ func (repo dbRepository) GetOrder(req *order_v1.GetOrderRequest) (*order_v1.Orde
 	return new(order_v1.Order), nil // todo:
 }
 
+func (repo dbRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
+	return new(order_v1.Order), nil // todo:
+}
+
 func (repo dbRepository) UpdateOrder(req *order_v1.UpdateOrderRequest) (*order_v1.Order, error) {
 	return new(order_v1.Order), nil // todo:
 }
 
 func (repo dbRepository) DeleteOrder(req *order_v1.DeleteOrderRequest) error {
 	return nil  // todo
-}
-
-func (repo dbRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
-	return new(order_v1.Order), nil // todo:
 }

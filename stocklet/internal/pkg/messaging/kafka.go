@@ -11,10 +11,6 @@ import (
 )
 
 func NewKafkaConn(conf config.KafkaConfig, opts ...kgo.Opt) (*kgo.Client, error) {
-	// todo: passing options
-	// kgo.ConsumerGroup("something-service")
-	// kgo.ConsumeTopics("topic1", "topic2")
-	
 	opts = append(opts, kgo.SeedBrokers(conf.Brokers...))
 	kcl, err := kgo.NewClient(opts...)
 	if err != nil {
@@ -25,14 +21,11 @@ func NewKafkaConn(conf config.KafkaConfig, opts ...kgo.Opt) (*kgo.Client, error)
 }
 
 func EnsureKafkaTopics(kcl *kgo.Client, topics ...string) error {
+	ctx := context.Background()
 	kadmcl := kadm.NewClient(kcl)
 
-	ctx := context.Background()
-	// or something: context.WithTimeout(ctx, time.Second * 30)
-
-	// todo: check functionality
 	_, err := kadmcl.CreateTopics(ctx, -1, -1, nil, topics...)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to create topics")
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to create Kafka topics", err)
 	}
 }

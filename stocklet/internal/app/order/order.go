@@ -25,14 +25,14 @@ func (svc svcRepository) GetOrder(req *order_v1.GetOrderRequest) (*order_v1.Orde
 	return svc.next.GetOrder(req)
 }
 
+func (svc svcRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
+	return svc.next.CreateOrder(req)
+}
+
 func (svc svcRepository) UpdateOrder(req *order_v1.UpdateOrderRequest) (*order_v1.Order, error) {
 	return svc.next.UpdateOrder(req)
 }
 
 func (svc svcRepository) DeleteOrder(req *order_v1.DeleteOrderRequest) error {
 	return svc.next.DeleteOrder(req)
-}
-
-func (svc svcRepository) CreateOrder(req *order_v1.CreateOrderRequest) (*order_v1.Order, error) {
-	return svc.next.CreateOrder(req)
 }

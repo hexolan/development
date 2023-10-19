@@ -25,6 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
+	defer db.Close()
 
 	// Open a Kafka connection
 	kcl, err := messaging.NewKafkaConn(
@@ -38,8 +39,10 @@ func main() {
 	defer kcl.Close()
 
 	// Ensure the required Kafka topics exist
-	// todo:
-	messaging.EnsureKafkaTopics(kcl, "abc", "def", "test1", "test2")
+	err = messaging.EnsureKafkaTopics(kcl, "orders", "orders2")
+	if err != nil {
+		log.Error().Err(err).Msg("")
+	}
 
 	// Create the service repositories
 	dbRepo := order.NewDBRepository(db)
@@ -48,5 +51,5 @@ func main() {
 	
 	// Start the HTTP and event interfaces
 	go api.NewHttpAPI(svc)
-	api.NewMessagingAPI(svc, kcl)
+	api.NewMessagingAPI(kcl, svc)
 }
