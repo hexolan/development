@@ -3,3 +3,9 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/auth/v1;auth_v1";
 
 package stocklet.auth.v1;
+
+message AuthToken {
+    string token_type = 1;
+    string access_token = 2;
+    int64 expires_in = 3;
+}

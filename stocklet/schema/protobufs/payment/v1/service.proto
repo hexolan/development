@@ -3,3 +3,15 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/payment/v1;payment_v1";
 
 package stocklet.payment.v1;
+
+message MakePayment {
+    string user_id = 1;
+    float amount = 2;
+
+    string order_id = 3;
+}
+
+message ReturnPayment {
+    string user_id = 1;
+    float amount = 2;
+}

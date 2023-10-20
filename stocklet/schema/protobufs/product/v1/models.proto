@@ -3,3 +3,12 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/product/v1;product_v1";
 
 package stocklet.product.v1;
+
+message Product {
+    string id = 1;
+    
+    string name = 2;
+    string description = 3;
+
+    float price = 4;
+}

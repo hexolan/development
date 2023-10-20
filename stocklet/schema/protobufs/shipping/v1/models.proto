@@ -3,3 +3,18 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/shipping/v1;shipping_v1";
 
 package stocklet.shipping.v1;
+
+enum ShippingStatus {
+    AWAITING_WAREHOUSE = 0;
+    AWAITING_DISPATCH = 1;
+    SHIPPED = 2;
+    DELIVERED = 3;
+}
+
+message ShippingState {
+    string order_id = 1;
+    ShippingStatus status = 2;
+
+    string courier = 3;
+    string tracking = 4;
+}

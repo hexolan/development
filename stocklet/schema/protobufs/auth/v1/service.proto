@@ -3,3 +3,25 @@ syntax = "proto3";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/auth/v1;auth_v1";
 
 package stocklet.auth.v1;
+
+import "auth/v1/models.proto";
+
+message SetPasswordRequest {
+    string user_id = 1;
+    string password = 2;
+}
+
+message PasswordChangeRequest {
+    string user_id = 1;
+    string password = 2;
+}
+
+message PasswordLoginRequest {
+    string user_id = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string detail = 1;
+    AuthToken data = 2;
+}
