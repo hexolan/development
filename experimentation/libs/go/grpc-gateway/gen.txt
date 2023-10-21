@@ -1,0 +1,22 @@
+https://github.com/grpc-ecosystem/grpc-gateway
+
+---
+
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 google.golang.org/protobuf/cmd/protoc-gen-go google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+---
+
+V1)
+protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative app/helloworld/helloworld.proto
+
+// protoc -I . --grpc-gateway_out ./app/gen --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true app/helloworld/helloworld.proto
+protoc --grpc-gateway_out . --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true app/helloworld/helloworld.proto
+
+---
+
+V2 (for use with annotations):
+
+// protoc -I ./app/helloworld --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative helloworld.proto
+protoc -I ./app/helloworld --go_out=./app/helloworld --go_opt=paths=source_relative --go-grpc_out=./app/helloworld --go-grpc_opt=paths=source_relative helloworld.proto
+
+protoc -I ./app/helloworld --grpc-gateway_out ./app/helloworld --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true helloworld.proto
