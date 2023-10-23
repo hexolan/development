@@ -5,11 +5,15 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/payment/v
 package stocklet.payment.v1;
 
 message PaymentCreditEvent {
-    
+    string transaction_id = 1;
+    string customer_id = 2;
+    float amount = 3;
 }
 
 message PaymentDebitEvent {
-
+    string transaction_id = 1;
+    string customer_id = 2;
+    float amount = 3;
 }
 
 enum OrderPaymentStatus {

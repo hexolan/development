@@ -21,11 +21,18 @@ func NewEventRepository(next OrderRepository, kcl *kgo.Client) OrderRepository {
 	}
 }
 
-func (repo evtRepository) dispatchCreatedEvent(req *order_v1.CreateOrderRequest, item *order_v1.Order) {
+func (repo evtRepository) dispatchEvent(record *kgo.Record) {
 	// todo: test
 	ctx := context.Background()
-	record := &kgo.Record{Topic: "order", Value: []byte("test")} 
 	repo.kcl.Produce(ctx, record, nil)
+}
+
+func (repo evtRepository) dispatchCreatedEvent(req *order_v1.CreateOrderRequest, item *order_v1.Order) {
+	// todo: test
+	// ctx := context.Background()
+	record := &kgo.Record{Topic: "order.created", Value: []byte("test")} 
+	// repo.kcl.Produce(ctx, record, nil)
+	repo.dispatchEvent(record)
 }
 
 func (repo evtRepository) dispatchUpdatedEvent(req *order_v1.UpdateOrderRequest, item *order_v1.Order) {

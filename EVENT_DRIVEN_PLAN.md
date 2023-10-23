@@ -2,6 +2,10 @@
 
 **Features**
 
+Reviews/Rating Service
+
+Categories
+
 Product
 
 * Items served
@@ -43,6 +47,24 @@ Users
 * *OrderPaymentEvent* (type: success) -> Order state changed to approved
 * *OrderPaymentEvent* (type: failure) -> Stock returned & order rejected
 * *OrderStockEvent* (type: out_of_stock) -> Order rejected
+
+* OrderShippingEvent (type: shipping_scheduled or no_avaliability)
+
+topics:
+
+order.created
+> OrderCreateEvent
+
+topics for creation sagas:
+order.created.stock (OrderStockEvent)
+order.created.payment (OrderPaymentEvent)
+order.created.shipping (OrderShippingEvent)
+
+stock.added
+stock.removed
+
+payment.debited (taken)
+payment.credited (returned)
 
 ----
 
