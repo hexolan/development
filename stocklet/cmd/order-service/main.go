@@ -4,11 +4,11 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
-	"github.com/hexolan/stocklet/internal/app/order"
-	"github.com/hexolan/stocklet/internal/app/order/api"
 	"github.com/hexolan/stocklet/internal/pkg/database"
 	"github.com/hexolan/stocklet/internal/pkg/logging"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
+	"github.com/hexolan/stocklet/internal/svc/order"
+	"github.com/hexolan/stocklet/internal/svc/order/api"
 )
 
 func main() {

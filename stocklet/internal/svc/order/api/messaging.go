@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
-	"github.com/hexolan/stocklet/internal/app/order"
+	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
 
