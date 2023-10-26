@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
-	order_v1 "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1"
+	order_v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 type evtRepository struct {

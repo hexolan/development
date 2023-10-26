@@ -1,7 +1,7 @@
 package order
 
 import (
-	order_v1 "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1"
+	order_v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 type OrderRepository interface {
