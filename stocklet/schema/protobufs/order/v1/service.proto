@@ -1,11 +1,10 @@
 syntax = "proto3";
 
-option go_package = "github.com/hexolan/stocklet/internal/pkg/protobuf/order/v1;order_v1";
-
 package stocklet.order.v1;
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
+import "google/api/annotations.proto";
 import "order/v1/models.proto";
-
 
 /* Create Order */
 message CreateOrderRequestData {
@@ -43,3 +42,13 @@ message DeleteOrderRequest {
     string user_id = 2;
 }
 /* End of Delete Order */
+
+
+service OrderService {
+    rpc GetOrder(GetOrderRequest) returns (Order) {
+        option (google.api.http) = {
+            post: "/v1/order/test"
+            body: "*"
+        };
+    }
+}
