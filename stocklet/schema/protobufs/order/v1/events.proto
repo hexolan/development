@@ -1,10 +1,9 @@
 syntax = "proto3";
 
+package stocklet.order.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
-package stocklet.order.v1;
-
-import "order/v1/models.proto";
+import "order/v1/types.proto";
 
 message OrderCreatedEvent {
     Order data = 1;

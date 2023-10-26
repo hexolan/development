@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: order/v1/service.proto
 
-package orderv1
+package order_v1
 
 import (
 	context "context"

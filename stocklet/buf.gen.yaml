@@ -1,28 +1,23 @@
 version: v1
-managed:
-  enabled: true
-  go_package_prefix:
-    default: github.com/hexolan/stocklet/internal/pkg/protogen
-    except:
-      - buf.build/googleapis/googleapis
-
 plugins:
   - plugin: buf.build/protocolbuffers/go:v1.31.0
     out: internal/pkg/protogen
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
 
-  - plugin: buf.build/grpc/go
+  - plugin: buf.build/grpc/go:v1.3.0
     out: internal/pkg/protogen
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
     
   - plugin: buf.build/grpc-ecosystem/gateway:v2.18.0
     out: internal/pkg/protogen
     opt: 
       - paths=source_relative
-      # - generate_unbound_methods=true
 
   - plugin: buf.build/grpc-ecosystem/openapiv2:v2.18.0
     out: schema/openapi
     opt:
+      - output_format=yaml
       - allow_merge=true
       - merge_file_name=services
