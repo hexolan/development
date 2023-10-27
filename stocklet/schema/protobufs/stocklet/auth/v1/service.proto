@@ -4,7 +4,7 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;a
 
 package stocklet.auth.v1;
 
-import "auth/v1/models.proto";
+import "stocklet/auth/v1/models.proto";
 
 message SetPasswordRequest {
     string user_id = 1;

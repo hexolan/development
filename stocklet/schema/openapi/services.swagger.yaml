@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  title: auth/v1/models.proto
+  title: stocklet/auth/v1/models.proto
   version: version not set
 tags:
   - name: OrderService
