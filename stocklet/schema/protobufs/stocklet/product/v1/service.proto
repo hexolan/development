@@ -3,7 +3,11 @@ syntax = "proto3";
 package stocklet.product.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1;product_v1";
 
-message GetProductRequest {}
+import "google/api/annotations.proto";
+
+message GetProductRequest {
+    string product_id = 1;
+}
 message GetProductResponse {}
 
 message GetProductsRequest {}
@@ -12,8 +16,48 @@ message GetProductsResponse {}
 message CreateProductRequest {}
 message CreateProductResponse {}
 
-message UpdateProductRequest {}
+message UpdateProductRequest {
+    string product_id = 1;
+}
 message UpdateProductResponse {}
 
-message DeleteProductRequest {}
+message DeleteProductRequest {
+    string product_id = 1;
+}
 message DeleteProductResponse {}
+
+// todo: api annotations
+// potentially adapt routes into /
+service ProductService {
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+        option (google.api.http) = {
+            get: "/v1/product/item/{product_id}"
+        };
+    }
+
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse) {
+        option (google.api.http) = {
+            get: "/v1/product/items"
+        };
+    }
+
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+        option (google.api.http) = {
+            post: "/v1/product/new"
+            body: "*"
+        };
+    }
+
+    rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+        option (google.api.http) = {
+            post: "/v1/product/item/{product_id}"
+            body: "*"
+        };
+    }
+
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {
+        option (google.api.http) = {
+            delete: "/v1/product/item/{product_id}"
+        };
+    }
+}

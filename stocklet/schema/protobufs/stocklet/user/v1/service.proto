@@ -3,35 +3,54 @@ syntax = "proto3";
 package stocklet.user.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;user_v1";
 
+import "google/api/annotations.proto";
+
 // todo
-message GetUserRequest {}
+message GetUserRequest {
+    string user_id = 1;
+}
 message GetUserResponse {}
 
 message CreateUserRequest {}
 message CreateUserResponse {}
 
-message UpdateUserRequest {}
+message UpdateUserRequest {
+    string user_id = 1;
+}
 message UpdateUserResponse {}
 
-message DeleteUserRequest {}
+message DeleteUserRequest {
+    string user_id = 1;
+}
 message DeleteUserResponse {}
 
 
 // todo: set api annotations
+// api routes could do with improvement (this syntax is just messy) - review real world example
 service UserService {
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {
-
+        option (google.api.http) = {
+            get: "/v1/user/id/{user_id}"
+        };
     }
 
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
-
+        option (google.api.http) = {
+            post: "/v1/user/new"
+            body: "*"
+        };
     }
 
     rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
-
+        option (google.api.http) = {
+            post: "/v1/user/id/{user_id}"
+            body: "*"
+        };
     }
 
     rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
-        
+        option (google.api.http) = {
+            delete: "/v1/user/id/{user_id}"
+        };
     }
 }

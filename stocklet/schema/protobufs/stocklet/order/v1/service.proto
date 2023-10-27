@@ -9,7 +9,7 @@ import "stocklet/order/v1/types.proto";
 
 // todo: improve - this is basic layout for planning routes
 message GetOrderRequest {
-    string id = 1;
+    string order_id = 1;
 }
 message GetOrderResponse {}
 
@@ -20,12 +20,12 @@ message CreateOrderRequest {}
 message CreateOrderResponse {}
 
 message UpdateOrderRequest {
-    string id = 1;
+    string order_id = 1;
 }
 message UpdateOrderResponse {}
 
 message CancelOrderRequest {
-    string id = 1;
+    string order_id = 1;
 }
 message CancelOrderResponse {}
 
@@ -37,7 +37,7 @@ message DeleteUserDataResponse {}
 service OrderService {
     rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
         option (google.api.http) = {
-            get: "/v1/order/{id}"
+            get: "/v1/order/{order_id}"
         };
     }
 
@@ -56,14 +56,14 @@ service OrderService {
 
     rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
         option (google.api.http) = {
-            post: "/v1/order/{id}"
+            post: "/v1/order/{order_id}"
             body: "*"
         };
     }
 
     rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
         option (google.api.http) = {
-            delete: "/v1/order/{id}"
+            delete: "/v1/order/{order_id}"
         };
     }
 }

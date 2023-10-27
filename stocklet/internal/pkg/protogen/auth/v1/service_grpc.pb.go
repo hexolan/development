@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_LoginPassword_FullMethodName = "/stocklet.auth.v1.AuthService/LoginPassword"
-	AuthService_SetPassword_FullMethodName   = "/stocklet.auth.v1.AuthService/SetPassword"
+	AuthService_LoginPassword_FullMethodName   = "/stocklet.auth.v1.AuthService/LoginPassword"
+	AuthService_SetPassword_FullMethodName     = "/stocklet.auth.v1.AuthService/SetPassword"
+	AuthService_RemoveUserLogin_FullMethodName = "/stocklet.auth.v1.AuthService/RemoveUserLogin"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -29,6 +30,8 @@ const (
 type AuthServiceClient interface {
 	LoginPassword(ctx context.Context, in *LoginPasswordRequest, opts ...grpc.CallOption) (*LoginPasswordResponse, error)
 	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*SetPasswordResponse, error)
+	// todo: annotate as internal method
+	RemoveUserLogin(ctx context.Context, in *RemoveUserLoginRequest, opts ...grpc.CallOption) (*RemoveUserLoginResponse, error)
 }
 
 type authServiceClient struct {
@@ -57,12 +60,23 @@ func (c *authServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequ
 	return out, nil
 }
 
+func (c *authServiceClient) RemoveUserLogin(ctx context.Context, in *RemoveUserLoginRequest, opts ...grpc.CallOption) (*RemoveUserLoginResponse, error) {
+	out := new(RemoveUserLoginResponse)
+	err := c.cc.Invoke(ctx, AuthService_RemoveUserLogin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
 	LoginPassword(context.Context, *LoginPasswordRequest) (*LoginPasswordResponse, error)
 	SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error)
+	// todo: annotate as internal method
+	RemoveUserLogin(context.Context, *RemoveUserLoginRequest) (*RemoveUserLoginResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -75,6 +89,9 @@ func (UnimplementedAuthServiceServer) LoginPassword(context.Context, *LoginPassw
 }
 func (UnimplementedAuthServiceServer) SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
+}
+func (UnimplementedAuthServiceServer) RemoveUserLogin(context.Context, *RemoveUserLoginRequest) (*RemoveUserLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserLogin not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -125,6 +142,24 @@ func _AuthService_SetPassword_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_RemoveUserLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveUserLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RemoveUserLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_RemoveUserLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RemoveUserLogin(ctx, req.(*RemoveUserLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +174,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetPassword",
 			Handler:    _AuthService_SetPassword_Handler,
+		},
+		{
+			MethodName: "RemoveUserLogin",
+			Handler:    _AuthService_RemoveUserLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

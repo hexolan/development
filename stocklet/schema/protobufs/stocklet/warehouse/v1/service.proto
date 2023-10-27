@@ -3,22 +3,32 @@ syntax = "proto3";
 package stocklet.warehouse.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1;warehouse_v1";
 
-// todo:
+import "google/api/annotations.proto";
 
-message GetProductStockRequest {}
+// todo:
+message GetProductStockRequest {
+    string product_id = 1;
+}
 message GetProductStockResponse {}
 
-message UpdateProductStockRequest {}
+message UpdateProductStockRequest {
+    string product_id = 1;
+}
 message UpdateProductStockResponse {}
 
 // todo: reserve stock method?
 // todo: api annotations
 service WarehouseService {
     rpc GetProductStock(GetProductStockRequest) returns (GetProductStockResponse) {
-
+        option (google.api.http) = {
+            get: "/v1/warehouse/product/{product_id}"
+        };
     }
 
     rpc UpdateProductStock(UpdateProductStockRequest) returns (UpdateProductStockResponse) {
-
+        option (google.api.http) = {
+            post: "/v1/warehouse/product/{product_id}"
+            body: "*"
+        };
     }
 } 

@@ -3,11 +3,36 @@ syntax = "proto3";
 package stocklet.shipping.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
+import "google/api/annotations.proto";
+
+// todo: adjust to types
+message GetShippingDetailsRequest {
+    string order_id = 1;
+}
+message GetShippingDetailsResponse {}
+
+message UpdateShippingStatusRequest {
+    string order_id = 1;
+}
+message UpdateShippingStatusResponse {}
+
 message NewShippingOrderRequest {}
 message NewShippingOrderResponse {}
 
-message GetShippingStatusRequest {}
-message GetShippingStatusResponse {}
+service ShippingService {
+    rpc GetShippingDetails(GetShippingDetailsRequest) returns (GetShippingDetailsResponse) {
+        option (google.api.http) = {
+            get: "/v1/shipping/order/{order_id}"
+        };
+    }
 
-message UpdateShippingStatusRequest {}
-message UpdateShippingStatusResponse {}
+    rpc UpdateShippingStatus(UpdateShippingStatusRequest) returns (UpdateShippingStatusResponse) {
+        option (google.api.http) = {
+            post: "/v1/shipping/order/{order_id}"
+            body: "*"
+        };
+    }
+
+    // todo: as internal method - find annotations
+    rpc NewShippingOrder(NewShippingOrderRequest) returns (NewShippingOrderResponse) {}
+}

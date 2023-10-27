@@ -27,8 +27,8 @@ message SetPasswordResponse {
 }
 
 // todo: mark internal (call on user deleted events)
-message RemoveUserRequest {}
-message RemoveUserResponse {}
+message RemoveUserLoginRequest {}
+message RemoveUserLoginResponse {}
 
 service AuthService {
     rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
@@ -44,6 +44,9 @@ service AuthService {
             body: "*"
         };
     }
+
+    // todo: annotate as internal method
+    rpc RemoveUserLogin(RemoveUserLoginRequest) returns (RemoveUserLoginResponse) {}
 }
 
 // todo: route paths, etc
