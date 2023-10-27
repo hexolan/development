@@ -1,9 +1,9 @@
 syntax = "proto3";
 
+package stocklet.user.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;user_v1";
 
-package stocklet.user.v1;
-
+// todo: work on models & events
 message User {
     string id = 1;
 

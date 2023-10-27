@@ -20,6 +20,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// todo: work on models
+// todo: event schemas
 type OrderStatus int32
 
 const (

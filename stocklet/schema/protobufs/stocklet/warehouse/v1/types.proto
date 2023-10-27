@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package stocklet.warehouse.v1;
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1;warehouse_v1";
+
+// todo: work on models & events
+message ProductStock {
+    string product_id = 1;
+    int64 quantity = 2;
+}

@@ -1,27 +1,49 @@
 syntax = "proto3";
 
+package stocklet.auth.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
-package stocklet.auth.v1;
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "stocklet/auth/v1/types.proto";
 
-import "stocklet/auth/v1/models.proto";
-
-message SetPasswordRequest {
-    string user_id = 1;
-    string password = 2;
+message LoginPasswordRequest {
+    string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+    string password = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
-message PasswordChangeRequest {
-    string user_id = 1;
-    string password = 2;
-}
-
-message PasswordLoginRequest {
-    string user_id = 1;
-    string password = 2;
-}
-
-message LoginResponse {
+message LoginPasswordResponse {
     string detail = 1;
     AuthToken data = 2;
 }
+
+message SetPasswordRequest {
+    string user_id = 1 [(google.api.field_behavior) = REQUIRED];
+    string password = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message SetPasswordResponse {
+    string detail = 1;
+}
+
+// todo: mark internal (call on user deleted events)
+message RemoveUserRequest {}
+message RemoveUserResponse {}
+
+service AuthService {
+    rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/login"
+            body: "*"
+        };
+    }
+
+    rpc SetPassword(SetPasswordRequest) returns (SetPasswordResponse) {
+        option (google.api.http) = {
+            post: "/v1/auth/password"
+            body: "*"
+        };
+    }
+}
+
+// todo: route paths, etc

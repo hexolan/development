@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -19,21 +20,280 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type NewShippingOrderRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *NewShippingOrderRequest) Reset() {
+	*x = NewShippingOrderRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewShippingOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewShippingOrderRequest) ProtoMessage() {}
+
+func (x *NewShippingOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewShippingOrderRequest.ProtoReflect.Descriptor instead.
+func (*NewShippingOrderRequest) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{0}
+}
+
+type NewShippingOrderResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *NewShippingOrderResponse) Reset() {
+	*x = NewShippingOrderResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewShippingOrderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewShippingOrderResponse) ProtoMessage() {}
+
+func (x *NewShippingOrderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewShippingOrderResponse.ProtoReflect.Descriptor instead.
+func (*NewShippingOrderResponse) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{1}
+}
+
+type GetShippingStatusRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetShippingStatusRequest) Reset() {
+	*x = GetShippingStatusRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetShippingStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetShippingStatusRequest) ProtoMessage() {}
+
+func (x *GetShippingStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetShippingStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetShippingStatusRequest) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{2}
+}
+
+type GetShippingStatusResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetShippingStatusResponse) Reset() {
+	*x = GetShippingStatusResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetShippingStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetShippingStatusResponse) ProtoMessage() {}
+
+func (x *GetShippingStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetShippingStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetShippingStatusResponse) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{3}
+}
+
+type UpdateShippingStatusRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *UpdateShippingStatusRequest) Reset() {
+	*x = UpdateShippingStatusRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateShippingStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateShippingStatusRequest) ProtoMessage() {}
+
+func (x *UpdateShippingStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateShippingStatusRequest.ProtoReflect.Descriptor instead.
+func (*UpdateShippingStatusRequest) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{4}
+}
+
+type UpdateShippingStatusResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *UpdateShippingStatusResponse) Reset() {
+	*x = UpdateShippingStatusResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_shipping_v1_service_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateShippingStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateShippingStatusResponse) ProtoMessage() {}
+
+func (x *UpdateShippingStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_shipping_v1_service_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateShippingStatusResponse.ProtoReflect.Descriptor instead.
+func (*UpdateShippingStatusResponse) Descriptor() ([]byte, []int) {
+	return file_stocklet_shipping_v1_service_proto_rawDescGZIP(), []int{5}
+}
+
 var File_stocklet_shipping_v1_service_proto protoreflect.FileDescriptor
 
 var file_stocklet_shipping_v1_service_proto_rawDesc = []byte{
 	0x0a, 0x22, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x73, 0x68, 0x69, 0x70, 0x70,
 	0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x14, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x73,
-	0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x2e, 0x76, 0x31, 0x42, 0x4b, 0x5a, 0x49, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e,
-	0x2f, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e,
-	0x61, 0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f,
-	0x73, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x3b, 0x73, 0x68, 0x69, 0x70,
-	0x70, 0x69, 0x6e, 0x67, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x2e, 0x76, 0x31, 0x22, 0x19, 0x0a, 0x17, 0x4e, 0x65,
+	0x77, 0x53, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x1a, 0x0a, 0x18, 0x4e, 0x65, 0x77, 0x53, 0x68, 0x69, 0x70,
+	0x70, 0x69, 0x6e, 0x67, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x1a, 0x0a, 0x18, 0x47, 0x65, 0x74, 0x53, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67,
+	0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x1b, 0x0a,
+	0x19, 0x47, 0x65, 0x74, 0x53, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1d, 0x0a, 0x1b, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x1e, 0x0a, 0x1c, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x53, 0x74, 0x61, 0x74, 0x75,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x4b, 0x5a, 0x49, 0x67, 0x69, 0x74,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e, 0x2f,
+	0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61,
+	0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f, 0x73,
+	0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x2f, 0x76, 0x31, 0x3b, 0x73, 0x68, 0x69, 0x70, 0x70,
+	0x69, 0x6e, 0x67, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
-var file_stocklet_shipping_v1_service_proto_goTypes = []interface{}{}
+var (
+	file_stocklet_shipping_v1_service_proto_rawDescOnce sync.Once
+	file_stocklet_shipping_v1_service_proto_rawDescData = file_stocklet_shipping_v1_service_proto_rawDesc
+)
+
+func file_stocklet_shipping_v1_service_proto_rawDescGZIP() []byte {
+	file_stocklet_shipping_v1_service_proto_rawDescOnce.Do(func() {
+		file_stocklet_shipping_v1_service_proto_rawDescData = protoimpl.X.CompressGZIP(file_stocklet_shipping_v1_service_proto_rawDescData)
+	})
+	return file_stocklet_shipping_v1_service_proto_rawDescData
+}
+
+var file_stocklet_shipping_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_stocklet_shipping_v1_service_proto_goTypes = []interface{}{
+	(*NewShippingOrderRequest)(nil),      // 0: stocklet.shipping.v1.NewShippingOrderRequest
+	(*NewShippingOrderResponse)(nil),     // 1: stocklet.shipping.v1.NewShippingOrderResponse
+	(*GetShippingStatusRequest)(nil),     // 2: stocklet.shipping.v1.GetShippingStatusRequest
+	(*GetShippingStatusResponse)(nil),    // 3: stocklet.shipping.v1.GetShippingStatusResponse
+	(*UpdateShippingStatusRequest)(nil),  // 4: stocklet.shipping.v1.UpdateShippingStatusRequest
+	(*UpdateShippingStatusResponse)(nil), // 5: stocklet.shipping.v1.UpdateShippingStatusResponse
+}
 var file_stocklet_shipping_v1_service_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
@@ -47,18 +307,93 @@ func file_stocklet_shipping_v1_service_proto_init() {
 	if File_stocklet_shipping_v1_service_proto != nil {
 		return
 	}
+	if !protoimpl.UnsafeEnabled {
+		file_stocklet_shipping_v1_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewShippingOrderRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_shipping_v1_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewShippingOrderResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_shipping_v1_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetShippingStatusRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_shipping_v1_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetShippingStatusResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_shipping_v1_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateShippingStatusRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_shipping_v1_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateShippingStatusResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_stocklet_shipping_v1_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_stocklet_shipping_v1_service_proto_goTypes,
 		DependencyIndexes: file_stocklet_shipping_v1_service_proto_depIdxs,
+		MessageInfos:      file_stocklet_shipping_v1_service_proto_msgTypes,
 	}.Build()
 	File_stocklet_shipping_v1_service_proto = out.File
 	file_stocklet_shipping_v1_service_proto_rawDesc = nil

@@ -3,6 +3,8 @@ syntax = "proto3";
 package stocklet.order.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
+// todo: work on models
+// todo: event schemas
 enum OrderStatus {
     PENDING = 0;
     CANCELLED = 1;

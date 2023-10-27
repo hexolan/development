@@ -4,51 +4,66 @@ package stocklet.order.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 import "stocklet/order/v1/types.proto";
 
-/* Create Order */
-message CreateOrderRequestData {
-    repeated OrderItem items = 1;
-}
-
-message CreateOrderRequest {
-    string user_id = 1;
-    CreateOrderRequestData data = 2;
-}
-/* End of Create Order */
-
-/* Get Order */
+// todo: improve - this is basic layout for planning routes
 message GetOrderRequest {
-    string order_id = 1;
-    string user_id = 2;
+    string id = 1;
 }
-/* End of Get Order */
+message GetOrderResponse {}
 
-/* Update Order */
-message UpdateOrderRequestData {
+message GetOrdersRequest {}
+message GetOrdersResponse {}
 
-}
+message CreateOrderRequest {}
+message CreateOrderResponse {}
 
 message UpdateOrderRequest {
-    string order_id = 1;
-    string user_id = 2;
-    UpdateOrderRequestData data = 3;
+    string id = 1;
 }
-/* End of Update Order */
+message UpdateOrderResponse {}
 
-/* Delete Order */
-message DeleteOrderRequest {
-    string order_id = 1;
-    string user_id = 2;
+message CancelOrderRequest {
+    string id = 1;
 }
-/* End of Delete Order */
+message CancelOrderResponse {}
 
+// todo: mark internal
+// todo: cannot delete active orders - figure out GDPR safe method of handling
+message DeleteUserDataRequest {}
+message DeleteUserDataResponse {}
 
 service OrderService {
-    rpc GetOrder(GetOrderRequest) returns (Order) {
+    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
         option (google.api.http) = {
-            post: "/v1/order/test"
+            get: "/v1/order/{id}"
+        };
+    }
+
+    rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
+        option (google.api.http) = {
+            get: "/v1/order/list"
+        };
+    }
+
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+        option (google.api.http) = {
+            post: "/v1/order/new"
             body: "*"
+        };
+    }
+
+    rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
+        option (google.api.http) = {
+            post: "/v1/order/{id}"
+            body: "*"
+        };
+    }
+
+    rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
+        option (google.api.http) = {
+            delete: "/v1/order/{id}"
         };
     }
 }

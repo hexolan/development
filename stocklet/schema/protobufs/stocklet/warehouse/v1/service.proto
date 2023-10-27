@@ -1,5 +1,24 @@
 syntax = "proto3";
 
+package stocklet.warehouse.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1;warehouse_v1";
 
-package stocklet.warehouse.v1;
+// todo:
+
+message GetProductStockRequest {}
+message GetProductStockResponse {}
+
+message UpdateProductStockRequest {}
+message UpdateProductStockResponse {}
+
+// todo: reserve stock method?
+// todo: api annotations
+service WarehouseService {
+    rpc GetProductStock(GetProductStockRequest) returns (GetProductStockResponse) {
+
+    }
+
+    rpc UpdateProductStock(UpdateProductStockRequest) returns (UpdateProductStockResponse) {
+
+    }
+} 

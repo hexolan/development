@@ -1,22 +1,26 @@
 swagger: "2.0"
 info:
-  title: stocklet/auth/v1/models.proto
+  title: stocklet/auth/v1/types.proto
   version: version not set
 tags:
+  - name: AuthService
   - name: OrderService
+  - name: PaymentService
+  - name: UserService
+  - name: WarehouseService
 consumes:
   - application/json
 produces:
   - application/json
 paths:
-  /v1/order/test:
+  /v1/auth/login:
     post:
-      operationId: OrderService_GetOrder
+      operationId: AuthService_LoginPassword
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1Order'
+            $ref: '#/definitions/v1LoginPasswordResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -26,9 +30,137 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/v1GetOrderRequest'
+            $ref: '#/definitions/v1LoginPasswordRequest'
+      tags:
+        - AuthService
+  /v1/auth/password:
+    post:
+      operationId: AuthService_SetPassword
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1SetPasswordResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1SetPasswordRequest'
+      tags:
+        - AuthService
+  /v1/order/list:
+    get:
+      operationId: OrderService_GetOrders
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrdersResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
       tags:
         - OrderService
+  /v1/order/new:
+    post:
+      operationId: OrderService_CreateOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CreateOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1CreateOrderRequest'
+      tags:
+        - OrderService
+  /v1/order/{id}:
+    get:
+      operationId: OrderService_GetOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+    delete:
+      operationId: OrderService_CancelOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CancelOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+    post:
+      operationId: OrderService_UpdateOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1UpdateOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+      tags:
+        - OrderService
+  /v1/payment/balance:
+    get:
+      operationId: PaymentService_GetBalance
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetBalanceResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - PaymentService
 definitions:
   protobufAny:
     type: object
@@ -49,41 +181,75 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/protobufAny'
-  v1GetOrderRequest:
+  v1AuthToken:
     type: object
     properties:
-      orderId:
+      tokenType:
         type: string
+      accessToken:
+        type: string
+      expiresIn:
+        type: string
+        format: int64
+  v1CancelOrderResponse:
+    type: object
+  v1CreateOrderRequest:
+    type: object
+  v1CreateOrderResponse:
+    type: object
+  v1CreateUserResponse:
+    type: object
+  v1DeleteUserResponse:
+    type: object
+  v1GetBalanceResponse:
+    type: object
+  v1GetOrderResponse:
+    type: object
+  v1GetOrdersResponse:
+    type: object
+  v1GetProductStockResponse:
+    type: object
+  v1GetUserResponse:
+    type: object
+  v1LoginPasswordRequest:
+    type: object
+    properties:
       userId:
         type: string
-    title: Get Order
-  v1Order:
+      password:
+        type: string
+    required:
+      - userId
+      - password
+  v1LoginPasswordResponse:
     type: object
     properties:
-      id:
+      detail:
         type: string
-      status:
-        $ref: '#/definitions/v1OrderStatus'
-      customerId:
-        type: string
-      items:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/v1OrderItem'
-  v1OrderItem:
+      data:
+        $ref: '#/definitions/v1AuthToken'
+  v1MakePaymentResponse:
+    type: object
+  v1ReversePaymentResponse:
+    type: object
+  v1SetPasswordRequest:
     type: object
     properties:
-      productId:
+      userId:
         type: string
-      quantity:
-        type: integer
-        format: int32
-  v1OrderStatus:
-    type: string
-    enum:
-      - PENDING
-      - CANCELLED
-      - REJECTED
-      - APPROVED
-    default: PENDING
+      password:
+        type: string
+    required:
+      - userId
+      - password
+  v1SetPasswordResponse:
+    type: object
+    properties:
+      detail:
+        type: string
+  v1UpdateOrderResponse:
+    type: object
+  v1UpdateProductStockResponse:
+    type: object
+  v1UpdateUserResponse:
+    type: object

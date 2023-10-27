@@ -1,5 +1,13 @@
 syntax = "proto3";
 
+package stocklet.shipping.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
-package stocklet.shipping.v1;
+message NewShippingOrderRequest {}
+message NewShippingOrderResponse {}
+
+message GetShippingStatusRequest {}
+message GetShippingStatusResponse {}
+
+message UpdateShippingStatusRequest {}
+message UpdateShippingStatusResponse {}

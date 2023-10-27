@@ -1,5 +1,37 @@
 syntax = "proto3";
 
+package stocklet.user.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;user_v1";
 
-package stocklet.user.v1;
+// todo
+message GetUserRequest {}
+message GetUserResponse {}
+
+message CreateUserRequest {}
+message CreateUserResponse {}
+
+message UpdateUserRequest {}
+message UpdateUserResponse {}
+
+message DeleteUserRequest {}
+message DeleteUserResponse {}
+
+
+// todo: set api annotations
+service UserService {
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+
+    }
+
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+
+    }
+
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+
+    }
+
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+        
+    }
+}

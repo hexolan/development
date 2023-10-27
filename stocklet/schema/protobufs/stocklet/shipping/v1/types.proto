@@ -1,9 +1,9 @@
 syntax = "proto3";
 
+package stocklet.shipping.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
-package stocklet.shipping.v1;
-
+// todo: work on models & events
 enum ShippingStatus {
     AWAITING_WAREHOUSE = 0;
     AWAITING_DISPATCH = 1;
