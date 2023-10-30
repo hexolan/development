@@ -31,6 +31,7 @@ type ShippingServiceClient interface {
 	GetShippingDetails(ctx context.Context, in *GetShippingDetailsRequest, opts ...grpc.CallOption) (*GetShippingDetailsResponse, error)
 	UpdateShippingStatus(ctx context.Context, in *UpdateShippingStatusRequest, opts ...grpc.CallOption) (*UpdateShippingStatusResponse, error)
 	// todo: as internal method - find annotations
+	// todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
 	NewShippingOrder(ctx context.Context, in *NewShippingOrderRequest, opts ...grpc.CallOption) (*NewShippingOrderResponse, error)
 }
 
@@ -76,6 +77,7 @@ type ShippingServiceServer interface {
 	GetShippingDetails(context.Context, *GetShippingDetailsRequest) (*GetShippingDetailsResponse, error)
 	UpdateShippingStatus(context.Context, *UpdateShippingStatusRequest) (*UpdateShippingStatusResponse, error)
 	// todo: as internal method - find annotations
+	// todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
 	NewShippingOrder(context.Context, *NewShippingOrderRequest) (*NewShippingOrderResponse, error)
 	mustEmbedUnimplementedShippingServiceServer()
 }

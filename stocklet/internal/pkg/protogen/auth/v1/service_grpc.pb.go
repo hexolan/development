@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_LoginPassword_FullMethodName   = "/stocklet.auth.v1.AuthService/LoginPassword"
-	AuthService_SetPassword_FullMethodName     = "/stocklet.auth.v1.AuthService/SetPassword"
-	AuthService_RemoveUserLogin_FullMethodName = "/stocklet.auth.v1.AuthService/RemoveUserLogin"
+	AuthService_LoginPassword_FullMethodName  = "/stocklet.auth.v1.AuthService/LoginPassword"
+	AuthService_SetPassword_FullMethodName    = "/stocklet.auth.v1.AuthService/SetPassword"
+	AuthService_DeleteUserData_FullMethodName = "/stocklet.auth.v1.AuthService/DeleteUserData"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -30,8 +30,8 @@ const (
 type AuthServiceClient interface {
 	LoginPassword(ctx context.Context, in *LoginPasswordRequest, opts ...grpc.CallOption) (*LoginPasswordResponse, error)
 	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*SetPasswordResponse, error)
-	// todo: annotate as internal method
-	RemoveUserLogin(ctx context.Context, in *RemoveUserLoginRequest, opts ...grpc.CallOption) (*RemoveUserLoginResponse, error)
+	// internal method
+	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
 }
 
 type authServiceClient struct {
@@ -60,9 +60,9 @@ func (c *authServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequ
 	return out, nil
 }
 
-func (c *authServiceClient) RemoveUserLogin(ctx context.Context, in *RemoveUserLoginRequest, opts ...grpc.CallOption) (*RemoveUserLoginResponse, error) {
-	out := new(RemoveUserLoginResponse)
-	err := c.cc.Invoke(ctx, AuthService_RemoveUserLogin_FullMethodName, in, out, opts...)
+func (c *authServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error) {
+	out := new(DeleteUserDataResponse)
+	err := c.cc.Invoke(ctx, AuthService_DeleteUserData_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +75,8 @@ func (c *authServiceClient) RemoveUserLogin(ctx context.Context, in *RemoveUserL
 type AuthServiceServer interface {
 	LoginPassword(context.Context, *LoginPasswordRequest) (*LoginPasswordResponse, error)
 	SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error)
-	// todo: annotate as internal method
-	RemoveUserLogin(context.Context, *RemoveUserLoginRequest) (*RemoveUserLoginResponse, error)
+	// internal method
+	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -90,8 +90,8 @@ func (UnimplementedAuthServiceServer) LoginPassword(context.Context, *LoginPassw
 func (UnimplementedAuthServiceServer) SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
 }
-func (UnimplementedAuthServiceServer) RemoveUserLogin(context.Context, *RemoveUserLoginRequest) (*RemoveUserLoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserLogin not implemented")
+func (UnimplementedAuthServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -142,20 +142,20 @@ func _AuthService_SetPassword_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_RemoveUserLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveUserLoginRequest)
+func _AuthService_DeleteUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).RemoveUserLogin(ctx, in)
+		return srv.(AuthServiceServer).DeleteUserData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_RemoveUserLogin_FullMethodName,
+		FullMethod: AuthService_DeleteUserData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).RemoveUserLogin(ctx, req.(*RemoveUserLoginRequest))
+		return srv.(AuthServiceServer).DeleteUserData(ctx, req.(*DeleteUserDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -176,8 +176,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_SetPassword_Handler,
 		},
 		{
-			MethodName: "RemoveUserLogin",
-			Handler:    _AuthService_RemoveUserLogin_Handler,
+			MethodName: "DeleteUserData",
+			Handler:    _AuthService_DeleteUserData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,17 +6,22 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;
 // todo: work on models
 // todo: event schemas
 enum OrderStatus {
-    PENDING = 0;
-    CANCELLED = 1;
-    REJECTED = 2;
-    APPROVED = 3;
+    ORDER_STATUS_UNSPECIFIED = 0;
+    ORDER_STATUS_PENDING = 1;
+    ORDER_STATUS_REJECTED = 2;
+    ORDER_STATUS_CANCELLED = 3;
+    ORDER_STATUS_APPROVED = 4;
+    ORDER_STATUS_SUCCESS = 5;
 }
 
 message Order {
     string id = 1;
     OrderStatus status = 2;
-    string customer_id = 3;
-    repeated OrderItem items = 4;
+    
+    repeated OrderItem items = 3;
+
+    string customer_id = 4;
+    int64 created_at = 5;
 }
 
 message OrderItem {

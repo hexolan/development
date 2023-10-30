@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
-	order_v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	"github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 func NewHttpAPI(svc order.OrderRepository) {

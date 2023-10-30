@@ -5,10 +5,11 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/
 
 // todo: work on models & events
 enum ShippingStatus {
-    AWAITING_WAREHOUSE = 0;
-    AWAITING_DISPATCH = 1;
-    SHIPPED = 2;
-    DELIVERED = 3;
+    SHIPPING_STATUS_UNSPECIFIED = 0;
+    SHIPPING_STATUS_WAREHOUSE = 1;
+    SHIPPING_STATUS_PACKAGED = 2;
+    SHIPPING_STATUS_DISPATCHED = 3;
+    SHIPPING_STATUS_DELIVERED = 4;
 }
 
 message ShippingState {

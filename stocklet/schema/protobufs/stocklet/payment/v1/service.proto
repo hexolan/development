@@ -4,7 +4,7 @@ package stocklet.payment.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
 
 import "google/api/annotations.proto";
-import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
 
 message GetBalanceRequest {}
 message GetBalanceResponse {}
@@ -22,6 +22,10 @@ message MakePaymentResponse {}
 message ReversePaymentRequest {}
 message ReversePaymentResponse {}
 
+// Internal Request Payload
+message DeleteUserDataRequest {}
+message DeleteUserDataResponse {}
+
 service PaymentService {
     rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
         option (google.api.http) = {
@@ -30,6 +34,18 @@ service PaymentService {
     }
 
     // todo: find correct annotations to mark these are internal
-    rpc MakePayment(MakePaymentRequest) returns (MakePaymentResponse) {}
-    rpc ReversePayment(ReversePaymentRequest) returns (ReversePaymentResponse) {}
+    rpc MakePayment(MakePaymentRequest) returns (MakePaymentResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
+    }
+
+    rpc ReversePayment(ReversePaymentRequest) returns (ReversePaymentResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
+    }
+
+    // internal method
+    // todo: return all balance to cards, etc...
+    // maybe retain transaction log? just set user_id to nullable in transaction log
+    rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
+    }
 }

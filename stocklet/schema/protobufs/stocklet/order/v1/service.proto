@@ -4,7 +4,7 @@ package stocklet.order.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
 import "google/api/annotations.proto";
-import "google/api/field_behavior.proto";
+import "google/api/visibility.proto";
 import "stocklet/order/v1/types.proto";
 
 // todo: improve - this is basic layout for planning routes
@@ -29,9 +29,11 @@ message CancelOrderRequest {
 }
 message CancelOrderResponse {}
 
-// todo: mark internal
 // todo: cannot delete active orders - figure out GDPR safe method of handling
+// Internal Request Payload
 message DeleteUserDataRequest {}
+
+// Internal Request Payload
 message DeleteUserDataResponse {}
 
 service OrderService {
@@ -65,5 +67,10 @@ service OrderService {
         option (google.api.http) = {
             delete: "/v1/order/{order_id}"
         };
+    }
+
+    // internal method
+    rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
     }
 }

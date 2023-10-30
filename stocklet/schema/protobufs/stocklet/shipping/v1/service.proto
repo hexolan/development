@@ -4,6 +4,7 @@ package stocklet.shipping.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
 import "google/api/annotations.proto";
+import "google/api/visibility.proto";
 
 // todo: adjust to types
 message GetShippingDetailsRequest {
@@ -34,5 +35,8 @@ service ShippingService {
     }
 
     // todo: as internal method - find annotations
-    rpc NewShippingOrder(NewShippingOrderRequest) returns (NewShippingOrderResponse) {}
+    // todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
+    rpc NewShippingOrder(NewShippingOrderRequest) returns (NewShippingOrderResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
+    }
 }

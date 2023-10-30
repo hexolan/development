@@ -22,6 +22,7 @@ const (
 	PaymentService_GetBalance_FullMethodName     = "/stocklet.payment.v1.PaymentService/GetBalance"
 	PaymentService_MakePayment_FullMethodName    = "/stocklet.payment.v1.PaymentService/MakePayment"
 	PaymentService_ReversePayment_FullMethodName = "/stocklet.payment.v1.PaymentService/ReversePayment"
+	PaymentService_DeleteUserData_FullMethodName = "/stocklet.payment.v1.PaymentService/DeleteUserData"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -32,6 +33,10 @@ type PaymentServiceClient interface {
 	// todo: find correct annotations to mark these are internal
 	MakePayment(ctx context.Context, in *MakePaymentRequest, opts ...grpc.CallOption) (*MakePaymentResponse, error)
 	ReversePayment(ctx context.Context, in *ReversePaymentRequest, opts ...grpc.CallOption) (*ReversePaymentResponse, error)
+	// internal method
+	// todo: return all balance to cards, etc...
+	// maybe retain transaction log? just set user_id to nullable in transaction log
+	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -69,6 +74,15 @@ func (c *paymentServiceClient) ReversePayment(ctx context.Context, in *ReversePa
 	return out, nil
 }
 
+func (c *paymentServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error) {
+	out := new(DeleteUserDataResponse)
+	err := c.cc.Invoke(ctx, PaymentService_DeleteUserData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
@@ -77,6 +91,10 @@ type PaymentServiceServer interface {
 	// todo: find correct annotations to mark these are internal
 	MakePayment(context.Context, *MakePaymentRequest) (*MakePaymentResponse, error)
 	ReversePayment(context.Context, *ReversePaymentRequest) (*ReversePaymentResponse, error)
+	// internal method
+	// todo: return all balance to cards, etc...
+	// maybe retain transaction log? just set user_id to nullable in transaction log
+	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -92,6 +110,9 @@ func (UnimplementedPaymentServiceServer) MakePayment(context.Context, *MakePayme
 }
 func (UnimplementedPaymentServiceServer) ReversePayment(context.Context, *ReversePaymentRequest) (*ReversePaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReversePayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 
@@ -160,6 +181,24 @@ func _PaymentService_ReversePayment_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_DeleteUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).DeleteUserData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_DeleteUserData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).DeleteUserData(ctx, req.(*DeleteUserDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -178,6 +217,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReversePayment",
 			Handler:    _PaymentService_ReversePayment_Handler,
+		},
+		{
+			MethodName: "DeleteUserData",
+			Handler:    _PaymentService_DeleteUserData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

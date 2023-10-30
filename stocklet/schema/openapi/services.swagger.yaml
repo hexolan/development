@@ -502,14 +502,6 @@ definitions:
         type: string
       data:
         $ref: '#/definitions/v1AuthToken'
-  v1MakePaymentResponse:
-    type: object
-  v1NewShippingOrderResponse:
-    type: object
-  v1RemoveUserLoginResponse:
-    type: object
-  v1ReversePaymentResponse:
-    type: object
   v1SetPasswordRequest:
     type: object
     properties:

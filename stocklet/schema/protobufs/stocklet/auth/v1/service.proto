@@ -4,6 +4,7 @@ package stocklet.auth.v1;
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
 import "google/api/annotations.proto";
+import "google/api/visibility.proto";
 import "google/api/field_behavior.proto";
 import "stocklet/auth/v1/types.proto";
 
@@ -26,10 +27,13 @@ message SetPasswordResponse {
     string detail = 1;
 }
 
-// todo: mark internal (call on user deleted events)
-message RemoveUserLoginRequest {}
-message RemoveUserLoginResponse {}
+// Internal Request Payload
+message DeleteUserDataRequest {}
 
+// Internal Request Payload
+message DeleteUserDataResponse {}
+
+// Auth Service
 service AuthService {
     rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
         option (google.api.http) = {
@@ -45,8 +49,8 @@ service AuthService {
         };
     }
 
-    // todo: annotate as internal method
-    rpc RemoveUserLogin(RemoveUserLoginRequest) returns (RemoveUserLoginResponse) {}
+    // internal method
+    rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+        option (google.api.method_visibility).restriction = "INTERNAL";
+    }
 }
-
-// todo: route paths, etc

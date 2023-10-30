@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OrderService_GetOrder_FullMethodName    = "/stocklet.order.v1.OrderService/GetOrder"
-	OrderService_GetOrders_FullMethodName   = "/stocklet.order.v1.OrderService/GetOrders"
-	OrderService_CreateOrder_FullMethodName = "/stocklet.order.v1.OrderService/CreateOrder"
-	OrderService_UpdateOrder_FullMethodName = "/stocklet.order.v1.OrderService/UpdateOrder"
-	OrderService_CancelOrder_FullMethodName = "/stocklet.order.v1.OrderService/CancelOrder"
+	OrderService_GetOrder_FullMethodName       = "/stocklet.order.v1.OrderService/GetOrder"
+	OrderService_GetOrders_FullMethodName      = "/stocklet.order.v1.OrderService/GetOrders"
+	OrderService_CreateOrder_FullMethodName    = "/stocklet.order.v1.OrderService/CreateOrder"
+	OrderService_UpdateOrder_FullMethodName    = "/stocklet.order.v1.OrderService/UpdateOrder"
+	OrderService_CancelOrder_FullMethodName    = "/stocklet.order.v1.OrderService/CancelOrder"
+	OrderService_DeleteUserData_FullMethodName = "/stocklet.order.v1.OrderService/DeleteUserData"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -35,6 +36,8 @@ type OrderServiceClient interface {
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
 	UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...grpc.CallOption) (*UpdateOrderResponse, error)
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
+	// internal method
+	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
 }
 
 type orderServiceClient struct {
@@ -90,6 +93,15 @@ func (c *orderServiceClient) CancelOrder(ctx context.Context, in *CancelOrderReq
 	return out, nil
 }
 
+func (c *orderServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error) {
+	out := new(DeleteUserDataResponse)
+	err := c.cc.Invoke(ctx, OrderService_DeleteUserData_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
@@ -99,6 +111,8 @@ type OrderServiceServer interface {
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
 	UpdateOrder(context.Context, *UpdateOrderRequest) (*UpdateOrderResponse, error)
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
+	// internal method
+	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -120,6 +134,9 @@ func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *UpdateOrder
 }
 func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 
@@ -224,6 +241,24 @@ func _OrderService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_DeleteUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).DeleteUserData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_DeleteUserData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).DeleteUserData(ctx, req.(*DeleteUserDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +285,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelOrder",
 			Handler:    _OrderService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "DeleteUserData",
+			Handler:    _OrderService_DeleteUserData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

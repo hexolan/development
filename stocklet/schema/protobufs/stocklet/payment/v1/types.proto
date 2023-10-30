@@ -17,5 +17,6 @@ message PaymentRecord {
     string order_id = 3;
 
     float amount = 4;
-    bool returned = 5;
+    
+    int64 timestamp = 5;
 }
