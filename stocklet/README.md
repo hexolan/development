@@ -28,6 +28,14 @@ discussion on protobuf schema of events
 
 ## Features
 
+technologies:
+> kafka
+> postgresql
+> (TODO) open telemetry
+> grpc
+> grpc gateway
+> protobuf
+
 maybe: description of patterns used
 
 event-driven architecture

@@ -5,12 +5,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
-
-	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
-
-func NewMessagingAPI(kcl *kgo.Client, svc order.OrderRepository) {
+func NewEventConsumer(kcl *kgo.Client) {
 	ctx := context.Background()
 
 	for {
@@ -22,7 +19,8 @@ func NewMessagingAPI(kcl *kgo.Client, svc order.OrderRepository) {
 		fetches.EachTopic(func(ft kgo.FetchTopic) {
 			switch ft.Topic {
 			case "topic1":
-				consumeTopic1(svc, ft)
+				// consumeTopic1(svc, ft)
+				consumeTopic1(ft)
 			default:
 				log.Error().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
 			}
@@ -30,7 +28,7 @@ func NewMessagingAPI(kcl *kgo.Client, svc order.OrderRepository) {
 	}
 }
 
-func consumeTopic1(svc order.OrderRepository, ft kgo.FetchTopic) {
+func consumeTopic1(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 	ft.EachRecord(func(record *kgo.Record) {
 		log.Debug().Str("value", string(record.Value)).Msg("")
