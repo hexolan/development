@@ -1,15 +1,16 @@
 syntax = "proto3";
 
 package stocklet.order.v1;
-option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
 import "stocklet/order/v1/types.proto";
 
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
+
 // todo: improve - this is basic layout for planning routes
 message GetOrderRequest {
-    string order_id = 1;
+  string order_id = 1;
 }
 message GetOrderResponse {}
 
@@ -20,12 +21,12 @@ message CreateOrderRequest {}
 message CreateOrderResponse {}
 
 message UpdateOrderRequest {
-    string order_id = 1;
+  string order_id = 1;
 }
 message UpdateOrderResponse {}
 
 message CancelOrderRequest {
-    string order_id = 1;
+  string order_id = 1;
 }
 message CancelOrderResponse {}
 
@@ -37,40 +38,40 @@ message DeleteUserDataRequest {}
 message DeleteUserDataResponse {}
 
 service OrderService {
-    rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
-        option (google.api.http) = {
-            get: "/v1/order/{order_id}"
-        };
-    }
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {
+      get: "/v1/order/{order_id}"
+    };
+  }
 
-    rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
-        option (google.api.http) = {
-            get: "/v1/order/list"
-        };
-    }
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
+    option (google.api.http) = {
+      get: "/v1/order/list"
+    };
+  }
 
-    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
-        option (google.api.http) = {
-            post: "/v1/order/new"
-            body: "*"
-        };
-    }
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/new"
+      body: "*"
+    };
+  }
 
-    rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
-        option (google.api.http) = {
-            post: "/v1/order/{order_id}"
-            body: "*"
-        };
-    }
+  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/{order_id}"
+      body: "*"
+    };
+  }
 
-    rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
-        option (google.api.http) = {
-            delete: "/v1/order/{order_id}"
-        };
-    }
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
+    option (google.api.http) = {
+      delete: "/v1/order/{order_id}"
+    };
+  }
 
-    // internal method
-    rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
-        option (google.api.method_visibility).restriction = "INTERNAL";
-    }
+  // internal method
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
 }

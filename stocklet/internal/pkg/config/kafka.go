@@ -17,7 +17,7 @@ func LoadKafkaConfig() (*KafkaConfig, error) {
 
 	// Comma seperate the brokers
 	brokers := strings.Split(*brokersOpt, ",")
-	
+
 	return &KafkaConfig{
 		Brokers: brokers,
 	}, nil

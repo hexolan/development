@@ -1,10 +1,11 @@
 syntax = "proto3";
 
 package stocklet.payment.v1;
-option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
 
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
 
 message GetBalanceRequest {}
 message GetBalanceResponse {}
@@ -27,25 +28,25 @@ message DeleteUserDataRequest {}
 message DeleteUserDataResponse {}
 
 service PaymentService {
-    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
-        option (google.api.http) = {
-            get: "/v1/payment/balance"
-        };
-    }
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {
+    option (google.api.http) = {
+      get: "/v1/payment/balance"
+    };
+  }
 
-    // todo: find correct annotations to mark these are internal
-    rpc MakePayment(MakePaymentRequest) returns (MakePaymentResponse) {
-        option (google.api.method_visibility).restriction = "INTERNAL";
-    }
+  // todo: find correct annotations to mark these are internal
+  rpc MakePayment(MakePaymentRequest) returns (MakePaymentResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
 
-    rpc ReversePayment(ReversePaymentRequest) returns (ReversePaymentResponse) {
-        option (google.api.method_visibility).restriction = "INTERNAL";
-    }
+  rpc ReversePayment(ReversePaymentRequest) returns (ReversePaymentResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
 
-    // internal method
-    // todo: return all balance to cards, etc...
-    // maybe retain transaction log? just set user_id to nullable in transaction log
-    rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
-        option (google.api.method_visibility).restriction = "INTERNAL";
-    }
+  // internal method
+  // todo: return all balance to cards, etc...
+  // maybe retain transaction log? just set user_id to nullable in transaction log
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
 }

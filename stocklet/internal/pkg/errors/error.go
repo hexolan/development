@@ -5,15 +5,15 @@ import (
 )
 
 type ServiceError struct {
-	code ErrorCode
-	msg string
+	code    ErrorCode
+	msg     string
 	wrapped error
 }
 
 func NewServiceError(code ErrorCode, msg string) error {
 	return &ServiceError{
 		code: code,
-		msg: msg,
+		msg:  msg,
 	}
 }
 
@@ -23,8 +23,8 @@ func NewServiceErrorf(code ErrorCode, msg string, args ...interface{}) error {
 
 func WrapServiceError(code ErrorCode, msg string, wrapped error) error {
 	return &ServiceError{
-		code: code,
-		msg: msg,
+		code:    code,
+		msg:     msg,
 		wrapped: wrapped,
 	}
 }
@@ -33,7 +33,7 @@ func (e ServiceError) Error() string {
 	if e.wrapped != nil {
 		return fmt.Sprintf("%s: %s", e.msg, e.wrapped.Error())
 	}
-	
+
 	return e.msg
 }
 

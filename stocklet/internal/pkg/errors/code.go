@@ -10,9 +10,9 @@ const (
 
 	ErrCodeNotFound
 	ErrCodeAlreadyExists
-	
+
 	ErrCodeForbidden
 	ErrCodeUnauthorised
-	
+
 	ErrCodeInvalidArgument
 )

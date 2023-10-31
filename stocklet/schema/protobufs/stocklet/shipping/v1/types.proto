@@ -1,21 +1,22 @@
 syntax = "proto3";
 
 package stocklet.shipping.v1;
+
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
 // todo: work on models & events
 enum ShippingStatus {
-    SHIPPING_STATUS_UNSPECIFIED = 0;
-    SHIPPING_STATUS_WAREHOUSE = 1;
-    SHIPPING_STATUS_PACKAGED = 2;
-    SHIPPING_STATUS_DISPATCHED = 3;
-    SHIPPING_STATUS_DELIVERED = 4;
+  SHIPPING_STATUS_UNSPECIFIED = 0;
+  SHIPPING_STATUS_WAREHOUSE = 1;
+  SHIPPING_STATUS_PACKAGED = 2;
+  SHIPPING_STATUS_DISPATCHED = 3;
+  SHIPPING_STATUS_DELIVERED = 4;
 }
 
 message ShippingState {
-    string order_id = 1;
-    ShippingStatus status = 2;
+  string order_id = 1;
+  ShippingStatus status = 2;
 
-    string courier = 3;
-    string tracking = 4;
+  string courier = 3;
+  string tracking = 4;
 }

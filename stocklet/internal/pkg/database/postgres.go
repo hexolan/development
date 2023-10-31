@@ -1,9 +1,9 @@
 package database
 
 import (
-	"time"
 	"context"
-	
+	"time"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
@@ -11,7 +11,7 @@ import (
 )
 
 func NewPostgresConn(conf config.PostgresConfig) (*pgxpool.Pool, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second * 45)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*45)
 	defer cancel()
 
 	pool, err := pgxpool.New(ctx, conf.GetDSN())

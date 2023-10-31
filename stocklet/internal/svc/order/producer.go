@@ -1,7 +1,7 @@
 package order
 
 import (
-	"context"	
+	"context"
 
 	"github.com/twmb/franz-go/pkg/kgo"
 
@@ -25,15 +25,15 @@ func (prod EventProducer) dispatchEvent(record *kgo.Record) {
 func (prod EventProducer) DispatchCreatedEvent(req *order_v1.CreateOrderRequest, item *order_v1.Order) {
 	// todo: test
 	// ctx := context.Background()
-	record := &kgo.Record{Topic: "order.created", Value: []byte("test")} 
+	record := &kgo.Record{Topic: "order.created", Value: []byte("test")}
 	// repo.kcl.Produce(ctx, record, nil)
 	prod.dispatchEvent(record)
 }
 
 func (prod EventProducer) DispatchUpdatedEvent(req *order_v1.UpdateOrderRequest, item *order_v1.Order) {
-	// todo: 
+	// todo:
 }
 
 func (prod EventProducer) DispatchDeletedEvent(req *order_v1.CancelOrderRequest) {
-	// todo: 
+	// todo:
 }

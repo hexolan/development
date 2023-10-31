@@ -2,7 +2,7 @@ package config
 
 type StandardConfig struct {
 	Postgres PostgresConfig
-	Kafka KafkaConfig
+	Kafka    KafkaConfig
 }
 
 func (cfg *StandardConfig) LoadStandardConfig() error {

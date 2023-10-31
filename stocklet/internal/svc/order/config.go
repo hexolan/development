@@ -15,6 +15,6 @@ func NewServiceConfig() (*ServiceConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &cfg, nil
 }

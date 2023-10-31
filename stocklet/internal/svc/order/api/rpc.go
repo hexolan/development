@@ -7,8 +7,8 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
-	"github.com/hexolan/stocklet/internal/svc/order"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
 type rpcServicer struct {

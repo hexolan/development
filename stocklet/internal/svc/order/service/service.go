@@ -3,12 +3,12 @@ package service
 import (
 	"net"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
+	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"github.com/rs/zerolog/log"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/twmb/franz-go/pkg/kgo"
 
 	"github.com/hexolan/stocklet/internal/svc/order/api"
 
@@ -42,7 +42,7 @@ func NewOrderService(db *pgxpool.Pool, kcl *kgo.Client) {
 
 	// Create the HTTP grpc-gateway interface
 	go api.NewHttpGateway(rpcSvc)
-	
+
 	// Begin consuming events from Kafka
 	api.NewEventConsumer(kcl)
 }
