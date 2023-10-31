@@ -38,7 +38,7 @@ services:
       dockerfile: ./dockerfiles/user.Dockerfile
 
   warehouse-service:
-    image: stocklet/auth-service
+    image: stocklet/warehouse-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/warehouse.Dockerfile

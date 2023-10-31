@@ -1,3 +1,5 @@
+# Protobuf Schema
+
 TODO: Documentation
 
 * Generated files

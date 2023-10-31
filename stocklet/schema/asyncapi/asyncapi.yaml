@@ -1,0 +1,39 @@
+asyncapi: 2.6.0
+info:
+  title: Stocklet
+  description: Event Schemas (todo\: currently as exper.)
+  contact:
+    name: Stocklet (GitHub Issues)
+    url: https://github.com/hexolan/stocklet/issues
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+
+channels:
+  order.placed:
+    subscribe:
+      operationId: emitOrderPlacedEvent
+      message:
+        $ref: "#/components/messages/OrderPlaced"
+
+components:
+  messages:
+    OrderPlaced:
+      name: orderPlaced
+      title: Order placed event
+      summary: Inform services of new order. Initiate order placed saga.
+      contentType: application/x-protobuf
+      payload:
+        $ref: "#/components/schemas/OrderPlacedPayload"
+
+schemas:
+  OrderPlacedPayload:
+    type: object
+    properties:
+      thing:
+        type: string
+        description: "foobar"
+      created:
+        type: string
+        format: date-time
