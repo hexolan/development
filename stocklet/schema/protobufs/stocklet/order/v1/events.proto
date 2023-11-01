@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package stocklet.order.v1;
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
+
+message OrderEvent {
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        TYPE_CREATED = 1;
+        TYPE_UPDATED = 2;
+        TYPE_DELETED = 3;
+    }
+
+    message Payload {
+        string order_id = 1;
+    }
+
+    Type type = 1;
+    Payload payload = 2;
+}
+
+message OrderPlacedEvent {
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        TYPE_PLACED = 1;
+    }
+
+    message Payload {
+
+    }
+
+    Type type = 1;
+    Payload payload = 2;
+}
