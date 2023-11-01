@@ -20,115 +20,117 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type OrderEvent_Type int32
+type PlaceOrderEvent_Type int32
 
 const (
-	OrderEvent_TYPE_UNSPECIFIED OrderEvent_Type = 0
-	OrderEvent_TYPE_CREATED     OrderEvent_Type = 1
-	OrderEvent_TYPE_UPDATED     OrderEvent_Type = 2
-	OrderEvent_TYPE_DELETED     OrderEvent_Type = 3
+	PlaceOrderEvent_TYPE_UNSPECIFIED PlaceOrderEvent_Type = 0
+	PlaceOrderEvent_TYPE_WAREHOUSE   PlaceOrderEvent_Type = 1
+	PlaceOrderEvent_TYPE_PAYMENT     PlaceOrderEvent_Type = 2
+	PlaceOrderEvent_TYPE_SHIPPING    PlaceOrderEvent_Type = 3
 )
 
-// Enum value maps for OrderEvent_Type.
+// Enum value maps for PlaceOrderEvent_Type.
 var (
-	OrderEvent_Type_name = map[int32]string{
+	PlaceOrderEvent_Type_name = map[int32]string{
 		0: "TYPE_UNSPECIFIED",
-		1: "TYPE_CREATED",
-		2: "TYPE_UPDATED",
-		3: "TYPE_DELETED",
+		1: "TYPE_WAREHOUSE",
+		2: "TYPE_PAYMENT",
+		3: "TYPE_SHIPPING",
 	}
-	OrderEvent_Type_value = map[string]int32{
+	PlaceOrderEvent_Type_value = map[string]int32{
 		"TYPE_UNSPECIFIED": 0,
-		"TYPE_CREATED":     1,
-		"TYPE_UPDATED":     2,
-		"TYPE_DELETED":     3,
+		"TYPE_WAREHOUSE":   1,
+		"TYPE_PAYMENT":     2,
+		"TYPE_SHIPPING":    3,
 	}
 )
 
-func (x OrderEvent_Type) Enum() *OrderEvent_Type {
-	p := new(OrderEvent_Type)
+func (x PlaceOrderEvent_Type) Enum() *PlaceOrderEvent_Type {
+	p := new(PlaceOrderEvent_Type)
 	*p = x
 	return p
 }
 
-func (x OrderEvent_Type) String() string {
+func (x PlaceOrderEvent_Type) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (OrderEvent_Type) Descriptor() protoreflect.EnumDescriptor {
+func (PlaceOrderEvent_Type) Descriptor() protoreflect.EnumDescriptor {
 	return file_stocklet_order_v1_events_proto_enumTypes[0].Descriptor()
 }
 
-func (OrderEvent_Type) Type() protoreflect.EnumType {
+func (PlaceOrderEvent_Type) Type() protoreflect.EnumType {
 	return &file_stocklet_order_v1_events_proto_enumTypes[0]
 }
 
-func (x OrderEvent_Type) Number() protoreflect.EnumNumber {
+func (x PlaceOrderEvent_Type) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use OrderEvent_Type.Descriptor instead.
-func (OrderEvent_Type) EnumDescriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{0, 0}
+// Deprecated: Use PlaceOrderEvent_Type.Descriptor instead.
+func (PlaceOrderEvent_Type) EnumDescriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{4, 0}
 }
 
-type OrderPlacedEvent_Type int32
+type PlaceOrderEvent_Status int32
 
 const (
-	OrderPlacedEvent_TYPE_UNSPECIFIED OrderPlacedEvent_Type = 0
-	OrderPlacedEvent_TYPE_PLACED      OrderPlacedEvent_Type = 1
+	PlaceOrderEvent_STATUS_UNSPECIFIED PlaceOrderEvent_Status = 0
+	PlaceOrderEvent_STATUS_SUCCESS     PlaceOrderEvent_Status = 1
+	PlaceOrderEvent_STATUS_FAILURE     PlaceOrderEvent_Status = 2
 )
 
-// Enum value maps for OrderPlacedEvent_Type.
+// Enum value maps for PlaceOrderEvent_Status.
 var (
-	OrderPlacedEvent_Type_name = map[int32]string{
-		0: "TYPE_UNSPECIFIED",
-		1: "TYPE_PLACED",
+	PlaceOrderEvent_Status_name = map[int32]string{
+		0: "STATUS_UNSPECIFIED",
+		1: "STATUS_SUCCESS",
+		2: "STATUS_FAILURE",
 	}
-	OrderPlacedEvent_Type_value = map[string]int32{
-		"TYPE_UNSPECIFIED": 0,
-		"TYPE_PLACED":      1,
+	PlaceOrderEvent_Status_value = map[string]int32{
+		"STATUS_UNSPECIFIED": 0,
+		"STATUS_SUCCESS":     1,
+		"STATUS_FAILURE":     2,
 	}
 )
 
-func (x OrderPlacedEvent_Type) Enum() *OrderPlacedEvent_Type {
-	p := new(OrderPlacedEvent_Type)
+func (x PlaceOrderEvent_Status) Enum() *PlaceOrderEvent_Status {
+	p := new(PlaceOrderEvent_Status)
 	*p = x
 	return p
 }
 
-func (x OrderPlacedEvent_Type) String() string {
+func (x PlaceOrderEvent_Status) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (OrderPlacedEvent_Type) Descriptor() protoreflect.EnumDescriptor {
+func (PlaceOrderEvent_Status) Descriptor() protoreflect.EnumDescriptor {
 	return file_stocklet_order_v1_events_proto_enumTypes[1].Descriptor()
 }
 
-func (OrderPlacedEvent_Type) Type() protoreflect.EnumType {
+func (PlaceOrderEvent_Status) Type() protoreflect.EnumType {
 	return &file_stocklet_order_v1_events_proto_enumTypes[1]
 }
 
-func (x OrderPlacedEvent_Type) Number() protoreflect.EnumNumber {
+func (x PlaceOrderEvent_Status) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use OrderPlacedEvent_Type.Descriptor instead.
-func (OrderPlacedEvent_Type) EnumDescriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{1, 0}
+// Deprecated: Use PlaceOrderEvent_Status.Descriptor instead.
+func (PlaceOrderEvent_Status) EnumDescriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{4, 1}
 }
 
-type OrderEvent struct {
+type OrderCreatedEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type    OrderEvent_Type     `protobuf:"varint,1,opt,name=type,proto3,enum=stocklet.order.v1.OrderEvent_Type" json:"type,omitempty"`
-	Payload *OrderEvent_Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	Payload *Order `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 
-func (x *OrderEvent) Reset() {
-	*x = OrderEvent{}
+func (x *OrderCreatedEvent) Reset() {
+	*x = OrderCreatedEvent{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_stocklet_order_v1_events_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -136,13 +138,13 @@ func (x *OrderEvent) Reset() {
 	}
 }
 
-func (x *OrderEvent) String() string {
+func (x *OrderCreatedEvent) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrderEvent) ProtoMessage() {}
+func (*OrderCreatedEvent) ProtoMessage() {}
 
-func (x *OrderEvent) ProtoReflect() protoreflect.Message {
+func (x *OrderCreatedEvent) ProtoReflect() protoreflect.Message {
 	mi := &file_stocklet_order_v1_events_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -154,36 +156,28 @@ func (x *OrderEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrderEvent.ProtoReflect.Descriptor instead.
-func (*OrderEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderCreatedEvent.ProtoReflect.Descriptor instead.
+func (*OrderCreatedEvent) Descriptor() ([]byte, []int) {
 	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OrderEvent) GetType() OrderEvent_Type {
-	if x != nil {
-		return x.Type
-	}
-	return OrderEvent_TYPE_UNSPECIFIED
-}
-
-func (x *OrderEvent) GetPayload() *OrderEvent_Payload {
+func (x *OrderCreatedEvent) GetPayload() *Order {
 	if x != nil {
 		return x.Payload
 	}
 	return nil
 }
 
-type OrderPlacedEvent struct {
+type OrderUpdatedEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type    OrderPlacedEvent_Type     `protobuf:"varint,1,opt,name=type,proto3,enum=stocklet.order.v1.OrderPlacedEvent_Type" json:"type,omitempty"`
-	Payload *OrderPlacedEvent_Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	Payload *Order `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 
-func (x *OrderPlacedEvent) Reset() {
-	*x = OrderPlacedEvent{}
+func (x *OrderUpdatedEvent) Reset() {
+	*x = OrderUpdatedEvent{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_stocklet_order_v1_events_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -191,13 +185,13 @@ func (x *OrderPlacedEvent) Reset() {
 	}
 }
 
-func (x *OrderPlacedEvent) String() string {
+func (x *OrderUpdatedEvent) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrderPlacedEvent) ProtoMessage() {}
+func (*OrderUpdatedEvent) ProtoMessage() {}
 
-func (x *OrderPlacedEvent) ProtoReflect() protoreflect.Message {
+func (x *OrderUpdatedEvent) ProtoReflect() protoreflect.Message {
 	mi := &file_stocklet_order_v1_events_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -209,35 +203,28 @@ func (x *OrderPlacedEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrderPlacedEvent.ProtoReflect.Descriptor instead.
-func (*OrderPlacedEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderUpdatedEvent.ProtoReflect.Descriptor instead.
+func (*OrderUpdatedEvent) Descriptor() ([]byte, []int) {
 	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *OrderPlacedEvent) GetType() OrderPlacedEvent_Type {
-	if x != nil {
-		return x.Type
-	}
-	return OrderPlacedEvent_TYPE_UNSPECIFIED
-}
-
-func (x *OrderPlacedEvent) GetPayload() *OrderPlacedEvent_Payload {
+func (x *OrderUpdatedEvent) GetPayload() *Order {
 	if x != nil {
 		return x.Payload
 	}
 	return nil
 }
 
-type OrderEvent_Payload struct {
+type OrderCancelledEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	OrderId string `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Payload *Order `protobuf:"bytes,1,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 
-func (x *OrderEvent_Payload) Reset() {
-	*x = OrderEvent_Payload{}
+func (x *OrderCancelledEvent) Reset() {
+	*x = OrderCancelledEvent{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_stocklet_order_v1_events_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -245,13 +232,13 @@ func (x *OrderEvent_Payload) Reset() {
 	}
 }
 
-func (x *OrderEvent_Payload) String() string {
+func (x *OrderCancelledEvent) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrderEvent_Payload) ProtoMessage() {}
+func (*OrderCancelledEvent) ProtoMessage() {}
 
-func (x *OrderEvent_Payload) ProtoReflect() protoreflect.Message {
+func (x *OrderCancelledEvent) ProtoReflect() protoreflect.Message {
 	mi := &file_stocklet_order_v1_events_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -263,26 +250,32 @@ func (x *OrderEvent_Payload) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrderEvent_Payload.ProtoReflect.Descriptor instead.
-func (*OrderEvent_Payload) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{0, 0}
+// Deprecated: Use OrderCancelledEvent.ProtoReflect.Descriptor instead.
+func (*OrderCancelledEvent) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *OrderEvent_Payload) GetOrderId() string {
+func (x *OrderCancelledEvent) GetPayload() *Order {
 	if x != nil {
-		return x.OrderId
+		return x.Payload
 	}
-	return ""
+	return nil
 }
 
-type OrderPlacedEvent_Payload struct {
+type PlaceOrderEventPayload struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	OrderId    string                              `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	UserId     string                              `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // User ID of the customer.
+	Items      []*PlaceOrderEventPayload_OrderItem `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
+	PaymentId  string                              `protobuf:"bytes,4,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	ShippingId string                              `protobuf:"bytes,5,opt,name=shipping_id,json=shippingId,proto3" json:"shipping_id,omitempty"`
 }
 
-func (x *OrderPlacedEvent_Payload) Reset() {
-	*x = OrderPlacedEvent_Payload{}
+func (x *PlaceOrderEventPayload) Reset() {
+	*x = PlaceOrderEventPayload{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_stocklet_order_v1_events_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -290,13 +283,13 @@ func (x *OrderPlacedEvent_Payload) Reset() {
 	}
 }
 
-func (x *OrderPlacedEvent_Payload) String() string {
+func (x *PlaceOrderEventPayload) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*OrderPlacedEvent_Payload) ProtoMessage() {}
+func (*PlaceOrderEventPayload) ProtoMessage() {}
 
-func (x *OrderPlacedEvent_Payload) ProtoReflect() protoreflect.Message {
+func (x *PlaceOrderEventPayload) ProtoReflect() protoreflect.Message {
 	mi := &file_stocklet_order_v1_events_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -308,9 +301,170 @@ func (x *OrderPlacedEvent_Payload) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use OrderPlacedEvent_Payload.ProtoReflect.Descriptor instead.
-func (*OrderPlacedEvent_Payload) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{1, 0}
+// Deprecated: Use PlaceOrderEventPayload.ProtoReflect.Descriptor instead.
+func (*PlaceOrderEventPayload) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PlaceOrderEventPayload) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *PlaceOrderEventPayload) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *PlaceOrderEventPayload) GetItems() []*PlaceOrderEventPayload_OrderItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *PlaceOrderEventPayload) GetPaymentId() string {
+	if x != nil {
+		return x.PaymentId
+	}
+	return ""
+}
+
+func (x *PlaceOrderEventPayload) GetShippingId() string {
+	if x != nil {
+		return x.ShippingId
+	}
+	return ""
+}
+
+type PlaceOrderEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Type    PlaceOrderEvent_Type    `protobuf:"varint,1,opt,name=type,proto3,enum=stocklet.order.v1.PlaceOrderEvent_Type" json:"type,omitempty"`
+	Status  PlaceOrderEvent_Status  `protobuf:"varint,2,opt,name=status,proto3,enum=stocklet.order.v1.PlaceOrderEvent_Status" json:"status,omitempty"`
+	Payload *PlaceOrderEventPayload `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+}
+
+func (x *PlaceOrderEvent) Reset() {
+	*x = PlaceOrderEvent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_order_v1_events_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PlaceOrderEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceOrderEvent) ProtoMessage() {}
+
+func (x *PlaceOrderEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_order_v1_events_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceOrderEvent.ProtoReflect.Descriptor instead.
+func (*PlaceOrderEvent) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PlaceOrderEvent) GetType() PlaceOrderEvent_Type {
+	if x != nil {
+		return x.Type
+	}
+	return PlaceOrderEvent_TYPE_UNSPECIFIED
+}
+
+func (x *PlaceOrderEvent) GetStatus() PlaceOrderEvent_Status {
+	if x != nil {
+		return x.Status
+	}
+	return PlaceOrderEvent_STATUS_UNSPECIFIED
+}
+
+func (x *PlaceOrderEvent) GetPayload() *PlaceOrderEventPayload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+type PlaceOrderEventPayload_OrderItem struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ProductId string  `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Quantity  int64   `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	UnitPrice float32 `protobuf:"fixed32,3,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
+}
+
+func (x *PlaceOrderEventPayload_OrderItem) Reset() {
+	*x = PlaceOrderEventPayload_OrderItem{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_order_v1_events_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PlaceOrderEventPayload_OrderItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceOrderEventPayload_OrderItem) ProtoMessage() {}
+
+func (x *PlaceOrderEventPayload_OrderItem) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_order_v1_events_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceOrderEventPayload_OrderItem.ProtoReflect.Descriptor instead.
+func (*PlaceOrderEventPayload_OrderItem) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *PlaceOrderEventPayload_OrderItem) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *PlaceOrderEventPayload_OrderItem) GetQuantity() int64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *PlaceOrderEventPayload_OrderItem) GetUnitPrice() float32 {
+	if x != nil {
+		return x.UnitPrice
+	}
+	return 0
 }
 
 var File_stocklet_order_v1_events_proto protoreflect.FileDescriptor
@@ -319,41 +473,71 @@ var file_stocklet_order_v1_events_proto_rawDesc = []byte{
 	0x0a, 0x1e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72,
 	0x2f, 0x76, 0x31, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x12, 0x11, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72,
-	0x2e, 0x76, 0x31, 0x22, 0xff, 0x01, 0x0a, 0x0a, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x45, 0x76, 0x65,
-	0x6e, 0x74, 0x12, 0x36, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e,
-	0x32, 0x22, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65,
-	0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e,
-	0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x3f, 0x0a, 0x07, 0x70, 0x61,
-	0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x73, 0x74,
-	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e, 0x50, 0x61, 0x79, 0x6c, 0x6f,
-	0x61, 0x64, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x1a, 0x24, 0x0a, 0x07, 0x50,
-	0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x49,
-	0x64, 0x22, 0x52, 0x0a, 0x04, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x10, 0x54, 0x59, 0x50,
-	0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12,
-	0x10, 0x0a, 0x0c, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x43, 0x52, 0x45, 0x41, 0x54, 0x45, 0x44, 0x10,
-	0x01, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x50, 0x44, 0x41, 0x54, 0x45,
-	0x44, 0x10, 0x02, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x44, 0x45, 0x4c, 0x45,
-	0x54, 0x45, 0x44, 0x10, 0x03, 0x22, 0xd1, 0x01, 0x0a, 0x10, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x50,
-	0x6c, 0x61, 0x63, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x3c, 0x0a, 0x04, 0x74, 0x79,
-	0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x28, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b,
+	0x2e, 0x76, 0x31, 0x1a, 0x1d, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x6f, 0x72,
+	0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x22, 0x47, 0x0a, 0x11, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x32, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f,
+	0x61, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b,
 	0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72, 0x64,
-	0x65, 0x72, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e, 0x54, 0x79,
-	0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x45, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c,
-	0x6f, 0x61, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x73, 0x74, 0x6f, 0x63,
-	0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72,
-	0x64, 0x65, 0x72, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e, 0x50,
-	0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x1a,
-	0x09, 0x0a, 0x07, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x2d, 0x0a, 0x04, 0x54, 0x79,
-	0x70, 0x65, 0x12, 0x14, 0x0a, 0x10, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45,
-	0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x0f, 0x0a, 0x0b, 0x54, 0x59, 0x50, 0x45,
-	0x5f, 0x50, 0x4c, 0x41, 0x43, 0x45, 0x44, 0x10, 0x01, 0x42, 0x45, 0x5a, 0x43, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e, 0x2f,
-	0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61,
-	0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f, 0x6f,
-	0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x76, 0x31,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x72, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x47, 0x0a, 0x11, 0x4f,
+	0x72, 0x64, 0x65, 0x72, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x12, 0x32, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64,
+	0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x07, 0x70, 0x61, 0x79,
+	0x6c, 0x6f, 0x61, 0x64, 0x22, 0x49, 0x0a, 0x13, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x43, 0x61, 0x6e,
+	0x63, 0x65, 0x6c, 0x6c, 0x65, 0x64, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x32, 0x0a, 0x07, 0x70,
+	0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73,
+	0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31,
+	0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22,
+	0xbe, 0x02, 0x0a, 0x16, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x45, 0x76,
+	0x65, 0x6e, 0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x72,
+	0x64, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6f, 0x72,
+	0x64, 0x65, 0x72, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x49,
+	0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x33, 0x2e,
+	0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76,
+	0x31, 0x2e, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x74,
+	0x65, 0x6d, 0x52, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x61, 0x79,
+	0x6d, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x70,
+	0x61, 0x79, 0x6d, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x68, 0x69, 0x70,
+	0x70, 0x69, 0x6e, 0x67, 0x5f, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73,
+	0x68, 0x69, 0x70, 0x70, 0x69, 0x6e, 0x67, 0x49, 0x64, 0x1a, 0x65, 0x0a, 0x09, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63,
+	0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x70, 0x72, 0x6f, 0x64,
+	0x75, 0x63, 0x74, 0x49, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x71, 0x75, 0x61, 0x6e, 0x74, 0x69, 0x74,
+	0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x71, 0x75, 0x61, 0x6e, 0x74, 0x69, 0x74,
+	0x79, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x6e, 0x69, 0x74, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x09, 0x75, 0x6e, 0x69, 0x74, 0x50, 0x72, 0x69, 0x63, 0x65,
+	0x22, 0xf7, 0x02, 0x0a, 0x0f, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x45,
+	0x76, 0x65, 0x6e, 0x74, 0x12, 0x3b, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0e, 0x32, 0x27, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72,
+	0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f, 0x72, 0x64, 0x65,
+	0x72, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70,
+	0x65, 0x12, 0x41, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x29, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64,
+	0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
+	0x45, 0x76, 0x65, 0x6e, 0x74, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x12, 0x43, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74,
+	0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x4f,
+	0x72, 0x64, 0x65, 0x72, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
+	0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x55, 0x0a, 0x04, 0x54, 0x79, 0x70,
+	0x65, 0x12, 0x14, 0x0a, 0x10, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43,
+	0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x12, 0x0a, 0x0e, 0x54, 0x59, 0x50, 0x45, 0x5f,
+	0x57, 0x41, 0x52, 0x45, 0x48, 0x4f, 0x55, 0x53, 0x45, 0x10, 0x01, 0x12, 0x10, 0x0a, 0x0c, 0x54,
+	0x59, 0x50, 0x45, 0x5f, 0x50, 0x41, 0x59, 0x4d, 0x45, 0x4e, 0x54, 0x10, 0x02, 0x12, 0x11, 0x0a,
+	0x0d, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x53, 0x48, 0x49, 0x50, 0x50, 0x49, 0x4e, 0x47, 0x10, 0x03,
+	0x22, 0x48, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x0a, 0x12, 0x53, 0x54,
+	0x41, 0x54, 0x55, 0x53, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44,
+	0x10, 0x00, 0x12, 0x12, 0x0a, 0x0e, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x53, 0x55, 0x43,
+	0x43, 0x45, 0x53, 0x53, 0x10, 0x01, 0x12, 0x12, 0x0a, 0x0e, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53,
+	0x5f, 0x46, 0x41, 0x49, 0x4c, 0x55, 0x52, 0x45, 0x10, 0x02, 0x42, 0x45, 0x5a, 0x43, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e,
+	0x2f, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e,
+	0x61, 0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f,
+	0x6f, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x76,
+	0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -369,25 +553,31 @@ func file_stocklet_order_v1_events_proto_rawDescGZIP() []byte {
 }
 
 var file_stocklet_order_v1_events_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_stocklet_order_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_stocklet_order_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_stocklet_order_v1_events_proto_goTypes = []interface{}{
-	(OrderEvent_Type)(0),             // 0: stocklet.order.v1.OrderEvent.Type
-	(OrderPlacedEvent_Type)(0),       // 1: stocklet.order.v1.OrderPlacedEvent.Type
-	(*OrderEvent)(nil),               // 2: stocklet.order.v1.OrderEvent
-	(*OrderPlacedEvent)(nil),         // 3: stocklet.order.v1.OrderPlacedEvent
-	(*OrderEvent_Payload)(nil),       // 4: stocklet.order.v1.OrderEvent.Payload
-	(*OrderPlacedEvent_Payload)(nil), // 5: stocklet.order.v1.OrderPlacedEvent.Payload
+	(PlaceOrderEvent_Type)(0),                // 0: stocklet.order.v1.PlaceOrderEvent.Type
+	(PlaceOrderEvent_Status)(0),              // 1: stocklet.order.v1.PlaceOrderEvent.Status
+	(*OrderCreatedEvent)(nil),                // 2: stocklet.order.v1.OrderCreatedEvent
+	(*OrderUpdatedEvent)(nil),                // 3: stocklet.order.v1.OrderUpdatedEvent
+	(*OrderCancelledEvent)(nil),              // 4: stocklet.order.v1.OrderCancelledEvent
+	(*PlaceOrderEventPayload)(nil),           // 5: stocklet.order.v1.PlaceOrderEventPayload
+	(*PlaceOrderEvent)(nil),                  // 6: stocklet.order.v1.PlaceOrderEvent
+	(*PlaceOrderEventPayload_OrderItem)(nil), // 7: stocklet.order.v1.PlaceOrderEventPayload.OrderItem
+	(*Order)(nil),                            // 8: stocklet.order.v1.Order
 }
 var file_stocklet_order_v1_events_proto_depIdxs = []int32{
-	0, // 0: stocklet.order.v1.OrderEvent.type:type_name -> stocklet.order.v1.OrderEvent.Type
-	4, // 1: stocklet.order.v1.OrderEvent.payload:type_name -> stocklet.order.v1.OrderEvent.Payload
-	1, // 2: stocklet.order.v1.OrderPlacedEvent.type:type_name -> stocklet.order.v1.OrderPlacedEvent.Type
-	5, // 3: stocklet.order.v1.OrderPlacedEvent.payload:type_name -> stocklet.order.v1.OrderPlacedEvent.Payload
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	8, // 0: stocklet.order.v1.OrderCreatedEvent.payload:type_name -> stocklet.order.v1.Order
+	8, // 1: stocklet.order.v1.OrderUpdatedEvent.payload:type_name -> stocklet.order.v1.Order
+	8, // 2: stocklet.order.v1.OrderCancelledEvent.payload:type_name -> stocklet.order.v1.Order
+	7, // 3: stocklet.order.v1.PlaceOrderEventPayload.items:type_name -> stocklet.order.v1.PlaceOrderEventPayload.OrderItem
+	0, // 4: stocklet.order.v1.PlaceOrderEvent.type:type_name -> stocklet.order.v1.PlaceOrderEvent.Type
+	1, // 5: stocklet.order.v1.PlaceOrderEvent.status:type_name -> stocklet.order.v1.PlaceOrderEvent.Status
+	5, // 6: stocklet.order.v1.PlaceOrderEvent.payload:type_name -> stocklet.order.v1.PlaceOrderEventPayload
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_stocklet_order_v1_events_proto_init() }
@@ -395,9 +585,10 @@ func file_stocklet_order_v1_events_proto_init() {
 	if File_stocklet_order_v1_events_proto != nil {
 		return
 	}
+	file_stocklet_order_v1_types_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_stocklet_order_v1_events_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderEvent); i {
+			switch v := v.(*OrderCreatedEvent); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -409,7 +600,7 @@ func file_stocklet_order_v1_events_proto_init() {
 			}
 		}
 		file_stocklet_order_v1_events_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderPlacedEvent); i {
+			switch v := v.(*OrderUpdatedEvent); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -421,7 +612,7 @@ func file_stocklet_order_v1_events_proto_init() {
 			}
 		}
 		file_stocklet_order_v1_events_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderEvent_Payload); i {
+			switch v := v.(*OrderCancelledEvent); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -433,7 +624,31 @@ func file_stocklet_order_v1_events_proto_init() {
 			}
 		}
 		file_stocklet_order_v1_events_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*OrderPlacedEvent_Payload); i {
+			switch v := v.(*PlaceOrderEventPayload); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_order_v1_events_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PlaceOrderEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_order_v1_events_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PlaceOrderEventPayload_OrderItem); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -451,7 +666,7 @@ func file_stocklet_order_v1_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_stocklet_order_v1_events_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

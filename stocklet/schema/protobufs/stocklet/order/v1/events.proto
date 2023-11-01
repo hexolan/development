@@ -2,34 +2,52 @@ syntax = "proto3";
 
 package stocklet.order.v1;
 
+import "stocklet/order/v1/types.proto";
+
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
-message OrderEvent {
-    enum Type {
-        TYPE_UNSPECIFIED = 0;
-        TYPE_CREATED = 1;
-        TYPE_UPDATED = 2;
-        TYPE_DELETED = 3;
-    }
-
-    message Payload {
-        string order_id = 1;
-    }
-
-    Type type = 1;
-    Payload payload = 2;
+message OrderCreatedEvent {
+    Order payload = 1;
 }
 
-message OrderPlacedEvent {
-    enum Type {
-        TYPE_UNSPECIFIED = 0;
-        TYPE_PLACED = 1;
+message OrderUpdatedEvent {
+    Order payload = 1;
+}
+
+message OrderCancelledEvent {
+    Order payload = 1;
+}
+
+message PlaceOrderEventPayload {
+    message OrderItem {
+        string product_id = 1;
+        int64 quantity = 2;
+        float unit_price = 3;
     }
 
-    message Payload {
+    string order_id = 1;
+    string user_id = 2;  // User ID of the customer.
+    repeated OrderItem items = 3;
 
+    string payment_id = 4;
+    string shipping_id = 5;
+}
+
+message PlaceOrderEvent {
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        TYPE_WAREHOUSE = 1;
+        TYPE_PAYMENT = 2;
+        TYPE_SHIPPING = 3;
+    }
+
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        STATUS_SUCCESS = 1;
+        STATUS_FAILURE = 2;
     }
 
     Type type = 1;
-    Payload payload = 2;
+    Status status = 2;
+    PlaceOrderEventPayload payload = 3;
 }

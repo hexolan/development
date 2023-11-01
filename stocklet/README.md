@@ -2,6 +2,10 @@
 
 An event driven microservice e-commerce application.
 
+TODO: add support for using NATS (/ NATS + Liftbridge) for messaging instead of Kafka
+  * https://docs.nats.io/
+  * https://liftbridge.io/docs/quick-start.html
+
 ## About
 
 ### Layout
