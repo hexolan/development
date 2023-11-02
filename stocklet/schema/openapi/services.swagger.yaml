@@ -67,6 +67,11 @@ paths:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          type: string
       tags:
         - OrderService
   /v1/order/new:
@@ -435,6 +440,14 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/protobufAny'
+  orderv1OrderItem:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
   protobufAny:
     type: object
     properties:
@@ -471,10 +484,25 @@ definitions:
     type: object
   v1GetBalanceResponse:
     type: object
+    properties:
+      userId:
+        type: string
+      balance:
+        type: number
+        format: float
   v1GetOrderResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
   v1GetOrdersResponse:
     type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Order'
   v1GetProductResponse:
     type: object
   v1GetProductStockResponse:
@@ -502,6 +530,38 @@ definitions:
         type: string
       data:
         $ref: '#/definitions/v1AuthToken'
+  v1Order:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/v1OrderStatus'
+      items:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/orderv1OrderItem'
+      customerId:
+        type: string
+      transactionId:
+        type: string
+      createdAt:
+        type: string
+        format: int64
+  v1OrderStatus:
+    type: string
+    enum:
+      - ORDER_STATUS_UNSPECIFIED
+      - ORDER_STATUS_PENDING
+      - ORDER_STATUS_REJECTED
+      - ORDER_STATUS_CANCELLED
+      - ORDER_STATUS_APPROVED
+      - ORDER_STATUS_SUCCESS
+    default: ORDER_STATUS_UNSPECIFIED
+    title: |-
+      todo: work on models
+      todo: event schemas
   v1SetPasswordRequest:
     type: object
     properties:

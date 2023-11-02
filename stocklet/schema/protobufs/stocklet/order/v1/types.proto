@@ -22,7 +22,9 @@ message Order {
   repeated OrderItem items = 3;
 
   string customer_id = 4;
-  int64 created_at = 5;
+  string transaction_id = 5;
+
+  int64 created_at = 6;
 }
 
 message OrderItem {
