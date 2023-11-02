@@ -8,7 +8,10 @@ import "google/api/visibility.proto";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
 
 message GetBalanceRequest {}
-message GetBalanceResponse {}
+message GetBalanceResponse {
+  string user_id = 1;
+  float balance = 2;
+}
 
 // todo: find proper marking - these are internal methods (not exposed by grpc-gateway)
 // also allows the possibility for implementing orchestrators
@@ -17,14 +20,28 @@ message GetBalanceResponse {}
 // response: paid -> success event
 //  success event: contains payment_id
 // response: failure -> failure event
-message MakePaymentRequest {}
-message MakePaymentResponse {}
+message MakePaymentRequest {
+  string order_id = 1;
+  float amount = 2;
+}
 
-message ReversePaymentRequest {}
-message ReversePaymentResponse {}
+message MakePaymentResponse {
+  string payment_id = 1;
+}
+
+message ReversePaymentRequest {
+  string payment_id = 1;
+}
+
+message ReversePaymentResponse {
+  bool success = 1;
+}
 
 // Internal Request Payload
-message DeleteUserDataRequest {}
+message DeleteUserDataRequest {
+  string user_id = 1;
+}
+
 message DeleteUserDataResponse {}
 
 service PaymentService {

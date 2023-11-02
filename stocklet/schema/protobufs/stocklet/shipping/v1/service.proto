@@ -11,7 +11,10 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/
 message GetShippingDetailsRequest {
   string order_id = 1;
 }
-message GetShippingDetailsResponse {}
+
+message GetShippingDetailsResponse {
+  
+}
 
 message UpdateShippingStatusRequest {
   string order_id = 1;

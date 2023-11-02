@@ -12,10 +12,17 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;
 message GetOrderRequest {
   string order_id = 1;
 }
-message GetOrderResponse {}
+message GetOrderResponse {
+  Order data = 1;
+}
 
-message GetOrdersRequest {}
-message GetOrdersResponse {}
+message GetOrdersRequest {
+  string customer_id = 1;
+}
+
+message GetOrdersResponse {
+  repeated Order data = 1;
+}
 
 message CreateOrderRequest {}
 message CreateOrderResponse {}

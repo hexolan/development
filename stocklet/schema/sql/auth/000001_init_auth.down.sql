@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS passwd_auth_methods CASCADE;
