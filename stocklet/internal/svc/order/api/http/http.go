@@ -1,4 +1,4 @@
-package api
+package http
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-func NewHttpGateway(rpcSvc pb.OrderServiceServer) error {
+func NewHttpGateway(svr pb.OrderServiceServer) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -18,11 +18,8 @@ func NewHttpGateway(rpcSvc pb.OrderServiceServer) error {
 
 	// https://github.com/grpc-ecosystem/grpc-gateway/issues/1458
 	// note: no gRPC handler support when using this method
-	err := pb.RegisterOrderServiceHandlerServer(
-		ctx,
-		mux,
-		rpcSvc,
-	)
+	// potentially use gRPC client instead
+	err := pb.RegisterOrderServiceHandlerServer(ctx, mux, svr)
 	if err != nil {
 		log.Panic().Err(err).Msg("failed to register gRPC to gateway server")
 	}
