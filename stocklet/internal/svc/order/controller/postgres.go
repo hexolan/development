@@ -15,12 +15,12 @@ const (
 	orderItemBaseQuery string = "SELECT product_id, quantity FROM order_items"
 )
 
-type DatabaseRepo struct {
+type PostgresController struct {
 	db *pgxpool.Pool
 }
 
-func NewDatabaseRepo(db *pgxpool.Pool) DatabaseRepo {
-	return DatabaseRepo{db: db}
+func NewPostgresController(db *pgxpool.Pool) PostgresController {
+	return PostgresController{db: db}
 }
 
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
@@ -51,8 +51,8 @@ func scanRowToOrderItem(row pgx.Row) (*pb.OrderItem, error) {
 }
 
 // Get all items included in an order (by order id).
-func (r DatabaseRepo) getOrderItemsById(ctx context.Context, id string) ([]*pb.OrderItem, error) {
-	rows, err := r.db.Query(ctx, (orderItemBaseQuery + " WHERE order_id=$1"), id)
+func (c PostgresController) getOrderItemsById(ctx context.Context, id string) ([]*pb.OrderItem, error) {
+	rows, err := c.db.Query(ctx, (orderItemBaseQuery + " WHERE order_id=$1"), id)
 	if err != nil {
 		// todo: wrap in service error
 		return nil, err
@@ -79,16 +79,16 @@ func (r DatabaseRepo) getOrderItemsById(ctx context.Context, id string) ([]*pb.O
 }
 
 // Get an order by its specified id
-func (r DatabaseRepo) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
+func (c PostgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
 	// Load the order data
-	row := r.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
+	row := c.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
 	order, err := scanRowToOrder(row)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
 	}
 
 	// Load the order items
-	items, err := r.getOrderItemsById(ctx, order.Id)
+	items, err := c.getOrderItemsById(ctx, order.Id)
 	if err != nil {
 		return nil, err
 	}

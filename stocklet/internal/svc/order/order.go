@@ -3,14 +3,25 @@ package order
 import (
 	"context"
 
+	"github.com/hexolan/stocklet/internal/svc/order/controller"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 type orderService struct {
+	// todo: generalise as interfaces (not structs)
+	// then it is easy to hotswap from KafkaProducer to NATS Producer, etc
+	// todo: implement main logic for now - then reorganise
+	evt controller.KafkaProducer
+	db controller.PostgresController
+
 	pb.UnimplementedOrderServiceServer
 }
 
+
+// plan:
+// service created first
+// then the api is plugged onto the service
 func NewOrderService() orderService {
 	return orderService{}
 }
