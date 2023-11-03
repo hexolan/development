@@ -8,32 +8,32 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-type KafkaProducer struct {
+type kafkaController struct {
 	kcl *kgo.Client
 }
 
-func NewKafkaProducer(kcl *kgo.Client) KafkaProducer {
-	return KafkaProducer{kcl: kcl}
+func NewKafkaController(kcl *kgo.Client) EventController {
+	return kafkaController{kcl: kcl}
 }
 
-func (p KafkaProducer) dispatchEvent(record *kgo.Record) {
+func (c kafkaController) dispatchEvent(record *kgo.Record) {
 	// todo: test
 	ctx := context.Background()
-	p.kcl.Produce(ctx, record, nil)
+	c.kcl.Produce(ctx, record, nil)
 }
 
-func (p KafkaProducer) DispatchCreatedEvent(req *pb.CreateOrderRequest, item *pb.Order) {
+func (c kafkaController) DispatchCreatedEvent(req *pb.CreateOrderRequest, item *pb.Order) {
 	// todo: test
 	// ctx := context.Background()
 	record := &kgo.Record{Topic: "order.created", Value: []byte("test")}
 	// repo.kcl.Produce(ctx, record, nil)
-	p.dispatchEvent(record)
+	c.dispatchEvent(record)
 }
 
-func (p KafkaProducer) DispatchUpdatedEvent(req *pb.UpdateOrderRequest, item *pb.Order) {
+func (c kafkaController) DispatchUpdatedEvent(req *pb.UpdateOrderRequest, item *pb.Order) {
 	// todo:
 }
 
-func (p KafkaProducer) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
+func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
 	// todo:
 }

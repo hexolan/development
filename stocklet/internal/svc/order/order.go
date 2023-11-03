@@ -9,11 +9,8 @@ import (
 )
 
 type orderService struct {
-	// todo: generalise as interfaces (not structs)
-	// then it is easy to hotswap from KafkaProducer to NATS Producer, etc
-	// todo: implement main logic for now - then reorganise
-	evt controller.KafkaProducer
-	db controller.PostgresController
+	evt controller.EventController
+	db controller.DataController
 
 	pb.UnimplementedOrderServiceServer
 }

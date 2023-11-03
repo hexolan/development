@@ -15,12 +15,12 @@ const (
 	orderItemBaseQuery string = "SELECT product_id, quantity FROM order_items"
 )
 
-type PostgresController struct {
+type postgresController struct {
 	db *pgxpool.Pool
 }
 
-func NewPostgresController(db *pgxpool.Pool) PostgresController {
-	return PostgresController{db: db}
+func NewPostgresController(db *pgxpool.Pool) DataController {
+	return postgresController{db: db}
 }
 
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
@@ -51,7 +51,7 @@ func scanRowToOrderItem(row pgx.Row) (*pb.OrderItem, error) {
 }
 
 // Get all items included in an order (by order id).
-func (c PostgresController) getOrderItemsById(ctx context.Context, id string) ([]*pb.OrderItem, error) {
+func (c postgresController) getOrderItemsById(ctx context.Context, id string) ([]*pb.OrderItem, error) {
 	rows, err := c.db.Query(ctx, (orderItemBaseQuery + " WHERE order_id=$1"), id)
 	if err != nil {
 		// todo: wrap in service error
@@ -79,7 +79,7 @@ func (c PostgresController) getOrderItemsById(ctx context.Context, id string) ([
 }
 
 // Get an order by its specified id
-func (c PostgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
+func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
 	// Load the order data
 	row := c.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
 	order, err := scanRowToOrder(row)
