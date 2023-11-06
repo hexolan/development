@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
@@ -19,7 +20,7 @@ type postgresController struct {
 	db *pgxpool.Pool
 }
 
-func NewPostgresController(db *pgxpool.Pool) DataController {
+func NewPostgresController(db *pgxpool.Pool) order.DataController {
 	return postgresController{db: db}
 }
 
@@ -78,15 +79,7 @@ func (c postgresController) getOrderItemsById(ctx context.Context, id string) ([
 	return items, nil
 }
 
-// Get an order by its specified id
-func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
-	// Load the order data
-	row := c.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
-	order, err := scanRowToOrder(row)
-	if err != nil {
-		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
-	}
-
+func (c postgresController) getOrderWithItems(ctx context.Context, order *pb.Order) (*pb.Order, error) {
 	// Load the order items
 	items, err := c.getOrderItemsById(ctx, order.Id)
 	if err != nil {
@@ -98,4 +91,32 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 
 	// Return the order
 	return order, nil
+}
+
+// Get an order by its specified id
+func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
+	// Load the order data
+	row := c.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
+	order, err := scanRowToOrder(row)
+	if err != nil {
+		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
+	}
+
+	// Add the order items and return
+	order, err = c.getOrderWithItems(ctx, order)
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
+}
+
+func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error) {
+	return nil, nil
+}
+func (c postgresController) UpdateOrderById(ctx context.Context, id string) ([]*pb.Order, error) {
+	return nil, nil
+}
+func (c postgresController) DeleteOrderById(ctx context.Context, id string) error {
+	return nil
 }

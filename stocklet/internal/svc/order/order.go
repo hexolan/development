@@ -3,46 +3,25 @@ package order
 import (
 	"context"
 
-	"github.com/hexolan/stocklet/internal/svc/order/controller"
-	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-type orderService struct {
-	evt controller.EventController
-	db controller.DataController
+// Generic database access methods
+// Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
+type DataController interface {
+	GetOrderById(ctx context.Context, id string) (*pb.Order, error)
+	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 
-	pb.UnimplementedOrderServiceServer
+	UpdateOrderById(ctx context.Context, id string) ([]*pb.Order, error) // todo: update args
+	DeleteOrderById(ctx context.Context, id string) error
 }
 
+// Generic event methods
+// Allows implementing seperate event controllers for different messaging systems (e.g. Kafka, NATS, etc)
+type EventController interface {
+	DispatchCreatedEvent(req *pb.CreateOrderRequest, item *pb.Order)
+	DispatchUpdatedEvent(req *pb.UpdateOrderRequest, item *pb.Order)
+	DispatchDeletedEvent(req *pb.CancelOrderRequest)
 
-// plan:
-// service created first
-// then the api is plugged onto the service
-func NewOrderService() orderService {
-	return orderService{}
-}
-
-func (svc orderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.GetOrderResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-func (svc orderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-func (svc orderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-func (svc orderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-func (svc orderService) CancelOrder(ctx context.Context, req *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-func (svc orderService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDataRequest) (*pb.DeleteUserDataResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	ProcessPlaceOrderEvent(evt *pb.PlaceOrderEvent) // todo: move into service? - dispatch place order origin event
 }

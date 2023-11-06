@@ -6,8 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
-
-	"github.com/hexolan/stocklet/internal/svc/order"
+	
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
@@ -52,7 +51,8 @@ func consumePlaceOrderTopic(ft kgo.FetchTopic) {
 		// Process the event
 
 		// todo: reorg
-		order.ProcessPlaceOrderEvent(&event)
+		// call event controller.ProcessPlaceOrderEvent
+		//order.ProcessPlaceOrderEvent(&event)
 
 		//
 		log.Debug().Str("value", string(record.Value)).Msg("")

@@ -8,7 +8,8 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/logging"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/order"
-	"github.com/hexolan/stocklet/internal/svc/order/service"
+	"github.com/hexolan/stocklet/internal/svc/order/api"
+	"github.com/hexolan/stocklet/internal/svc/order/controller"
 )
 
 func main() {
@@ -40,6 +41,17 @@ func main() {
 		log.Error().Err(err).Msg("")
 	}
 
+	// Wrap the connections in their controllers
+	evtC := controller.NewKafkaController(kcl)
+	dbC := controller.NewPostgresController(db)
+
 	// Create the service
-	service.NewOrderService(db, kcl)
+	svc := order.NewOrderService(evtC, dbC)
+
+	// Attach the API interfaces to the service
+	go api.NewKafkaConsumer(kcl)
+	
+	grpcSvr := api.NewGrpcServer(svc)
+	go api.ServeGrpcServer(grpcSvr)
+	api.NewHttpGateway(svc)
 }

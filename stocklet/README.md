@@ -3,8 +3,9 @@
 An event driven microservice e-commerce application.
 
 TODO: add support for using NATS (/ NATS + Liftbridge) for messaging instead of Kafka
-  * https://docs.nats.io/
-  * https://liftbridge.io/docs/quick-start.html
+
+* <https://docs.nats.io/>
+* <https://liftbridge.io/docs/quick-start.html>
 
 ## About
 
@@ -49,8 +50,8 @@ description of choreography saga
 
 difference between choreography and orchestration
 
-- [ ] ABC
-- [ ] DEF
+* [ ] ABC
+* [ ] DEF
 
 ## Deployment
 
