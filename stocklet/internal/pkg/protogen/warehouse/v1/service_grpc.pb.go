@@ -8,9 +8,11 @@ package warehouse_v1
 
 import (
 	context "context"
+	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +21,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	WarehouseService_GetProductStock_FullMethodName    = "/stocklet.warehouse.v1.WarehouseService/GetProductStock"
-	WarehouseService_UpdateProductStock_FullMethodName = "/stocklet.warehouse.v1.WarehouseService/UpdateProductStock"
+	WarehouseService_GetProductStock_FullMethodName        = "/stocklet.warehouse.v1.WarehouseService/GetProductStock"
+	WarehouseService_UpdateProductStock_FullMethodName     = "/stocklet.warehouse.v1.WarehouseService/UpdateProductStock"
+	WarehouseService_ProcessPlaceOrderEvent_FullMethodName = "/stocklet.warehouse.v1.WarehouseService/ProcessPlaceOrderEvent"
 )
 
 // WarehouseServiceClient is the client API for WarehouseService service.
@@ -29,6 +32,15 @@ const (
 type WarehouseServiceClient interface {
 	GetProductStock(ctx context.Context, in *GetProductStockRequest, opts ...grpc.CallOption) (*GetProductStockResponse, error)
 	UpdateProductStock(ctx context.Context, in *UpdateProductStockRequest, opts ...grpc.CallOption) (*UpdateProductStockResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// TODO: documentation
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type warehouseServiceClient struct {
@@ -57,12 +69,30 @@ func (c *warehouseServiceClient) UpdateProductStock(ctx context.Context, in *Upd
 	return out, nil
 }
 
+func (c *warehouseServiceClient) ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, WarehouseService_ProcessPlaceOrderEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WarehouseServiceServer is the server API for WarehouseService service.
 // All implementations must embed UnimplementedWarehouseServiceServer
 // for forward compatibility
 type WarehouseServiceServer interface {
 	GetProductStock(context.Context, *GetProductStockRequest) (*GetProductStockResponse, error)
 	UpdateProductStock(context.Context, *UpdateProductStockRequest) (*UpdateProductStockResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// TODO: documentation
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedWarehouseServiceServer()
 }
 
@@ -75,6 +105,9 @@ func (UnimplementedWarehouseServiceServer) GetProductStock(context.Context, *Get
 }
 func (UnimplementedWarehouseServiceServer) UpdateProductStock(context.Context, *UpdateProductStockRequest) (*UpdateProductStockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProductStock not implemented")
+}
+func (UnimplementedWarehouseServiceServer) ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPlaceOrderEvent not implemented")
 }
 func (UnimplementedWarehouseServiceServer) mustEmbedUnimplementedWarehouseServiceServer() {}
 
@@ -125,6 +158,24 @@ func _WarehouseService_UpdateProductStock_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WarehouseService_ProcessPlaceOrderEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PlaceOrderEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).ProcessPlaceOrderEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_ProcessPlaceOrderEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).ProcessPlaceOrderEvent(ctx, req.(*v1.PlaceOrderEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WarehouseService_ServiceDesc is the grpc.ServiceDesc for WarehouseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +190,10 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProductStock",
 			Handler:    _WarehouseService_UpdateProductStock_Handler,
+		},
+		{
+			MethodName: "ProcessPlaceOrderEvent",
+			Handler:    _WarehouseService_ProcessPlaceOrderEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

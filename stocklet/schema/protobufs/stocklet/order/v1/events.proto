@@ -6,16 +6,16 @@ import "stocklet/order/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
-message OrderCreatedEvent {
-    Order payload = 1;
-}
+message OrderStateEvent {
+    enum Type {
+        TYPE_UNSPECIFIED = 0;
+        TYPE_CREATED = 1;
+        TYPE_UPDATED = 2;
+        TYPE_DELETED = 3;
+    }
 
-message OrderUpdatedEvent {
-    Order payload = 1;
-}
-
-message OrderCancelledEvent {
-    Order payload = 1;
+    Type type = 1;
+    Order payload = 2;
 }
 
 message PlaceOrderEventPayload {
@@ -34,6 +34,7 @@ message PlaceOrderEventPayload {
 }
 
 message PlaceOrderEvent {
+    // rename to saga stage?
     enum Type {
         TYPE_UNSPECIFIED = 0;
         TYPE_WAREHOUSE = 1;

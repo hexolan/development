@@ -1,3 +1,3 @@
 package messaging
 
-// todo: implement support
+// todo: implement support for NATS after core functionality

@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package stocklet.shipping.v1;
 
+import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
+import "stocklet/order/v1/events.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
@@ -41,6 +43,18 @@ service ShippingService {
   // todo: as internal method - find annotations
   // todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
   rpc NewShippingOrder(NewShippingOrderRequest) returns (NewShippingOrderResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // Internal Method
+  //
+  // Processes PlaceOrderEvents.
+  // TODO: documentation
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessPlaceOrderEvent(stocklet.order.v1.PlaceOrderEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }

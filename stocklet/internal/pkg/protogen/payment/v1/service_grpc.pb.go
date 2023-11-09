@@ -8,9 +8,11 @@ package payment_v1
 
 import (
 	context "context"
+	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,10 +21,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PaymentService_GetBalance_FullMethodName     = "/stocklet.payment.v1.PaymentService/GetBalance"
-	PaymentService_MakePayment_FullMethodName    = "/stocklet.payment.v1.PaymentService/MakePayment"
-	PaymentService_ReversePayment_FullMethodName = "/stocklet.payment.v1.PaymentService/ReversePayment"
-	PaymentService_DeleteUserData_FullMethodName = "/stocklet.payment.v1.PaymentService/DeleteUserData"
+	PaymentService_GetBalance_FullMethodName             = "/stocklet.payment.v1.PaymentService/GetBalance"
+	PaymentService_MakePayment_FullMethodName            = "/stocklet.payment.v1.PaymentService/MakePayment"
+	PaymentService_ReversePayment_FullMethodName         = "/stocklet.payment.v1.PaymentService/ReversePayment"
+	PaymentService_DeleteUserData_FullMethodName         = "/stocklet.payment.v1.PaymentService/DeleteUserData"
+	PaymentService_ProcessPlaceOrderEvent_FullMethodName = "/stocklet.payment.v1.PaymentService/ProcessPlaceOrderEvent"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -37,6 +40,24 @@ type PaymentServiceClient interface {
 	// todo: return all balance to cards, etc...
 	// maybe retain transaction log? just set user_id to nullable in transaction log
 	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// > If an event is recieved from the stage before this service's stage,
+	//
+	//	then the service will attempt to complete its stage of the saga.
+	//	 > In this case, payment will attempt to be reserved for the order.
+	//	 > The success/failure of this action is dispatched as another PlaceOrderEvent.
+	//
+	// > If an event is recieved from after this service's stage of the saga,
+	//
+	//	and has a failure status, then compensationary action is taken.
+	//	 > In this case, payment taken for the order is refunded.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type paymentServiceClient struct {
@@ -83,6 +104,15 @@ func (c *paymentServiceClient) DeleteUserData(ctx context.Context, in *DeleteUse
 	return out, nil
 }
 
+func (c *paymentServiceClient) ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PaymentService_ProcessPlaceOrderEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
@@ -95,6 +125,24 @@ type PaymentServiceServer interface {
 	// todo: return all balance to cards, etc...
 	// maybe retain transaction log? just set user_id to nullable in transaction log
 	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// > If an event is recieved from the stage before this service's stage,
+	//
+	//	then the service will attempt to complete its stage of the saga.
+	//	 > In this case, payment will attempt to be reserved for the order.
+	//	 > The success/failure of this action is dispatched as another PlaceOrderEvent.
+	//
+	// > If an event is recieved from after this service's stage of the saga,
+	//
+	//	and has a failure status, then compensationary action is taken.
+	//	 > In this case, payment taken for the order is refunded.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -113,6 +161,9 @@ func (UnimplementedPaymentServiceServer) ReversePayment(context.Context, *Revers
 }
 func (UnimplementedPaymentServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
+}
+func (UnimplementedPaymentServiceServer) ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPlaceOrderEvent not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 
@@ -199,6 +250,24 @@ func _PaymentService_DeleteUserData_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_ProcessPlaceOrderEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PlaceOrderEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).ProcessPlaceOrderEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_ProcessPlaceOrderEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).ProcessPlaceOrderEvent(ctx, req.(*v1.PlaceOrderEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -221,6 +290,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUserData",
 			Handler:    _PaymentService_DeleteUserData_Handler,
+		},
+		{
+			MethodName: "ProcessPlaceOrderEvent",
+			Handler:    _PaymentService_ProcessPlaceOrderEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

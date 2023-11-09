@@ -40,13 +40,32 @@ func usePostgresController(cfg *order.ServiceConfig) (order.DataController, *pgx
 
 func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
 	// open a Kafka connection
-	kcl, err := messaging.NewKafkaConn(cfg.Kafka, kgo.ConsumerGroup("order-service"), kgo.ConsumeTopics("orders"))
+	kcl, err := messaging.NewKafkaConn(
+		cfg.Kafka,
+		kgo.ConsumerGroup("order-service"),
+		
+		kgo.ConsumeRegex(),
+		kgo.ConsumeTopics(
+			messaging.Order_PlaceOrder_Catchall,
+		),
+	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
 
 	// ensure the required Kafka topics exist
-	err = messaging.EnsureKafkaTopics(kcl, "orders", "orders2")
+	err = messaging.EnsureKafkaTopics(
+		kcl,
+
+		messaging.Order_State_Created_Topic,
+		messaging.Order_State_Updated_Topic,
+		messaging.Order_State_Deleted_Topic,
+
+		messaging.Order_PlaceOrder_Order_Topic,
+		messaging.Order_PlaceOrder_Payment_Topic,
+		messaging.Order_PlaceOrder_Shipping_Topic,
+		messaging.Order_PlaceOrder_Warehouse_Topic,
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("")
 	}

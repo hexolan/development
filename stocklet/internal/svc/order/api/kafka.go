@@ -64,7 +64,7 @@ func (c kafkaConsumer) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 
 		// Process the event
 		// will currently result in error
-		c.svc.EvtC.ProcessPlaceOrderEvent(&event)
+		c.svc.EvtCtrl.ProcessPlaceOrderEvent(&event)
 
 		//
 		log.Debug().Str("value", string(record.Value)).Msg("")

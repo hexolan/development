@@ -8,10 +8,11 @@ import (
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
+	"github.com/hexolan/stocklet/internal/svc/order"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-func NewGrpcServer(svc pb.OrderServiceServer) *grpc.Server {
+func NewGrpcServer(svc order.OrderService) *grpc.Server {
 	svr := grpc.NewServer()
 
 	healthSvc := health.NewServer()

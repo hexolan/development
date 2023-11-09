@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package stocklet.payment.v1;
 
+import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
+import "stocklet/order/v1/events.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
 
@@ -64,6 +66,25 @@ service PaymentService {
   // todo: return all balance to cards, etc...
   // maybe retain transaction log? just set user_id to nullable in transaction log
   rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // Internal Method
+  //
+  // Processes PlaceOrderEvents.
+  // > If an event is recieved from the stage before this service's stage,
+  //   then the service will attempt to complete its stage of the saga.
+  //    > In this case, payment will attempt to be reserved for the order.
+  //    > The success/failure of this action is dispatched as another PlaceOrderEvent.
+  //
+  // > If an event is recieved from after this service's stage of the saga,
+  //   and has a failure status, then compensationary action is taken.
+  //    > In this case, payment taken for the order is refunded.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessPlaceOrderEvent(stocklet.order.v1.PlaceOrderEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }

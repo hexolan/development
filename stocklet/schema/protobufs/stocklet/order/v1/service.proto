@@ -2,9 +2,11 @@ syntax = "proto3";
 
 package stocklet.order.v1;
 
+import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
 import "stocklet/order/v1/types.proto";
+import "stocklet/order/v1/events.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
@@ -79,6 +81,19 @@ service OrderService {
 
   // internal method
   rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // Internal Method
+  //
+  // Processes responses from other services to PlaceOrderEvents.
+  // > If a failure status is recieved, the order is updated and marked rejected.
+  // > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessPlaceOrderEvent(PlaceOrderEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }

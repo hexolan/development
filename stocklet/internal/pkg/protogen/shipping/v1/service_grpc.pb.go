@@ -8,9 +8,11 @@ package shipping_v1
 
 import (
 	context "context"
+	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,9 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ShippingService_GetShippingDetails_FullMethodName   = "/stocklet.shipping.v1.ShippingService/GetShippingDetails"
-	ShippingService_UpdateShippingStatus_FullMethodName = "/stocklet.shipping.v1.ShippingService/UpdateShippingStatus"
-	ShippingService_NewShippingOrder_FullMethodName     = "/stocklet.shipping.v1.ShippingService/NewShippingOrder"
+	ShippingService_GetShippingDetails_FullMethodName     = "/stocklet.shipping.v1.ShippingService/GetShippingDetails"
+	ShippingService_UpdateShippingStatus_FullMethodName   = "/stocklet.shipping.v1.ShippingService/UpdateShippingStatus"
+	ShippingService_NewShippingOrder_FullMethodName       = "/stocklet.shipping.v1.ShippingService/NewShippingOrder"
+	ShippingService_ProcessPlaceOrderEvent_FullMethodName = "/stocklet.shipping.v1.ShippingService/ProcessPlaceOrderEvent"
 )
 
 // ShippingServiceClient is the client API for ShippingService service.
@@ -33,6 +36,15 @@ type ShippingServiceClient interface {
 	// todo: as internal method - find annotations
 	// todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
 	NewShippingOrder(ctx context.Context, in *NewShippingOrderRequest, opts ...grpc.CallOption) (*NewShippingOrderResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// TODO: documentation
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type shippingServiceClient struct {
@@ -70,6 +82,15 @@ func (c *shippingServiceClient) NewShippingOrder(ctx context.Context, in *NewShi
 	return out, nil
 }
 
+func (c *shippingServiceClient) ProcessPlaceOrderEvent(ctx context.Context, in *v1.PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ShippingService_ProcessPlaceOrderEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ShippingServiceServer is the server API for ShippingService service.
 // All implementations must embed UnimplementedShippingServiceServer
 // for forward compatibility
@@ -79,6 +100,15 @@ type ShippingServiceServer interface {
 	// todo: as internal method - find annotations
 	// todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
 	NewShippingOrder(context.Context, *NewShippingOrderRequest) (*NewShippingOrderResponse, error)
+	// Internal Method
+	//
+	// Processes PlaceOrderEvents.
+	// TODO: documentation
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedShippingServiceServer()
 }
 
@@ -94,6 +124,9 @@ func (UnimplementedShippingServiceServer) UpdateShippingStatus(context.Context, 
 }
 func (UnimplementedShippingServiceServer) NewShippingOrder(context.Context, *NewShippingOrderRequest) (*NewShippingOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewShippingOrder not implemented")
+}
+func (UnimplementedShippingServiceServer) ProcessPlaceOrderEvent(context.Context, *v1.PlaceOrderEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPlaceOrderEvent not implemented")
 }
 func (UnimplementedShippingServiceServer) mustEmbedUnimplementedShippingServiceServer() {}
 
@@ -162,6 +195,24 @@ func _ShippingService_NewShippingOrder_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ShippingService_ProcessPlaceOrderEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PlaceOrderEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).ProcessPlaceOrderEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_ProcessPlaceOrderEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).ProcessPlaceOrderEvent(ctx, req.(*v1.PlaceOrderEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ShippingService_ServiceDesc is the grpc.ServiceDesc for ShippingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -180,6 +231,10 @@ var ShippingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "NewShippingOrder",
 			Handler:    _ShippingService_NewShippingOrder_Handler,
+		},
+		{
+			MethodName: "ProcessPlaceOrderEvent",
+			Handler:    _ShippingService_ProcessPlaceOrderEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

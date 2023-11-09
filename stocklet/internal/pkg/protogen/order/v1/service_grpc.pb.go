@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,12 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OrderService_GetOrder_FullMethodName       = "/stocklet.order.v1.OrderService/GetOrder"
-	OrderService_GetOrders_FullMethodName      = "/stocklet.order.v1.OrderService/GetOrders"
-	OrderService_CreateOrder_FullMethodName    = "/stocklet.order.v1.OrderService/CreateOrder"
-	OrderService_UpdateOrder_FullMethodName    = "/stocklet.order.v1.OrderService/UpdateOrder"
-	OrderService_CancelOrder_FullMethodName    = "/stocklet.order.v1.OrderService/CancelOrder"
-	OrderService_DeleteUserData_FullMethodName = "/stocklet.order.v1.OrderService/DeleteUserData"
+	OrderService_GetOrder_FullMethodName               = "/stocklet.order.v1.OrderService/GetOrder"
+	OrderService_GetOrders_FullMethodName              = "/stocklet.order.v1.OrderService/GetOrders"
+	OrderService_CreateOrder_FullMethodName            = "/stocklet.order.v1.OrderService/CreateOrder"
+	OrderService_UpdateOrder_FullMethodName            = "/stocklet.order.v1.OrderService/UpdateOrder"
+	OrderService_CancelOrder_FullMethodName            = "/stocklet.order.v1.OrderService/CancelOrder"
+	OrderService_DeleteUserData_FullMethodName         = "/stocklet.order.v1.OrderService/DeleteUserData"
+	OrderService_ProcessPlaceOrderEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessPlaceOrderEvent"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -38,6 +40,16 @@ type OrderServiceClient interface {
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
 	// internal method
 	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
+	// Internal Method
+	//
+	// Processes responses from other services to PlaceOrderEvents.
+	// > If a failure status is recieved, the order is updated and marked rejected.
+	// > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(ctx context.Context, in *PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -102,6 +114,15 @@ func (c *orderServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserD
 	return out, nil
 }
 
+func (c *orderServiceClient) ProcessPlaceOrderEvent(ctx context.Context, in *PlaceOrderEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ProcessPlaceOrderEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
@@ -113,6 +134,16 @@ type OrderServiceServer interface {
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
 	// internal method
 	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
+	// Internal Method
+	//
+	// Processes responses from other services to PlaceOrderEvents.
+	// > If a failure status is recieved, the order is updated and marked rejected.
+	// > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPlaceOrderEvent(context.Context, *PlaceOrderEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -137,6 +168,9 @@ func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *CancelOrder
 }
 func (UnimplementedOrderServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
+}
+func (UnimplementedOrderServiceServer) ProcessPlaceOrderEvent(context.Context, *PlaceOrderEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPlaceOrderEvent not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 
@@ -259,6 +293,24 @@ func _OrderService_DeleteUserData_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_ProcessPlaceOrderEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceOrderEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ProcessPlaceOrderEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ProcessPlaceOrderEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ProcessPlaceOrderEvent(ctx, req.(*PlaceOrderEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -289,6 +341,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUserData",
 			Handler:    _OrderService_DeleteUserData_Handler,
+		},
+		{
+			MethodName: "ProcessPlaceOrderEvent",
+			Handler:    _OrderService_ProcessPlaceOrderEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

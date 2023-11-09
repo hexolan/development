@@ -29,7 +29,7 @@ description of events (and invoked compensation transactions) + topics they are 
   > e.g. 'order.created', 'order.updated' topics
 
 discussion on protobuf schema of events
-  > recently discovered: <https://www.asyncapi.com/> (todo: have a look into it. potentially write schemas with it. find way to integrate protobuf as it appears json-oriented)
+  > potentially write event schema with <https://www.asyncapi.com/> (find way to integrate protobuf as it appears json-oriented)
 
 ## Features
 
@@ -40,6 +40,8 @@ technologies:
 > grpc
 > grpc gateway
 > protobuf
+> NATS support
+> "pluggable architecture"
 
 maybe: description of patterns used
 
