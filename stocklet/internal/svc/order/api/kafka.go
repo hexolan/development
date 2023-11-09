@@ -6,15 +6,29 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
-	
+
+	"github.com/hexolan/stocklet/internal/svc/order"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-func NewKafkaConsumer(kcl *kgo.Client) {
+type kafkaConsumer struct {
+	svc order.OrderService
+	
+	kcl *kgo.Client
+}
+
+func NewKafkaConsumer(svc order.OrderService, kcl *kgo.Client) kafkaConsumer {
+	return kafkaConsumer{
+		svc: svc,
+		kcl: kcl,
+	}
+}
+
+func (c kafkaConsumer) StartConsuming() {
 	ctx := context.Background()
 
 	for {
-		fetches := kcl.PollFetches(ctx)
+		fetches := c.kcl.PollFetches(ctx)
 		if errs := fetches.Errors(); len(errs) > 0 {
 			log.Panic().Any("kafka-errs", errs).Msg("consumer: unrecoverable kafka errors")
 		}
@@ -30,7 +44,7 @@ func NewKafkaConsumer(kcl *kgo.Client) {
 				// order.placeorder.warehouse
 				// order.placeorder.payment
 				// order.placeorder.shipping
-				consumePlaceOrderTopic(ft)
+				c.consumePlaceOrderTopic(ft)
 			default:
 				log.Error().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
 			}
@@ -38,7 +52,7 @@ func NewKafkaConsumer(kcl *kgo.Client) {
 	}
 }
 
-func consumePlaceOrderTopic(ft kgo.FetchTopic) {
+func (c kafkaConsumer) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
@@ -49,10 +63,8 @@ func consumePlaceOrderTopic(ft kgo.FetchTopic) {
 		}
 
 		// Process the event
-
-		// todo: reorg
-		// call event controller.ProcessPlaceOrderEvent
-		//order.ProcessPlaceOrderEvent(&event)
+		// will currently result in error
+		c.svc.EvtC.ProcessPlaceOrderEvent(&event)
 
 		//
 		log.Debug().Str("value", string(record.Value)).Msg("")
