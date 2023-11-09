@@ -492,9 +492,14 @@ definitions:
         format: float
   v1GetOrderResponse:
     type: object
+    example:
+      data:
+        id: "123"
     properties:
       data:
         $ref: '#/definitions/v1Order'
+    description: abcdef
+    title: Order Response
   v1GetOrdersResponse:
     type: object
     properties:

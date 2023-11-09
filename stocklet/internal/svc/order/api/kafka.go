@@ -62,9 +62,9 @@ func (c kafkaConsumer) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 			log.Panic().Err(err).Msg("consumer: failed to unmarshal place order event")
 		}
 
-		// Process the event
-		// will currently result in error
-		c.svc.EvtCtrl.ProcessPlaceOrderEvent(&event)
+		// Process the Event
+		ctx := context.Background()
+		c.svc.ProcessPlaceOrderEvent(ctx, &event)
 
 		//
 		log.Debug().Str("value", string(record.Value)).Msg("")

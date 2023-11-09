@@ -28,4 +28,6 @@ func EnsureKafkaTopics(kcl *kgo.Client, topics ...string) error {
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to create Kafka topics", err)
 	}
+
+	return nil
 }

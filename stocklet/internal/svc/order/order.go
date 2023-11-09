@@ -22,13 +22,9 @@ type DataController interface {
 // Interface for event related methods
 // Allows implementing seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
-	DispatchCreatedEvent(req *pb.CreateOrderRequest, item *pb.Order)
-	DispatchUpdatedEvent(req *pb.UpdateOrderRequest, item *pb.Order)
+	DispatchCreatedEvent(order *pb.Order)
+	DispatchUpdatedEvent(order *pb.Order)
 	DispatchDeletedEvent(req *pb.CancelOrderRequest)
-
-	// todo: move into service
-	// create seperate method for dispatching reactionary events
-	ProcessPlaceOrderEvent(evt *pb.PlaceOrderEvent)
 }
 
 // The implemented order service served as a gRPC service
@@ -103,5 +99,25 @@ func (svc OrderService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDa
 }
 
 func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.PlaceOrderEvent) (*emptypb.Empty, error) {
+	// todo: improve
+
+	// Ignore events dispatched by the order service
+	if req.Type == pb.PlaceOrderEvent_TYPE_UNSPECIFIED || req.Status == pb.PlaceOrderEvent_STATUS_UNSPECIFIED {
+		return &emptypb.Empty{}, nil
+	}
+
+	// Mark the order as rejected if a failure status was reported at any stage.
+	if req.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
+		// todo
+		return &emptypb.Empty{}, nil
+	}
+	
+	// Otherwise, if the event is from the last stage of the saga (shipping svc)
+	// ... then mark the order as succesful.
+	if req.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
+		// todo: update order status and details
+		// (append transaction id, etc to stored order)
+	}
+
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }

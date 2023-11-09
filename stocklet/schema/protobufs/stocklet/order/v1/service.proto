@@ -5,6 +5,7 @@ package stocklet.order.v1;
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "stocklet/order/v1/types.proto";
 import "stocklet/order/v1/events.proto";
 
@@ -14,7 +15,16 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;
 message GetOrderRequest {
   string order_id = 1;
 }
+
 message GetOrderResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Order Response"
+      description: "abcdef"
+    }
+    example: "{\"data\": {\"id\": \"123\"}}"
+  };
+
   Order data = 1;
 }
 

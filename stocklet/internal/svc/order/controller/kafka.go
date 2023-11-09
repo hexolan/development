@@ -4,8 +4,11 @@ import (
 	"context"
 
 	"github.com/twmb/franz-go/pkg/kgo"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
@@ -23,40 +26,68 @@ func (c kafkaController) dispatchEvent(record *kgo.Record) {
 	c.kcl.Produce(ctx, record, nil)
 }
 
-func (c kafkaController) DispatchCreatedEvent(req *pb.CreateOrderRequest, item *pb.Order) {
-	// todo: test
-	// ctx := context.Background()
-	record := &kgo.Record{Topic: "order.created", Value: []byte("test")}
-	// repo.kcl.Produce(ctx, record, nil)
+func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
+	wireEvt, err := proto.Marshal(evt)
+	if err != nil {
+		// todo: handling
+		panic(err)
+	}
+
+	return wireEvt
+}
+
+func (c kafkaController) DispatchCreatedEvent(order *pb.Order) {
+	record := &kgo.Record{
+		Topic: messaging.Order_State_Created_Topic,
+		Value: c.marshalEvent(
+			&pb.OrderStateEvent{
+				Type: pb.OrderStateEvent_TYPE_CREATED,
+				Payload: order,
+			},
+		),
+	}
+
 	c.dispatchEvent(record)
 }
 
-func (c kafkaController) DispatchUpdatedEvent(req *pb.UpdateOrderRequest, item *pb.Order) {
-	// todo:
+func (c kafkaController) DispatchUpdatedEvent(order *pb.Order) {
+	record := &kgo.Record{
+		Topic: messaging.Order_State_Updated_Topic,
+		Value: c.marshalEvent(
+			&pb.OrderStateEvent{
+				Type: pb.OrderStateEvent_TYPE_UPDATED,
+				Payload: order,
+			},
+		),
+	}
+
+	c.dispatchEvent(record)
 }
 
 func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
-	// todo:
+	// todo: improve assembly of payload (dispatch whole order?)
+
+	record := &kgo.Record{
+		Topic: messaging.Order_State_Deleted_Topic,
+		Value: c.marshalEvent(
+			&pb.OrderStateEvent{
+				Type: pb.OrderStateEvent_TYPE_DELETED,
+				Payload: &pb.Order{
+					Id: req.GetOrderId(),
+				},
+			},
+		),
+	}
+
+	c.dispatchEvent(record)
 }
 
-func (c kafkaController) ProcessPlaceOrderEvent(event *pb.PlaceOrderEvent) {
-	// Ignore events dispatched by the order service
-	if event.Type == pb.PlaceOrderEvent_TYPE_UNSPECIFIED || event.Status == pb.PlaceOrderEvent_STATUS_UNSPECIFIED {
-		return
+func (c kafkaController) DispatchPlaceOrderEvent(evt *pb.PlaceOrderEvent) {
+	// todo:
+	record := &kgo.Record{
+		Topic: messaging.Order_PlaceOrder_Order_Topic,
+		Value: c.marshalEvent(evt),
 	}
 
-	// Mark the order as rejected if a failure status
-	// was reported at any stage.
-	if event.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
-		// todo
-		return
-	}
-	
-	// Otherwise,
-	// If the event is from the last stage of the saga (shipping svc)
-	// then mark the order as succesful.
-	if event.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
-		// todo: update order status and details
-		// (append transaction id, etc to stored order)
-	}
+	c.dispatchEvent(record)
 }

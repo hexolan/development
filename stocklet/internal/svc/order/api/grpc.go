@@ -15,6 +15,7 @@ import (
 func NewGrpcServer(svc order.OrderService) *grpc.Server {
 	svr := grpc.NewServer()
 
+	// todo: move to pkg method? AttachHealthService?
 	healthSvc := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(svr, healthSvc)
 
