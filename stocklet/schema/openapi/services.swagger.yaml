@@ -87,11 +87,50 @@ paths:
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: body
+        - name: order
           in: body
           required: true
           schema:
-            $ref: '#/definitions/v1CreateOrderRequest'
+            $ref: '#/definitions/v1Order'
+      tags:
+        - OrderService
+  /v1/order/{order.id}:
+    post:
+      operationId: OrderService_UpdateOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1UpdateOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: order.id
+          in: path
+          required: true
+          type: string
+        - name: order
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: '#/definitions/v1OrderStatus'
+              items:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/definitions/orderv1OrderItem'
+              customerId:
+                type: string
+              transactionId:
+                type: string
+              createdAt:
+                type: string
+                format: int64
       tags:
         - OrderService
   /v1/order/{orderId}:
@@ -129,29 +168,6 @@ paths:
           in: path
           required: true
           type: string
-      tags:
-        - OrderService
-    post:
-      operationId: OrderService_UpdateOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1UpdateOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: orderId
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
       tags:
         - OrderService
   /v1/payment/balance:
@@ -466,10 +482,11 @@ definitions:
         format: int64
   v1CancelOrderResponse:
     type: object
-  v1CreateOrderRequest:
-    type: object
   v1CreateOrderResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
   v1CreateProductRequest:
     type: object
   v1CreateProductResponse:

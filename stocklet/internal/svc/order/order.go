@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -15,7 +16,7 @@ type DataController interface {
 	GetOrderById(ctx context.Context, id string) (*pb.Order, error)
 	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 
-	UpdateOrderById(ctx context.Context, id string) ([]*pb.Order, error) // todo: update args
+	UpdateOrder(ctx context.Context, order *pb.Order) error
 	DeleteOrderById(ctx context.Context, id string) error
 }
 
@@ -83,11 +84,30 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 }
 
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
-	// update order (db level)
+	// Validate the inputs
 
-	// if succesful dispatch updated event
+	// Update the order (db level)
+	err := svc.DataCtrl.UpdateOrder(ctx, req.Order)
+	if err != nil {
+		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
+	}
+
+	// todo: dispatching created,updated,deleted events at DB level on succesful updates
 	
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	/*
+	// todo: return updated order
+	order, err := svc.DataCtrl.GetOrderById(ctx, req.Order.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// todo: get order at start
+	// merge to form patch with existing body
+	// check permissions
+	// return updated patch on success (instead of double query)
+	*/
+
+	return &pb.UpdateOrderResponse{}, nil
 }
 
 func (svc OrderService) CancelOrder(ctx context.Context, req *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
@@ -99,25 +119,45 @@ func (svc OrderService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDa
 }
 
 func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.PlaceOrderEvent) (*emptypb.Empty, error) {
-	// todo: improve
-
 	// Ignore events dispatched by the order service
 	if req.Type == pb.PlaceOrderEvent_TYPE_UNSPECIFIED || req.Status == pb.PlaceOrderEvent_STATUS_UNSPECIFIED {
 		return &emptypb.Empty{}, nil
 	}
-
+	
 	// Mark the order as rejected if a failure status was reported at any stage.
 	if req.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
-		// todo
+		err := svc.DataCtrl.UpdateOrder(
+			context.Background(),
+			&pb.Order{
+				Id: req.GetPayload().GetOrderId(),
+				Status: pb.OrderStatus_ORDER_STATUS_REJECTED,
+			},
+		)
+		if err != nil {
+			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as failed in response to PlaceOrderEvent")
+		}
+
 		return &emptypb.Empty{}, nil
 	}
 	
 	// Otherwise, if the event is from the last stage of the saga (shipping svc)
 	// ... then mark the order as succesful.
 	if req.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
-		// todo: update order status and details
-		// (append transaction id, etc to stored order)
+		err := svc.DataCtrl.UpdateOrder(
+			context.Background(),
+			&pb.Order{
+				Id: req.GetPayload().GetOrderId(),
+
+				TransactionId: req.GetPayload().GetPaymentId(),
+				Status: pb.OrderStatus_ORDER_STATUS_APPROVED,
+			},
+		)
+		if err != nil {
+			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as successful in response to PlaceOrderEvent")
+		}
+
+		return &emptypb.Empty{}, nil
 	}
 
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	return &emptypb.Empty{}, nil
 }

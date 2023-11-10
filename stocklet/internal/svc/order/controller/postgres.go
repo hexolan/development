@@ -114,9 +114,18 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error) {
 	return nil, nil
 }
-func (c postgresController) UpdateOrderById(ctx context.Context, id string) ([]*pb.Order, error) {
-	return nil, nil
+
+func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) error {
+	// todo: actual SQL statement
+	query := "UPDATE orders SET xyz WHERE abc"
+	_, err := c.db.Exec(ctx, query)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
+	}
+
+	return nil
 }
+
 func (c postgresController) DeleteOrderById(ctx context.Context, id string) error {
 	return nil
 }
