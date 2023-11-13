@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package testingv1;
+
+option go_package = "github.com/hexolan/development/experimentation/gateway-exper1/protogen/testingv1;testingv1";
+
+message DeleteUserDataRequest {}
+message DeleteUserDataResponse {}
+
+service TestService {
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {}
+}
