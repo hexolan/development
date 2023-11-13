@@ -20,10 +20,17 @@ func NewKafkaController(kCl *kgo.Client) order.EventController {
 	return kafkaController{kCl: kCl}
 }
 
-func (c kafkaController) dispatchEvent(record *kgo.Record) {
-	// todo: test
+func (c kafkaController) dispatchEvent(topic string, wireEvt []byte) {
 	ctx := context.Background()
-	c.kCl.Produce(ctx, record, nil)
+
+	c.kCl.Produce(
+		ctx,
+		&kgo.Record{
+			Topic: topic,
+			Value: wireEvt,
+		},
+		nil,
+	)
 }
 
 func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
@@ -37,39 +44,34 @@ func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
 }
 
 func (c kafkaController) DispatchCreatedEvent(order *pb.Order) {
-	record := &kgo.Record{
-		Topic: messaging.Order_State_Created_Topic,
-		Value: c.marshalEvent(
+	c.dispatchEvent(
+		messaging.Order_State_Created_Topic,
+		c.marshalEvent(
 			&pb.OrderStateEvent{
 				Type: pb.OrderStateEvent_TYPE_CREATED,
 				Payload: order,
 			},
 		),
-	}
-
-	c.dispatchEvent(record)
+	)
 }
 
 func (c kafkaController) DispatchUpdatedEvent(order *pb.Order) {
-	record := &kgo.Record{
-		Topic: messaging.Order_State_Updated_Topic,
-		Value: c.marshalEvent(
+	c.dispatchEvent(
+		messaging.Order_State_Updated_Topic,
+		c.marshalEvent(
 			&pb.OrderStateEvent{
 				Type: pb.OrderStateEvent_TYPE_UPDATED,
 				Payload: order,
 			},
 		),
-	}
-
-	c.dispatchEvent(record)
+	)
 }
 
 func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
 	// todo: improve assembly of payload (dispatch whole order?)
-
-	record := &kgo.Record{
-		Topic: messaging.Order_State_Deleted_Topic,
-		Value: c.marshalEvent(
+	c.dispatchEvent(
+		messaging.Order_State_Deleted_Topic,
+		c.marshalEvent(
 			&pb.OrderStateEvent{
 				Type: pb.OrderStateEvent_TYPE_DELETED,
 				Payload: &pb.Order{
@@ -77,17 +79,13 @@ func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
 				},
 			},
 		),
-	}
-
-	c.dispatchEvent(record)
+	)
 }
 
 func (c kafkaController) DispatchPlaceOrderEvent(evt *pb.PlaceOrderEvent) {
 	// todo:
-	record := &kgo.Record{
-		Topic: messaging.Order_PlaceOrder_Order_Topic,
-		Value: c.marshalEvent(evt),
-	}
-
-	c.dispatchEvent(record)
+	c.dispatchEvent(
+		messaging.Order_PlaceOrder_Order_Topic,
+		c.marshalEvent(evt),
+	)
 }

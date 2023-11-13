@@ -5,6 +5,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/twmb/franz-go/pkg/kgo"
 
+	"github.com/hexolan/stocklet/internal/pkg/serve"
 	"github.com/hexolan/stocklet/internal/pkg/storage"
 	"github.com/hexolan/stocklet/internal/pkg/logging"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
@@ -97,6 +98,8 @@ func main() {
 	grpcSvr := api.NewGrpcServer(svc)
 	gatewayMux := api.NewHttpGateway()
 	go api.NewKafkaConsumer(svc, kcl)
-	go api.ServeGrpcServer(grpcSvr)
-	api.ServeHttpGateway(gatewayMux)
+
+	// Serve the API interfaces
+	go serve.ServeGrpcServer(grpcSvr)
+	serve.ServeHttpGateway(gatewayMux)
 }
