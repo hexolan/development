@@ -14,13 +14,13 @@ import (
 type kafkaConsumer struct {
 	svc order.OrderService
 	
-	kcl *kgo.Client
+	kCl *kgo.Client
 }
 
-func NewKafkaConsumer(svc order.OrderService, kcl *kgo.Client) kafkaConsumer {
+func NewKafkaConsumer(svc order.OrderService, kCl *kgo.Client) kafkaConsumer {
 	return kafkaConsumer{
 		svc: svc,
-		kcl: kcl,
+		kCl: kCl,
 	}
 }
 
@@ -28,7 +28,7 @@ func (c kafkaConsumer) StartConsuming() {
 	ctx := context.Background()
 
 	for {
-		fetches := c.kcl.PollFetches(ctx)
+		fetches := c.kCl.PollFetches(ctx)
 		if errs := fetches.Errors(); len(errs) > 0 {
 			log.Panic().Any("kafka-errs", errs).Msg("consumer: unrecoverable kafka errors")
 		}

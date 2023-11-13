@@ -12,7 +12,7 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-func NewHttpGateway(svr pb.OrderServiceServer) error {
+func NewHttpGateway() *runtime.ServeMux {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -24,5 +24,10 @@ func NewHttpGateway(svr pb.OrderServiceServer) error {
 		log.Panic().Err(err).Msg("failed to register gRPC to gateway server")
 	}
 
+	return mux
+}
+
+// todo: as pkg method?
+func ServeHttpGateway(mux *runtime.ServeMux) error {
 	return http.ListenAndServe("0.0.0.0:90", mux)
 }

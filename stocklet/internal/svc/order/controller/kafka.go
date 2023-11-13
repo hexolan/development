@@ -13,17 +13,17 @@ import (
 )
 
 type kafkaController struct {
-	kcl *kgo.Client
+	kCl *kgo.Client
 }
 
-func NewKafkaController(kcl *kgo.Client) order.EventController {
-	return kafkaController{kcl: kcl}
+func NewKafkaController(kCl *kgo.Client) order.EventController {
+	return kafkaController{kCl: kCl}
 }
 
 func (c kafkaController) dispatchEvent(record *kgo.Record) {
 	// todo: test
 	ctx := context.Background()
-	c.kcl.Produce(ctx, record, nil)
+	c.kCl.Produce(ctx, record, nil)
 }
 
 func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {

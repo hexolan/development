@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"context"
@@ -14,9 +14,9 @@ func NewPostgresConn(conf config.PostgresConfig) (*pgxpool.Pool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*45)
 	defer cancel()
 
-	pool, err := pgxpool.New(ctx, conf.GetDSN())
+	pCl, err := pgxpool.New(ctx, conf.GetDSN())
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to connect to postgres", err)
 	}
-	return pool, nil
+	return pCl, nil
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/twmb/franz-go/pkg/kgo"
 
-	"github.com/hexolan/stocklet/internal/pkg/database"
+	"github.com/hexolan/stocklet/internal/pkg/storage"
 	"github.com/hexolan/stocklet/internal/pkg/logging"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/order"
@@ -26,24 +26,25 @@ func loadConfig() *order.ServiceConfig {
 	return cfg
 }
 
-func usePostgresController(cfg *order.ServiceConfig) (order.DataController, *pgxpool.Pool) {
+func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController) (order.StorageController, *pgxpool.Pool) {
 	// open a Postgres connection
-	db, err := database.NewPostgresConn(cfg.Postgres)
+	pCl, err := storage.NewPostgresConn(cfg.Postgres)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
 
 	// create the data controller
-	dbC := controller.NewPostgresController(db)
-	return dbC, db
+	dbC := controller.NewPostgresController(pCl, evtC)
+	return dbC, pCl
 }
 
 func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
 	// open a Kafka connection
-	kcl, err := messaging.NewKafkaConn(
+	kCl, err := messaging.NewKafkaConn(
 		cfg.Kafka,
 		kgo.ConsumerGroup("order-service"),
 		
+		// todo: exper with REGEX consumption
 		kgo.ConsumeRegex(),
 		kgo.ConsumeTopics(
 			messaging.Order_PlaceOrder_Catchall,
@@ -55,7 +56,7 @@ func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.C
 
 	// ensure the required Kafka topics exist
 	err = messaging.EnsureKafkaTopics(
-		kcl,
+		kCl,
 
 		messaging.Order_State_Created_Topic,
 		messaging.Order_State_Updated_Topic,
@@ -71,29 +72,31 @@ func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.C
 	}
 
 	// create the event controller
-	evtC := controller.NewKafkaController(kcl)
-	return evtC, kcl
+	evtC := controller.NewKafkaController(kCl)
+	return evtC, kCl
 }
 
 func main() {
 	cfg := loadConfig()
 
-	// todo: clean up variable names for controllers and client conns
+	// todo: sort out names of controller clients
+	// change kcl to kCl or something - or strandardise as evtCl
+	// change db to pCl or standardise as strCl
 
 	// Create the controllers
 	evtC, kcl := useKafkaController(cfg)
 	defer kcl.Close()
 	
-	dbC, db := usePostgresController(cfg)
+	strC, db := usePostgresController(cfg, evtC)
 	defer db.Close()
 
 	// Create the service
-	svc := order.NewOrderService(dbC, evtC)
-
-	// Attach the API interfaces to the service
-	go api.NewKafkaConsumer(svc, kcl)
+	svc := order.NewOrderService(evtC, strC)
 	
+	// Attach the API interfaces to the service
 	grpcSvr := api.NewGrpcServer(svc)
+	gatewayMux := api.NewHttpGateway()
+	go api.NewKafkaConsumer(svc, kcl)
 	go api.ServeGrpcServer(grpcSvr)
-	api.NewHttpGateway(svc)  // todo: change for client conn - use grpcSvr instead of svc - kafka consumer can maintain
+	api.ServeHttpGateway(gatewayMux)
 }

@@ -12,7 +12,7 @@ import (
 
 // Interface for database methods
 // Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
-type DataController interface {
+type StorageController interface {
 	GetOrderById(ctx context.Context, id string) (*pb.Order, error)
 	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 
@@ -30,16 +30,16 @@ type EventController interface {
 
 // The implemented order service served as a gRPC service
 type OrderService struct {
-	DataCtrl DataController
 	EvtCtrl EventController
+	StrCtrl StorageController
 
 	pb.UnimplementedOrderServiceServer
 }
 
-func NewOrderService(dataCtrl DataController, evtCtrl EventController) OrderService {
+func NewOrderService(evtCtrl EventController, strCtrl StorageController) OrderService {
 	return OrderService{
-		DataCtrl: dataCtrl,
 		EvtCtrl: evtCtrl,
+		StrCtrl: strCtrl,
 	}
 }
 
@@ -50,7 +50,7 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 	}
 	
 	// Get the order
-	order, err := svc.DataCtrl.GetOrderById(ctx, req.GetOrderId())
+	order, err := svc.StrCtrl.GetOrderById(ctx, req.GetOrderId())
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest)
 	}
 	
 	// Get the orders
-	orders, err := svc.DataCtrl.GetOrdersByCustomerId(ctx, req.GetCustomerId())
+	orders, err := svc.StrCtrl.GetOrdersByCustomerId(ctx, req.GetCustomerId())
 	if err != nil {
 		return nil, err
 	}
@@ -74,6 +74,11 @@ func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest)
 }
 
 func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
+	// todo: perform validation
+	// orders require at least one item
+	// ensure items are valid
+	// get prices of items
+
 	// create pending order - dispatch created event
 
 	// dispatch placed order SAGA event
@@ -87,12 +92,13 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 	// Validate the inputs
 
 	// Update the order (db level)
-	err := svc.DataCtrl.UpdateOrder(ctx, req.Order)
+	err := svc.StrCtrl.UpdateOrder(ctx, req.Order)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
 
 	// todo: dispatching created,updated,deleted events at DB level on succesful updates
+	// on the storage controller level
 	
 	/*
 	// todo: return updated order
@@ -126,7 +132,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	
 	// Mark the order as rejected if a failure status was reported at any stage.
 	if req.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
-		err := svc.DataCtrl.UpdateOrder(
+		err := svc.StrCtrl.UpdateOrder(
 			context.Background(),
 			&pb.Order{
 				Id: req.GetPayload().GetOrderId(),
@@ -143,7 +149,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	// Otherwise, if the event is from the last stage of the saga (shipping svc)
 	// ... then mark the order as succesful.
 	if req.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
-		err := svc.DataCtrl.UpdateOrder(
+		err := svc.StrCtrl.UpdateOrder(
 			context.Background(),
 			&pb.Order{
 				Id: req.GetPayload().GetOrderId(),

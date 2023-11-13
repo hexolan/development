@@ -16,17 +16,20 @@ const (
 	orderItemBaseQuery string = "SELECT product_id, quantity FROM order_items"
 )
 
+// Postgres Storage Controller
 type postgresController struct {
-	db *pgxpool.Pool
+	pCl *pgxpool.Pool
+	evtC order.EventController
 }
 
-func NewPostgresController(db *pgxpool.Pool) order.DataController {
-	return postgresController{db: db}
+func NewPostgresController(pCl *pgxpool.Pool, evtC order.EventController) order.StorageController {
+	return postgresController{pCl: pCl, evtC: evtC}
 }
 
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 	var order pb.Order
 
+	// todo: test enum conversion
 	err := row.Scan(
 		order.Id, 
 		order.Status, 
@@ -53,7 +56,7 @@ func scanRowToOrderItem(row pgx.Row) (*pb.OrderItem, error) {
 
 // Get all items included in an order (by order id).
 func (c postgresController) getOrderItemsById(ctx context.Context, id string) ([]*pb.OrderItem, error) {
-	rows, err := c.db.Query(ctx, (orderItemBaseQuery + " WHERE order_id=$1"), id)
+	rows, err := c.pCl.Query(ctx, (orderItemBaseQuery + " WHERE order_id=$1"), id)
 	if err != nil {
 		// todo: wrap in service error
 		return nil, err
@@ -96,7 +99,7 @@ func (c postgresController) getOrderWithItems(ctx context.Context, order *pb.Ord
 // Get an order by its specified id
 func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Order, error) {
 	// Load the order data
-	row := c.db.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
+	row := c.pCl.QueryRow(ctx, (orderBaseQuery + " WHERE id=$1"), id)
 	order, err := scanRowToOrder(row)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
@@ -118,7 +121,7 @@ func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId st
 func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) error {
 	// todo: actual SQL statement
 	query := "UPDATE orders SET xyz WHERE abc"
-	_, err := c.db.Exec(ctx, query)
+	_, err := c.pCl.Exec(ctx, query)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}
