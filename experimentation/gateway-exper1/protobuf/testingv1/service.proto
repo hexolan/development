@@ -2,11 +2,85 @@ syntax = "proto3";
 
 package testingv1;
 
+import "google/api/annotations.proto";
+
 option go_package = "github.com/hexolan/development/experimentation/gateway-exper1/protogen/testingv1;testingv1";
 
-message DeleteUserDataRequest {}
-message DeleteUserDataResponse {}
+// === START OF MODELS ===
+
+message Item {
+  string id = 1;
+}
+
+// === END OF MODELS ===
+//
+// -------------------------
+//
+// === START OF REQUESTS ===
+
+message GetItemRequest {
+  string item_id = 1;
+}
+message GetItemResponse {
+  Item data = 1;
+}
+
+message GetItemsRequest {}
+message GetItemsResponse {
+  repeated Item data = 1;
+}
+
+message UpdateItemRequest {
+  Item data = 1;
+}
+message UpdateItemResponse {
+  Item data = 1;
+}
+
+message DeleteItemRequest {
+  string item_id = 1;
+}
+message DeleteItemResponse {}
+
+message CreateItemRequest {
+  Item data = 1;
+}
+message CreateItemResponse {
+  Item data = 1;
+}
+
+// === END OF REQUESTS ===
 
 service TestService {
-  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {}
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+    option (google.api.http) = {
+      get: "/items/{item_id}"
+    };
+  }
+
+  rpc GetItems(GetItemsRequest) returns (GetItemsResponse) {
+    option (google.api.http) = {
+      get: "/items"
+    };
+  }
+
+  rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
+    option (google.api.http) = {
+      post: "/items/{data.id}"
+      body: "data"
+    };
+  }
+
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {
+    option (google.api.http) = {
+      delete: "/items/{item_id}"
+    };
+  }
+
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
+    option (google.api.http) = {
+      post: "/items"
+      body: "data"
+    };
+  }
 }
