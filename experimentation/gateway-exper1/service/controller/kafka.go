@@ -35,7 +35,6 @@ func (c kafkaController) dispatchEvent(topic string, wireEvt []byte) {
 func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
 	wireEvt, err := proto.Marshal(evt)
 	if err != nil {
-		// todo: handling
 		panic(err)
 	}
 
@@ -43,13 +42,37 @@ func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
 }
 
 func (c kafkaController) DispatchCreatedEvent(item *pb.Item) {
-	// todo:
+	c.dispatchEvent(
+		"testing.state.created",
+		c.marshalEvent(
+			&pb.ItemStateEvent{
+				Type: pb.ItemStateEvent_TYPE_CREATED,
+				Payload: item,
+			},
+		),
+	)
 }
 
 func (c kafkaController) DispatchUpdatedEvent(item *pb.Item) {
-	// todo:
+	c.dispatchEvent(
+		"testing.state.updated",
+		c.marshalEvent(
+			&pb.ItemStateEvent{
+				Type: pb.ItemStateEvent_TYPE_UPDATED,
+				Payload: item,
+			},
+		),
+	)
 }
 
 func (c kafkaController) DispatchDeletedEvent(item *pb.Item) {
-	// todo:
+	c.dispatchEvent(
+		"testing.state.deleted",
+		c.marshalEvent(
+			&pb.ItemStateEvent{
+				Type: pb.ItemStateEvent_TYPE_DELETED,
+				Payload: item,
+			},
+		),
+	)
 }
