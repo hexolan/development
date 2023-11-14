@@ -7,11 +7,20 @@ import (
 )
 
 type StorageController interface {
+	GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.GetItemResponse, error)
+	GetItems(ctx context.Context, req *pb.GetItemsRequest) (*pb.GetItemsResponse, error)
+	
+	UpdateItem(ctx context.Context, req *pb.UpdateItemRequest) (*pb.UpdateItemResponse, error)
+	
+	DeleteItem(ctx context.Context, req *pb.DeleteItemRequest) (*pb.DeleteItemResponse, error)
 
+	CreateItem(ctx context.Context, req *pb.CreateItemRequest) (*pb.CreateItemResponse, error)
 }
 
 type EventController interface {
-
+	DispatchCreatedEvent(item *pb.Item)
+	DispatchUpdatedEvent(item *pb.Item)
+	DispatchDeletedEvent(item *pb.Item)
 }
 
 type Service struct {

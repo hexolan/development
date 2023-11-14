@@ -8,6 +8,7 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 
 	"github.com/hexolan/development/experimentation/gateway-exper1/service"
+	pb "github.com/hexolan/development/experimentation/gateway-exper1/protogen/testingv1"
 )
 
 type kafkaController struct {
@@ -39,4 +40,16 @@ func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
 	}
 
 	return wireEvt
+}
+
+func (c kafkaController) DispatchCreatedEvent(item *pb.Item) {
+	// todo:
+}
+
+func (c kafkaController) DispatchUpdatedEvent(item *pb.Item) {
+	// todo:
+}
+
+func (c kafkaController) DispatchDeletedEvent(item *pb.Item) {
+	// todo:
 }
