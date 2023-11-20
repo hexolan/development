@@ -31,9 +31,9 @@ services:
 
   test-service-migrations:
     image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
+    command: "-path=/migrations -database postgresql://postgres:postgres@test-service-postgres:5432/postgres?sslmode=disable up"
     volumes:
-      - ../migrations:/migrations
+      - ./migrations:/migrations
     depends_on:
       - test-service-postgres
   # ---
@@ -42,7 +42,7 @@ services:
   test-service:
     image: hexolan/gateway-exper1
     build: 
-      context: ../
+      context: .
     ports:
       - "90:90"
       - "9090:9090"

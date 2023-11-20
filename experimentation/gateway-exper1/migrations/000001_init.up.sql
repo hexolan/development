@@ -6,7 +6,7 @@ CREATE TABLE items (
 
     title varchar(128) NOT NULL,
 
-    created_at timestamp NOT NULL DEFAULT timezone('utc', now()),
+    created_at timestamp NOT NULL DEFAULT timezone('utc', now())
 );
 
 END;
