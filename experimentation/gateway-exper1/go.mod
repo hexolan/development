@@ -3,6 +3,7 @@ module github.com/hexolan/development/experimentation/gateway-exper1
 go 1.21.3
 
 require (
+	github.com/doug-martin/goqu/v9 v9.18.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/jackc/pgx/v5 v5.5.0
 	github.com/rs/zerolog v1.31.0

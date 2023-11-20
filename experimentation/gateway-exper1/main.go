@@ -45,17 +45,17 @@ func main() {
 	// Create the controllers
 	evtC, kcl := useKafkaController(
 		&config.KafkaConfig{
-			Brokers: []string{"localhost"},
+			Brokers: []string{"kafka:19092"},
 		},
 	)
 	defer kcl.Close()
 	
 	strC, db := usePostgresController(
 		&config.PostgresConfig{
-			Username: "",
-			Password: "",
-			Host: "",
-			Database: "",
+			Username: "postgres",
+			Password: "postgres",
+			Host: "test-service-postgres:5432",
+			Database: "postgres",
 		},
 		evtC,
 	)

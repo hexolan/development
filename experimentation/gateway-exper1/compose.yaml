@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  # Kafka
+  kafka:
+    image: bitnami/kafka:3.4
+    restart: unless-stopped
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=CONTROLLER://:19093,INTERNAL://:19092,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:19092,EXTERNAL://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:19093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+    ports:
+      - "9092:9092"
+  # ---
+
+  # Database and Migrations
+  test-service-postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - test-service-postgres-volume:/var/lib/postgresql
+
+  test-service-migrations:
+    image: migrate/migrate:4
+    command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
+    volumes:
+      - ../migrations:/migrations
+    depends_on:
+      - test-service-postgres
+  # ---
+
+  # Service Overrides (depend on migrations for startup)
+  test-service:
+    image: hexolan/gateway-exper1
+    build: 
+      context: ../
+    ports:
+      - "90:90"
+      - "9090:9090"
+    depends_on:
+      - test-service-migrations
+  # ---
+
+volumes:
+  auth-service-postgres-volume:
