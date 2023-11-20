@@ -6,39 +6,70 @@ services:
     build: 
       context: ../
       dockerfile: ./dockerfiles/auth.Dockerfile
-      
+    networks:
+      - stocklet-network
+      - stocklet-auth-network
+
   order-service:
     image: stocklet/order-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/order.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-order-network
 
   payment-service:
     image: stocklet/payment-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/payment.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-payment-network
 
   product-service:
     image: stocklet/product-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/product.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-product-network
 
   shipping-service:
     image: stocklet/shipping-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/shipping.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-shipping-network
 
   user-service:
     image: stocklet/user-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/user.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-user-network
 
   warehouse-service:
     image: stocklet/warehouse-service
     build: 
       context: ../
       dockerfile: ./dockerfiles/warehouse.Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-warehouse-network
+
+networks:
+  stocklet-network:
+  stocklet-auth-network:
+  stocklet-order-network:
+  stocklet-payment-network:
+  stocklet-product-network:
+  stocklet-shipping-network:
+  stocklet-user-network:
+  stocklet-warehouse-network:

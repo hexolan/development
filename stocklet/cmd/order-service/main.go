@@ -80,16 +80,12 @@ func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.C
 func main() {
 	cfg := loadConfig()
 
-	// todo: sort out names of controller clients
-	// change kcl to kCl or something - or strandardise as evtCl
-	// change db to pCl or standardise as strCl
-
 	// Create the controllers
-	evtC, kcl := useKafkaController(cfg)
-	defer kcl.Close()
+	evtC, kCl := useKafkaController(cfg)
+	defer kCl.Close()
 	
-	strC, db := usePostgresController(cfg, evtC)
-	defer db.Close()
+	strC, pCl := usePostgresController(cfg, evtC)
+	defer pCl.Close()
 
 	// Create the service
 	svc := order.NewOrderService(evtC, strC)
@@ -97,9 +93,9 @@ func main() {
 	// Attach the API interfaces to the service
 	grpcSvr := api.NewGrpcServer(svc)
 	gatewayMux := api.NewHttpGateway()
-	go api.NewKafkaConsumer(svc, kcl)
+	go api.NewKafkaConsumer(svc, kCl)
 
 	// Serve the API interfaces
-	go serve.ServeGrpcServer(grpcSvr)
-	serve.ServeHttpGateway(gatewayMux)
+	go serve.GrpcServer(grpcSvr)
+	serve.HttpGateway(gatewayMux)
 }

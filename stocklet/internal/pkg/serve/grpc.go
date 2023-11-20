@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-func ServeGrpcServer(svr *grpc.Server) {
+func GrpcServer(svr *grpc.Server) {
 	lis, err := net.Listen("tcp", "0.0.0.0:" + RpcPort)
 	if err != nil {
 		log.Panic().Err(err).Str("port", RpcPort).Msg("failed to listen on RPC port")

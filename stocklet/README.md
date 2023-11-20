@@ -1,11 +1,13 @@
 # Stocklet
 
-An event driven microservice e-commerce application.
+An event-driven microservice e-commerce application.
 
 TODO: add support for using NATS (/ NATS + Liftbridge) for messaging instead of Kafka
 
 * <https://docs.nats.io/>
 * <https://liftbridge.io/docs/quick-start.html>
+
+todo: Apache -> AGPL
 
 ## About
 
@@ -66,4 +68,4 @@ tracing method?
 
 ## License
 
-This project is distributed under the [MIT License.](/LICENSE)
+This project is distributed under the [XYZ License.](/LICENSE)

@@ -6,6 +6,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-func ServeHttpGateway(mux *runtime.ServeMux) error {
+func HttpGateway(mux *runtime.ServeMux) error {
 	return http.ListenAndServe("0.0.0.0:" + HttpPort, mux)
 }
