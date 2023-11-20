@@ -51,4 +51,4 @@ services:
   # ---
 
 volumes:
-  auth-service-postgres-volume:
+  test-service-postgres-volume:
