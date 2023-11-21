@@ -6,10 +6,12 @@ import (
 	"strconv"
 	"encoding/json"
 
+	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/hexolan/development/experimentation/gateway-exper1/service"
 	"github.com/hexolan/development/experimentation/gateway-exper1/utils/errors"
@@ -40,15 +42,23 @@ func scanRowToItem(row pgx.Row) (*pb.Item, error) {
 	var item pb.Item
 
 	// todo: test enum conversion
+	var itemId pgtype.Int8
+	var status pb.ItemStatus
+	var createdAt time.Time
 	err := row.Scan(
-		item.Id, 
-		item.Status, 
+		itemId, // todo: resolve scan error - may have to change from bigserial to serial for now?
+		status, 
 		item.Title,
-		item.CreatedAt,
+		createdAt,
 	)
 	if err != nil {
+		log.Error().Err(err).Msg("failed scan")
 		return nil, err
 	}
+
+	item.Id = strconv.FormatInt(itemId.Int64, 10)
+	// item.Status = pb.ItemStatus(int32(status))
+	item.CreatedAt = createdAt.Unix()
 	
 	return &item, nil
 }

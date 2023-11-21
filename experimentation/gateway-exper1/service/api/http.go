@@ -12,13 +12,16 @@ import (
 )
 
 func NewHttpGateway() *runtime.ServeMux {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := context.Background()
+	
+	// todo: pass thru cancel
+	// ctx, cancel := context.WithCancel(ctx)
+	// defer cancel()
 
 	mux := runtime.NewServeMux()
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := pb.RegisterTestServiceHandlerFromEndpoint(ctx, mux, "localhost:90", opts)
+	err := pb.RegisterTestServiceHandlerFromEndpoint(ctx, mux, "localhost:9090", opts)
 	if err != nil {
 		log.Panic().Err(err).Msg("failed to register gRPC to gateway server")
 	}
