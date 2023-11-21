@@ -107,6 +107,9 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 		return nil, err
 	}
 
+	// order items are immutable currently
+	// something to change in the future
+
 	// todo: get order at start
 	// merge to form patch with existing body
 	// check permissions
