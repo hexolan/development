@@ -21,6 +21,11 @@
 * Aurulent
   * Meaning gold in colour
 
+* Timber
+
+* Arroyo
+  * Spanish
+
 ### Without Meaning
 
 * Foality
@@ -32,6 +37,23 @@
 * 
 
 
+### Locations
+
+* Casablanca, Morocco
+
+* Palermo, Italy
+
+* Sorocaba, Brazil
+
+* Bridgetown, Barbados
+
+* Timbo, Brazil
+
+* Manama, Bahrain
+
+* Tahiti, French Polynesia
+
+* Guarma, Red Dead Redemption (fictional)
 
 
 ## Resources

@@ -43,11 +43,11 @@ func scanRowToItem(row pgx.Row) (*pb.Item, error) {
 
 	// todo: test enum conversion
 	var itemId int64
-	var status pb.ItemStatus
+
 	var createdAt time.Time
 	err := row.Scan(
 		&itemId, // todo: resolve scan error - may have to change from bigserial to serial for now?
-		&status, 
+		&item.Status, 
 		&item.Title,
 		&createdAt,
 	)
@@ -57,7 +57,6 @@ func scanRowToItem(row pgx.Row) (*pb.Item, error) {
 	}
 
 	item.Id = strconv.FormatInt(itemId, 10)
-	// item.Status = pb.ItemStatus(int32(status))
 	item.CreatedAt = createdAt.Unix()
 	
 	return &item, nil
