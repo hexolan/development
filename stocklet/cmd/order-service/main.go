@@ -91,7 +91,7 @@ func main() {
 	svc := order.NewOrderService(evtC, strC)
 	
 	// Attach the API interfaces to the service
-	grpcSvr := api.NewGrpcServer(svc)
+	grpcSvr := api.NewGrpcServer(cfg, svc)
 	gatewayMux := api.NewHttpGateway()
 	go api.NewKafkaConsumer(svc, kCl)
 
