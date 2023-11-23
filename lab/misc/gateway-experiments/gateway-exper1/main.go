@@ -1,0 +1,74 @@
+package main
+
+import (
+	"github.com/rs/zerolog/log"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/twmb/franz-go/pkg/kgo"
+
+	"null.hexolan.dev/exp/service"
+	"null.hexolan.dev/exp/service/api"
+	"null.hexolan.dev/exp/service/controller"
+	"null.hexolan.dev/exp/utils/serve"
+	"null.hexolan.dev/exp/utils/config"
+	"null.hexolan.dev/exp/utils/clients"
+)
+
+
+func usePostgresController(pgCfg *config.PostgresConfig, evtC service.EventController) (service.StorageController, *pgxpool.Pool) {
+	// open a Postgres connection
+	pCl, err := clients.NewPostgresConn(pgCfg)
+	if err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+
+	// create the data controller
+	dbC := controller.NewPostgresController(pCl, evtC)
+	return dbC, pCl
+}
+
+func useKafkaController(kCfg *config.KafkaConfig) (service.EventController, *kgo.Client) {
+	// open a Kafka connection
+	kCl, err := clients.NewKafkaConn(
+		kCfg,
+		kgo.ConsumerGroup("test-service"),
+	)
+	if err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+
+	// create the event controller
+	evtC := controller.NewKafkaController(kCl)
+	return evtC, kCl
+}
+
+func main() {
+	// Create the controllers
+	evtC, kcl := useKafkaController(
+		&config.KafkaConfig{
+			Brokers: []string{"kafka:19092"},
+		},
+	)
+	defer kcl.Close()
+	
+	strC, db := usePostgresController(
+		&config.PostgresConfig{
+			Username: "postgres",
+			Password: "postgres",
+			Host: "test-service-postgres:5432",
+			Database: "postgres",
+		},
+		evtC,
+	)
+	defer db.Close()
+
+	// Create the service
+	svc := service.NewTestService(evtC, strC)
+	
+	// Attach the API interfaces to the service
+	grpcSvr := api.NewGrpcServer(svc)
+	gatewayMux := api.NewHttpGateway()
+
+	// Serve the API interfaces
+	go serve.GrpcServer(grpcSvr)
+	serve.HttpGateway(gatewayMux)
+}

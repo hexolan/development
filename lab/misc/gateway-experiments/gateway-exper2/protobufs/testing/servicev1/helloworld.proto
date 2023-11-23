@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "null.hexolan.dev/dev/service1/protogen";
+
+import "google/api/annotations.proto";
+
+package testing.service1;
+
+// The greeting service definition.
+service Experiment1Service {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    option (google.api.http) = {
+      get: "/hello1"
+    };
+  }
+
+  // rpc SayHelloStreamReply (HelloRequest) returns (stream HelloReply) {}
+  // rpc SayHelloBidiStream (stream HelloRequest) returns (stream HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
