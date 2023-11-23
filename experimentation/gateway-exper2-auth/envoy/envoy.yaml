@@ -20,10 +20,10 @@ static_resources:
             - name: local_service
               domains: ["*"]
               routes:
-              - match: { prefix: "/v1/foo" }
-                route: { cluster: service_1, prefix_rewrite: "" }
-              - match: { prefix: "/v1/bar" }
-                route: { cluster: service_2, prefix_rewrite: "" }
+              - match: { prefix: "/v1/foo/" }
+                route: { cluster: service_1, prefix_rewrite: "/" }
+              - match: { prefix: "/v1/bar/" }
+                route: { cluster: service_2, prefix_rewrite: "/" }
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
