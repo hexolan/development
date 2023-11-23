@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  envoy:
+    image: hexolan/experiment-envoy
+    build:
+      context: ./envoy
+    ports:
+      - "80:80"
+      - "8080:8080"
+
+  service1:
+    image: hexolan/experiment1
+    build: 
+      context: ./services/service1
+
+  service2:
+    image: hexolan/experiment2
+    build: 
+      context: ./services/service2

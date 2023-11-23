@@ -1,11 +1,13 @@
 package main;
 
 import (
+	"os"
 	"net"
 	"net/http"
 	"context"
 
 	"github.com/rs/zerolog/log"
+	"github.com/gorilla/handlers"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/credentials/insecure"
@@ -49,7 +51,8 @@ func newHttpGateway() *runtime.ServeMux {
 }
 
 func serveHttpGateway(mux *runtime.ServeMux) error {
-	return http.ListenAndServe("0.0.0.0:90", mux)
+	// return http.ListenAndServe("0.0.0.0:90", mux)
+	return http.ListenAndServe("0.0.0.0:90", handlers.LoggingHandler(os.Stdout, mux))
 }
 
 type rpcService struct {
