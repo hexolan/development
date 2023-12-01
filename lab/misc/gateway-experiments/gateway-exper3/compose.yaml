@@ -9,7 +9,10 @@ services:
       - "80:80"
       - "8080:8080"
 
-  service1:
+  service:
     image: hexolan/experiment-service
     build: 
       context: ./service
+    ports:
+      - "90:90"
+      - "9090:9090"

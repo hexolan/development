@@ -3,6 +3,9 @@ package main;
 import (
 	"context"
 
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/metadata"
+
 	pb "null.hexolan.dev/dev/protogen"
 )
 
@@ -10,11 +13,17 @@ type rpcService struct {
 	pb.UnimplementedTestServiceServer
 }
 
-func newRpcService() pb.TestServiceServer {
-	return rpcService{}
+func newRpcService() *rpcService {
+	return &rpcService{}
 }
 
 func (svc rpcService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
+	// https://www.hward.com/golang-grpc-context-client-server/
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info().Any("meta", md).Msg("metadata extract")
+
+	log.Info().Any("val", ctx.Value("Authorization")).Msg("")
+	log.Info().Any("ctx", ctx).Msg("")
 	return &pb.HelloReply{
 		Message: "service says hello",
 	}, nil

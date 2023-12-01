@@ -37,8 +37,13 @@ func serveGrpcServer(svr *grpc.Server) {
 func newHttpGateway() *runtime.ServeMux {
 	ctx := context.Background()
 
-	mux := runtime.NewServeMux()
+	// add extras to gateway
+	muxOpts := runtime.WithIncomingHeaderMatcher(runtime.DefaultHeaderMatcher)
 
+	// create serve mux
+	mux := runtime.NewServeMux(muxOpts)
+
+	// register service to mux
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	err := pb.RegisterTestServiceHandlerFromEndpoint(ctx, mux, "localhost:9090", opts)
 	if err != nil {
