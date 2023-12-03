@@ -1,6 +1,7 @@
 package main;
 
 import (
+	"fmt"
 	"context"
 
 	"github.com/rs/zerolog/log"
@@ -24,7 +25,9 @@ func (svc rpcService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.H
 
 	log.Info().Any("val", ctx.Value("Authorization")).Msg("")
 	log.Info().Any("ctx", ctx).Msg("")
+
+	fromGateway := reqFromGateway(&md)
 	return &pb.HelloReply{
-		Message: "service says hello",
+		Message: "from gateway " + fmt.Sprintf("%v", fromGateway),
 	}, nil
 }
