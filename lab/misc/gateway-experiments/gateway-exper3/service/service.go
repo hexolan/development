@@ -27,7 +27,8 @@ func (svc rpcService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.H
 	log.Info().Any("ctx", ctx).Msg("")
 
 	fromGateway := reqFromGateway(&md)
+	isAuthenticated := reqIsAuthenticated(&md)
 	return &pb.HelloReply{
-		Message: "from gateway " + fmt.Sprintf("%v", fromGateway),
+		Message: "from gateway: " + fmt.Sprintf("%v", fromGateway) + " && is authenticated: " + fmt.Sprintf("%v", isAuthenticated),
 	}, nil
 }
