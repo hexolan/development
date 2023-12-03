@@ -38,7 +38,9 @@ func newGatewayMux() *runtime.ServeMux {
 			// - map no other default HTTP headers
 			return "authorization", false
 		default:
-			return key, false
+			// return key, false
+			// for testing purposes:
+			return "testing-" + key, true
 		}
 	})
 	// with muxOpt3 and muxOpt2:

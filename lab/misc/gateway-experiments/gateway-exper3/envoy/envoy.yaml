@@ -8,6 +8,7 @@ static_resources:
     address:
       socket_address: { address: 0.0.0.0, port_value: 80 }
     filter_chains:
+    # Route Mapping to Services
     - filters:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
@@ -23,6 +24,26 @@ static_resources:
               - match: { prefix: "/v1/foo/" }
                 route: { cluster: service, prefix_rewrite: "/" }
           http_filters:
+          # JWT Validation
+          # https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/jwt_authn/v3/config.proto#envoy-v3-api-msg-extensions-filters-http-jwt-authn-v3-jwtprovider
+          - name: envoy.filters.http.jwt_authn
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+              providers:
+                provider1:
+                  # https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/jwt_authn/v3/config.proto#envoy-v3-api-field-extensions-filters-http-jwt-authn-v3-jwtprovider-remote-jwks
+                  local_jwks:
+                    filename: /etc/envoy/jwks/jwks.txt
+                  from_headers:
+                  - name: Authorization
+                  forward: true
+                  forward_payload_header: X-JWT-Payload
+              rules:
+              - match:
+                  prefix: /
+                requires:
+                  provider_name: provider1
+          # Router
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router

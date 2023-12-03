@@ -1,0 +1,13 @@
+creating JWK from PEM:
+https://russelldavies.github.io/jwk-creator/
+
+---
+
+generating new:
+https://mkjwk.org/
+
+---
+
+use public key in jwk.
+
+todo: instead use external and point to route to fetch JWKs from auth service
