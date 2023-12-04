@@ -11,7 +11,9 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;a
 
 // todo: implement
 message GetJwksRequest {}
-message GetJwksResponse {}
+message GetJwksResponse {
+  repeated JWK keys = 1;
+}
 
 message LoginPasswordRequest {
   string user_id = 1 [(google.api.field_behavior) = REQUIRED];
