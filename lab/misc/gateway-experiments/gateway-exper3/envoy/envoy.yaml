@@ -41,8 +41,13 @@ static_resources:
               rules:
               - match:
                   prefix: /
+                # https://github.com/envoyproxy/envoy/blob/d01ec7249f17e06f2dd01aef32efe26ebed5ff1b/api/envoy/extensions/filters/http/jwt_authn/v3/config.proto#L681
                 requires:
-                  provider_name: provider1
+                  # https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/jwt_authn/v3/config.proto#extensions-filters-http-jwt-authn-v3-jwtrequirement
+                  requires_any:
+                    requirements:
+                      - provider_name: provider1
+                      - allow_missing: {}
           # Router
           - name: envoy.filters.http.router
             typed_config:
