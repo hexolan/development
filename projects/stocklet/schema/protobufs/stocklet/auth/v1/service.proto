@@ -9,6 +9,10 @@ import "stocklet/auth/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
+// todo: implement
+message GetJwksRequest {}
+message GetJwksResponse {}
+
 message LoginPasswordRequest {
   string user_id = 1 [(google.api.field_behavior) = REQUIRED];
   string password = 2 [(google.api.field_behavior) = REQUIRED];
@@ -36,6 +40,12 @@ message DeleteUserDataResponse {}
 
 // Auth Service
 service AuthService {
+  rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/jwks"
+    };
+  }
+
   rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
     option (google.api.http) = {
       post: "/v1/auth/login"

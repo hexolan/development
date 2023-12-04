@@ -19,40 +19,33 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: "/v1/auth/"
+                  prefix: "/v1/auth"
                 route:
                   cluster: auth_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/order/"
+                  prefix: "/v1/order"
                 route:
                   cluster: order_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/payment/"
+                  prefix: "/v1/payment"
                 route:
                   cluster: payment_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/product/"
+                  prefix: "/v1/product"
                 route:
                   cluster: product_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/shipping/"
+                  prefix: "/v1/shipping"
                 route:
                   cluster: shipping_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/user/"
+                  prefix: "/v1/user"
                 route:
                   cluster: user_service_gw
-                  prefix_rewrite: "/"
               - match:
-                  prefix: "/v1/warehouse/"
+                  prefix: "/v1/warehouse"
                 route:
                   cluster: warehouse_service_gw
-                  prefix_rewrite: "/"
           http_filters:
           - name: envoy.filters.http.jwt_authn
             typed_config:
@@ -60,7 +53,6 @@ static_resources:
               providers:
                 default_provider:
                   remote_jwks:
-                    # todo: implement route on auth service
                     http_uri:
                       uri: http://auth-service/jwks
                       cluster: auth_service_gw
