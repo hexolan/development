@@ -37,6 +37,10 @@ func newGatewayMux() *runtime.ServeMux {
 			// maybe change key here? - for now just work with the default mapping
 			// - map no other default HTTP headers
 			return "authorization", false
+		case "X-JWT-Payload":
+			// Envoy will validate the JWT token (if provided) and provide a "X-JWT-Payload" header. (base64 JWT token claims)
+			// no reason to use authorization header unless passing downstream to other services
+			return "auth-payload", true
 		default:
 			// return key, false
 			// for testing purposes:
@@ -88,10 +92,12 @@ func reqIsInternal(md *metadata.MD) bool {
 // JWT tokens (if provided) will be validated at the API gateway level (by Envoy - or when using Kubernetes; Istio)
 // This is for handling afterwards, after being passed through gRPC-gateway (to ensure ability to interact/check within the services)
 //
-// todo: parsing authorization headers
-// maybe using a common user header?
+// Envoy will validate the JWT token (if provided) and provide a "X-JWT-Payload" header. (base64 JWT token claims)
+//
+// TODO: ensure users are unable to spoof X-JWT-Payload header.
+// ^ headers appear to be protected by Envoy. Look into the documentation for this.
 func reqIsAuthenticated(md *metadata.MD) bool {
-	authorization := md.Get("authorization")
+	authorization := md.Get("auth-payload")
 	if len(authorization) == 1 {
 		return true
 	}
