@@ -4,8 +4,8 @@ services:
   auth-service:
     image: stocklet/auth-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/auth.Dockerfile
+      context: ../../
+      dockerfile: ../../build/auth/Dockerfile
     networks:
       - stocklet-network
       - stocklet-auth-network
@@ -13,8 +13,8 @@ services:
   order-service:
     image: stocklet/order-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/order.Dockerfile
+      context: ../../
+      dockerfile: ../../build/order/Dockerfile
     networks:
       - stocklet-network
       - stocklet-order-network
@@ -22,8 +22,8 @@ services:
   payment-service:
     image: stocklet/payment-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/payment.Dockerfile
+      context: ../../
+      dockerfile: ../../build/payment/Dockerfile
     networks:
       - stocklet-network
       - stocklet-payment-network
@@ -31,8 +31,8 @@ services:
   product-service:
     image: stocklet/product-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/product.Dockerfile
+      context: ../../
+      dockerfile: ../../build/product/Dockerfile
     networks:
       - stocklet-network
       - stocklet-product-network
@@ -40,8 +40,8 @@ services:
   shipping-service:
     image: stocklet/shipping-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/shipping.Dockerfile
+      context: ../../
+      dockerfile: ../../build/shipping/Dockerfile
     networks:
       - stocklet-network
       - stocklet-shipping-network
@@ -49,8 +49,8 @@ services:
   user-service:
     image: stocklet/user-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/user.Dockerfile
+      context: ../../
+      dockerfile: ../../build/user/Dockerfile
     networks:
       - stocklet-network
       - stocklet-user-network
@@ -58,8 +58,8 @@ services:
   warehouse-service:
     image: stocklet/warehouse-service
     build: 
-      context: ../
-      dockerfile: ./dockerfiles/warehouse.Dockerfile
+      context: ../../
+      dockerfile: ../../build/warehouse/Dockerfile
     networks:
       - stocklet-network
       - stocklet-warehouse-network
