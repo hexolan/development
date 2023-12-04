@@ -5,7 +5,7 @@ services:
     image: stocklet/auth-service
     build: 
       context: ../../
-      dockerfile: ../../build/auth/Dockerfile
+      dockerfile: ../../build/auth-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-auth-network
@@ -14,7 +14,7 @@ services:
     image: stocklet/order-service
     build: 
       context: ../../
-      dockerfile: ../../build/order/Dockerfile
+      dockerfile: ../../build/order-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-order-network
@@ -23,7 +23,7 @@ services:
     image: stocklet/payment-service
     build: 
       context: ../../
-      dockerfile: ../../build/payment/Dockerfile
+      dockerfile: ../../build/payment-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-payment-network
@@ -32,7 +32,7 @@ services:
     image: stocklet/product-service
     build: 
       context: ../../
-      dockerfile: ../../build/product/Dockerfile
+      dockerfile: ../../build/product-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-product-network
@@ -41,7 +41,7 @@ services:
     image: stocklet/shipping-service
     build: 
       context: ../../
-      dockerfile: ../../build/shipping/Dockerfile
+      dockerfile: ../../build/shipping-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-shipping-network
@@ -50,7 +50,7 @@ services:
     image: stocklet/user-service
     build: 
       context: ../../
-      dockerfile: ../../build/user/Dockerfile
+      dockerfile: ../../build/user-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-user-network
@@ -59,7 +59,7 @@ services:
     image: stocklet/warehouse-service
     build: 
       context: ../../
-      dockerfile: ../../build/warehouse/Dockerfile
+      dockerfile: ../../build/warehouse-service/Dockerfile
     networks:
       - stocklet-network
       - stocklet-warehouse-network
