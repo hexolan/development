@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  edge-gateway:
+    image: stocklet/edge-gateway
+    build:
+      context: ../../build/edge-gateway
+    ports:
+      - 80:80
+    networks:
+      - stocklet-network
+
   auth-service:
     image: stocklet/auth-service
     build: 
