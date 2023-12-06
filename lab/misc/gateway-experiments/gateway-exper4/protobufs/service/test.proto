@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "null.hexolan.dev/dev/protogen";
+
+import "google/api/annotations.proto";
+
+package service;
+
+service TestService {
+  rpc ViewTest (ViewTestRequest) returns (ViewTestReply) {
+    option (google.api.http) = {
+      get: "/v1/test/hello"
+    };
+  }
+}
+
+message ViewTestRequest {
+
+}
+
+message ViewTestReply {
+  string message = 1;
+}

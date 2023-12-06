@@ -1,0 +1,1 @@
+Envoy w/ gRPC-Gateway and JWT validation using auth service JWT route

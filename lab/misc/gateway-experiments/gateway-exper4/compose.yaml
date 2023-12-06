@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  envoy:
+    image: hexolan/experiment-envoy
+    build:
+      context: ./envoy
+    ports:
+      - "80:80"
+
+  service1:
+    image: hexolan/experiment-service1
+    build: 
+      context: ./service1-auth
+    ports:
+      - "90:90"
+      - "9090:9090"
+
+  service2:
+    image: hexolan/experiment-service2
+    build: 
+      context: ./service2-test
+    ports:
+      - "70:70"
+      - "7070:7070"

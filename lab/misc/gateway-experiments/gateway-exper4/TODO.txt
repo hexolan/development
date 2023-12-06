@@ -1,0 +1,3 @@
+change from using RS256 to ES256 in next experiment.
+
+supposedly a better (and newer) algorithm. shorter key sizes, more security, faster verification (more robustness)
