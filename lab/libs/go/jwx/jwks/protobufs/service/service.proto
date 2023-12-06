@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option go_package = "null.hexolan.dev/dev/protogen";
+
+import "google/api/annotations.proto";
+
+package service;
+
+service TestService {
+  rpc GetJwks (GetJwksRequest) returns (GetJwksResponse) {
+    option (google.api.http) = {
+      get: "/jwks"
+    };
+  }
+}
+
+// more optimised: (rest are used for public/private key pairs)
+message JWKPublicKey {
+  string kty = 1;
+  string use = 2;
+  string alg = 3;
+  string e = 4;
+  string n = 5;
+}
+
+// less optimal
+message JWK {
+  string kty = 1;
+  string use = 2;
+  string alg = 3;
+  string kid = 4;
+  repeated string x5c = 5;
+  string x5t = 6;
+  string n = 7;
+  string e = 8;
+}
+
+message GetJwksRequest {
+
+}
+
+message GetJwksResponse {
+  repeated JWK keys = 1;
+}
