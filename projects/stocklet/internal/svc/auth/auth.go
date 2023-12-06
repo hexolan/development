@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
@@ -48,6 +49,9 @@ func (svc *AuthService) getJwks() (*pb.GetJwksResponse, error) {
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "something went wrong parsing public key", err)
 	}
+
+	jwk.Set("use", "sig")  // denote use for signatures
+	jwk.Set("alg", fmt.Sprintf("EC%v", svc.privKey.Curve.Params().BitSize))  // ease support for both EC256 and EC512
 
 	// Attempt to marshal to protobuf
 	// Convert the JWK to JSON

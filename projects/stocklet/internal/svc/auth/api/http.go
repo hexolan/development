@@ -14,8 +14,8 @@ import (
 
 func NewHttpGateway() *runtime.ServeMux {
 	// todo: move into generic - miscutil.NewBaseGatewayMux or something
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx, _ := context.WithCancel(context.Background())
+	// defer cancel()
 
 	mux := runtime.NewServeMux()
 
@@ -24,7 +24,6 @@ func NewHttpGateway() *runtime.ServeMux {
 	if err != nil {
 		log.Panic().Err(err).Msg("failed to register gRPC to gateway server")
 	}
-	// ^ then just attach this stuff and return
 
 	return mux
 }
