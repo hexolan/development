@@ -18,7 +18,7 @@ func (cfg *StandardConfig) LoadStandardConfig() error {
 	}
 
 	cfg.DevMode = false
-	mode := loadFromEnv("MODE")
+	mode := LoadFromEnv("MODE")
 	if mode != nil {
 		if *mode == "dev" || *mode == "development" {
 			cfg.DevMode = true

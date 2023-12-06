@@ -6,7 +6,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 )
 
-func loadFromEnv(name string) *string {
+func LoadFromEnv(name string) *string {
 	value, exists := os.LookupEnv(name)
 	if !exists || value == "" {
 		return nil
@@ -15,11 +15,11 @@ func loadFromEnv(name string) *string {
 	return &value
 }
 
-func requireFromEnv(name string) (*string, error) {
-	value := loadFromEnv(name)
+func RequireFromEnv(name string) (string, error) {
+	value := LoadFromEnv(name)
 	if value == nil {
-		return nil, errors.NewServiceErrorf(errors.ErrCodeService, "failed to load required config option (%s)", name)
+		return "", errors.NewServiceErrorf(errors.ErrCodeService, "failed to load required config option (%s)", name)
 	}
 
-	return value, nil
+	return *value, nil
 }

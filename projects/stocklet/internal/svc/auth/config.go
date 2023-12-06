@@ -1,38 +1,66 @@
 package auth
 
 import (
+	"crypto/x509"
+	"crypto/ecdsa"
+	"encoding/pem"
+	"encoding/base64"
+
 	"github.com/hexolan/stocklet/internal/pkg/config"
+	"github.com/hexolan/stocklet/internal/pkg/errors"
 )
 
 type ServiceConfig struct {
 	config.StandardConfig
+	
+	PrivateKey *ecdsa.PrivateKey
 }
 
-func NewServiceConfig() (*ServiceConfig, error) {
-	// todo: loading in ES256 private key
-	// base64 encoded env variable?
-	// decode base64 -> bytes -> jwx library (JWK)
-	// gen JWK to serve from API route
-	// use private key for generation of JWTs for authed
-	// users
-
-	// example of public key JWK for ES256:
-	//
-	// ensure use is set to signature
-	/*
-	{
-		"kty": "EC",
-		"use": "sig",
-		"crv": "P-256",
-		"x": "i2bzTXnapYy0SCe3nTwSroLV2hHmpjxPObCplD61c8c",
-		"y": "2R9Uupcmx_4LaFYjAgIcPe8YMA0LuKxlGuuUKl8OKN4",
-		"alg": "ES256"
+// Load the ECDSA private key.
+// Used for signing JWT tokens and validating at the API ingress.
+func loadPrivateKey() (*ecdsa.PrivateKey, error) {
+	// PEM private key file exposed as an environment variable encoded in base64 
+	pkB64, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
+	if err != nil {
+		return nil, err
 	}
-	*/
 
-	cfg := ServiceConfig{}
+	// Decode from base64
+	pkBytes, err := base64.StdEncoding.DecodeString(pkB64)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
+	}
 
-	err := cfg.LoadStandardConfig()
+	// Decode the PEM key
+	pkBlock, _ := pem.Decode(pkBytes)
+	if pkBlock == nil {
+		return nil, errors.NewServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid PEM format")
+	}
+
+	// Parse the block to a ecdsa.PrivateKey object
+	privateKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to ECDSA private key", err)
+	}
+
+	return privateKey, nil
+}
+
+// Load the auth service configurations
+func NewServiceConfig() (*ServiceConfig, error) {
+	// Load the private key
+	privateKey, err := loadPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	// Initialise the configuration struct
+	cfg := ServiceConfig{
+		PrivateKey: privateKey,
+	}
+
+	// Load the other standard config options
+	err = cfg.LoadStandardConfig()
 	if err != nil {
 		return nil, err
 	}

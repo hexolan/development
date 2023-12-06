@@ -10,13 +10,13 @@ type KafkaConfig struct {
 
 func LoadKafkaConfig() (*KafkaConfig, error) {
 	// Load configurations from env
-	brokersOpt, err := requireFromEnv("KAFKA_BROKERS")
+	brokersOpt, err := RequireFromEnv("KAFKA_BROKERS")
 	if err != nil {
 		return nil, err
 	}
 
 	// Comma seperate the brokers
-	brokers := strings.Split(*brokersOpt, ",")
+	brokers := strings.Split(brokersOpt, ",")
 
 	return &KafkaConfig{
 		Brokers: brokers,

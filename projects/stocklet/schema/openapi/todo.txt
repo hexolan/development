@@ -1,0 +1,7 @@
+https://github.com/grpc-ecosystem/grpc-gateway/blob/main/docs/docs/mapping/customizing_openapi_output.md#merging-output
+
+adjusting this after merge of openapi out
+
+info:
+  title: stocklet/auth/v1/types.proto
+  version: version not set
