@@ -49,3 +49,10 @@ NOTES:
 grouped in folders such as /database
 they have a protocol grouping such as net2/http2
 -
+
+other:
+https://github.com/franciscofferraz/go-nuts/tree/main/internal
+somewhat sensible up until the utils folder - not sure how I feel about that.
+
+doc package namign conventions:
+https://go.dev/blog/package-names
