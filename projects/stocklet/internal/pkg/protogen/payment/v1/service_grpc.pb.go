@@ -44,15 +44,13 @@ type PaymentServiceClient interface {
 	//
 	// Processes PlaceOrderEvents.
 	// > If an event is recieved from the stage before this service's stage,
-	//
-	//	then the service will attempt to complete its stage of the saga.
-	//	 > In this case, payment will attempt to be reserved for the order.
-	//	 > The success/failure of this action is dispatched as another PlaceOrderEvent.
+	//   then the service will attempt to complete its stage of the saga.
+	//    > In this case, payment will attempt to be reserved for the order.
+	//    > The success/failure of this action is dispatched as another PlaceOrderEvent.
 	//
 	// > If an event is recieved from after this service's stage of the saga,
-	//
-	//	and has a failure status, then compensationary action is taken.
-	//	 > In this case, payment taken for the order is refunded.
+	//   and has a failure status, then compensationary action is taken.
+	//    > In this case, payment taken for the order is refunded.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
@@ -129,15 +127,13 @@ type PaymentServiceServer interface {
 	//
 	// Processes PlaceOrderEvents.
 	// > If an event is recieved from the stage before this service's stage,
-	//
-	//	then the service will attempt to complete its stage of the saga.
-	//	 > In this case, payment will attempt to be reserved for the order.
-	//	 > The success/failure of this action is dispatched as another PlaceOrderEvent.
+	//   then the service will attempt to complete its stage of the saga.
+	//    > In this case, payment will attempt to be reserved for the order.
+	//    > The success/failure of this action is dispatched as another PlaceOrderEvent.
 	//
 	// > If an event is recieved from after this service's stage of the saga,
-	//
-	//	and has a failure status, then compensationary action is taken.
-	//	 > In this case, payment taken for the order is refunded.
+	//   and has a failure status, then compensationary action is taken.
+	//    > In this case, payment taken for the order is refunded.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME

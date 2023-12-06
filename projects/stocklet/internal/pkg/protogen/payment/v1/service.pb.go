@@ -122,9 +122,7 @@ func (x *GetBalanceResponse) GetBalance() float32 {
 // simplifies event consumers - just call these internally (similar to grpc-gateway but as a sort of grpc event gateway)
 // event recieved -> MakePaymentRequest
 // response: paid -> success event
-//
-//	success event: contains payment_id
-//
+//  success event: contains payment_id
 // response: failure -> failure event
 type MakePaymentRequest struct {
 	state         protoimpl.MessageState

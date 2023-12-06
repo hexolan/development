@@ -12,7 +12,7 @@ import (
 
 type ServiceConfig struct {
 	config.StandardConfig
-	
+
 	PrivateKey *ecdsa.PrivateKey
 }
 
@@ -38,25 +38,25 @@ func loadPrivateKey() (*ecdsa.PrivateKey, error) {
 	}
 
 	// Parse the block to a ecdsa.PrivateKey object
-	privateKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
+	privKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to ECDSA private key", err)
 	}
 
-	return privateKey, nil
+	return privKey, nil
 }
 
 // Load the auth service configurations
 func NewServiceConfig() (*ServiceConfig, error) {
 	// Load the private key
-	privateKey, err := loadPrivateKey()
+	privKey, err := loadPrivateKey()
 	if err != nil {
 		return nil, err
 	}
 
 	// Initialise the configuration struct
 	cfg := ServiceConfig{
-		PrivateKey: privateKey,
+		PrivateKey: privKey,
 	}
 
 	// Load the other standard config options

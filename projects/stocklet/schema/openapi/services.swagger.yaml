@@ -15,6 +15,20 @@ consumes:
 produces:
   - application/json
 paths:
+  /v1/auth/jwks:
+    get:
+      operationId: AuthService_GetJwks
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetJwksResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - AuthService
   /v1/auth/login:
     post:
       operationId: AuthService_LoginPassword
@@ -499,6 +513,21 @@ definitions:
     type: object
   v1DeleteUserResponse:
     type: object
+  v1ECPublicJWK:
+    type: object
+    properties:
+      kty:
+        type: string
+      use:
+        type: string
+      alg:
+        type: string
+      crv:
+        type: string
+      x:
+        type: string
+      "y":
+        type: string
   v1GetBalanceResponse:
     type: object
     properties:
@@ -507,6 +536,14 @@ definitions:
       balance:
         type: number
         format: float
+  v1GetJwksResponse:
+    type: object
+    properties:
+      keys:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1ECPublicJWK'
   v1GetOrderResponse:
     type: object
     example:
@@ -581,9 +618,7 @@ definitions:
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
-    title: |-
-      todo: work on models
-      todo: event schemas
+    title: "todo: work on models\r\ntodo: event schemas"
   v1SetPasswordRequest:
     type: object
     properties:

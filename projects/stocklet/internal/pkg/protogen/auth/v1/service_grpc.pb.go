@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	AuthService_GetJwks_FullMethodName        = "/stocklet.auth.v1.AuthService/GetJwks"
 	AuthService_LoginPassword_FullMethodName  = "/stocklet.auth.v1.AuthService/LoginPassword"
 	AuthService_SetPassword_FullMethodName    = "/stocklet.auth.v1.AuthService/SetPassword"
 	AuthService_DeleteUserData_FullMethodName = "/stocklet.auth.v1.AuthService/DeleteUserData"
@@ -28,6 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
+	GetJwks(ctx context.Context, in *GetJwksRequest, opts ...grpc.CallOption) (*GetJwksResponse, error)
 	LoginPassword(ctx context.Context, in *LoginPasswordRequest, opts ...grpc.CallOption) (*LoginPasswordResponse, error)
 	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*SetPasswordResponse, error)
 	// internal method
@@ -40,6 +42,15 @@ type authServiceClient struct {
 
 func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
+}
+
+func (c *authServiceClient) GetJwks(ctx context.Context, in *GetJwksRequest, opts ...grpc.CallOption) (*GetJwksResponse, error) {
+	out := new(GetJwksResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetJwks_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *authServiceClient) LoginPassword(ctx context.Context, in *LoginPasswordRequest, opts ...grpc.CallOption) (*LoginPasswordResponse, error) {
@@ -73,6 +84,7 @@ func (c *authServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserDa
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
+	GetJwks(context.Context, *GetJwksRequest) (*GetJwksResponse, error)
 	LoginPassword(context.Context, *LoginPasswordRequest) (*LoginPasswordResponse, error)
 	SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error)
 	// internal method
@@ -84,6 +96,9 @@ type AuthServiceServer interface {
 type UnimplementedAuthServiceServer struct {
 }
 
+func (UnimplementedAuthServiceServer) GetJwks(context.Context, *GetJwksRequest) (*GetJwksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJwks not implemented")
+}
 func (UnimplementedAuthServiceServer) LoginPassword(context.Context, *LoginPasswordRequest) (*LoginPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginPassword not implemented")
 }
@@ -104,6 +119,24 @@ type UnsafeAuthServiceServer interface {
 
 func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
 	s.RegisterService(&AuthService_ServiceDesc, srv)
+}
+
+func _AuthService_GetJwks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJwksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetJwks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetJwks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetJwks(ctx, req.(*GetJwksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthService_LoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -167,6 +200,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "stocklet.auth.v1.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetJwks",
+			Handler:    _AuthService_GetJwks_Handler,
+		},
 		{
 			MethodName: "LoginPassword",
 			Handler:    _AuthService_LoginPassword_Handler,
