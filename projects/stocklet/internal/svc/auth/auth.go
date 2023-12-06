@@ -17,7 +17,7 @@ import (
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
 	
-	StrCtrl StorageController
+	StrCtrl *StorageController
 
 	privKey *ecdsa.PrivateKey
 	pubJWKResponse *pb.GetJwksResponse
@@ -30,7 +30,7 @@ type StorageController interface {
 }
 
 // Initialise the service
-func NewAuthService(strCtrl StorageController, privKey *ecdsa.PrivateKey) *AuthService {
+func NewAuthService(strCtrl *StorageController, privKey *ecdsa.PrivateKey) *AuthService {
 	svc := &AuthService{
 		StrCtrl: strCtrl,
 
