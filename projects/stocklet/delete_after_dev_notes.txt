@@ -1,0 +1,1 @@
+es256 to be used for JWT auth tokens

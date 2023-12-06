@@ -9,10 +9,10 @@ import "stocklet/auth/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
-// todo: implement
 message GetJwksRequest {}
+
 message GetJwksResponse {
-  repeated JWK keys = 1;
+  repeated ECPublicJWK keys = 1;
 }
 
 message LoginPasswordRequest {

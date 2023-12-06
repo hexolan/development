@@ -54,7 +54,7 @@ static_resources:
                 default_provider:
                   remote_jwks:
                     http_uri:
-                      uri: http://auth-service/jwks
+                      uri: http://auth-service/v1/auth/jwks
                       cluster: auth_service_gw
                       timeout: 1s
                     cache_duration:

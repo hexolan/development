@@ -1,0 +1,1 @@
+openssl ec -in private.pem -pubout -out public.pem

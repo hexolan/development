@@ -4,15 +4,13 @@ package stocklet.auth.v1;
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
-message JWK {
+message ECPublicJWK {
   string kty = 1;
   string use = 2;
   string alg = 3;
-  string kid = 4;
-  repeated string x5c = 5;
-  string x5t = 6;
-  string n = 7;
-  string e = 8;
+  string crv = 4;
+  string x = 5;
+  string y = 6;
 }
 
 message AuthToken {
