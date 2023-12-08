@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"null.hexolan.dev/dev/pkg/service1"
+	"null.hexolan.dev/dev/pkg/otelutil"
 	"null.hexolan.dev/dev/pkg/serveutil"
 	pb "null.hexolan.dev/dev/protogen"
 )
@@ -21,6 +22,11 @@ func main() {
 	if err != nil {
 		log.Panic().Err(err).Msg("")
 	}
+
+	// Init Open Telemetry
+	var otelCollGrpcAddr string = "otel-collector:4317"
+	otelResource := otelutil.InitTracerResource("service1")
+	otelutil.InitTracerProvider(otelCollGrpcAddr, otelResource)
 
 	// Create Service
 	svc := service1.NewRpcService(privateKey)

@@ -6,11 +6,18 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 )
 
 func NewGrpcServer() *grpc.Server {
-	svr := grpc.NewServer()
+	//svr := grpc.NewServer()
+	svr := grpc.NewServer(
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
+
 	reflection.Register(svr)
+
 	return svr
 }
 

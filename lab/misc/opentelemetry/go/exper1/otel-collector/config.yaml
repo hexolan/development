@@ -4,6 +4,7 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: "0.0.0.0:4317" # default grpc endpoint is 0.0.0.0:4317
       http:
 
 exporters:
@@ -11,6 +12,7 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+      # insecure_skip_verify: true  # https://github.com/open-telemetry/opentelemetry-collector/issues/4829 - delete if not work may be unneeded
   logging:
     loglevel: debug
 
@@ -32,4 +34,4 @@ service:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, otlp]
+      exporters: [logging]
