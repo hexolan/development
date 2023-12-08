@@ -11,7 +11,7 @@ type PostgresConfig struct {
 	Database string
 }
 
-func (conf PostgresConfig) GetDSN() string {
+func (conf *PostgresConfig) GetDSN() string {
 	return fmt.Sprintf(
 		"postgresql://%s:%s@%s/%s?sslmode=disable",
 		conf.Username,
@@ -21,32 +21,32 @@ func (conf PostgresConfig) GetDSN() string {
 	)
 }
 
-func LoadPostgresConfig() (*PostgresConfig, error) {
+func (cfg *PostgresConfig) Load() error {
 	// Load configurations from env
-	username, err := RequireFromEnv("PG_USER")
-	if err != nil {
-		return nil, err
+	if username, err := RequireFromEnv("PG_USER"); err != nil {
+		return err
+	} else {
+		cfg.Username = username
 	}
 
-	password, err := RequireFromEnv("PG_PASS")
-	if err != nil {
-		return nil, err
+	if password, err := RequireFromEnv("PG_PASS"); err != nil {
+		return err
+	} else {
+		cfg.Password = password
 	}
 
-	host, err := RequireFromEnv("PG_HOST")
-	if err != nil {
-		return nil, err
+	if host, err := RequireFromEnv("PG_HOST"); err != nil {
+		return err
+	} else {
+		cfg.Host = host
 	}
 
-	database, err := RequireFromEnv("PG_DB")
-	if err != nil {
-		return nil, err
+	if database, err := RequireFromEnv("PG_DB"); err != nil {
+		return err
+	} else {
+		cfg.Database = database		
 	}
 
-	return &PostgresConfig{
-		Username: username,
-		Password: password,
-		Host:     host,
-		Database: database,
-	}, nil
+	// config properties succesfully loaded
+	return nil
 }

@@ -1,0 +1,2 @@
+skaffold for building containers
+that then uses Helm charts for deployment stage

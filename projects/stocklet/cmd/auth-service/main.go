@@ -10,7 +10,7 @@ import (
 )
 
 func loadConfig() *auth.ServiceConfig {
-	// load the service configuration
+	// load the main service configuration
 	cfg, err := auth.NewServiceConfig()
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -23,6 +23,11 @@ func loadConfig() *auth.ServiceConfig {
 }
 
 func usePostgresController(cfg *auth.ServiceConfig) (*auth.StorageController, error) {
+	// load the postgres configuration
+	if err := cfg.Postgres.Load(); err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+
 	// todo:
 	// instead of error return client
 
@@ -37,7 +42,7 @@ func main() {
 	strC, _ := usePostgresController(cfg)
 
 	// Create the service
-	svc := auth.NewAuthService(strC, cfg.PrivateKey)
+	svc := auth.NewAuthService(cfg, strC)
 	
 	// Attach the API interfaces to the service
 	grpcSvr := api.NewGrpcServer(cfg, svc)

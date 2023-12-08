@@ -1,0 +1,45 @@
+# inspiration for OTEL config from:
+# - https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml
+version: "3.8"
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.52.0
+    environment:
+      - LOG_LEVEL=debug
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+
+  otel-collector:
+    image: hexolan/experiment-otel-collector
+    build:
+      context: ./otel-collector
+    ports:
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      # - 4317:4317 # OTLP gRPC receiver
+      # - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension
+    depends_on:
+      - jaeger
+
+  envoy:
+    image: hexolan/experiment-envoy
+    build:
+      context: ./envoy
+    ports:
+      - "80:80"
+
+  service1:
+    image: hexolan/experiment-service1
+    build: 
+      context: ./services
+      dockerfile: ./service1.Dockerfile
+    environment:
+      - AUTH_PRIVATE_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUJ5RHBLV1pHS3YxNDdvZGlUR2N4V0l0NWxEbEtRQW5zdDZQQkw3bUNGMFJvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFbUM0UVdtek1ta3lkT0xMZUxYdHVIa3RqVGtQZzM5djRkSnNFZEhGcGdQM1M0ZXp4a2ZYaApmSVZiQlR6OXA4OFFBSkRsL0ZOVFFjUXFUYlZ2bCsybE9RPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQ==
+    ports:
+      - "90:90"
+      - "9090:9090"

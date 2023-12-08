@@ -3,7 +3,6 @@ package auth
 import (
 	"fmt"
 	"context"
-	"crypto/ecdsa"
 	"encoding/json"
 
 	"github.com/rs/zerolog/log"
@@ -17,11 +16,11 @@ import (
 // Interface for the service
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
+
+	cfg *ServiceConfig
+	pubJWKResponse *pb.GetJwksResponse
 	
 	StrCtrl *StorageController
-
-	privKey *ecdsa.PrivateKey
-	pubJWKResponse *pb.GetJwksResponse
 }
 
 // Interface for database methods
@@ -31,12 +30,12 @@ type StorageController interface {
 }
 
 // Initialise the service
-func NewAuthService(strCtrl *StorageController, privKey *ecdsa.PrivateKey) *AuthService {
+func NewAuthService(cfg *ServiceConfig, strCtrl *StorageController) *AuthService {
 	svc := &AuthService{
-		StrCtrl: strCtrl,
-
-		privKey: privKey,
+		cfg: cfg,
 		pubJWKResponse: nil,
+
+		StrCtrl: strCtrl,
 	}
 
 	return svc
@@ -45,13 +44,13 @@ func NewAuthService(strCtrl *StorageController, privKey *ecdsa.PrivateKey) *Auth
 // Underlying utility method for preparing the JWKs
 func (svc *AuthService) getJwks() (*pb.GetJwksResponse, error) {
 	// Assemble the public JWK
-	jwk, err := jwk.FromRaw(svc.privKey.PublicKey)
+	jwk, err := jwk.FromRaw(svc.cfg.ServiceOpts.PrivateKey.PublicKey)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "something went wrong parsing public key", err)
 	}
 
 	jwk.Set("use", "sig")  // denote use for signatures
-	jwk.Set("alg", fmt.Sprintf("EC%v", svc.privKey.Curve.Params().BitSize))  // ease support for both EC256 and EC512
+	jwk.Set("alg", fmt.Sprintf("EC%v", svc.cfg.ServiceOpts.PrivateKey.Curve.Params().BitSize))  // ease support for both EC256 and EC512
 
 	// Attempt to marshal to protobuf
 	// Convert the JWK to JSON

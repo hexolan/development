@@ -1,0 +1,35 @@
+# useful examples:
+# - https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  logging:
+    loglevel: debug
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, otlp]

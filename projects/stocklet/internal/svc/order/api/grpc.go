@@ -13,7 +13,7 @@ func NewGrpcServer(cfg *order.ServiceConfig, svc order.OrderService) *grpc.Serve
 
 	pb.RegisterOrderServiceServer(svr, svc)
 	
-	serve.AttachGrpcUtils(svr, cfg.DevMode)
+	serve.AttachGrpcUtils(svr, cfg.StandardConfig)
 
 	return svr
 }

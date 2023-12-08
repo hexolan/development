@@ -1,1 +1,11 @@
 es256 to be used for JWT auth tokens
+
+rename controllers to adapters?
+better name fit
+
+so there's a key StorageController
+which is implemented by Adapters
+e.g. PostgresAdapter
+
+good practices (generally follows the Golang semantics of programming):
+https://www.youtube.com/watch?v=q1qKv5TBaOA

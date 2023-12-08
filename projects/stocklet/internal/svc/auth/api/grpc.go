@@ -12,7 +12,7 @@ func NewGrpcServer(cfg *auth.ServiceConfig, svc *auth.AuthService) *grpc.Server 
 	// todo: move into generic?
 	// miscutil.NewBaseGrpcServer or something?
 	svr := grpc.NewServer()
-	serve.AttachGrpcUtils(svr, cfg.DevMode)
+	serve.AttachGrpcUtils(svr, cfg.Shared.DevMode)
 
 	pb.RegisterAuthServiceServer(svr, svc)
 

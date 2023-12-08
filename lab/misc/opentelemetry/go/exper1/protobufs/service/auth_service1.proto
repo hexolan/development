@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "null.hexolan.dev/dev/protogen";
+
+import "google/api/annotations.proto";
+
+package service;
+
+service AuthService {
+  rpc GetJwks (GetJwksRequest) returns (GetJwksResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/jwks"
+    };
+  }
+}
+
+message ECPublicJWK {
+  string kty = 1;
+  string use = 2;
+  string alg = 3;
+  string crv = 4;
+  string x = 5;
+  string y = 6;
+}
+
+message GetJwksRequest {}
+
+message GetJwksResponse {
+  repeated ECPublicJWK keys = 1;
+}
