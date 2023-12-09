@@ -1,6 +1,6 @@
 package serve
 
 const (
-	RpcPort string = "9090"
-	HttpPort string = "90"
+	GrpcPort string = "9090"
+	GatewayPort string = "90"
 )

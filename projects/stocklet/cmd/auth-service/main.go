@@ -45,11 +45,11 @@ func main() {
 	svc := auth.NewAuthService(cfg, strC)
 	
 	// Attach the API interfaces to the service
-	grpcSvr := api.NewGrpcServer(cfg, svc)
-	gatewayMux := api.NewHttpGateway()
+	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
+	gatewayMux := api.AttachSvcToGateway(cfg, svc)
 
 	// Serve the API interfaces
-	go serve.GrpcServer(grpcSvr)
-	serve.HttpGateway(gatewayMux)
+	go serve.Gateway(gatewayMux)
+	serve.Grpc(grpcSvr)
 }
 

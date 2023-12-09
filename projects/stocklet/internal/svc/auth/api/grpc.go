@@ -8,13 +8,8 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
 )
 
-func NewGrpcServer(cfg *auth.ServiceConfig, svc *auth.AuthService) *grpc.Server {
-	// todo: move into generic?
-	// miscutil.NewBaseGrpcServer or something?
-	svr := grpc.NewServer()
-	serve.AttachGrpcUtils(svr, cfg.Shared.DevMode)
-
+func AttachSvcToGrpc(cfg *auth.ServiceConfig, svc *auth.AuthService) *grpc.Server {
+	svr := serve.NewGrpcServeBase(cfg.Shared)
 	pb.RegisterAuthServiceServer(svr, svc)
-
 	return svr
 }

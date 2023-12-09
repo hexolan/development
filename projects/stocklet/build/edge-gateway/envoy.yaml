@@ -65,7 +65,7 @@ static_resources:
                 default_provider:
                   remote_jwks:
                     http_uri:
-                      uri: http://auth-service/v1/auth/jwks
+                      uri: http://auth-service:90/v1/auth/jwks
                       cluster: auth_service_gw
                       timeout: 1s
                     cache_duration:
@@ -73,7 +73,7 @@ static_resources:
                   from_headers:
                   - name: Authorization
                   forward: true
-                  forward_payload_header: X-JWT-Payload
+                  forward_payload_header: x-jwt-payload
               rules:
               - match:
                   prefix: /

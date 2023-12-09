@@ -8,28 +8,35 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
+
+	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-func GrpcServer(svr *grpc.Server) {
-	lis, err := net.Listen("tcp", "0.0.0.0:" + RpcPort)
-	if err != nil {
-		log.Panic().Err(err).Str("port", RpcPort).Msg("failed to listen on RPC port")
-	}
+func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
+	// todo: attaching OTEL metrics middleware
+	svr := grpc.NewServer()
 
-	err = svr.Serve(lis)
-	if err != nil {
-		log.Panic().Err(err).Msg("failed to serve gRPC server")
-	}
-}
-
-func AttachGrpcUtils(svr *grpc.Server, devMode bool) {
 	// attach the health service
 	svc := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(svr, svc)
 	
 	// enable reflection in dev mode
 	// this is to make testing easier with tools like grpcurl and grpcui
-	if devMode {
+	if cfg.DevMode {
 		reflection.Register(svr)
+	}
+
+	return svr
+}
+
+func Grpc(svr *grpc.Server) {
+	lis, err := net.Listen("tcp", "0.0.0.0:" + GrpcPort)
+	if err != nil {
+		log.Panic().Err(err).Str("port", GrpcPort).Msg("failed to listen on gRPC port")
+	}
+
+	err = svr.Serve(lis)
+	if err != nil {
+		log.Panic().Err(err).Msg("failed to serve gRPC server")
 	}
 }

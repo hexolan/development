@@ -50,7 +50,7 @@ func (svc *AuthService) getJwks() (*pb.GetJwksResponse, error) {
 	}
 
 	jwk.Set("use", "sig")  // denote use for signatures
-	jwk.Set("alg", fmt.Sprintf("EC%v", svc.cfg.ServiceOpts.PrivateKey.Curve.Params().BitSize))  // ease support for both EC256 and EC512
+	jwk.Set("alg", fmt.Sprintf("ES%v", svc.cfg.ServiceOpts.PrivateKey.Curve.Params().BitSize))  // dynamic support for ES256, ES384 and ES512
 
 	// Attempt to marshal to protobuf
 	// Convert the JWK to JSON

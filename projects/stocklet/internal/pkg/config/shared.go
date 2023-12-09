@@ -1,18 +1,9 @@
 package config
 
-// Base configuration implemented by all services
-type BaseConfig struct {
-	Shared *SharedConfig
-}
-
-// Load the base configuration
-func (cfg *BaseConfig) LoadBaseConfig() error {
-	return cfg.Shared.Load()
-}
-
-// Shared configuration loaded under the base config
+// Shared configuration implemented by all services
 type SharedConfig struct {
-	OtelConfig *OtelConfig
+	Otel *OtelConfig
+
 	DevMode bool
 }
 
@@ -25,9 +16,9 @@ func (cfg *SharedConfig) Load() error {
 			cfg.DevMode = true
 		}
 	}
-
+	
 	// load the Open Telemetry config
-	if err := cfg.OtelConfig.Load(); err != nil {
+	if err := cfg.Otel.Load(); err != nil {
 		return err
 	}
 

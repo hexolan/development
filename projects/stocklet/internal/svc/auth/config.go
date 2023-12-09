@@ -13,7 +13,7 @@ import (
 // Service Configuration
 type ServiceConfig struct {
 	// core configuration
-	config.BaseConfig
+	Shared *config.SharedConfig
 	ServiceOpts *ServiceConfigOpts
 
 	// dynamically loaded configuration
@@ -24,8 +24,8 @@ type ServiceConfig struct {
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{}
 
-	// load the base config
-	if err := cfg.LoadBaseConfig(); err != nil {
+	// load the shared config options
+	if err := cfg.Shared.Load(); err != nil {
 		return nil, err
 	}
 
