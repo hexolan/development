@@ -7,6 +7,8 @@ import (
 	"crypto/ecdsa"
 	"encoding/json"
 
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/metadata"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"google.golang.org/protobuf/encoding/protojson"
 
@@ -35,7 +37,7 @@ func (svc *rpcService) getJwks() (*pb.GetJwksResponse, error) {
 	}
 
 	jwk.Set("use", "sig")  // denote use for signatures
-	jwk.Set("alg", fmt.Sprintf("EC%v", svc.PrivateKey.Curve.Params().BitSize))  // ease support for both EC256 and EC512
+	jwk.Set("alg", fmt.Sprintf("ES%v", svc.PrivateKey.Curve.Params().BitSize))  // ease support for both ES256 and ES512
 
 	// Attempt to marshal to protobuf
 	// Convert the JWK to JSON
@@ -61,9 +63,12 @@ func (svc *rpcService) getJwks() (*pb.GetJwksResponse, error) {
 }
 
 func (svc *rpcService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	log.Info().Any("meta", md).Msg("metadata extract")
+
 	if svc.publicKeyJWK != nil {
 		return svc.publicKeyJWK, nil
 	}
-	
+
 	return svc.getJwks()
 }

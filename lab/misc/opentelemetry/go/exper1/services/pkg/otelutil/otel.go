@@ -7,11 +7,11 @@ import (
 
 	"go.opentelemetry.io/otel"
 	// "go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	// "google.golang.org/grpc"
 	// "google.golang.org/grpc/credentials/insecure"
 )
@@ -31,6 +31,8 @@ func InitTracerProvider(otelCollGrpcAddr string, resource *sdkresource.Resource)
 	)
 
 	otel.SetTracerProvider(tp)
+
+	otel.SetTextMapPropagator(propagation.TraceContext{})
 
 	return tp
 }
