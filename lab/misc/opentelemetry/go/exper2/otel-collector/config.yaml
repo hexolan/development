@@ -1,0 +1,37 @@
+# useful examples:
+# - https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317" # default grpc endpoint is 0.0.0.0:4317
+      http:
+
+exporters:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+      # insecure_skip_verify: true  # https://github.com/open-telemetry/opentelemetry-collector/issues/4829 - delete if not work may be unneeded
+  logging:
+    loglevel: debug
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
