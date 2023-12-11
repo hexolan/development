@@ -8,13 +8,18 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
 func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
-	// todo: attaching OTEL metrics middleware
-	svr := grpc.NewServer()
+	// attach OTEL metrics middleware
+	svr := grpc.NewServer(
+		grpc.StatsHandler(
+			otelgrpc.NewServerHandler(),
+		),
+	)
 
 	// attach the health service
 	svc := health.NewServer()

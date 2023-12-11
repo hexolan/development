@@ -11,13 +11,7 @@ exporters:
 processors:
   batch:
 
-extensions:
-  health_check:
-  zpages:
-    endpoint: 0.0.0.0:55679
-
 service:
-  extensions: [zpages, health_check]
   pipelines:
     traces:
       receivers: [otlp]

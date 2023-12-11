@@ -1,4 +1,4 @@
-package logging
+package metrics
 
 import (
 	"github.com/rs/zerolog"

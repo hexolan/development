@@ -7,7 +7,7 @@ import (
 
 	"github.com/hexolan/stocklet/internal/pkg/serve"
 	"github.com/hexolan/stocklet/internal/pkg/storage"
-	"github.com/hexolan/stocklet/internal/pkg/logging"
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/svc/order/api"
@@ -22,7 +22,9 @@ func loadConfig() *order.ServiceConfig {
 	}
 
 	// configure the logger
-	logging.ConfigureLogger()
+	metrics.ConfigureLogger()
+
+	// TODO: configure otel
 
 	return cfg
 }

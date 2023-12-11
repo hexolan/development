@@ -6,7 +6,7 @@ import (
 	"github.com/hexolan/stocklet/internal/svc/auth"
 	"github.com/hexolan/stocklet/internal/svc/auth/api"
 	"github.com/hexolan/stocklet/internal/pkg/serve"
-	"github.com/hexolan/stocklet/internal/pkg/logging"
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
 )
 
 func loadConfig() *auth.ServiceConfig {
@@ -17,7 +17,13 @@ func loadConfig() *auth.ServiceConfig {
 	}
 
 	// configure the logger
-	logging.ConfigureLogger()
+	metrics.ConfigureLogger()
+
+	// configure OTEL
+	metrics.InitTracerProvider(
+		cfg.Shared.Otel,
+		"auth",
+	)
 
 	return cfg
 }
