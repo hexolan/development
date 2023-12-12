@@ -10,7 +10,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 )
 
-func NewKafkaConn(conf config.KafkaConfig, opts ...kgo.Opt) (*kgo.Client, error) {
+func NewKafkaConn(conf *config.KafkaConfig, opts ...kgo.Opt) (*kgo.Client, error) {
 	opts = append(opts, kgo.SeedBrokers(conf.Brokers...))
 	kCl, err := kgo.NewClient(opts...)
 	if err != nil {

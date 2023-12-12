@@ -10,7 +10,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 )
 
-func NewPostgresConn(conf config.PostgresConfig) (*pgxpool.Pool, error) {
+func NewPostgresConn(conf *config.PostgresConfig) (*pgxpool.Pool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*45)
 	defer cancel()
 
