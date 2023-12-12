@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: shipping-service
+  name: shipping-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: shipping-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.network/docker-stocklet-network: "true"
+        io.kompose.network/docker-stocklet-shipping-network: "true"
+        io.kompose.service: shipping-service
+    spec:
+      containers:
+        - image: stocklet/shipping-service
+          name: shipping-service
+          ports:
+            - containerPort: 90
+              protocol: TCP
+            - containerPort: 9090
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always
+status: {}
