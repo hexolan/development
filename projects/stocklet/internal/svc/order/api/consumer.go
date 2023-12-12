@@ -2,15 +2,34 @@ package api
 
 import (
 	"context"
-
+	
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
-
+	
 	"github.com/hexolan/stocklet/internal/svc/order"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
+type eventConsumer struct {
+
+}
+
+// plan:
+// this is the generic consumption interface
+// a generic method is called in the controller to attach the consumer interface to the EventController or something.
+// this returns a method to actually start the consumption after prepartation?
+func AttachSvcToConsumer(cfg *order.ServiceConfig, svc *order.OrderService) error {
+	// todo: implement
+	return nil
+}
+
+func (c eventConsumer) ConsumePlaceOrderTopic()
+// on second thoughts this may need a rethink
+
+// =====================================================
+// before refactoring:
+// todo: clean up
 type kafkaConsumer struct {
 	svc order.OrderService
 	

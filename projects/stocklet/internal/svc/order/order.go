@@ -10,6 +10,14 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
+// Interface for the service
+type OrderService struct {
+	pb.UnimplementedOrderServiceServer
+
+	EvtCtrl EventController
+	StrCtrl StorageController
+}
+
 // Interface for database methods
 // Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
@@ -20,26 +28,18 @@ type StorageController interface {
 	DeleteOrderById(ctx context.Context, id string) error
 }
 
-// Interface for event related methods
-// Allows implementing seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
+// Interface for event methods
+// Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
 	DispatchCreatedEvent(order *pb.Order)
 	DispatchUpdatedEvent(order *pb.Order)
 	DispatchDeletedEvent(req *pb.CancelOrderRequest)
 }
 
-// The implemented order service served as a gRPC service
-type OrderService struct {
-	EvtCtrl EventController
-	StrCtrl StorageController
-
-	pb.UnimplementedOrderServiceServer
-}
-
-func NewOrderService(evtCtrl EventController, strCtrl StorageController) OrderService {
-	return OrderService{
-		EvtCtrl: evtCtrl,
+func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *OrderService {
+	return &OrderService{
 		StrCtrl: strCtrl,
+		EvtCtrl: evtCtrl,
 	}
 }
 

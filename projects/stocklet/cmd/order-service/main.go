@@ -15,7 +15,7 @@ import (
 )
 
 func loadConfig() *order.ServiceConfig {
-	// load the service configuration
+	// load the core service configuration
 	cfg, err := order.NewServiceConfig()
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -24,7 +24,11 @@ func loadConfig() *order.ServiceConfig {
 	// configure the logger
 	metrics.ConfigureLogger()
 
-	// TODO: configure otel
+	// configure OTEL
+	metrics.InitTracerProvider(
+		cfg.Shared.Otel,
+		"order",
+	)
 
 	return cfg
 }
@@ -95,14 +99,15 @@ func main() {
 	defer pCl.Close()
 
 	// Create the service
-	svc := order.NewOrderService(evtC, strC)
+	svc := order.NewOrderService(cfg, strC, evtC)
 	
 	// Attach the API interfaces to the service
-	grpcSvr := api.NewGrpcServer(cfg, svc)
-	gatewayMux := api.NewHttpGateway()
-	go api.NewKafkaConsumer(svc, kCl)
+	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
+	gwMux := api.AttachSvcToGateway(cfg, svc)
+	// todo: api.AttachSvcToConsumer(cfg, svc)
 
 	// Serve the API interfaces
-	go serve.GrpcServer(grpcSvr)
-	serve.HttpGateway(gatewayMux)
+	go serve.Gateway(gwMux)
+	serve.Grpc(grpcSvr)
+	// todo: also starting the consumer after gRPC started - serve.Consume(consumer) or something
 }

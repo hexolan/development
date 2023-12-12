@@ -8,12 +8,8 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-func NewGrpcServer(cfg *order.ServiceConfig, svc order.OrderService) *grpc.Server {
-	svr := grpc.NewServer()
-
+func AttachSvcToGrpc(cfg *order.ServiceConfig, svc *order.OrderService) *grpc.Server {
+	svr := serve.NewGrpcServeBase(cfg.Shared)
 	pb.RegisterOrderServiceServer(svr, svc)
-	
-	serve.AttachGrpcUtils(svr, cfg.StandardConfig)
-
 	return svr
 }

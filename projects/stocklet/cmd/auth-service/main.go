@@ -52,10 +52,10 @@ func main() {
 	
 	// Attach the API interfaces to the service
 	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
-	gatewayMux := api.AttachSvcToGateway(cfg, svc)
+	gwMux := api.AttachSvcToGateway(cfg, svc)
 
 	// Serve the API interfaces
-	go serve.Gateway(gatewayMux)
+	go serve.Gateway(gwMux)
 	serve.Grpc(grpcSvr)
 }
 
