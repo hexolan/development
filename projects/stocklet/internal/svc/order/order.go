@@ -31,9 +31,17 @@ type StorageController interface {
 // Interface for event methods
 // Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
+	PrepareConsumer(svc *OrderService) EventConsumerController
+
 	DispatchCreatedEvent(order *pb.Order)
 	DispatchUpdatedEvent(order *pb.Order)
 	DispatchDeletedEvent(req *pb.CancelOrderRequest)
+}
+
+// todo: move to generic?
+type EventConsumerController interface {
+	Start()
+	Stop()
 }
 
 func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *OrderService {

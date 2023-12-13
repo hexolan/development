@@ -51,36 +51,18 @@ func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController)
 }
 
 func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
+	// load the Kafka configuration
+	if err := cfg.Kafka.Load(); err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+
 	// open a Kafka connection
 	kCl, err := messaging.NewKafkaConn(
 		cfg.Kafka,
 		kgo.ConsumerGroup("order-service"),
-		
-		// todo: exper with REGEX consumption
-		kgo.ConsumeRegex(),
-		kgo.ConsumeTopics(
-			messaging.Order_PlaceOrder_Catchall,
-		),
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
-	}
-
-	// ensure the required Kafka topics exist
-	err = messaging.EnsureKafkaTopics(
-		kCl,
-
-		messaging.Order_State_Created_Topic,
-		messaging.Order_State_Updated_Topic,
-		messaging.Order_State_Deleted_Topic,
-
-		messaging.Order_PlaceOrder_Order_Topic,
-		messaging.Order_PlaceOrder_Payment_Topic,
-		messaging.Order_PlaceOrder_Shipping_Topic,
-		messaging.Order_PlaceOrder_Warehouse_Topic,
-	)
-	if err != nil {
-		log.Error().Err(err).Msg("")
 	}
 
 	// create the event controller
@@ -104,10 +86,10 @@ func main() {
 	// Attach the API interfaces to the service
 	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
 	gwMux := api.AttachSvcToGateway(cfg, svc)
-	// todo: api.AttachSvcToConsumer(cfg, svc)
+	consCtrl := api.AttachSvcToConsumer(cfg, svc)
 
 	// Serve the API interfaces
 	go serve.Gateway(gwMux)
+	go consCtrl.Start()  // todo: starting consumer after gRPC; though this should work for now since calling directly (goroutine/thread safety needs a look into though)
 	serve.Grpc(grpcSvr)
-	// todo: also starting the consumer after gRPC started - serve.Consume(consumer) or something
 }
