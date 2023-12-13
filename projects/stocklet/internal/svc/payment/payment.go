@@ -35,6 +35,7 @@ type EventController interface {
 	// DispatchDeletedEvent()
 }
 
+// Create the payment service
 func NewPaymentService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *PaymentService {
 	return &PaymentService{
 		StrCtrl: strCtrl,

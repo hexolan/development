@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/rs/zerolog/log"
+	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -14,6 +15,8 @@ import (
 // Interface for the service
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
+	
+	pbVal *protovalidate.Validator
 
 	StrCtrl StorageController
 	EvtCtrl EventController
@@ -39,20 +42,30 @@ type EventController interface {
 	DispatchDeletedEvent(req *pb.CancelOrderRequest)
 }
 
+// Create the order service
 func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *OrderService {
+	// Initialise the protobuf validator
+	pbVal, err := protovalidate.New()
+	if err != nil {
+		log.Panic().Err(err).Msg("failed to initialise protobuf validator")
+	}
+
+	// Initialise the service
 	return &OrderService{
 		StrCtrl: strCtrl,
 		EvtCtrl: evtCtrl,
+		pbVal: pbVal,
 	}
 }
 
 func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.GetOrderResponse, error) {
-	// Validate args - todo:
-	if req.GetOrderId() == "" {
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid order id")
+	// Validate the request
+	// todo: unwrapping error (if validation error) to expose the argument issues in the response
+	if err := svc.pbVal.Validate(req); err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid request", err)
 	}
 	
-	// Get the order
+	// Get the order from the storage controller
 	order, err := svc.StrCtrl.GetOrderById(ctx, req.GetOrderId())
 	if err != nil {
 		return nil, err

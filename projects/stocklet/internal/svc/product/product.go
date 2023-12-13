@@ -35,6 +35,7 @@ type EventController interface {
 	// DispatchDeletedEvent()
 }
 
+// Create the product service
 func NewProductService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *ProductService {
 	return &ProductService{
 		StrCtrl: strCtrl,

@@ -29,7 +29,7 @@ type StorageController interface {
 
 }
 
-// Initialise the service
+// Create the auth service
 func NewAuthService(cfg *ServiceConfig, strCtrl *StorageController) *AuthService {
 	svc := &AuthService{
 		cfg: cfg,

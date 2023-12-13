@@ -35,6 +35,7 @@ type EventController interface {
 	// DispatchDeletedEvent()
 }
 
+// Create the user service
 func NewUserService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *UserService {
 	return &UserService{
 		StrCtrl: strCtrl,

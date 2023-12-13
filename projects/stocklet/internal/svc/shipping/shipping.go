@@ -35,6 +35,7 @@ type EventController interface {
 	// DispatchDeletedEvent()
 }
 
+// Create the shipping service
 func NewShippingService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *ShippingService {
 	return &ShippingService{
 		StrCtrl: strCtrl,

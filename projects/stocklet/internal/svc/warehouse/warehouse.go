@@ -35,6 +35,7 @@ type EventController interface {
 	// DispatchDeletedEvent()
 }
 
+// Create the warehouse service
 func NewWarehouseService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *WarehouseService {
 	return &WarehouseService{
 		StrCtrl: strCtrl,
