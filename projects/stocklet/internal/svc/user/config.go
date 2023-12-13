@@ -1,10 +1,10 @@
-package order
+package user
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// Order Service Configuration
+// User Service Configuration
 type ServiceConfig struct {
 	// Core Configuration
 	Shared *config.SharedConfig

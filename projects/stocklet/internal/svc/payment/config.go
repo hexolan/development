@@ -1,10 +1,10 @@
-package order
+package payment
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// Order Service Configuration
+// Payment Service Configuration
 type ServiceConfig struct {
 	// Core Configuration
 	Shared *config.SharedConfig

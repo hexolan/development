@@ -1,10 +1,10 @@
-package order
+package warehouse
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// Order Service Configuration
+// Warehouse Service Configuration
 type ServiceConfig struct {
 	// Core Configuration
 	Shared *config.SharedConfig

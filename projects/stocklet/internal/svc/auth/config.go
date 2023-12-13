@@ -10,17 +10,19 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 )
 
-// Service Configuration
+// Auth Service Configuration
 type ServiceConfig struct {
-	// core configuration
+	// Core configuration
 	Shared *config.SharedConfig
 	ServiceOpts *ServiceConfigOpts
 
-	// dynamically loaded configuration
+	// Dynamically loaded configuration
 	Postgres *config.PostgresConfig
 }
 
-// Load the core auth service opts
+// load the base service configuration
+//
+// This involves loading the service specific options (ServiceConfigOpts)
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{}
 
@@ -37,13 +39,30 @@ func NewServiceConfig() (*ServiceConfig, error) {
 	return &cfg, nil
 }
 
-// Service specific cfg options
+// Auth-service specific config options
 type ServiceConfigOpts struct {
 	PrivateKey *ecdsa.PrivateKey
 }
 
+// Load the ServiceConfigOpts
+//
+// PrivateKey is loaded and decoded from the base64
+// encoded PEM file exposed in the 'AUTH_PRIVATE_KEY'
+// environment variable.
+func (opts *ServiceConfigOpts) Load() error {
+	// load the private key
+	if err := opts.loadPrivateKey(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Load the ECDSA private key.
-// Used for signing JWT tokens and validating at the API ingress.
+//
+// Used for signing JWT tokens.
+// The public key is also served in JWK format, from this service,
+// for use when validating the tokens at the API ingress.
 func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// PEM private key file exposed as an environment variable encoded in base64 
 	pkB64, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
@@ -66,19 +85,9 @@ func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// Parse the block to a ecdsa.PrivateKey object
 	privKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to ECDSA private key", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to an ECDSA private key", err)
 	}
 
 	opts.PrivateKey = privKey
-	return nil
-}
-
-// Load the service specific configuration options
-func (opts *ServiceConfigOpts) Load() error {
-	// load the private key
-	if err := opts.loadPrivateKey(); err != nil {
-		return err
-	}
-
 	return nil
 }
