@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
@@ -14,8 +15,8 @@ import (
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
 
-	EvtCtrl EventController
 	StrCtrl StorageController
+	EvtCtrl EventController
 }
 
 // Interface for database methods
@@ -31,17 +32,11 @@ type StorageController interface {
 // Interface for event methods
 // Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
-	PrepareConsumer(svc *OrderService) EventConsumerController
+	PrepareConsumer(svc *OrderService) messaging.EventConsumerController
 
 	DispatchCreatedEvent(order *pb.Order)
 	DispatchUpdatedEvent(order *pb.Order)
 	DispatchDeletedEvent(req *pb.CancelOrderRequest)
-}
-
-// todo: move to generic?
-type EventConsumerController interface {
-	Start()
-	Stop()
 }
 
 func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl EventController) *OrderService {
