@@ -5,6 +5,7 @@ package stocklet.auth.v1;
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
+import "buf/validate/validate.proto";
 import "stocklet/auth/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
@@ -16,8 +17,18 @@ message GetJwksResponse {
 }
 
 message LoginPasswordRequest {
-  string user_id = 1 [(google.api.field_behavior) = REQUIRED];
-  string password = 2 [(google.api.field_behavior) = REQUIRED];
+  string user_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).string.min_len = 1
+  ];
+
+  string password = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).string = {
+      min_len: 1;
+      max_len: 64;
+    }
+  ];
 }
 
 message LoginPasswordResponse {
@@ -26,8 +37,18 @@ message LoginPasswordResponse {
 }
 
 message SetPasswordRequest {
-  string user_id = 1 [(google.api.field_behavior) = REQUIRED];
-  string password = 2 [(google.api.field_behavior) = REQUIRED];
+  string user_id = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).string.min_len = 1
+  ];
+  
+  string password = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (buf.validate.field).string = {
+      min_len: 1;
+      max_len: 64;
+    }
+  ];
 }
 
 message SetPasswordResponse {

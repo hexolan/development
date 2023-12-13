@@ -34,7 +34,7 @@ func loadConfig() *order.ServiceConfig {
 }
 
 func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController) (order.StorageController, *pgxpool.Pool) {
-	// load the postgres configuration
+	// load the Postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
