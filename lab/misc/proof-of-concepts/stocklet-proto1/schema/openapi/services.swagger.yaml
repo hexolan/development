@@ -1,0 +1,325 @@
+swagger: "2.0"
+info:
+  title: stocklet/auth/v1/types.proto
+  version: version not set
+tags:
+  - name: AuthService
+  - name: OrderService
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /v1/auth/jwks:
+    get:
+      operationId: AuthService_GetJwks
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetJwksResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - AuthService
+  /v1/auth/login:
+    post:
+      operationId: AuthService_LoginPassword
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1LoginPasswordResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1LoginPasswordRequest'
+      tags:
+        - AuthService
+  /v1/auth/password:
+    post:
+      operationId: AuthService_SetPassword
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1SetPasswordResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1SetPasswordRequest'
+      tags:
+        - AuthService
+  /v1/order/list:
+    get:
+      operationId: OrderService_GetOrders
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrdersResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          type: string
+      tags:
+        - OrderService
+  /v1/order/new:
+    post:
+      operationId: OrderService_CreateOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CreateOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: order
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1Order'
+      tags:
+        - OrderService
+  /v1/order/{order.id}:
+    post:
+      operationId: OrderService_UpdateOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1UpdateOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: order.id
+          in: path
+          required: true
+          type: string
+        - name: order
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: '#/definitions/v1OrderStatus'
+              items:
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
+                title: Items mapped by quantity
+              customerId:
+                type: string
+              transactionId:
+                type: string
+              createdAt:
+                type: string
+                format: int64
+      tags:
+        - OrderService
+  /v1/order/{orderId}:
+    get:
+      operationId: OrderService_GetOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+    delete:
+      operationId: OrderService_CancelOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CancelOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+definitions:
+  googlerpcStatus:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/protobufAny'
+  protobufAny:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  v1AuthToken:
+    type: object
+    properties:
+      tokenType:
+        type: string
+      accessToken:
+        type: string
+      expiresIn:
+        type: string
+        format: int64
+  v1CancelOrderResponse:
+    type: object
+  v1CreateOrderResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
+  v1ECPublicJWK:
+    type: object
+    properties:
+      kty:
+        type: string
+      use:
+        type: string
+      alg:
+        type: string
+      crv:
+        type: string
+      x:
+        type: string
+      "y":
+        type: string
+  v1GetJwksResponse:
+    type: object
+    properties:
+      keys:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1ECPublicJWK'
+  v1GetOrderResponse:
+    type: object
+    example:
+      data:
+        id: "123"
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
+    description: abcdef
+    title: Order Response
+  v1GetOrdersResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Order'
+  v1LoginPasswordRequest:
+    type: object
+    properties:
+      userId:
+        type: string
+      password:
+        type: string
+    required:
+      - userId
+      - password
+  v1LoginPasswordResponse:
+    type: object
+    properties:
+      detail:
+        type: string
+      data:
+        $ref: '#/definitions/v1AuthToken'
+  v1Order:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        $ref: '#/definitions/v1OrderStatus'
+      items:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
+        title: Items mapped by quantity
+      customerId:
+        type: string
+      transactionId:
+        type: string
+      createdAt:
+        type: string
+        format: int64
+  v1OrderStatus:
+    type: string
+    enum:
+      - ORDER_STATUS_UNSPECIFIED
+      - ORDER_STATUS_PENDING
+      - ORDER_STATUS_REJECTED
+      - ORDER_STATUS_CANCELLED
+      - ORDER_STATUS_APPROVED
+      - ORDER_STATUS_SUCCESS
+    default: ORDER_STATUS_UNSPECIFIED
+    title: "todo: work on models\r\ntodo: event schemas"
+  v1SetPasswordRequest:
+    type: object
+    properties:
+      userId:
+        type: string
+      password:
+        type: string
+    required:
+      - userId
+      - password
+  v1SetPasswordResponse:
+    type: object
+    properties:
+      detail:
+        type: string
+  v1UpdateOrderResponse:
+    type: object

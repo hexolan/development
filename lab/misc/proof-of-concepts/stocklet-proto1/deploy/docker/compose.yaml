@@ -1,0 +1,134 @@
+version: "3.8"
+
+services:
+  # Core Infra
+  otel-collector:
+    image: stocklet/otel-collector
+    build:
+      context: ../../build/otel-collector
+    networks:
+      - stocklet-network
+
+  edge-gateway:
+    image: stocklet/edge-gateway
+    build:
+      context: ../../build/edge-gateway
+    ports:
+      - 80:80
+    networks:
+      - stocklet-network
+
+  kafka:
+    image: bitnami/kafka:3.4
+    restart: unless-stopped
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=CONTROLLER://:19093,INTERNAL://:19092,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:19092,EXTERNAL://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:19093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_KRAFT_CLUSTER_ID=g9rbXaCaSGqB3CURPeEvTA
+    volumes:
+      - kafka-volume:/bitnami/kafka
+    networks:
+      - stocklet-network
+
+  # Services
+  auth-service:
+    image: stocklet/auth-service
+    build: 
+      context: ../../
+      dockerfile: build/auth-service/Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-auth-network
+    depends_on:
+      - kafka
+      - auth-service-migrations
+    env_file:
+      - ../configs/auth.env
+
+  order-service:
+    image: stocklet/order-service
+    build: 
+      context: ../../
+      dockerfile: build/order-service/Dockerfile
+    networks:
+      - stocklet-network
+      - stocklet-order-network
+    depends_on:
+      - kafka
+      - order-service-migrations
+    env_file:
+      - ../configs/order.env
+
+  # Databases
+  auth-service-postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "--dbname={POSTGRES_DB}"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - auth-service-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-auth-network
+      
+  order-service-postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "--dbname={POSTGRES_DB}"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - order-service-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-order-network
+
+  # Database Migrations
+  auth-service-migrations:
+    image: migrate/migrate:4
+    command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
+    volumes:
+      - ../../../schema/sql/auth:/migrations
+    depends_on:
+      - auth-service-postgres
+    networks:
+      - stocklet-auth-network
+
+  order-service-migrations:
+    image: migrate/migrate:4
+    command: "-path=/migrations -database postgresql://postgres:postgres@order-service-postgres:5432/postgres?sslmode=disable up"
+    volumes:
+      - ../../../schema/sql/order:/migrations
+    depends_on:
+      - order-service-postgres
+    networks:
+      - stocklet-order-network
+
+networks:
+  stocklet-network:
+  stocklet-auth-network:
+  stocklet-order-network:
+
+volumes:
+  kafka-volume:
+  auth-service-postgres-volume:
+  order-service-postgres-volume:

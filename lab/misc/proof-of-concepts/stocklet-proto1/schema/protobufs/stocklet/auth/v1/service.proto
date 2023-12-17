@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package stocklet.auth.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
-import "buf/validate/validate.proto";
 import "stocklet/auth/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
@@ -41,7 +41,7 @@ message SetPasswordRequest {
     (google.api.field_behavior) = REQUIRED,
     (buf.validate.field).string.min_len = 1
   ];
-  
+
   string password = 2 [
     (google.api.field_behavior) = REQUIRED,
     (buf.validate.field).string = {
@@ -63,9 +63,7 @@ message DeleteUserDataResponse {}
 // Auth Service
 service AuthService {
   rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
-    option (google.api.http) = {
-      get: "/v1/auth/jwks"
-    };
+    option (google.api.http) = {get: "/v1/auth/jwks"};
   }
 
   rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {

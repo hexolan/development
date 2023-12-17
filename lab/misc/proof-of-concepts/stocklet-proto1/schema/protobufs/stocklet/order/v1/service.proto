@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package stocklet.order.v1;
+
+import "google/api/annotations.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "stocklet/order/v1/events.proto";
+import "stocklet/order/v1/types.proto";
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
+
+// todo: improve - this is basic layout for planning routes
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message GetOrderResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Order Response"
+      description: "abcdef"
+    }
+    example: "{\"data\": {\"id\": \"123\"}}"
+  };
+
+  Order data = 1;
+}
+
+message GetOrdersRequest {
+  string customer_id = 1;
+}
+
+message GetOrdersResponse {
+  repeated Order data = 1;
+}
+
+message CreateOrderRequest {
+  Order order = 1;
+}
+message CreateOrderResponse {
+  Order data = 1;
+}
+
+message UpdateOrderRequest {
+  Order order = 1;
+}
+message UpdateOrderResponse {}
+
+message CancelOrderRequest {
+  string order_id = 1;
+}
+message CancelOrderResponse {}
+
+// todo: cannot delete active orders - figure out GDPR safe method of handling
+// Internal Request Payload
+message DeleteUserDataRequest {}
+
+// Internal Request Payload
+message DeleteUserDataResponse {}
+
+service OrderService {
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {get: "/v1/order/{order_id}"};
+  }
+
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
+    option (google.api.http) = {get: "/v1/order/list"};
+  }
+
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/new"
+      body: "order"
+    };
+  }
+
+  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/{order.id}"
+      body: "order"
+    };
+  }
+
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
+    option (google.api.http) = {delete: "/v1/order/{order_id}"};
+  }
+
+  // internal method
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // Internal Method
+  //
+  // Processes responses from other services to PlaceOrderEvents.
+  // > If a failure status is recieved, the order is updated and marked rejected.
+  // > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessPlaceOrderEvent(PlaceOrderEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+}
