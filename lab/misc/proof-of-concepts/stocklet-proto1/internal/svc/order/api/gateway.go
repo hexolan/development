@@ -15,12 +15,7 @@ func AttachSvcToGateway(cfg *order.ServiceConfig, svc *order.OrderService) *runt
 	mux, clientOpts := serve.NewGatewayServeBase(&cfg.Shared)
 
 	ctx := context.Background()
-	err := pb.RegisterOrderServiceHandlerFromEndpoint(
-		ctx,
-		mux,
-		"localhost:" + serve.GrpcPort, // todo: better generalisation (e.g. serve.AddrToLocalGrpc()) - change from serve.GatewayPort -> server.GrpcPort in working stocklet
-		clientOpts,
-	)
+	err := pb.RegisterOrderServiceHandlerFromEndpoint(ctx, mux, serve.AddrToGrpc("localhost"), clientOpts)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to register svc to gateway server")
 	}

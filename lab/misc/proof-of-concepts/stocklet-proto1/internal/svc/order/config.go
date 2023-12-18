@@ -16,12 +16,7 @@ type ServiceConfig struct {
 
 // load the base service configuration
 func NewServiceConfig() (*ServiceConfig, error) {
-	cfg := ServiceConfig{
-		Shared: config.SharedConfig{},
-
-		Postgres: config.PostgresConfig{},
-		Kafka: config.KafkaConfig{},
-	}
+	cfg := ServiceConfig{}
 
 	// Load the core configuration
 	if err := cfg.Shared.Load(); err != nil {

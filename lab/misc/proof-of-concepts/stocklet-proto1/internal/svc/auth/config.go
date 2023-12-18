@@ -24,12 +24,7 @@ type ServiceConfig struct {
 //
 // This involves loading the service specific options (ServiceConfigOpts)
 func NewServiceConfig() (*ServiceConfig, error) {
-	cfg := ServiceConfig{
-		Shared: config.SharedConfig{},
-		ServiceOpts: ServiceConfigOpts{},
-
-		Postgres: config.PostgresConfig{},
-	}
+	cfg := ServiceConfig{}
 
 	// load the shared config options
 	if err := cfg.Shared.Load(); err != nil {

@@ -52,7 +52,7 @@ func Gateway(mux *runtime.ServeMux) error {
 
 	// create gateway HTTP server
 	svr := &http.Server{
-		Addr: "0.0.0.0:" + GatewayPort,
+		Addr: AddrToGateway("0.0.0.0"),
 		// Handler: handler,
 		Handler: withLogger(handler),
 	}

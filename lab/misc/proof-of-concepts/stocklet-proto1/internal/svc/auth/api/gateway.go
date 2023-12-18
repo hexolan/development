@@ -15,12 +15,7 @@ func AttachSvcToGateway(cfg *auth.ServiceConfig, svc *auth.AuthService) *runtime
 	mux, clientOpts := serve.NewGatewayServeBase(&cfg.Shared)
 
 	ctx := context.Background()
-	err := pb.RegisterAuthServiceHandlerFromEndpoint(
-		ctx,
-		mux,
-		"localhost:" + serve.GrpcPort, // todo: better generalisation (e.g. serve.AddrToLocalGrpc()) - change from serve.GatewayPort -> server.GrpcPort in working stocklet
-		clientOpts,
-	)
+	err := pb.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, serve.AddrToGrpc("localhost"), clientOpts)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to register svc to gateway server")
 	}

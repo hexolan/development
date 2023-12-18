@@ -1,6 +1,14 @@
 package serve
 
 const (
-	GatewayPort string = "90"
-	GrpcPort string = "9090"
+	grpcPort string = "9090"
+	gatewayPort string = "90"
 )
+
+func AddrToGrpc(host string) string {
+	return host + ":" + grpcPort
+}
+
+func AddrToGateway(host string) string {
+	return host + ":" + gatewayPort
+}

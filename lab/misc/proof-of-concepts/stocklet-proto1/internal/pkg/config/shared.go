@@ -11,14 +11,14 @@ type SharedConfig struct {
 func (cfg *SharedConfig) Load() error {
 	// determine application mode
 	cfg.DevMode = false
-	if mode := LoadFromEnv("MODE"); mode != nil {
-		if *mode == "dev" || *mode == "development" {
+	if mode, err := RequireFromEnv("MODE"); err == nil {
+		if mode == "dev" || mode == "development" {
 			cfg.DevMode = true
 		}
 	}
 	
 	// load the Open Telemetry config
-	cfg.Otel = OtelConfig{}
+	//cfg.Otel = OtelConfig{}
 	if err := cfg.Otel.Load(); err != nil {
 		return err
 	}
