@@ -24,7 +24,7 @@ func loadConfig() *order.ServiceConfig {
 	// configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
 	metrics.InitTracerProvider(
-		cfg.Shared.Otel,
+		&cfg.Shared.Otel,
 		"order",
 	)
 
@@ -38,7 +38,7 @@ func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController)
 	}
 
 	// open a Postgres connection
-	pCl, err := storage.NewPostgresConn(cfg.Postgres)
+	pCl, err := storage.NewPostgresConn(&cfg.Postgres)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
@@ -56,7 +56,7 @@ func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.C
 
 	// open a Kafka connection
 	kCl, err := messaging.NewKafkaConn(
-		cfg.Kafka,
+		&cfg.Kafka,
 		kgo.ConsumerGroup("order-service"),
 	)
 	if err != nil {

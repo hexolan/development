@@ -7,20 +7,20 @@ import (
 // Order Service Configuration
 type ServiceConfig struct {
 	// Core Configuration
-	Shared *config.SharedConfig
+	Shared config.SharedConfig
 
 	// Dynamically loaded configuration
-	Postgres *config.PostgresConfig
-	Kafka *config.KafkaConfig
+	Postgres config.PostgresConfig
+	Kafka config.KafkaConfig
 }
 
 // load the base service configuration
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{
-		Shared: &config.SharedConfig{},
+		Shared: config.SharedConfig{},
 
-		Postgres: &config.PostgresConfig{},
-		Kafka: &config.KafkaConfig{},
+		Postgres: config.PostgresConfig{},
+		Kafka: config.KafkaConfig{},
 	}
 
 	// Load the core configuration

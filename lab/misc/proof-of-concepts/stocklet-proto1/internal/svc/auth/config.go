@@ -13,11 +13,11 @@ import (
 // Auth Service Configuration
 type ServiceConfig struct {
 	// Core configuration
-	Shared *config.SharedConfig
-	ServiceOpts *ServiceConfigOpts
+	Shared config.SharedConfig
+	ServiceOpts ServiceConfigOpts
 
 	// Dynamically loaded configuration
-	Postgres *config.PostgresConfig
+	Postgres config.PostgresConfig
 }
 
 // load the base service configuration
@@ -25,10 +25,10 @@ type ServiceConfig struct {
 // This involves loading the service specific options (ServiceConfigOpts)
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{
-		Shared: &config.SharedConfig{},
-		ServiceOpts: &ServiceConfigOpts{},
+		Shared: config.SharedConfig{},
+		ServiceOpts: ServiceConfigOpts{},
 
-		Postgres: &config.PostgresConfig{},
+		Postgres: config.PostgresConfig{},
 	}
 
 	// load the shared config options

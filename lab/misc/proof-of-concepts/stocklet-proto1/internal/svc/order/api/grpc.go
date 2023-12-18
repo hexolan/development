@@ -9,7 +9,7 @@ import (
 )
 
 func AttachSvcToGrpc(cfg *order.ServiceConfig, svc *order.OrderService) *grpc.Server {
-	svr := serve.NewGrpcServeBase(cfg.Shared)
+	svr := serve.NewGrpcServeBase(&cfg.Shared)
 	pb.RegisterOrderServiceServer(svr, svc)
 	return svr
 }

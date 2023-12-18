@@ -19,7 +19,7 @@ func loadConfig() *auth.ServiceConfig {
 	// configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
 	metrics.InitTracerProvider(
-		cfg.Shared.Otel,
+		&cfg.Shared.Otel,
 		"auth",
 	)
 

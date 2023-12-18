@@ -12,7 +12,7 @@ import (
 )
 
 func AttachSvcToGateway(cfg *auth.ServiceConfig, svc *auth.AuthService) *runtime.ServeMux {
-	mux, clientOpts := serve.NewGatewayServeBase(cfg.Shared)
+	mux, clientOpts := serve.NewGatewayServeBase(&cfg.Shared)
 
 	ctx := context.Background()
 	err := pb.RegisterAuthServiceHandlerFromEndpoint(

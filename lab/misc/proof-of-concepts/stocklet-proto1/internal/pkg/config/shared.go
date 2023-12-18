@@ -2,7 +2,7 @@ package config
 
 // Shared configuration implemented by all services
 type SharedConfig struct {
-	Otel *OtelConfig
+	Otel OtelConfig
 
 	DevMode bool
 }
@@ -18,7 +18,7 @@ func (cfg *SharedConfig) Load() error {
 	}
 	
 	// load the Open Telemetry config
-	cfg.Otel = &OtelConfig{}
+	cfg.Otel = OtelConfig{}
 	if err := cfg.Otel.Load(); err != nil {
 		return err
 	}

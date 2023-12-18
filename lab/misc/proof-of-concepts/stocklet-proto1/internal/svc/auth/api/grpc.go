@@ -9,7 +9,7 @@ import (
 )
 
 func AttachSvcToGrpc(cfg *auth.ServiceConfig, svc *auth.AuthService) *grpc.Server {
-	svr := serve.NewGrpcServeBase(cfg.Shared)
+	svr := serve.NewGrpcServeBase(&cfg.Shared)
 	pb.RegisterAuthServiceServer(svr, svc)
 	return svr
 }
