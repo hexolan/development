@@ -18,7 +18,7 @@ func AttachSvcToGateway(cfg *auth.ServiceConfig, svc *auth.AuthService) *runtime
 	err := pb.RegisterAuthServiceHandlerFromEndpoint(
 		ctx,
 		mux,
-		"localhost:" + serve.GatewayPort,
+		"localhost:" + serve.GrpcPort, // todo: better generalisation (e.g. serve.AddrToLocalGrpc()) - change from serve.GatewayPort -> server.GrpcPort in working stocklet
 		clientOpts,
 	)
 	if err != nil {

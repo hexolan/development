@@ -21,10 +21,8 @@ func loadConfig() *order.ServiceConfig {
 		log.Fatal().Err(err).Msg("")
 	}
 
-	// configure the logger
+	// configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
-
-	// configure OTEL
 	metrics.InitTracerProvider(
 		cfg.Shared.Otel,
 		"order",

@@ -37,26 +37,6 @@ static_resources:
                   prefix: /v1/order
                 route:
                   cluster: order_service_gw
-              - match:
-                  prefix: /v1/payment
-                route:
-                  cluster: payment_service_gw
-              - match:
-                  prefix: /v1/product
-                route:
-                  cluster: product_service_gw
-              - match:
-                  prefix: /v1/shipping
-                route:
-                  cluster: shipping_service_gw
-              - match:
-                  prefix: /v1/user
-                route:
-                  cluster: user_service_gw
-              - match:
-                  prefix: /v1/warehouse
-                route:
-                  cluster: warehouse_service_gw
           http_filters:
           - name: envoy.filters.http.jwt_authn
             typed_config:
@@ -127,64 +107,4 @@ static_resources:
             address:
               socket_address:
                 address: order-service
-                port_value: 90
-  - name: payment_service_gw
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: payment_service_gw
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: payment-service
-                port_value: 90
-  - name: product_service_gw
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: product_service_gw
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: product-service
-                port_value: 90
-  - name: shipping_service_gw
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: shipping_service_gw
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: shipping-service
-                port_value: 90
-  - name: user_service_gw
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: user_service_gw
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: user-service
-                port_value: 90
-  - name: warehouse_service_gw
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: warehouse_service_gw
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: warehouse-service
                 port_value: 90

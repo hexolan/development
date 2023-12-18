@@ -12,5 +12,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/auth-service ./cmd/au
 # Runtime Environment
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /bin/auth-service .
-EXPOSE 3000
+
+# Expose ports
+EXPOSE 90
+EXPOSE 9090
+
 CMD ["./auth-service"]

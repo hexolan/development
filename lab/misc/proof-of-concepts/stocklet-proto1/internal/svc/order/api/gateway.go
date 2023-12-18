@@ -18,7 +18,7 @@ func AttachSvcToGateway(cfg *order.ServiceConfig, svc *order.OrderService) *runt
 	err := pb.RegisterOrderServiceHandlerFromEndpoint(
 		ctx,
 		mux,
-		"localhost:" + serve.GatewayPort,
+		"localhost:" + serve.GrpcPort, // todo: better generalisation (e.g. serve.AddrToLocalGrpc()) - change from serve.GatewayPort -> server.GrpcPort in working stocklet
 		clientOpts,
 	)
 	if err != nil {

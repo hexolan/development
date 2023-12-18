@@ -15,6 +15,8 @@ services:
       context: ../../build/edge-gateway
     ports:
       - 80:80
+    depends_on:
+      - otel-collector
     networks:
       - stocklet-network
 
@@ -33,6 +35,10 @@ services:
       - KAFKA_KRAFT_CLUSTER_ID=g9rbXaCaSGqB3CURPeEvTA
     volumes:
       - kafka-volume:/bitnami/kafka
+    # for dev purposes.
+    # all svcs depend on kafka. so this is to make it easier
+    depends_on:
+      - otel-collector
     networks:
       - stocklet-network
 
@@ -74,7 +80,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "--dbname={POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready", "--username={POSTGRES_USER}", "--dbname={POSTGRES_DB}"]
       interval: 30s
       timeout: 15s
       retries: 3
@@ -92,7 +98,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "--dbname={POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready", "--username={POSTGRES_USER}", "--dbname={POSTGRES_DB}"]
       interval: 30s
       timeout: 15s
       retries: 3

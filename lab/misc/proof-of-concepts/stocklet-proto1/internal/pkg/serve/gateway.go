@@ -3,6 +3,7 @@ package serve
 import (
 	"net/http"
 
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -27,6 +28,16 @@ func NewGatewayServeBase(cfg *config.SharedConfig) (*runtime.ServeMux, []grpc.Di
 	return mux, clientOpts
 }
 
+// todo: improve - http logger for debug
+func withLogger(h http.Handler) http.Handler {
+    return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+			log.Info().Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
+		},
+	)
+}
+
 func Gateway(mux *runtime.ServeMux) error {
 	// create OTEL instrumentation handler
 	handler := otelhttp.NewHandler(
@@ -42,7 +53,8 @@ func Gateway(mux *runtime.ServeMux) error {
 	// create gateway HTTP server
 	svr := &http.Server{
 		Addr: "0.0.0.0:" + GatewayPort,
-		Handler: handler,
+		// Handler: handler,
+		Handler: withLogger(handler),
 	}
 
 	// serve

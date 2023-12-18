@@ -13,6 +13,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
+// todo: logger for GRPC
 func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 	// attach OTEL metrics middleware
 	svr := grpc.NewServer(
