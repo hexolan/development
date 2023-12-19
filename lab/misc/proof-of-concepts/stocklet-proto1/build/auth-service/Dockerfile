@@ -13,8 +13,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/auth-service ./cmd/au
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /bin/auth-service .
 
-# Expose ports
-EXPOSE 90
-EXPOSE 9090
+EXPOSE 90 9090
 
 CMD ["./auth-service"]

@@ -13,8 +13,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/order-service ./cmd/o
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /bin/order-service .
 
-# Expose ports
-EXPOSE 90
-EXPOSE 9090
+EXPOSE 90 9090
 
 CMD ["./order-service"]

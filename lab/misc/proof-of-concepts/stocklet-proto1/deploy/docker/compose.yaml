@@ -33,6 +33,12 @@ services:
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_KRAFT_CLUSTER_ID=g9rbXaCaSGqB3CURPeEvTA
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     volumes:
       - kafka-volume:/bitnami/kafka
     # for dev purposes.
@@ -52,8 +58,10 @@ services:
       - stocklet-network
       - stocklet-auth-network
     depends_on:
-      - kafka
-      - auth-service-migrations
+      kafka:
+        condition: service_healthy
+      auth-service-migrations:
+        condition: service_completed_successfully
     env_file:
       - ../configs/auth.env
 
@@ -66,21 +74,23 @@ services:
       - stocklet-network
       - stocklet-order-network
     depends_on:
-      - kafka
-      - order-service-migrations
+      kafka:
+        condition: service_healthy
+      order-service-migrations:
+        condition: service_completed_successfully
     env_file:
       - ../configs/order.env
 
   # Databases
   auth-service-postgres:
-    image: postgres:15-alpine
+    image: postgres:16-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "--username={POSTGRES_USER}", "--dbname={POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 30s
       timeout: 15s
       retries: 3
@@ -91,14 +101,14 @@ services:
       - stocklet-auth-network
       
   order-service-postgres:
-    image: postgres:15-alpine
+    image: postgres:16-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "--username={POSTGRES_USER}", "--dbname={POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 30s
       timeout: 15s
       retries: 3
@@ -113,9 +123,10 @@ services:
     image: migrate/migrate:4
     command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
     volumes:
-      - ../../../schema/sql/auth:/migrations
+      - ../../schema/sql/auth:/migrations
     depends_on:
-      - auth-service-postgres
+      auth-service-postgres:
+        condition: service_completed_successfully
     networks:
       - stocklet-auth-network
 
@@ -123,9 +134,10 @@ services:
     image: migrate/migrate:4
     command: "-path=/migrations -database postgresql://postgres:postgres@order-service-postgres:5432/postgres?sslmode=disable up"
     volumes:
-      - ../../../schema/sql/order:/migrations
+      - ../../schema/sql/order:/migrations
     depends_on:
-      - order-service-postgres
+      order-service-postgres:
+        condition: service_completed_successfully
     networks:
       - stocklet-order-network
 
