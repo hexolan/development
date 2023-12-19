@@ -126,7 +126,7 @@ services:
       - ../../schema/sql/auth:/migrations
     depends_on:
       auth-service-postgres:
-        condition: service_completed_successfully
+        condition: service_healthy
     networks:
       - stocklet-auth-network
 
@@ -137,7 +137,7 @@ services:
       - ../../schema/sql/order:/migrations
     depends_on:
       order-service-postgres:
-        condition: service_completed_successfully
+        condition: service_healthy
     networks:
       - stocklet-order-network
 
