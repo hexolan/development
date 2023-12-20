@@ -10,6 +10,31 @@ import "stocklet/auth/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
+service AuthService {
+  rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
+    option (google.api.http) = {get: "/v1/auth/jwks"};
+  }
+
+  rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+
+  rpc SetPassword(SetPasswordRequest) returns (SetPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/password"
+      body: "*"
+    };
+  }
+
+  // internal method
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+}
+
 message GetJwksRequest {}
 
 message GetJwksResponse {
@@ -59,29 +84,3 @@ message SetPasswordResponse {
 // Internal Request Payloads
 message DeleteUserDataRequest {}
 message DeleteUserDataResponse {}
-
-// Auth Service
-service AuthService {
-  rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
-    option (google.api.http) = {get: "/v1/auth/jwks"};
-  }
-
-  rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth/login"
-      body: "*"
-    };
-  }
-
-  rpc SetPassword(SetPasswordRequest) returns (SetPasswordResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth/password"
-      body: "*"
-    };
-  }
-
-  // internal method
-  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
-    option (google.api.method_visibility).restriction = "INTERNAL";
-  }
-}

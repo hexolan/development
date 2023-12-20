@@ -7,14 +7,12 @@
 package order_v1
 
 import (
-	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "google.golang.org/genproto/googleapis/api/visibility"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -23,538 +21,6 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
-
-// todo: improve - this is basic layout for planning routes
-type GetOrderRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	OrderId string `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-}
-
-func (x *GetOrderRequest) Reset() {
-	*x = GetOrderRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetOrderRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetOrderRequest) ProtoMessage() {}
-
-func (x *GetOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetOrderRequest.ProtoReflect.Descriptor instead.
-func (*GetOrderRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GetOrderRequest) GetOrderId() string {
-	if x != nil {
-		return x.OrderId
-	}
-	return ""
-}
-
-type GetOrderResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Data *Order `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-}
-
-func (x *GetOrderResponse) Reset() {
-	*x = GetOrderResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetOrderResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetOrderResponse) ProtoMessage() {}
-
-func (x *GetOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetOrderResponse.ProtoReflect.Descriptor instead.
-func (*GetOrderResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetOrderResponse) GetData() *Order {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type GetOrdersRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	CustomerId string `protobuf:"bytes,1,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
-}
-
-func (x *GetOrdersRequest) Reset() {
-	*x = GetOrdersRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetOrdersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetOrdersRequest) ProtoMessage() {}
-
-func (x *GetOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetOrdersRequest.ProtoReflect.Descriptor instead.
-func (*GetOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GetOrdersRequest) GetCustomerId() string {
-	if x != nil {
-		return x.CustomerId
-	}
-	return ""
-}
-
-type GetOrdersResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Data []*Order `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty"`
-}
-
-func (x *GetOrdersResponse) Reset() {
-	*x = GetOrdersResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetOrdersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetOrdersResponse) ProtoMessage() {}
-
-func (x *GetOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetOrdersResponse.ProtoReflect.Descriptor instead.
-func (*GetOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetOrdersResponse) GetData() []*Order {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type CreateOrderRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Order *Order `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-}
-
-func (x *CreateOrderRequest) Reset() {
-	*x = CreateOrderRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateOrderRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrderRequest) ProtoMessage() {}
-
-func (x *CreateOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateOrderRequest.ProtoReflect.Descriptor instead.
-func (*CreateOrderRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CreateOrderRequest) GetOrder() *Order {
-	if x != nil {
-		return x.Order
-	}
-	return nil
-}
-
-type CreateOrderResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Data *Order `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-}
-
-func (x *CreateOrderResponse) Reset() {
-	*x = CreateOrderResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateOrderResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateOrderResponse) ProtoMessage() {}
-
-func (x *CreateOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateOrderResponse.ProtoReflect.Descriptor instead.
-func (*CreateOrderResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CreateOrderResponse) GetData() *Order {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type UpdateOrderRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Order *Order `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-}
-
-func (x *UpdateOrderRequest) Reset() {
-	*x = UpdateOrderRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[6]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *UpdateOrderRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateOrderRequest) ProtoMessage() {}
-
-func (x *UpdateOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[6]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateOrderRequest.ProtoReflect.Descriptor instead.
-func (*UpdateOrderRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *UpdateOrderRequest) GetOrder() *Order {
-	if x != nil {
-		return x.Order
-	}
-	return nil
-}
-
-type UpdateOrderResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *UpdateOrderResponse) Reset() {
-	*x = UpdateOrderResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[7]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *UpdateOrderResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateOrderResponse) ProtoMessage() {}
-
-func (x *UpdateOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[7]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateOrderResponse.ProtoReflect.Descriptor instead.
-func (*UpdateOrderResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{7}
-}
-
-type CancelOrderRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	OrderId string `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-}
-
-func (x *CancelOrderRequest) Reset() {
-	*x = CancelOrderRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CancelOrderRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CancelOrderRequest) ProtoMessage() {}
-
-func (x *CancelOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CancelOrderRequest.ProtoReflect.Descriptor instead.
-func (*CancelOrderRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *CancelOrderRequest) GetOrderId() string {
-	if x != nil {
-		return x.OrderId
-	}
-	return ""
-}
-
-type CancelOrderResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *CancelOrderResponse) Reset() {
-	*x = CancelOrderResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CancelOrderResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CancelOrderResponse) ProtoMessage() {}
-
-func (x *CancelOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CancelOrderResponse.ProtoReflect.Descriptor instead.
-func (*CancelOrderResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{9}
-}
-
-// todo: cannot delete active orders - figure out GDPR safe method of handling
-// Internal Request Payload
-type DeleteUserDataRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *DeleteUserDataRequest) Reset() {
-	*x = DeleteUserDataRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[10]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeleteUserDataRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteUserDataRequest) ProtoMessage() {}
-
-func (x *DeleteUserDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[10]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteUserDataRequest.ProtoReflect.Descriptor instead.
-func (*DeleteUserDataRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{10}
-}
-
-// Internal Request Payload
-type DeleteUserDataResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *DeleteUserDataResponse) Reset() {
-	*x = DeleteUserDataResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_service_proto_msgTypes[11]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *DeleteUserDataResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteUserDataResponse) ProtoMessage() {}
-
-func (x *DeleteUserDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_service_proto_msgTypes[11]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteUserDataResponse.ProtoReflect.Descriptor instead.
-func (*DeleteUserDataResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_service_proto_rawDescGZIP(), []int{11}
-}
 
 var File_stocklet_order_v1_service_proto protoreflect.FileDescriptor
 
@@ -567,54 +33,11 @@ var file_stocklet_order_v1_service_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x76,
 	0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a,
 	0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
-	0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x2d, 0x67, 0x65, 0x6e, 0x2d, 0x6f, 0x70, 0x65, 0x6e, 0x61, 0x70, 0x69,
-	0x76, 0x32, 0x2f, 0x6f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x73, 0x74,
+	0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x73, 0x74,
 	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f,
-	0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1d, 0x73, 0x74,
+	0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x20, 0x73, 0x74,
 	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x2f,
-	0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x2c, 0x0a, 0x0f, 0x47,
-	0x65, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19,
-	0x0a, 0x08, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x07, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x64, 0x22, 0x78, 0x0a, 0x10, 0x47, 0x65, 0x74,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2c, 0x0a,
-	0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74,
-	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x36, 0x92, 0x41, 0x33,
-	0x0a, 0x18, 0x2a, 0x0e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x20, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x32, 0x06, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x32, 0x17, 0x7b, 0x22, 0x64, 0x61,
-	0x74, 0x61, 0x22, 0x3a, 0x20, 0x7b, 0x22, 0x69, 0x64, 0x22, 0x3a, 0x20, 0x22, 0x31, 0x32, 0x33,
-	0x22, 0x7d, 0x7d, 0x22, 0x33, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a, 0x0b, 0x63, 0x75, 0x73, 0x74, 0x6f,
-	0x6d, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x75,
-	0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x49, 0x64, 0x22, 0x41, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x4f,
-	0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2c, 0x0a,
-	0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74,
-	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x44, 0x0a, 0x12, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x18, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65,
-	0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x05, 0x6f, 0x72, 0x64, 0x65,
-	0x72, 0x22, 0x43, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2c, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65,
-	0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72,
-	0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x44, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x05,
-	0x6f, 0x72, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x73, 0x74,
-	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
-	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x05, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x22, 0x15, 0x0a, 0x13,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x2f, 0x0a, 0x12, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x4f, 0x72, 0x64,
-	0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x72, 0x64,
-	0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6f, 0x72, 0x64,
-	0x65, 0x72, 0x49, 0x64, 0x22, 0x15, 0x0a, 0x13, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x4f, 0x72,
-	0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x17, 0x0a, 0x15, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x22, 0x18, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73,
-	0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xce,
+	0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x32, 0xce,
 	0x06, 0x0a, 0x0c, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12,
 	0x71, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x22, 0x2e, 0x73, 0x74,
 	0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e,
@@ -675,61 +98,42 @@ var file_stocklet_order_v1_service_proto_rawDesc = []byte{
 	0x64, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
-var (
-	file_stocklet_order_v1_service_proto_rawDescOnce sync.Once
-	file_stocklet_order_v1_service_proto_rawDescData = file_stocklet_order_v1_service_proto_rawDesc
-)
-
-func file_stocklet_order_v1_service_proto_rawDescGZIP() []byte {
-	file_stocklet_order_v1_service_proto_rawDescOnce.Do(func() {
-		file_stocklet_order_v1_service_proto_rawDescData = protoimpl.X.CompressGZIP(file_stocklet_order_v1_service_proto_rawDescData)
-	})
-	return file_stocklet_order_v1_service_proto_rawDescData
-}
-
-var file_stocklet_order_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_stocklet_order_v1_service_proto_goTypes = []interface{}{
 	(*GetOrderRequest)(nil),        // 0: stocklet.order.v1.GetOrderRequest
-	(*GetOrderResponse)(nil),       // 1: stocklet.order.v1.GetOrderResponse
-	(*GetOrdersRequest)(nil),       // 2: stocklet.order.v1.GetOrdersRequest
-	(*GetOrdersResponse)(nil),      // 3: stocklet.order.v1.GetOrdersResponse
-	(*CreateOrderRequest)(nil),     // 4: stocklet.order.v1.CreateOrderRequest
-	(*CreateOrderResponse)(nil),    // 5: stocklet.order.v1.CreateOrderResponse
-	(*UpdateOrderRequest)(nil),     // 6: stocklet.order.v1.UpdateOrderRequest
-	(*UpdateOrderResponse)(nil),    // 7: stocklet.order.v1.UpdateOrderResponse
-	(*CancelOrderRequest)(nil),     // 8: stocklet.order.v1.CancelOrderRequest
-	(*CancelOrderResponse)(nil),    // 9: stocklet.order.v1.CancelOrderResponse
-	(*DeleteUserDataRequest)(nil),  // 10: stocklet.order.v1.DeleteUserDataRequest
-	(*DeleteUserDataResponse)(nil), // 11: stocklet.order.v1.DeleteUserDataResponse
-	(*Order)(nil),                  // 12: stocklet.order.v1.Order
-	(*PlaceOrderEvent)(nil),        // 13: stocklet.order.v1.PlaceOrderEvent
-	(*emptypb.Empty)(nil),          // 14: google.protobuf.Empty
+	(*GetOrdersRequest)(nil),       // 1: stocklet.order.v1.GetOrdersRequest
+	(*CreateOrderRequest)(nil),     // 2: stocklet.order.v1.CreateOrderRequest
+	(*UpdateOrderRequest)(nil),     // 3: stocklet.order.v1.UpdateOrderRequest
+	(*CancelOrderRequest)(nil),     // 4: stocklet.order.v1.CancelOrderRequest
+	(*DeleteUserDataRequest)(nil),  // 5: stocklet.order.v1.DeleteUserDataRequest
+	(*PlaceOrderEvent)(nil),        // 6: stocklet.order.v1.PlaceOrderEvent
+	(*GetOrderResponse)(nil),       // 7: stocklet.order.v1.GetOrderResponse
+	(*GetOrdersResponse)(nil),      // 8: stocklet.order.v1.GetOrdersResponse
+	(*CreateOrderResponse)(nil),    // 9: stocklet.order.v1.CreateOrderResponse
+	(*UpdateOrderResponse)(nil),    // 10: stocklet.order.v1.UpdateOrderResponse
+	(*CancelOrderResponse)(nil),    // 11: stocklet.order.v1.CancelOrderResponse
+	(*DeleteUserDataResponse)(nil), // 12: stocklet.order.v1.DeleteUserDataResponse
+	(*emptypb.Empty)(nil),          // 13: google.protobuf.Empty
 }
 var file_stocklet_order_v1_service_proto_depIdxs = []int32{
-	12, // 0: stocklet.order.v1.GetOrderResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 1: stocklet.order.v1.GetOrdersResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 2: stocklet.order.v1.CreateOrderRequest.order:type_name -> stocklet.order.v1.Order
-	12, // 3: stocklet.order.v1.CreateOrderResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 4: stocklet.order.v1.UpdateOrderRequest.order:type_name -> stocklet.order.v1.Order
-	0,  // 5: stocklet.order.v1.OrderService.GetOrder:input_type -> stocklet.order.v1.GetOrderRequest
-	2,  // 6: stocklet.order.v1.OrderService.GetOrders:input_type -> stocklet.order.v1.GetOrdersRequest
-	4,  // 7: stocklet.order.v1.OrderService.CreateOrder:input_type -> stocklet.order.v1.CreateOrderRequest
-	6,  // 8: stocklet.order.v1.OrderService.UpdateOrder:input_type -> stocklet.order.v1.UpdateOrderRequest
-	8,  // 9: stocklet.order.v1.OrderService.CancelOrder:input_type -> stocklet.order.v1.CancelOrderRequest
-	10, // 10: stocklet.order.v1.OrderService.DeleteUserData:input_type -> stocklet.order.v1.DeleteUserDataRequest
-	13, // 11: stocklet.order.v1.OrderService.ProcessPlaceOrderEvent:input_type -> stocklet.order.v1.PlaceOrderEvent
-	1,  // 12: stocklet.order.v1.OrderService.GetOrder:output_type -> stocklet.order.v1.GetOrderResponse
-	3,  // 13: stocklet.order.v1.OrderService.GetOrders:output_type -> stocklet.order.v1.GetOrdersResponse
-	5,  // 14: stocklet.order.v1.OrderService.CreateOrder:output_type -> stocklet.order.v1.CreateOrderResponse
-	7,  // 15: stocklet.order.v1.OrderService.UpdateOrder:output_type -> stocklet.order.v1.UpdateOrderResponse
-	9,  // 16: stocklet.order.v1.OrderService.CancelOrder:output_type -> stocklet.order.v1.CancelOrderResponse
-	11, // 17: stocklet.order.v1.OrderService.DeleteUserData:output_type -> stocklet.order.v1.DeleteUserDataResponse
-	14, // 18: stocklet.order.v1.OrderService.ProcessPlaceOrderEvent:output_type -> google.protobuf.Empty
-	12, // [12:19] is the sub-list for method output_type
-	5,  // [5:12] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	0,  // 0: stocklet.order.v1.OrderService.GetOrder:input_type -> stocklet.order.v1.GetOrderRequest
+	1,  // 1: stocklet.order.v1.OrderService.GetOrders:input_type -> stocklet.order.v1.GetOrdersRequest
+	2,  // 2: stocklet.order.v1.OrderService.CreateOrder:input_type -> stocklet.order.v1.CreateOrderRequest
+	3,  // 3: stocklet.order.v1.OrderService.UpdateOrder:input_type -> stocklet.order.v1.UpdateOrderRequest
+	4,  // 4: stocklet.order.v1.OrderService.CancelOrder:input_type -> stocklet.order.v1.CancelOrderRequest
+	5,  // 5: stocklet.order.v1.OrderService.DeleteUserData:input_type -> stocklet.order.v1.DeleteUserDataRequest
+	6,  // 6: stocklet.order.v1.OrderService.ProcessPlaceOrderEvent:input_type -> stocklet.order.v1.PlaceOrderEvent
+	7,  // 7: stocklet.order.v1.OrderService.GetOrder:output_type -> stocklet.order.v1.GetOrderResponse
+	8,  // 8: stocklet.order.v1.OrderService.GetOrders:output_type -> stocklet.order.v1.GetOrdersResponse
+	9,  // 9: stocklet.order.v1.OrderService.CreateOrder:output_type -> stocklet.order.v1.CreateOrderResponse
+	10, // 10: stocklet.order.v1.OrderService.UpdateOrder:output_type -> stocklet.order.v1.UpdateOrderResponse
+	11, // 11: stocklet.order.v1.OrderService.CancelOrder:output_type -> stocklet.order.v1.CancelOrderResponse
+	12, // 12: stocklet.order.v1.OrderService.DeleteUserData:output_type -> stocklet.order.v1.DeleteUserDataResponse
+	13, // 13: stocklet.order.v1.OrderService.ProcessPlaceOrderEvent:output_type -> google.protobuf.Empty
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_stocklet_order_v1_service_proto_init() }
@@ -738,166 +142,19 @@ func file_stocklet_order_v1_service_proto_init() {
 		return
 	}
 	file_stocklet_order_v1_events_proto_init()
-	file_stocklet_order_v1_types_proto_init()
-	if !protoimpl.UnsafeEnabled {
-		file_stocklet_order_v1_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetOrderRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetOrderResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetOrdersRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetOrdersResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateOrderRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateOrderResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateOrderRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateOrderResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CancelOrderRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CancelOrderResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteUserDataRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_stocklet_order_v1_service_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteUserDataResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-	}
+	file_stocklet_order_v1_requests_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_stocklet_order_v1_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_stocklet_order_v1_service_proto_goTypes,
 		DependencyIndexes: file_stocklet_order_v1_service_proto_depIdxs,
-		MessageInfos:      file_stocklet_order_v1_service_proto_msgTypes,
 	}.Build()
 	File_stocklet_order_v1_service_proto = out.File
 	file_stocklet_order_v1_service_proto_rawDesc = nil

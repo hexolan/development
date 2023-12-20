@@ -40,9 +40,9 @@ type OrderServiceClient interface {
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
 	// internal method
 	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
-	// Internal Method
+	// Internal Event Methods
 	//
-	// Processes responses from other services to PlaceOrderEvents.
+	// Processes PlaceOrderEvents.
 	// > If a failure status is recieved, the order is updated and marked rejected.
 	// > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
 	//
@@ -134,9 +134,9 @@ type OrderServiceServer interface {
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
 	// internal method
 	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
-	// Internal Method
+	// Internal Event Methods
 	//
-	// Processes responses from other services to PlaceOrderEvents.
+	// Processes PlaceOrderEvents.
 	// > If a failure status is recieved, the order is updated and marked rejected.
 	// > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
 	//

@@ -305,7 +305,6 @@ definitions:
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
-    title: "todo: work on models\r\ntodo: event schemas"
   v1SetPasswordRequest:
     type: object
     properties:

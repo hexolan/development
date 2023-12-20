@@ -6,8 +6,6 @@ import "buf/validate/validate.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
-// todo: work on models
-// todo: event schemas
 enum OrderStatus {
   ORDER_STATUS_UNSPECIFIED = 0;
   ORDER_STATUS_PENDING = 1;
