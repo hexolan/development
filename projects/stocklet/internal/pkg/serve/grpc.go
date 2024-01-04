@@ -13,6 +13,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
+// todo: logger for GRPC
 func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 	// attach OTEL metrics middleware
 	svr := grpc.NewServer(
@@ -35,9 +36,9 @@ func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 }
 
 func Grpc(svr *grpc.Server) {
-	lis, err := net.Listen("tcp", "0.0.0.0:" + GrpcPort)
+	lis, err := net.Listen("tcp", AddrToGrpc("0.0.0.0"))
 	if err != nil {
-		log.Panic().Err(err).Str("port", GrpcPort).Msg("failed to listen on gRPC port")
+		log.Panic().Err(err).Str("port", grpcPort).Msg("failed to listen on gRPC port")
 	}
 
 	err = svr.Serve(lis)

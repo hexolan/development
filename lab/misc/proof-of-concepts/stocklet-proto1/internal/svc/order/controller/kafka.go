@@ -59,8 +59,8 @@ func (c kafkaController) dispatchEvent(topic string, wireEvt []byte) {
 func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
 	wireEvt, err := proto.Marshal(evt)
 	if err != nil {
-		// todo: handling
-		panic(err)
+		// todo: proper error handling
+		log.Panic().Err(err).Msg("error marshaling protobuf event")
 	}
 
 	return wireEvt

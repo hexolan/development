@@ -320,7 +320,8 @@ func (x *SetPasswordResponse) GetDetail() string {
 	return ""
 }
 
-// Internal Request Payload
+// todo:
+// Internal Request Payloads
 type DeleteUserDataRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -359,7 +360,6 @@ func (*DeleteUserDataRequest) Descriptor() ([]byte, []int) {
 	return file_stocklet_auth_v1_service_proto_rawDescGZIP(), []int{6}
 }
 
-// Internal Request Payload
 type DeleteUserDataResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

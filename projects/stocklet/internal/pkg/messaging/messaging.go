@@ -1,5 +1,12 @@
 package messaging
 
+// Consumer Interface
+type EventConsumerController interface {
+	Start()
+	Stop()
+}
+
+// Topic Definitions
 const (
 	// RegEx
 	Order_State_Catchall string = "order\\.state\\."
