@@ -58,12 +58,14 @@ func (c kafkaConsumerController) Start() {
 }
 
 func (c kafkaConsumerController) Stop() {
-	// cancel the consumer context
+	// Cancel the consumer context
 	c.ctxCancel()
 }
 
 func (c kafkaConsumerController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
+
+	// Process each message from the topic
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
 		var event pb.PlaceOrderEvent
@@ -72,7 +74,7 @@ func (c kafkaConsumerController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 			log.Panic().Err(err).Msg("consumer: failed to unmarshal place order event")
 		}
 
-		// Process the Event
+		// Process the event
 		ctx := context.Background()
 		c.svc.ProcessPlaceOrderEvent(ctx, &event)
 
