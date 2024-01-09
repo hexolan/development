@@ -90,16 +90,19 @@ func (svc *AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*p
 
 // todo: docs
 func (svc *AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordRequest) (*pb.LoginPasswordResponse, error) {
+	// todo: implement
 	log.Info().Msg("testing")
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 
 // todo: docs
 func (svc *AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
+	// todo: implement
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 
 // todo: docs
 func (svc *AuthService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDataRequest) (*pb.DeleteUserDataResponse, error) {
+	// todo: implement
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }

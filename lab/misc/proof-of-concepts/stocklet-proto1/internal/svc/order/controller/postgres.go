@@ -47,8 +47,7 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id string) (*map[string]int32, error) {
 	rows, err := c.pCl.Query(ctx, (pgOrderItemsBaseQuery + " WHERE order_id=$1"), id)
 	if err != nil {
-		// todo: wrap in service error
-		return nil, err
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error wilst fetching order items", err)
 	}
 
 	orderItems := make(map[string]int32)
@@ -62,17 +61,15 @@ func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id strin
 			productQuantity,
 		)
 		if err != nil {
-			// todo: handling
-			// return service error - something went wrong?
-			continue
+			// something went wrong when scanning an order item
+			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan an order item", err)
 		}
 		
 		orderItems[productId] = productQuantity
 	}
 
 	if rows.Err() != nil {
-		// todo: wrap with service error
-		return nil, rows.Err()
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst scanning order item rows", rows.Err())
 	}
 
 	return &orderItems, nil

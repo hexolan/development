@@ -73,19 +73,19 @@ func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// Decode from base64
 	pkBytes, err := base64.StdEncoding.DecodeString(pkB64)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "the provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
 	}
 
 	// Decode the PEM key
 	pkBlock, _ := pem.Decode(pkBytes)
 	if pkBlock == nil {
-		return errors.NewServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid PEM format")
+		return errors.NewServiceError(errors.ErrCodeService, "the provided 'AUTH_PRIVATE_KEY' is not valid PEM format")
 	}
 
 	// Parse the block to a ecdsa.PrivateKey object
 	privKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to an ECDSA private key", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse the provided 'AUTH_PRIVATE_KEY' to an ECDSA private key", err)
 	}
 
 	opts.PrivateKey = privKey
