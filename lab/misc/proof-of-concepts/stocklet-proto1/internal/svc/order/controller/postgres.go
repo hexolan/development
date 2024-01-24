@@ -75,7 +75,7 @@ func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id strin
 	return &orderItems, nil
 }
 
-func (c postgresController) getOrderWithItems(ctx context.Context, order *pb.Order) (*pb.Order, error) {
+func (c postgresController) appendOrderItems(ctx context.Context, order *pb.Order) (*pb.Order, error) {
 	// Load the order items
 	orderItems, err := c.getOrderItemsByOrderId(ctx, order.Id)
 	if err != nil {
@@ -103,7 +103,7 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 	}
 
 	// Add the order items and return
-	order, err = c.getOrderWithItems(ctx, order)
+	order, err = c.appendOrderItems(ctx, order)
 	if err != nil {
 		return nil, err
 	}

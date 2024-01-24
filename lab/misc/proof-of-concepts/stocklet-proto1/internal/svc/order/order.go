@@ -105,10 +105,24 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 }
 
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
+	// idea:
+	// on change of thought, have separate API for each editable property?
+	
+
+	// alternatively keep as is, patch:
+	// look at: https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/
+
 	// Validate the inputs
+	// req.Order
+
+	// Merge the order patch in the request with current state
+	
+	// todo: validate merged
+	// ... patchedOrder 
+	patchedOrder := req.Order
 
 	// Update the order (db level)
-	err := svc.StrCtrl.UpdateOrder(ctx, req.Order)
+	err := svc.StrCtrl.UpdateOrder(ctx, patchedOrder)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
