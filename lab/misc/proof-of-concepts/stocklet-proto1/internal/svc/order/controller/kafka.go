@@ -98,7 +98,7 @@ func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
 			&pb.OrderStateEvent{
 				Type: pb.OrderStateEvent_TYPE_DELETED,
 				Payload: &pb.Order{
-					Id: req.GetOrderId(),
+					Id: req.GetId(),
 				},
 			},
 		),

@@ -2,9 +2,11 @@ package order
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -66,7 +68,7 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 	}
 	
 	// Get the order from the storage controller
-	order, err := svc.StrCtrl.GetOrderById(ctx, req.GetOrderId())
+	order, err := svc.StrCtrl.GetOrderById(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +119,12 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 
 	// Merge the order patch in the request with current state
 	
+	// todo: delete after
+	// for testing
+	// todo: check field_mask and order object
+	b, _ := json.Marshal(req)
+	fmt.Print(b)
+
 	// todo: validate merged
 	// ... patchedOrder 
 	patchedOrder := req.Order

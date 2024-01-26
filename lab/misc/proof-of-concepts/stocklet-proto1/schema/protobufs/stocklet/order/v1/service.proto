@@ -12,7 +12,7 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;
 
 service OrderService {
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
-    option (google.api.http) = {get: "/v1/order/{order_id}"};
+    option (google.api.http) = {get: "/v1/order/{id}"};
   }
 
   rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
@@ -27,14 +27,26 @@ service OrderService {
   }
 
   rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
+    // todo: ensure proper implementation
+    // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/
+    // option (google.api.http) = {
+    //   put: "/v1/order/{order.id}"
+    //   body: "order"
+    //   additional_bindings {
+    //     patch: "/v1/order/{order.id}"
+    //     body: "order"
+    //   }
+    // };
+
+    // with only patch (PUT requires full resource)
     option (google.api.http) = {
-      post: "/v1/order/{order.id}"
+      patch: "/v1/order/{order.id}"
       body: "order"
     };
   }
 
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
-    option (google.api.http) = {delete: "/v1/order/{order_id}"};
+    option (google.api.http) = {delete: "/v1/order/{id}"};
   }
 
   // internal method

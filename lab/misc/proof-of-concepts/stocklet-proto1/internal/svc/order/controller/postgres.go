@@ -27,7 +27,7 @@ func NewPostgresController(pCl *pgxpool.Pool, evtC order.EventController) order.
 }
 
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
-	var order *pb.Order
+	var order pb.Order
 
 	err := row.Scan(
 		&order.Id, 
@@ -40,7 +40,7 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 		return nil, err
 	}
 	
-	return order, nil
+	return &order, nil
 }
 
 // Get items included in an order (by order id)
@@ -99,6 +99,9 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 	)
 	order, err := scanRowToOrder(row)
 	if err != nil {
+		// todo: ascertaining error
+		// order not found?
+		// return appropriate code
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
 	}
 

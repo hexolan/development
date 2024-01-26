@@ -3,6 +3,7 @@ syntax = "proto3";
 package stocklet.order.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "stocklet/order/v1/types.proto";
 
@@ -52,12 +53,13 @@ message CreateOrderResponse {
 
 message UpdateOrderRequest {
   Order order = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
 
 message UpdateOrderResponse {}
 
 message CancelOrderRequest {
-  string id = 1; [(buf.validate.field).string.min_len = 1];
+  string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message CancelOrderResponse {}

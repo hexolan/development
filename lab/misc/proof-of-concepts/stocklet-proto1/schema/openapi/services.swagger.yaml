@@ -78,6 +78,7 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: customerId
+          description: Request a list of a customer's orders
           in: query
           required: false
           type: string
@@ -103,8 +104,47 @@ paths:
             $ref: '#/definitions/v1Order'
       tags:
         - OrderService
+  /v1/order/{id}:
+    get:
+      operationId: OrderService_GetOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          description: Request an order by specifying order id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+    delete:
+      operationId: OrderService_CancelOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CancelOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
   /v1/order/{order.id}:
-    post:
+    patch:
+      summary: "todo: ensure proper implementation\r\n https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/\r\n option (google.api.http) = {\r\n   put: \"/v1/order/{order.id}\"\r\n   body: \"order\"\r\n   additional_bindings {\r\n     patch: \"/v1/order/{order.id}\"\r\n     body: \"order\"\r\n   }\r\n };"
       operationId: OrderService_UpdateOrder
       responses:
         "200":
@@ -141,43 +181,6 @@ paths:
               createdAt:
                 type: string
                 format: int64
-      tags:
-        - OrderService
-  /v1/order/{orderId}:
-    get:
-      operationId: OrderService_GetOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1GetOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: orderId
-          in: path
-          required: true
-          type: string
-      tags:
-        - OrderService
-    delete:
-      operationId: OrderService_CancelOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1CancelOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: orderId
-          in: path
-          required: true
-          type: string
       tags:
         - OrderService
 definitions:
