@@ -37,7 +37,11 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 		&order.CreatedAt,
 	)
 	if err != nil {
-		return nil, err
+		if err == pgx.ErrNoRows {
+			return nil, errors.WrapServiceError(errors.ErrCodeNotFound, "order not found", err)
+		} else {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "something went wrong scanning order", err)
+		}
 	}
 	
 	return &order, nil
@@ -99,10 +103,7 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 	)
 	order, err := scanRowToOrder(row)
 	if err != nil {
-		// todo: ascertaining error
-		// order not found?
-		// return appropriate code
-		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to unmarshal database row")
+		return nil, err
 	}
 
 	// Add the order items and return
