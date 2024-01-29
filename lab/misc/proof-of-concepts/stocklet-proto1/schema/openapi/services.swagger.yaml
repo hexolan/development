@@ -181,6 +181,9 @@ paths:
               createdAt:
                 type: string
                 format: int64
+              updatedAt:
+                type: string
+                format: int64
       tags:
         - OrderService
 definitions:
@@ -296,6 +299,9 @@ definitions:
       transactionId:
         type: string
       createdAt:
+        type: string
+        format: int64
+      updatedAt:
         type: string
         format: int64
   v1OrderStatus:

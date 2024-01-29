@@ -14,11 +14,22 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// todo: remove as not needed anymore (just using default for now)
 // overriding gRPC status has prevented leaking of internal error information
+// so this just shows generic user facing error msgs (from the gRPC status returned from rpc calls to actual gRPC svc)
+//
+// todo: changing layout of gateway error messages
+// though have to bear in mind format of error messages from failed JWT checks performed by envoy (may use standard gRPC
+//   error interface)
+//
+// although the format doesn't really matter right now.
+// it could just stay as is - more a beautification thing
+// bigger priorities on mind than focusing on that rn
+//
+// self-reminder: clear up this pkg and these notes later
 func withGatewayErrorHandler() runtime.ErrorHandlerFunc {
-	return func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, req *http.Request, err error) {
-		runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, req, err)
+	return func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+		runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
+		log.Error().Err(err).Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
 	}
 }
 

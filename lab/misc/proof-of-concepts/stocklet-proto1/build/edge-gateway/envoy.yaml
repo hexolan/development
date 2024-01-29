@@ -30,11 +30,11 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: /v1/auth
+                  prefix: /v1/auth/
                 route:
                   cluster: auth_service_gw
               - match:
-                  prefix: /v1/order
+                  prefix: /v1/order/
                 route:
                   cluster: order_service_gw
           http_filters:

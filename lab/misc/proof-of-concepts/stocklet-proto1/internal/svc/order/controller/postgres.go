@@ -3,7 +3,9 @@ package controller
 import (
 	"context"
 
+	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
@@ -26,22 +28,37 @@ func NewPostgresController(pCl *pgxpool.Pool, evtC order.EventController) order.
 	return postgresController{pCl: pCl, evtC: evtC}
 }
 
+// todo: clean up func
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 	var order pb.Order
+
+	// convert from postgres timestamp format to int64 unix timestamp
+	var tmpCreatedAt pgtype.Timestamp
+
+	// todo: implementing updated_at into the query as well
 
 	err := row.Scan(
 		&order.Id, 
 		&order.Status, 
 		&order.CustomerId,
 		&order.TransactionId, 
-		&order.CreatedAt,
+		&tmpCreatedAt,
 	)
 	if err != nil {
+		// todo: delete after
+		log.Error().Err(err).Msg("debug scan")
 		if err == pgx.ErrNoRows {
 			return nil, errors.WrapServiceError(errors.ErrCodeNotFound, "order not found", err)
 		} else {
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "something went wrong scanning order", err)
 		}
+	}
+
+	// convert timestamp to unix
+	if tmpCreatedAt.Valid {
+		order.CreatedAt = tmpCreatedAt.Time.Unix()
+	} else {
+		return nil, errors.NewServiceError(errors.ErrCodeUnknown, "failed to convert order (created_at) timestamp")
 	}
 	
 	return &order, nil
@@ -51,7 +68,7 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id string) (*map[string]int32, error) {
 	rows, err := c.pCl.Query(ctx, (pgOrderItemsBaseQuery + " WHERE order_id=$1"), id)
 	if err != nil {
-		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error wilst fetching order items", err)
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching order items", err)
 	}
 
 	orderItems := make(map[string]int32)
@@ -61,10 +78,11 @@ func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id strin
 			productQuantity int32
 		)
 		err := rows.Scan(
-			productId,
-			productQuantity,
+			&productId,
+			&productQuantity,
 		)
 		if err != nil {
+			log.Error().Err(err).Msg("debug scan items")
 			// something went wrong when scanning an order item
 			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan an order item", err)
 		}
@@ -115,10 +133,23 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 	return order, nil
 }
 
+// todo: IMPLEMENT
 func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error) {
 	return nil, nil
 }
 
+// todo: IMPLEMENT
+func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error) {
+	// insert order query
+
+	// todo: check if there are items included in the order
+	// if there are - rows will have to be inserted for those as well
+	
+	// return the order with its ID
+	return nil, nil
+}
+
+// todo: IMPLEMENT
 func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) error {
 	// todo: actual SQL statement
 	query := "UPDATE orders SET xyz WHERE abc"
@@ -126,10 +157,11 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) er
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}
-
+	
 	return nil
 }
 
+// todo: IMPLEMENT
 func (c postgresController) DeleteOrderById(ctx context.Context, id string) error {
 	return nil
 }

@@ -23,7 +23,8 @@ message Order {
   map<string, int32> items = 3 [(buf.validate.field).map.values.int32.gt = 0];
 
   string customer_id = 4;
-  string transaction_id = 5;
+  optional string transaction_id = 5;
 
   int64 created_at = 6;
+  optional int64 updated_at = 7;
 }

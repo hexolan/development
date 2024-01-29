@@ -30,6 +30,7 @@ type StorageController interface {
 	GetOrderById(ctx context.Context, id string) (*pb.Order, error)
 	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 
+	CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error)
 	UpdateOrder(ctx context.Context, order *pb.Order) error
 	DeleteOrderById(ctx context.Context, id string) error
 }
@@ -64,7 +65,7 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 	// Validate the request
 	// todo: unwrapping error (if validation error) to expose the argument issues in the response
 	if err := svc.pbVal.Validate(req); err != nil {
-		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid request", err)
+		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order request", err)
 	}
 	
 	// Get the order from the storage controller
@@ -98,12 +99,22 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	// get prices of items
 
 	// create pending order - dispatch created event
+	//
+	// todo: properly implement CreateOrder storage func
+	// assumption is that necessary valiation has taken place on the req.Order
+	req.Order.Status = pb.OrderStatus_ORDER_STATUS_PENDING
+	order, err := svc.StrCtrl.CreateOrder(ctx, req.Order)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
+	}
+	// TODO: ensure order created event dispatched
 
 	// dispatch placed order SAGA event
+	// TODO: send event
 
 	// return pending order
-
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// todo: return a message (/ 'detail') in create order response?
+	return &pb.CreateOrderResponse{Data: order}, nil
 }
 
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
@@ -195,7 +206,9 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 			&pb.Order{
 				Id: req.GetPayload().GetOrderId(),
 
-				TransactionId: req.GetPayload().GetPaymentId(),
+				// todo: ensuring typesafe - changed proto to field optional 
+				// check if checks needed to ensure exists
+				TransactionId: req.GetPayload().PaymentId,
 				Status: pb.OrderStatus_ORDER_STATUS_APPROVED,
 			},
 		)
