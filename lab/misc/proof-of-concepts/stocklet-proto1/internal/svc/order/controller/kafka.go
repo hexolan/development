@@ -105,6 +105,26 @@ func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
 	)
 }
 
+func (c kafkaController) DispatchNewlyPlacedOrderEvent(order *pb.Order) {
+	// todo:
+	c.dispatchEvent(
+		messaging.Order_PlaceOrder_Order_Topic,
+		c.marshalEvent(
+			&pb.PlaceOrderEvent{
+				Type: pb.PlaceOrderEvent_TYPE_UNSPECIFIED,
+				Status: pb.PlaceOrderEvent_STATUS_UNSPECIFIED,
+				Payload: &pb.PlaceOrderEventPayload{
+					OrderId: order.Id,
+					UserId: order.CustomerId,
+					// Items: order.Items  // todo: properly assemble items
+					PaymentId: nil,
+					ShippingId: nil,
+				},
+			},
+		),
+	)
+}
+
 func (c kafkaController) DispatchPlaceOrderEvent(evt *pb.PlaceOrderEvent) {
 	// todo:
 	c.dispatchEvent(

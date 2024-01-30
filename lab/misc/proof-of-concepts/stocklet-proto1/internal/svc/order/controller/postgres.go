@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"time"
 	"context"
 
 	"github.com/rs/zerolog/log"
@@ -139,14 +140,34 @@ func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId st
 }
 
 // todo: IMPLEMENT
+// Create a new order in the Postgres database.
+//
+// This interface assumes that the necessary validation has already
+// taken place on the order object.
 func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error) {
 	// insert order query
+	var id string
+	err := c.pCl.QueryRow(
+		ctx,
+		"INSERT INTO orders (status, customer_id) VALUES ($1, $2) RETURNING id",
+		order.Status,
+		order.CustomerId,
+	).Scan(&id)
+	if err != nil {
+		// todo: checking of error cause
+		// connection error?
+		// integrity constraint violation?
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order", err)
+	}
 
 	// todo: check if there are items included in the order
 	// if there are - rows will have to be inserted for those as well
-	
-	// return the order with its ID
-	return nil, nil
+	// TODO: ^^^ this is important and needs doing
+
+	// Return the created order
+	order.Id = id
+	order.CreatedAt = time.Now().Unix()
+	return order, nil
 }
 
 // todo: IMPLEMENT

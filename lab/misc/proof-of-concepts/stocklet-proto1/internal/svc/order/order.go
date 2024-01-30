@@ -98,21 +98,36 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	// ensure items are valid
 	// get prices of items
 
-	// create pending order - dispatch created event
-	//
+
+	// create pending order
 	// todo: properly implement CreateOrder storage func
-	// assumption is that necessary valiation has taken place on the req.Order
+	// 	(order items are not added at the moment)
 	req.Order.Status = pb.OrderStatus_ORDER_STATUS_PENDING
 	order, err := svc.StrCtrl.CreateOrder(ctx, req.Order)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
 	}
-	// TODO: ensure order created event dispatched
+	
+	// dispatch order created event
+	svc.EvtCtrl.DispatchCreatedEvent(order)
 
 	// dispatch placed order SAGA event
-	// TODO: send event
+	// ^^^^ maybe not - Placed Order SAGA will start from the OrderCreated event
+	// actually... unless I want to validate the order items before?
+	// but that can be done syncronously - at the validation stage
+	//
+	// or this service could not be publicly exposed - and that is done in a seperate checkout service
+	// ... this service (on the public face) would just be for checking order statuses and attempting
+	//		order updates
+	//
+	// checkout service would/could be an orchestrator?
+	// checkout service ->
+	// 	-> warehouse svc
+	//  -> order svc
+	//  -> payment svc
+	// -> checkout service?
 
-	// return pending order
+	// return the pending order
 	// todo: return a message (/ 'detail') in create order response?
 	return &pb.CreateOrderResponse{Data: order}, nil
 }
