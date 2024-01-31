@@ -8,6 +8,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -134,9 +136,30 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 	return order, nil
 }
 
-// todo: IMPLEMENT
+// Get all orders related to a specified customer.
+//
+// TODO: implement pagination - currently limited to showing first 10
 func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error) {
-	return nil, nil
+	rows, err := c.pCl.Query(ctx, (pgOrderBaseQuery + " WHERE customer_id=$1 LIMIT 10"), custId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching customer orders", err)
+	}
+
+	orders := []*pb.Order{}
+	for rows.Next() {
+		order, err := scanRowToOrder(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		orders = append(orders, order)
+	}
+
+	if rows.Err() != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst scanning order rows", rows.Err())
+	}
+
+	return orders, nil
 }
 
 // todo: IMPLEMENT
@@ -160,6 +183,15 @@ func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order", err)
 	}
 
+	// create records for any order items
+	err = c.createOrderItems(ctx, id, order.Items)
+	if err != nil {
+		// failed to add order items??
+		// undo above transaction and return error - or just error?
+		// todo: think about how to handle this
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order item records", err)
+	}
+
 	// todo: check if there are items included in the order
 	// if there are - rows will have to be inserted for those as well
 	// TODO: ^^^ this is important and needs doing
@@ -171,10 +203,95 @@ func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*
 }
 
 // todo: IMPLEMENT
+// todo: proper documentation for all funcs
+func (c postgresController) createOrderItems(ctx context.Context, orderId string, itemQuantities map[string]int32) error {
+	// check if there are any items to add
+	if len(itemQuantities) > 1 {
+		statementVals := [][]interface{}{}  // what the fuck?
+		// won't let me do []goqu.Vals{} but this is okay????
+		for product_id, quantity := range itemQuantities {
+			statementVals = append(
+				statementVals, 
+				goqu.Vals{orderId, product_id, quantity},
+			)
+		}
+
+		statement, args, _ := goqu.Dialect("postgres").From(
+			"order_items",
+		).Insert().Cols(
+			"order_id",
+			"product_id",
+			"quantity",
+		).Vals(
+			statementVals...
+		).Prepared(
+			true,
+		).ToSQL()
+		_, err := c.pCl.Exec(ctx, statement, args...)
+		if err != nil {
+			return err
+		}
+
+		// ~~todo: assemble into single query~~ DONE ABOVE
+		// HOWEVER NEED TO LOOK AT POSSIBLE IMPROVEMENTS
+		// then execute. instead of making multiple insert queries
+		// this is just a prototype, but need to improve in future
+		// maybe implement goka or whatever query builder I used in panels?
+		//
+		// while on this train of thought.
+		// need to experiment with the update mask in UpdateOrder
+		// think of a way to implement that. may require goka anyway
+		// just need to ensure validation works properly
+
+		// create records for the order items
+		/*
+		for key, val := range itemQuantities {
+			_, err := c.pCl.Exec(
+				ctx,
+				"INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)",
+				orderId,
+				key,
+				val,
+			)
+			if err != nil {
+				return err
+			}
+		}
+		*/
+	}
+
+	return nil
+}
+
+// todo: IMPLEMENT FOLLOWING METHODS
+// addOrderItem( orderId, productId, quantity )
+// >	adds a new order item
+//
+// setOrderItem( orderId, productId, quantity )
+// >	sets an order item
+//
+// setOrderItems( orderId, orderItems, deletePrev )   (CHANGE FROM addOrderItems - when adding deletePrev false)
+// >	replace/add/update the items in an order
+//
+// removeOrderItem ( orderId, productId )
+// >	remove an order item
+
+// todo: IMPLEMENT
 func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) error {
 	// todo: actual SQL statement
-	query := "UPDATE orders SET xyz WHERE abc"
-	_, err := c.pCl.Exec(ctx, query)
+
+	// assumption here is that Order is properly validated for patching
+	// if it isn't broken - don't fix - get working for now then improve later
+
+	// TODO: all order attrs (excluding Items, CreatedAt and UpdateAt)
+	// 	-> patchData below
+
+	patchData := goqu.Record{
+		"updated_at": goqu.L("timezone('utc', now())"),
+	}
+	statement, args, _ := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(patchData).Where(goqu.C("id").Eq(order.Id)).ToSQL()
+
+	_, err := c.pCl.Exec(ctx, statement, args...)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}

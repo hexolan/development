@@ -57,6 +57,10 @@ services:
     networks:
       - stocklet-network
       - stocklet-auth-network
+    # for development purposes
+    ports:
+      - 91:90
+      - 9091:9090
     depends_on:
       kafka:
         condition: service_healthy
@@ -73,6 +77,10 @@ services:
     networks:
       - stocklet-network
       - stocklet-order-network
+    # for development purposes
+    ports:
+      - 92:90
+      - 9092:9090
     depends_on:
       kafka:
         condition: service_healthy

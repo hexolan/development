@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bufbuild/protovalidate-go"
 	"github.com/rs/zerolog/log"
+	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -25,6 +25,7 @@ type OrderService struct {
 }
 
 // Interface for database methods
+//
 // Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
 	GetOrderById(ctx context.Context, id string) (*pb.Order, error)
@@ -36,6 +37,7 @@ type StorageController interface {
 }
 
 // Interface for event methods
+//
 // Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
 	PrepareConsumer(svc *OrderService) messaging.EventConsumerController
@@ -62,7 +64,7 @@ func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl Even
 }
 
 func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.GetOrderResponse, error) {
-	// Validate the request
+	// Validate the request args
 	// todo: unwrapping error (if validation error) to expose the argument issues in the response
 	if err := svc.pbVal.Validate(req); err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order request", err)
@@ -78,9 +80,10 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 }
 
 func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error) {
-	// Validate args - todo:
-	if req.GetCustomerId() == "" {
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid customer id")
+	// Validate the request args
+	// todo: unwrapping error (if validation error) to expose the argument issues in the response
+	if err := svc.pbVal.Validate(req); err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid orders request", err)
 	}
 	
 	// Get the orders
@@ -105,6 +108,7 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	req.Order.Status = pb.OrderStatus_ORDER_STATUS_PENDING
 	order, err := svc.StrCtrl.CreateOrder(ctx, req.Order)
 	if err != nil {
+		log.Error().Err(err).Msg("order err")
 		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
 	}
 	
@@ -142,6 +146,40 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 
 	// Validate the inputs
 	// req.Order
+
+	// TODO: (NEW!)
+	// validating the inputs specified in the UpdateMask
+	// cross reference update_mask to req.Order object
+	// create new validated object??
+	// pass validated order obj for update req
+	//
+	// protovalidate has no support for FieldMask
+	// think of solution to pull validation for individual fields
+	// 	defined in the proto file for the Order type
+
+	log.Info().Any("req", req).Msg("order (request)")
+	log.Info().Any("order", req.Order).Msg("order (order)")
+	log.Info().Any("mask", req.UpdateMask).Msg("order (field mask)")
+
+	/*
+
+	insomnia request to 
+	PATCH: /v1/order/1
+	{
+		"status": "ORDER_STATUS_APPROVED",
+		"customerId": "2"
+	}
+
+	- - -
+	recieved proto:
+
+	"req": {
+		"order":{
+			"id":"1","status":4,"customer_id":"2"
+		},
+		"update_mask":{"paths":["customer_id","status"]}
+	}
+	*/
 
 	// Merge the order patch in the request with current state
 	
