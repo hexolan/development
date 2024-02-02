@@ -2,12 +2,11 @@ package order
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
@@ -32,7 +31,7 @@ type StorageController interface {
 	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 
 	CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error)
-	UpdateOrder(ctx context.Context, order *pb.Order) error
+	UpdateOrder(ctx context.Context, order *pb.Order, mask *fieldmaskpb.FieldMask) error
 	DeleteOrderById(ctx context.Context, id string) error
 }
 
@@ -136,89 +135,41 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	return &pb.CreateOrderResponse{Data: order}, nil
 }
 
+// Update an order.
+//
+// Uses the provided field mask as a selector for which fields
+// to update.
+//
+// Effectively operates as a PATCH function.
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
-	// idea:
-	// on change of thought, have separate API for each editable property?
-	
-
-	// alternatively keep as is, patch:
-	// look at: https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/
-
-	// Validate the inputs
-	// req.Order
-
-	// TODO: (NEW!)
-	// validating the inputs specified in the UpdateMask
-	// cross reference update_mask to req.Order object
-	// create new validated object??
-	// pass validated order obj for update req
+	// TODO:
+	// validating all the inputs specified in the UpdateMask
 	//
 	// protovalidate has no support for FieldMask
 	// think of solution to pull validation for individual fields
 	// 	defined in the proto file for the Order type
 
-	log.Info().Any("req", req).Msg("order (request)")
-	log.Info().Any("order", req.Order).Msg("order (order)")
-	log.Info().Any("mask", req.UpdateMask).Msg("order (field mask)")
+	// take a copy of orderId (for returning the updated order)
+	// the `req.Order` object will be overriden by the storage controller
+	orderId := req.Order.Id
 
-	/*
-
-	insomnia request to 
-	PATCH: /v1/order/1
-	{
-		"status": "ORDER_STATUS_APPROVED",
-		"customerId": "2"
-	}
-
-	- - -
-	recieved proto:
-
-	"req": {
-		"order":{
-			"id":"1","status":4,"customer_id":"2"
-		},
-		"update_mask":{"paths":["customer_id","status"]}
-	}
-	*/
-
-	// Merge the order patch in the request with current state
-	
-	// todo: delete after
-	// for testing
-	// todo: check field_mask and order object
-	b, _ := json.Marshal(req)
-	fmt.Print(b)
-
-	// todo: validate merged
-	// ... patchedOrder 
-	patchedOrder := req.Order
-
-	// Update the order (db level)
-	err := svc.StrCtrl.UpdateOrder(ctx, patchedOrder)
+	// Update the order (database level)
+	err := svc.StrCtrl.UpdateOrder(ctx, req.Order, req.Mask)
 	if err != nil {
+		log.Error().Err(err).Msg("debug")
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
-
-	// todo: dispatching created,updated,deleted events at DB level on succesful updates
-	// on the storage controller level
 	
-	/*
-	// todo: return updated order
-	order, err := svc.DataCtrl.GetOrderById(ctx, req.Order.Id)
+	// get the updated order
+	order, err := svc.StrCtrl.GetOrderById(ctx, orderId)
 	if err != nil {
 		return nil, err
 	}
 
-	// order items are immutable currently
-	// something to change in the future
+	// todo: dispatching created,updated,deleted events at DB level on succesful updates
+	// on the storage controller level
 
-	// todo: get order at start
-	// merge to form patch with existing body
-	// check permissions
-	// return updated patch on success (instead of double query)
-	*/
-
-	return &pb.UpdateOrderResponse{}, nil
+	return &pb.UpdateOrderResponse{Data: order}, nil
 }
 
 func (svc OrderService) CancelOrder(ctx context.Context, req *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
@@ -230,6 +181,8 @@ func (svc OrderService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDa
 }
 
 func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.PlaceOrderEvent) (*emptypb.Empty, error) {
+	// todo: properly validating the request?
+
 	// Ignore events dispatched by the order service
 	if req.Type == pb.PlaceOrderEvent_TYPE_UNSPECIFIED || req.Status == pb.PlaceOrderEvent_STATUS_UNSPECIFIED {
 		return &emptypb.Empty{}, nil
@@ -243,6 +196,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 				Id: req.GetPayload().GetOrderId(),
 				Status: pb.OrderStatus_ORDER_STATUS_REJECTED,
 			},
+			&fieldmaskpb.FieldMask{Paths: []string{"status"}},
 		)
 		if err != nil {
 			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as failed in response to PlaceOrderEvent")
@@ -264,6 +218,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 				TransactionId: req.GetPayload().PaymentId,
 				Status: pb.OrderStatus_ORDER_STATUS_APPROVED,
 			},
+			&fieldmaskpb.FieldMask{Paths: []string{"transaction_id", "status"}},
 		)
 		if err != nil {
 			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as successful in response to PlaceOrderEvent")

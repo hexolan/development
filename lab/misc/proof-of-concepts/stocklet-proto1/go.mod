@@ -11,6 +11,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/lestrrat-go/jwx/v2 v2.0.18
+	github.com/mennanov/fmutils v0.2.1
 	github.com/rs/zerolog v1.31.0
 	github.com/twmb/franz-go v1.15.0
 	github.com/twmb/franz-go/pkg/kadm v1.9.2

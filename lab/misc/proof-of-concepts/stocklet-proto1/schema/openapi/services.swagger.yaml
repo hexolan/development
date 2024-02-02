@@ -184,6 +184,10 @@ paths:
               updatedAt:
                 type: string
                 format: int64
+        - name: mask
+          in: query
+          required: false
+          type: string
       tags:
         - OrderService
 definitions:
@@ -331,3 +335,6 @@ definitions:
         type: string
   v1UpdateOrderResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'

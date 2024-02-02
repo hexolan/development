@@ -42,7 +42,7 @@ services:
     volumes:
       - kafka-volume:/bitnami/kafka
     # for dev purposes.
-    # all svcs depend on kafka. so this is to make it easier
+    # all svcs depend on "kafka" (the event bus) - and kafka won't be ready until otel-coll is (triggering other svcs)
     depends_on:
       - otel-collector
     networks:

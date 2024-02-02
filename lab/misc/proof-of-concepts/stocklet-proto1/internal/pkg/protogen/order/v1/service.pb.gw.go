@@ -168,11 +168,11 @@ func request_OrderService_UpdateOrder_0(ctx context.Context, marshaler runtime.M
 	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Order); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if protoReq.UpdateMask == nil || len(protoReq.UpdateMask.GetPaths()) == 0 {
+	if protoReq.Mask == nil || len(protoReq.Mask.GetPaths()) == 0 {
 		if fieldMask, err := runtime.FieldMaskFromRequestBody(newReader(), protoReq.Order); err != nil {
 			return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 		} else {
-			protoReq.UpdateMask = fieldMask
+			protoReq.Mask = fieldMask
 		}
 	}
 
@@ -216,11 +216,11 @@ func local_request_OrderService_UpdateOrder_0(ctx context.Context, marshaler run
 	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Order); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if protoReq.UpdateMask == nil || len(protoReq.UpdateMask.GetPaths()) == 0 {
+	if protoReq.Mask == nil || len(protoReq.Mask.GetPaths()) == 0 {
 		if fieldMask, err := runtime.FieldMaskFromRequestBody(newReader(), protoReq.Order); err != nil {
 			return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 		} else {
-			protoReq.UpdateMask = fieldMask
+			protoReq.Mask = fieldMask
 		}
 	}
 

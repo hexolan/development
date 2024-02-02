@@ -3,6 +3,7 @@ package controller
 import (
 	"time"
 	"context"
+	"encoding/json"
 
 	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5"
@@ -10,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/mennanov/fmutils"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -208,7 +211,7 @@ func (c postgresController) createOrderItems(ctx context.Context, orderId string
 	// check if there are any items to add
 	if len(itemQuantities) > 1 {
 		statementVals := [][]interface{}{}  // what the fuck?
-		// won't let me do []goqu.Vals{} but this is okay????
+		// won't let me do []goqu.Vals{} but this is okay???
 		for product_id, quantity := range itemQuantities {
 			statementVals = append(
 				statementVals, 
@@ -277,21 +280,38 @@ func (c postgresController) createOrderItems(ctx context.Context, orderId string
 // >	remove an order item
 
 // todo: IMPLEMENT
-func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order) error {
-	// todo: actual SQL statement
+func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, mask *fieldmaskpb.FieldMask) error {
+	orderId := order.Id
+	statementSetData := goqu.Record{"updated_at": goqu.L("timezone('utc', now())")}
 
-	// assumption here is that Order is properly validated for patching
-	// if it isn't broken - don't fix - get working for now then improve later
+	// https://github.com/mennanov/fieldmask-utils
+	// https://github.com/mennanov/fmutils
 
-	// TODO: all order attrs (excluding Items, CreatedAt and UpdateAt)
-	// 	-> patchData below
+	// Filter to only field mask elements
+	maskPaths := mask.Paths
+	// todo: ensuring that order.Items is not in maskPath
+	// all order attrs (excluding Id, Items, CreatedAt and UpdatedAt)
+	//
+	// handle settings items in seperate DB route
+	// (maybe even in a seperate /v1/order/<order_id>/items route)
+	//
+	// disallow setting id / created_at / updated_at entirely
 
-	patchData := goqu.Record{
-		"updated_at": goqu.L("timezone('utc', now())"),
+	fmutils.Filter(order, maskPaths)
+
+	// put filtered mask order into patchData
+	marshalledMask, err := json.Marshal(order)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "error whilst assembling patch data", err)
 	}
-	statement, args, _ := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(patchData).Where(goqu.C("id").Eq(order.Id)).ToSQL()
+	err = json.Unmarshal(marshalledMask, &statementSetData)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "error whilst assembling patch data", err)
+	}
 
-	_, err := c.pCl.Exec(ctx, statement, args...)
+	// build an update statement
+	statement, args, _ := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(statementSetData).Where(goqu.C("id").Eq(orderId)).ToSQL()
+	_, err = c.pCl.Exec(ctx, statement, args...)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}
