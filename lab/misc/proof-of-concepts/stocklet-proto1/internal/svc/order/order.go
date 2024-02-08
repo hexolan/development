@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/rs/zerolog/log"
+	"github.com/mennanov/fmutils"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -36,6 +37,15 @@ type StorageController interface {
 }
 
 // Interface for event methods
+//
+// Methods for assembling this service's events.
+type EventBuilder interface {
+	PrepareCreatedEvent(order *pb.Order) (string, []byte)
+	PrepareUpdatedEvent(order *pb.Order) (string, []byte)
+	PrepareDeletedEvent(req *pb.CancelOrderRequest) (string, []byte)
+}
+
+// Event controller is responsible for dispatching.
 //
 // Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
@@ -137,29 +147,102 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 
 // Update an order.
 //
-// Uses the provided field mask as a selector for which fields
-// to update.
+// Uses the provided field mask as a selector
+// for which fields to update.
 //
 // Effectively operates as a PATCH function.
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
+	// Validating the core request
+	if req.Order == nil || req.Mask == nil {
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "malformed request")
+	}
+
+	// todo: ensuring req.Mask is real and req.Order is real
+
 	// TODO:
 	// validating all the inputs specified in the UpdateMask
+	// ensuring that they are VALID and ALLOWED fields
 	//
 	// protovalidate has no support for FieldMask
 	// think of solution to pull validation for individual fields
 	// 	defined in the proto file for the Order type
 
-	// take a copy of orderId (for returning the updated order)
-	// the `req.Order` object will be overriden by the storage controller
+	// Take a copy of orderId
+	// The `req.Order` object will be overriden when filtering by field mask
 	orderId := req.Order.Id
 
+	// Filter to only field mask elements 
+	// TODO: ensuring that Id, Items, CreatedAt and UpdatedAt cannot be specified
+	// items will be handled in a seperate str ctrl call
+	maskPaths := req.Mask.GetPaths()
+	log.Info().Any("paths", maskPaths).Msg("abc")
+	fmutils.Filter(req.Order, maskPaths)
+
+	// protovalidate has no support for FieldMask
+	//
+	// think of solution to pull validation for individual fields
+	// so I only validate the fields specified in the field mask
+	//
+	// this will currently fail unless an entire PUT request is taking place
+	//
+	// although I still need to add checks to ensure that ID, CreatedAt and UpdatedAt are not being updated
+	// maliciously in that case
+	//
+	// since this is a user-facing operation, it cannot be willy-nilly allowed to update
+	// order.Status and etc...
+	// users will have to call a seperate UserOrders / OrderHandler service or something requesting they cancel their order
+	//
+	// need to think of how authentication is going to play out
+	// already have methods of checking if a request has come through gRPC gateway (so they can skip any user validation)
+	// - but for handling internally (aside events) - maybe there should be an OrderHandler service which users use to place their order
+	// 		> that can act as an orchestrator or whatever - this can still be called directly to view order details
+	//
+	// maybe also split services into:
+	// Order Service (business and validation logic)
+	//  > handles inbound gRPC calls
+	//  > performs validation before making data service calls
+	//
+	// ((( AS USING EVENT DRIVEN DESIGN )))
+	// 		Order service doesn't even need to call the Order Data Service via gRPC
+	// 		- the order service performs validation and dispatches created, updated and deleted events
+	// 		- the order consumer will then TELL the order data service to enact that event (however stipulations for generating unique ids)
+	// 		- for updates this could be entirely fine
+	//
+	// Order Data Service - called by Order Service thru gRPC - stores/retrieves stuff in databases // can also split into order-postgres-data-svc, order-mongo-data-svc
+	// 	> also acts as an outbox for Created, Updated, Deleted events
+	//  > as it is acting as an outbox (functionality also required by main Order Service)
+    //  	could splinter another service for Order Producer // split into order-kafka-producer, order-nats-producer
+	//
+	// Order Consumer (Service) - calls the Order Service upon reciept of events // can also split into order-kafka-consumer, order-nats-consumer
+	//
+	// This does mean that there is tight coupling (runtime-wise) between these services though.
+	//
+	// However there are benefits to having a separate data service // load balancing or sending repeat requests to different instances of data services (1 req -> Postgres and Mongo instances)
+	// In addition, requests could be routed by order ids - can coalesce requests
+	if err := svc.pbVal.Validate(req.Order); err != nil {
+		log.Error().Err(err).Msg("invalid order update err")
+		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order update", err)
+	}
+
 	// Update the order (database level)
+	// TODO: remove after (temp)
+	req.Order.Id = orderId
 	err := svc.StrCtrl.UpdateOrder(ctx, req.Order, req.Mask)
 	if err != nil {
-		log.Error().Err(err).Msg("debug")
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
 	
+	// todo: reliably sending created/updated/deleted events
+	// https://microservices.io/patterns/data/transactional-outbox.html
+	// https://batalin.dev/posts/transaction-outbox-pattern/
+	//
+	// https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html
+	//
+	// - -
+	// https://www.baeldung.com/transactions-across-microservices
+	//
+	// CREATING SEPARATE EXPER
+
 	// get the updated order
 	order, err := svc.StrCtrl.GetOrderById(ctx, orderId)
 	if err != nil {

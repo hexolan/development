@@ -16,14 +16,19 @@ enum OrderStatus {
 }
 
 message Order {
-  string id = 1;
-  OrderStatus status = 2;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+
+  OrderStatus status = 2 [(buf.validate.field).enum = {
+    defined_only: true,
+    not_in: [0]
+  }];
 
   // Items mapped by quantity
   map<string, int32> items = 3 [(buf.validate.field).map.values.int32.gt = 0];
 
-  string customer_id = 4;
-  optional string transaction_id = 5;
+  string customer_id = 4 [(buf.validate.field).string.min_len = 1];
+
+  optional string transaction_id = 5 [(buf.validate.field).string.min_len = 1];
 
   int64 created_at = 6;
   optional int64 updated_at = 7;

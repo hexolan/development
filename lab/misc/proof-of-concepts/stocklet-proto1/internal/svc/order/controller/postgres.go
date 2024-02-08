@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
-	"github.com/mennanov/fmutils"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
@@ -171,33 +170,43 @@ func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId st
 // This interface assumes that the necessary validation has already
 // taken place on the order object.
 func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error) {
-	// insert order query
+	// Begin a DB transaction
+	tx, err := c.pCl.Begin(ctx)
+	if err != nil {
+		// todo: implement check to determine if database problem (likely is a connection problem)
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Insert order query
 	var id string
-	err := c.pCl.QueryRow(
+	err = tx.QueryRow(
 		ctx,
 		"INSERT INTO orders (status, customer_id) VALUES ($1, $2) RETURNING id",
 		order.Status,
 		order.CustomerId,
 	).Scan(&id)
 	if err != nil {
-		// todo: checking of error cause
-		// connection error?
-		// integrity constraint violation?
-		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order", err)
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to create order", err)
 	}
 
-	// create records for any order items
-	err = c.createOrderItems(ctx, id, order.Items)
+	// Create records for any order items
+	err = c.createOrderItems(ctx, tx, id, order.Items)
 	if err != nil {
-		// failed to add order items??
-		// undo above transaction and return error - or just error?
-		// todo: think about how to handle this
-		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order item records", err)
+		// the deffered rollback will be called
+		// - and the order will not be commited as a result of this err
+		return nil, err
 	}
 
-	// todo: check if there are items included in the order
-	// if there are - rows will have to be inserted for those as well
-	// TODO: ^^^ this is important and needs doing
+	// TODO: implement event outbox table
+	// and add order created event to the outbox
+	// (which is commited with the transaction)
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
 
 	// Return the created order
 	order.Id = id
@@ -207,7 +216,7 @@ func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*
 
 // todo: IMPLEMENT
 // todo: proper documentation for all funcs
-func (c postgresController) createOrderItems(ctx context.Context, orderId string, itemQuantities map[string]int32) error {
+func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, orderId string, itemQuantities map[string]int32) error {
 	// check if there are any items to add
 	if len(itemQuantities) > 1 {
 		statementVals := [][]interface{}{}  // what the fuck?
@@ -219,7 +228,7 @@ func (c postgresController) createOrderItems(ctx context.Context, orderId string
 			)
 		}
 
-		statement, args, _ := goqu.Dialect("postgres").From(
+		statement, args, err := goqu.Dialect("postgres").From(
 			"order_items",
 		).Insert().Cols(
 			"order_id",
@@ -230,37 +239,15 @@ func (c postgresController) createOrderItems(ctx context.Context, orderId string
 		).Prepared(
 			true,
 		).ToSQL()
-		_, err := c.pCl.Exec(ctx, statement, args...)
 		if err != nil {
-			return err
+			return errors.WrapServiceError(errors.ErrCodeService, "failed to build SQL statement", err)
 		}
-
-		// ~~todo: assemble into single query~~ DONE ABOVE
-		// HOWEVER NEED TO LOOK AT POSSIBLE IMPROVEMENTS
-		// then execute. instead of making multiple insert queries
-		// this is just a prototype, but need to improve in future
-		// maybe implement goka or whatever query builder I used in panels?
-		//
-		// while on this train of thought.
-		// need to experiment with the update mask in UpdateOrder
-		// think of a way to implement that. may require goka anyway
-		// just need to ensure validation works properly
-
-		// create records for the order items
-		/*
-		for key, val := range itemQuantities {
-			_, err := c.pCl.Exec(
-				ctx,
-				"INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)",
-				orderId,
-				key,
-				val,
-			)
-			if err != nil {
-				return err
-			}
+		
+		// Execute the statement on the transaction
+		_, err = tx.Exec(ctx, statement, args...)
+		if err != nil {
+			return errors.WrapServiceError(errors.ErrCodeExtService, "failed to add items to order", err)
 		}
-		*/
 	}
 
 	return nil
@@ -281,12 +268,21 @@ func (c postgresController) createOrderItems(ctx context.Context, orderId string
 
 // todo: IMPLEMENT
 func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, mask *fieldmaskpb.FieldMask) error {
+	// Begin a DB transaction
+	tx, err := c.pCl.Begin(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Set the updatable attrs (TEMP ALL BELOW NEEDS CLEANING UP)
 	orderId := order.Id
 	statementSetData := goqu.Record{"updated_at": goqu.L("timezone('utc', now())")}
 
 	// https://github.com/mennanov/fieldmask-utils
 	// https://github.com/mennanov/fmutils
 
+	/*
 	// Filter to only field mask elements
 	maskPaths := mask.Paths
 	// todo: ensuring that order.Items is not in maskPath
@@ -298,6 +294,8 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, ma
 	// disallow setting id / created_at / updated_at entirely
 
 	fmutils.Filter(order, maskPaths)
+	log.Info().Any("filteredOrd", order).Any("paths", maskPaths).Msg("")
+	*/
 
 	// put filtered mask order into patchData
 	marshalledMask, err := json.Marshal(order)
@@ -310,12 +308,29 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, ma
 	}
 
 	// build an update statement
-	statement, args, _ := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(statementSetData).Where(goqu.C("id").Eq(orderId)).ToSQL()
-	_, err = c.pCl.Exec(ctx, statement, args...)
+	statement, args, err := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(statementSetData).Where(goqu.C("id").Eq(orderId)).ToSQL()
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to build SQL statement", err)
+	}
+
+	// Execute the statement as part of the transaction
+	_, err = tx.Exec(ctx, statement, args...)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}
 	
+	// TODO: implement event outbox table
+	// and add order updated event to the outbox
+	// (which is commited with the transaction)
+
+	// https://stackoverflow.com/questions/52289338/how-can-i-catch-an-event-of-a-new-postgresql-record-with-golang
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
+
 	return nil
 }
 
