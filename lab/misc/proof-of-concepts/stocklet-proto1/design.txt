@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/50986816/how-to-handle-http-requests-in-a-microservice-event-driven-architecture
