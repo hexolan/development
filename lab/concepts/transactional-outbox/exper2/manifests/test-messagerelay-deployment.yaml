@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: test-messagerelay
+  name: test-messagerelay
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: test-messagerelay
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: test-messagerelay
+    spec:
+      containers:
+        - name: test-messagerelay
+          image: test-messagerelay:latest
+          imagePullPolicy: Never
+          ports: []
+          resources:
+            limits:
+              cpu: "4"
+              memory: "4096Mi"
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+      restartPolicy: Always
+status: {}

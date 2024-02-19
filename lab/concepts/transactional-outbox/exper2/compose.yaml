@@ -5,9 +5,21 @@ services:
     image: hexolan/test-service
     build: 
       context: ./service
+      dockerfile: service.Dockerfile
     ports:
       - 90:90
       - 9090:9090
+    depends_on:
+      kafka:
+        condition: service_healthy
+      test-service-migrations:
+        condition: service_completed_successfully
+
+  test-messagerelay:
+    image: hexolan/test-messagerelay
+    build: 
+      context: ./service
+      dockerfile: messagerelay.Dockerfile
     depends_on:
       kafka:
         condition: service_healthy

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package testpb.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "null.hexolan.dev/dev/protogen/testpb";
+
+service TestService {
+  rpc GetTestItem(GetTestItemRequest) returns (GetTestItemResponse) {
+    option (google.api.http) = {get: "/v1/test/{id}"};
+  }
+
+  rpc CreateTestItem(CreateTestItemRequest) returns (CreateTestItemResponse) {
+    option (google.api.http) = {
+      post: "/v1/test/new"
+      body: "item"
+    };
+  }
+}
+
+message TestItem {
+  string id = 1;
+
+  string name = 2;
+
+  int64 created_at = 3;
+  int64 updated_at = 4;
+}
+
+message ItemStateEvent {
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_CREATED = 1;
+    TYPE_UPDATED = 2;
+    TYPE_DELETED = 3;
+  }
+
+  Type type = 1;
+  TestItem payload = 2;
+}
+
+message GetTestItemRequest {
+  string id = 1;
+}
+
+message GetTestItemResponse {
+  TestItem data = 1;
+}
+
+message CreateTestItemRequest {
+  TestItem item = 1;
+}
+
+message CreateTestItemResponse {
+  TestItem data = 1;
+}

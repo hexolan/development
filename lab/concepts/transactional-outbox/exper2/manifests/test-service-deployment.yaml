@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: test-service
+  name: test-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: test-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: test-service
+    spec:
+      containers:
+        - name: test-service
+          image: hexolan/test-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 90
+              hostPort: 90
+              protocol: TCP
+            - containerPort: 9090
+              hostPort: 9090
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: "500Mi"
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+      restartPolicy: Always
+status: {}

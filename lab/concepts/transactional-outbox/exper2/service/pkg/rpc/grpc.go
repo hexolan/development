@@ -1,43 +1,29 @@
-package main
+package rpc
 
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
+	"null.hexolan.dev/dev/pkg/serve"
+	"null.hexolan.dev/dev/pkg/database"
 	pb "null.hexolan.dev/dev/protogen/testpb"
 )
 
 type rpcService struct {
-	db DatabaseInterface
+	db database.DatabaseInterface
 
 	pb.UnimplementedTestServiceServer
 }
 
-func newGrpcServer() *grpc.Server {
-	svr := newGrpcBase()
+func NewGrpcServer(db database.DatabaseInterface) *grpc.Server {
+	svr := serve.NewGrpcBase()
 
-	db := NewDatabaseInterface()
 	svc := rpcService{db: db}
 	pb.RegisterTestServiceServer(svr, svc)
 
 	return svr
 }
-
-func newGrpcGateway() *runtime.ServeMux {
-	mux, opts := newGrpcGatewayBase()
-
-	ctx := context.Background()
-	err := pb.RegisterTestServiceHandlerFromEndpoint(ctx, mux, "localhost:9090", opts)
-	if err != nil {
-		log.Panic().Err(err).Msg("gateway svc registration")
-	}
-
-	return mux
-}
-
 
 func (svc rpcService) GetTestItem(ctx context.Context, req *pb.GetTestItemRequest) (*pb.GetTestItemResponse, error) {
 	item, err := svc.db.GetById(ctx, req.Id)

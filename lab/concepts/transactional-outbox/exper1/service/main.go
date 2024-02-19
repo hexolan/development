@@ -1,9 +1,12 @@
 package main
 
 func main() {
-	svr := newGrpcServer()
+	db := NewDatabaseInterface()
+
+	svr := newGrpcServer(db)
 	gw := newGrpcGateway()
 
+	// go db.StartProducer()
 	go serveGrpcGateway(gw)
 	serveGrpcServer(svr)
 }
