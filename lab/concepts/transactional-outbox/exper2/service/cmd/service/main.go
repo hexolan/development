@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db := database.NewDatabaseInterface()
+	db := database.NewDatabaseInterface("postgresql://postgres:postgres@test-service-postgres:5432/postgres?sslmode=disable")
 
 	svr := rpc.NewGrpcServer(db)
 	gw := gateway.NewGrpcGateway()
