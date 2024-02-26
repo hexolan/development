@@ -1,0 +1,9 @@
+https://event-driven.io/en/push_based_outbox_pattern_with_postgres_logical_replication/
+https://stackoverflow.com/questions/76308901/managing-rapidly-growing-outbox-table-when-implementing-transactional-outbox
+https://jeremydmiller.com/2020/05/05/using-postgresql-advisory-locks-for-leader-election/
+https://dev.to/hassanrehan/walking-through-postgresql-how-it-writes-and-recovers-data-using-wal-35hn
+
+---
+
+using postgres WAL for outbox
+transactional outbox table WAL

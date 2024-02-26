@@ -1,0 +1,28 @@
+push-based transactional outbox processor
+
+support for:
+* postgres
+* mongodb
+
+publishing to:
+* kafka
+* nats
+
+---
+
+ability to build own "connectors" (database processors) and "sinks"
+add support for mysql
+
+-=-=-=-=-=
+
+thoughts to keep in mind:
+* skipped messages in outbox table (missed by the WAL stream or whatever)
+* pruning already sent messages
+* methods of leader election (toggle between Kubernetes, Database, etc)
+* ensuring messages are sent in order?
+
+-=-=-=-=
+
+configurable schema?
+customisation options (think about this later on in other versions?)
+properly versioning outboxie
