@@ -1,7 +1,6 @@
 package order
 
 import (
-	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 
@@ -9,41 +8,46 @@ import (
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
-type eventBuilder struct {}
-
-var _ EventBuilder = (*eventBuilder)(nil)
-
-func (eb eventBuilder) marshalProto(evt protoreflect.ProtoMessage) []byte {
-	wireEvt, err := proto.Marshal(evt)
+func marshalEvent(event protoreflect.ProtoMessage) ([]byte, error) {
+	wireEvt, err := proto.Marshal(event)
 	if err != nil {
-		// todo: proper error handling
-		log.Panic().Err(err).Msg("error marshaling protobuf event")
+		return []byte{}, err
 	}
 
-	return wireEvt
+	return wireEvt, nil
 }
 
-func (eb eventBuilder) PrepareCreatedEvent(order *pb.Order) (string, []byte) {
+func PrepareCreatedEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Created_Topic
 	event := &pb.OrderStateEvent{
 		Type: pb.OrderStateEvent_TYPE_CREATED,
 		Payload: order,
 	}
 
-	return topic, eb.marshalProto(event)
+	wireEvt, err := marshalEvent(event)
+	if err != nil {
+		return []byte{}, "", err
+	}
+
+	return wireEvt, topic, nil
 }
 
-func (eb eventBuilder) PrepareUpdatedEvent(order *pb.Order) (string, []byte) {
+func PrepareUpdatedEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Updated_Topic
 	event := &pb.OrderStateEvent{
 		Type: pb.OrderStateEvent_TYPE_UPDATED,
 		Payload: order,
 	}
 
-	return topic, eb.marshalProto(event)
+	wireEvt, err := marshalEvent(event)
+	if err != nil {
+		return []byte{}, "", err
+	}
+
+	return wireEvt, topic, nil
 }
 
-func (eb eventBuilder) PrepareDeletedEvent(req *pb.CancelOrderRequest) (string, []byte) {
+func PrepareDeletedEvent(req *pb.CancelOrderRequest) ([]byte, string, error) {
 	topic := messaging.Order_State_Deleted_Topic
 	event := &pb.OrderStateEvent{
 		Type: pb.OrderStateEvent_TYPE_DELETED,
@@ -52,5 +56,10 @@ func (eb eventBuilder) PrepareDeletedEvent(req *pb.CancelOrderRequest) (string, 
 		},
 	}
 
-	return topic, eb.marshalProto(event)
+	wireEvt, err := marshalEvent(event)
+	if err != nil {
+		return []byte{}, "", err
+	}
+
+	return wireEvt, topic, nil
 }

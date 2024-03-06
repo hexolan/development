@@ -1,6 +1,23 @@
 version: "3.8"
 
 services:
+  # Core Infra
+  debezium:
+    ports:
+      - 8083:8083
+
+  # Services
+  auth-service:
+    ports:
+      - 91:90
+      - 9091:9090
+      
+  order-service:
+    ports:
+      - 92:90
+      - 9092:9090
+
+  # Development Utilities
   dev-kafka-ui:
     image: provectuslabs/kafka-ui:latest
     restart: unless-stopped

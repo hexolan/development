@@ -35,7 +35,7 @@ func NewPostgresController(pCl *pgxpool.Pool, evtC order.EventController) order.
 
 // todo: clean up func
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
-	var order pb.Order
+	var orderObj pb.Order
 
 	// convert from postgres timestamp format to int64 unix timestamp
 	var tmpCreatedAt pgtype.Timestamp
@@ -43,10 +43,10 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 	// todo: implementing updated_at into the query as well
 
 	err := row.Scan(
-		&order.Id, 
-		&order.Status, 
-		&order.CustomerId,
-		&order.TransactionId, 
+		&orderObj.Id, 
+		&orderObj.Status, 
+		&orderObj.CustomerId,
+		&orderObj.TransactionId, 
 		&tmpCreatedAt,
 	)
 	if err != nil {
@@ -61,12 +61,12 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 
 	// convert timestamp to unix
 	if tmpCreatedAt.Valid {
-		order.CreatedAt = tmpCreatedAt.Time.Unix()
+		orderObj.CreatedAt = tmpCreatedAt.Time.Unix()
 	} else {
 		return nil, errors.NewServiceError(errors.ErrCodeUnknown, "failed to convert order (created_at) timestamp")
 	}
 	
-	return &order, nil
+	return &orderObj, nil
 }
 
 // Get items included in an order (by order id)
@@ -102,18 +102,18 @@ func (c postgresController) getOrderItemsByOrderId(ctx context.Context, id strin
 	return &orderItems, nil
 }
 
-func (c postgresController) appendOrderItems(ctx context.Context, order *pb.Order) (*pb.Order, error) {
+func (c postgresController) appendOrderItems(ctx context.Context, orderObj *pb.Order) (*pb.Order, error) {
 	// Load the order items
-	orderItems, err := c.getOrderItemsByOrderId(ctx, order.Id)
+	orderItems, err := c.getOrderItemsByOrderId(ctx, orderObj.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	// Add the order items to the order protobuf
-	order.Items = *orderItems
+	orderObj.Items = *orderItems
 
 	// Return the order
-	return order, nil
+	return orderObj, nil
 }
 
 // Get an order by its specified id
@@ -124,18 +124,18 @@ func (c postgresController) GetOrderById(ctx context.Context, id string) (*pb.Or
 		pgOrderBaseQuery + " WHERE id=$1",
 		id,
 	)
-	order, err := scanRowToOrder(row)
+	orderObj, err := scanRowToOrder(row)
 	if err != nil {
 		return nil, err
 	}
 
 	// Add the order items and return
-	order, err = c.appendOrderItems(ctx, order)
+	orderObj, err = c.appendOrderItems(ctx, orderObj)
 	if err != nil {
 		return nil, err
 	}
 
-	return order, nil
+	return orderObj, nil
 }
 
 // Get all orders related to a specified customer.
@@ -149,12 +149,12 @@ func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId st
 
 	orders := []*pb.Order{}
 	for rows.Next() {
-		order, err := scanRowToOrder(rows)
+		orderObj, err := scanRowToOrder(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		orders = append(orders, order)
+		orders = append(orders, orderObj)
 	}
 
 	if rows.Err() != nil {
@@ -169,7 +169,7 @@ func (c postgresController) GetOrdersByCustomerId(ctx context.Context, custId st
 //
 // This interface assumes that the necessary validation has already
 // taken place on the order object.
-func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error) {
+func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order) (*pb.Order, error) {
 	// Begin a DB transaction
 	tx, err := c.pCl.Begin(ctx)
 	if err != nil {
@@ -183,24 +183,45 @@ func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*
 	err = tx.QueryRow(
 		ctx,
 		"INSERT INTO orders (status, customer_id) VALUES ($1, $2) RETURNING id",
-		order.Status,
-		order.CustomerId,
+		orderObj.Status,
+		orderObj.CustomerId,
 	).Scan(&id)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to create order", err)
 	}
 
 	// Create records for any order items
-	err = c.createOrderItems(ctx, tx, id, order.Items)
+	err = c.createOrderItems(ctx, tx, id, orderObj.Items)
 	if err != nil {
 		// the deffered rollback will be called
 		// - and the order will not be commited as a result of this err
 		return nil, err
 	}
 
-	// TODO: implement event outbox table
-	// and add order created event to the outbox
-	// (which is commited with the transaction)
+	// Attach attrs to the order
+	orderObj.Id = id
+	orderObj.CreatedAt = time.Now().Unix()
+
+	// Prepare a created event.
+	//
+	// Then add the event to the outbox table with the transaction
+	// to ensure that the event will be dispatched if
+	// the transaction succeeds.
+	evt, evtTopic, err := order.PrepareCreatedEvent(orderObj)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
+	}
+
+	_, err = tx.Exec(
+		ctx,
+		"INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)",
+		orderObj.Id,
+		evtTopic,
+		evt,
+	)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to add order event", err)
+	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
@@ -209,9 +230,7 @@ func (c postgresController) CreateOrder(ctx context.Context, order *pb.Order) (*
 	}
 
 	// Return the created order
-	order.Id = id
-	order.CreatedAt = time.Now().Unix()
-	return order, nil
+	return orderObj, nil
 }
 
 // todo: IMPLEMENT
@@ -267,7 +286,7 @@ func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, ord
 // >	remove an order item
 
 // todo: IMPLEMENT
-func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, mask *fieldmaskpb.FieldMask) error {
+func (c postgresController) UpdateOrder(ctx context.Context, orderObj *pb.Order, mask *fieldmaskpb.FieldMask) error {
 	// Begin a DB transaction
 	tx, err := c.pCl.Begin(ctx)
 	if err != nil {
@@ -276,7 +295,7 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, ma
 	defer tx.Rollback(ctx)
 
 	// Set the updatable attrs (TEMP ALL BELOW NEEDS CLEANING UP)
-	orderId := order.Id
+	orderId := orderObj.Id
 	statementSetData := goqu.Record{"updated_at": goqu.L("timezone('utc', now())")}
 
 	// https://github.com/mennanov/fieldmask-utils
@@ -298,7 +317,7 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, ma
 	*/
 
 	// put filtered mask order into patchData
-	marshalledMask, err := json.Marshal(order)
+	marshalledMask, err := json.Marshal(orderObj)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeService, "error whilst assembling patch data", err)
 	}
@@ -319,12 +338,27 @@ func (c postgresController) UpdateOrder(ctx context.Context, order *pb.Order, ma
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order", err)
 	}
 	
-	// TODO: implement event outbox table
-	// and add order updated event to the outbox
-	// (which is commited with the transaction)
+	// Prepare an updated event.
+	//
+	// Then add the event to the outbox table with the transaction
+	// to ensure that the event will be dispatched if
+	// the transaction succeeds.
+	evt, evtTopic, err := order.PrepareUpdatedEvent(orderObj)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
+	}
 
-	// https://stackoverflow.com/questions/52289338/how-can-i-catch-an-event-of-a-new-postgresql-record-with-golang
-
+	_, err = tx.Exec(
+		ctx,
+		"INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)",
+		orderObj.Id,
+		evtTopic,
+		evt,
+	)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to add order event", err)
+	}
+	
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {

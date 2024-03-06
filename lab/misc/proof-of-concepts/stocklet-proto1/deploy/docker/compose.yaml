@@ -48,19 +48,34 @@ services:
     networks:
       - stocklet-network
 
+  debezium:
+    image: debezium/connect:latest
+    restart: unless-stopped
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:19092
+      - GROUP_ID=0
+    healthcheck:
+      test: ["CMD", "curl --silent --fail -X GET http://localhost:8083/connectors"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    depends_on:
+      kafka:
+        condition: service_healthy
+      auth-service-postgres:
+        condition: service_healthy
+      order-service-postgres:
+        condition: service_healthy
+    networks:
+      - stocklet-network
+
   # Services
   auth-service:
     image: stocklet/auth-service
     build: 
       context: ../../
       dockerfile: build/auth-service/Dockerfile
-    networks:
-      - stocklet-network
-      - stocklet-auth-network
-    # for development purposes
-    ports:
-      - 91:90
-      - 9091:9090
     depends_on:
       kafka:
         condition: service_healthy
@@ -68,19 +83,15 @@ services:
         condition: service_completed_successfully
     env_file:
       - ../configs/auth.env
+    networks:
+      - stocklet-network
+      - stocklet-auth-network
 
   order-service:
     image: stocklet/order-service
     build: 
       context: ../../
       dockerfile: build/order-service/Dockerfile
-    networks:
-      - stocklet-network
-      - stocklet-order-network
-    # for development purposes
-    ports:
-      - 92:90
-      - 9092:9090
     depends_on:
       kafka:
         condition: service_healthy
@@ -88,8 +99,11 @@ services:
         condition: service_completed_successfully
     env_file:
       - ../configs/order.env
+    networks:
+      - stocklet-network
+      - stocklet-order-network
 
-  # Databases
+  # Service Databases
   auth-service-postgres:
     image: postgres:16-bookworm
     restart: unless-stopped

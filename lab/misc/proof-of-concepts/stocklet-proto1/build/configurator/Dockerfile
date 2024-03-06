@@ -7,12 +7,10 @@ RUN go mod download
 
 # Build the service
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/auth-service ./cmd/auth-service
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/configurator ./cmd/configurator
 
 # Runtime Environment
 FROM gcr.io/distroless/static-debian12
-COPY --from=build /bin/auth-service .
+COPY --from=build /bin/configurator .
 
-EXPOSE 90 9090
-
-CMD ["./auth-service"]
+CMD ["./configurator"]

@@ -39,6 +39,7 @@ type StorageController interface {
 // Interface for event methods
 //
 // Methods for assembling this service's events.
+// todo: deprecate? or find better way of impl.
 type EventBuilder interface {
 	PrepareCreatedEvent(order *pb.Order) (string, []byte)
 	PrepareUpdatedEvent(order *pb.Order) (string, []byte)
@@ -50,10 +51,6 @@ type EventBuilder interface {
 // Allows flexibility to have seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
 type EventController interface {
 	PrepareConsumer(svc *OrderService) messaging.EventConsumerController
-
-	DispatchCreatedEvent(order *pb.Order)
-	DispatchUpdatedEvent(order *pb.Order)
-	DispatchDeletedEvent(req *pb.CancelOrderRequest)
 }
 
 // Create the order service
@@ -121,9 +118,6 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
 	}
 	
-	// dispatch order created event
-	svc.EvtCtrl.DispatchCreatedEvent(order)
-
 	// dispatch placed order SAGA event
 	// ^^^^ maybe not - Placed Order SAGA will start from the OrderCreated event
 	// actually... unless I want to validate the order items before?

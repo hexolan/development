@@ -22,6 +22,7 @@ CREATE TABLE order_items (
 CREATE TABLE event_outbox (
     id bigserial PRIMARY KEY,
 
-    topic varchar(128) NOT NULL,
-    msg bytea NOT NULL
+    aggregateid varchar(128) NOT NULL,
+    aggregatetype varchar(128) NOT NULL,
+    payload bytea NOT NULL
 );
