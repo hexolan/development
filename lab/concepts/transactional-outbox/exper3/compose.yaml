@@ -15,17 +15,19 @@ services:
         condition: service_healthy
       test-service-migrations:
         condition: service_completed_successfully
+      dbzcfg:
+        condition: service_completed_successfully
 
-  # test-messagerelay:
-  #   image: hexolan/test-messagerelay
-  #   build: 
-  #     context: ./service
-  #     dockerfile: messagerelay.Dockerfile
-  #   depends_on:
-  #     kafka:
-  #       condition: service_healthy
-  #     test-service-migrations:
-  #       condition: service_completed_successfully
+  dbzcfg:
+    image: hexolan/dbzcfg
+    build: 
+      context: ./service
+      dockerfile: dbzcfg.Dockerfile
+    depends_on:
+      debezium:
+        condition: service_healthy
+      test-service-migrations:
+        condition: service_completed_successfully
 
   test-service-postgres:
     image: postgres:16-bookworm
@@ -80,14 +82,37 @@ services:
     image: debezium/connect:latest
     restart: unless-stopped
     environment:
+      # Kafka
       BOOTSTRAP_SERVERS: kafka:19092
       GROUP_ID: 0
-      CONFIG_STORAGE_TOPIC: debeziumconnect_configs
-      STATUS_STORAGE_TOPIC: debeziumconnect_statuses
-      OFFSET_STORAGE_TOPIC: debeziumconnect_offsets
+      CONFIG_STORAGE_TOPIC: debezium-config
+      STATUS_STORAGE_TOPIC: debezium-status
+      OFFSET_STORAGE_TOPIC: debezium-offset
+      
       KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      ENABLE_DEBEZIUM_SCRIPTING: 'true'
+
+      CONNECT_TOPIC_CREATION_ENABLE: "true"
+
+      # CONNECT_CONNECTOR_CLASS: io.debezium.connector.postgresql.PostgresConnector
+      # CONNECT_DATABASE_HOSTNAME: test-service-postgres
+      # CONNECT_DATABASE_PORT: "5432"
+      # CONNECT_DATABASE_USER: postgres
+      # CONNECT_DATABASE_PASSWORD: postgres
+      # CONNECT_DATABASE_DBNAME: postgres
+      # CONNECT_DATABASE_SERVER_NAME: "databasething"
+
+      # CONNECT_SCHEMA_INCLUDE_LIST: "common"
+      # CONNECT_TABLE_INCLUDE_LIST: "common.event_outbox"
+      # CONNECT_TOMBSTONES_ON_DELETE: "false"
+
+      # CONNECT_PLUGIN_NAME: pgoutput
+
+      # CONNECT_TRANSFORMS: outbox
+      # CONNECT_TRANSFORMS_OUTBOX_TYPE: io.debezium.transforms.outbox.EventRouter
+      # CONNECT_TRANSFORMS_OUTBOX_ROUTE_BY_FIELD: topic
+      # CONNECT_TRANSFORMS_OUTBOX_TABLE_EXPAND_JSON_PAYLOAD: "true"
+      # CONNECT_TRANSFORMS_OUTBOX_ROUTE_TOPIC_REPLACEMENT: \$\{routedByValue\}
     ports:
       - 8083:8083
     healthcheck:

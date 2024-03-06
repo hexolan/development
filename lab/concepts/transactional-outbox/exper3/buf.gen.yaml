@@ -1,0 +1,19 @@
+version: v1
+plugins:
+  - plugin: buf.build/protocolbuffers/go:v1.31.0
+    out: service/protogen
+    opt:
+      - paths=import
+      - module=null.hexolan.dev/dev/protogen
+
+  - plugin: buf.build/grpc/go:v1.3.0
+    out: service/protogen
+    opt:
+      - paths=import
+      - module=null.hexolan.dev/dev/protogen
+    
+  - plugin: buf.build/grpc-ecosystem/gateway:v2.18.0
+    out: service/protogen
+    opt: 
+      - paths=import
+      - module=null.hexolan.dev/dev/protogen

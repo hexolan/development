@@ -115,30 +115,12 @@ func startWithElectioner(ctx context.Context, cfg *rest.Config) {
 }
 
 func start(ctx context.Context) {
-	log.Info().Msg("relay has started")
-	// log.Info().Msg("TODO: no relay method has been implemented yet - try homegrown log tailing / db polling (currently trying Debezium)")
+	log.Info().Msg("starting consumption")
 
 	// todo: ensuring stopped when context is cancelled
 	pCl, err := database.NewPostgresConn("postgresql://postgres:postgres@test-service-postgres:5432/postgres?sslmode=disable")
 	if err != nil {
 		log.Panic().Err(err).Msg("")
 	}
-	messagerelay.PostgresLogTailing(ctx, pCl)
-
-	/*
-	for {
-		select {
-			case <-ctx.Done():
-				return
-			default:
-		}
-		// do something. forever. until context is cancelled
-	}
-	*/
+	messagerelay.PostgresTailing(ctx, pCl)
 }
-
-// with Debezium:
-//
-// testing without Zookeeper for Kafka
-// testing with using NATS instead of Kafka
-// https://www.iamninad.com/posts/docker-compose-for-your-next-debezium-and-postgres-project/

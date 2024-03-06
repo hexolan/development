@@ -7,3 +7,9 @@ https://dev.to/hassanrehan/walking-through-postgresql-how-it-writes-and-recovers
 
 using postgres WAL for outbox
 transactional outbox table WAL
+
+---
+
+project layout inspiration:
+https://github.com/golang-migrate/migrate/blob/master/Makefile
+https://github.com/jackc/pglogrepl
