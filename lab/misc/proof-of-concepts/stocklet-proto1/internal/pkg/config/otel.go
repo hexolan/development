@@ -1,6 +1,7 @@
 package config
 
 type OtelConfig struct {
+	// Env Var: "OTEL_COLLECTOR_GRPC"
 	CollectorGrpc string
 }
 
@@ -12,6 +13,6 @@ func (cfg *OtelConfig) Load() error {
 		cfg.CollectorGrpc = collectorGrpc
 	}
 
-	// succesfully loaded all config properties
+	// Succesfully loaded all config properties
 	return nil
 }

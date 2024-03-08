@@ -5,10 +5,20 @@ import (
 )
 
 type PostgresConfig struct {
+	// Env Var: "PG_USER"
 	Username string
+
+	// Env Var: "PG_PASS"
 	Password string
-	Host     string
-	Port     string
+
+	// Env Var: "PG_HOST"
+	Host string
+
+	// Env Var: "PG_PORT" (optional)
+	// Defaults to "5432"
+	Port string
+	
+	// Env Var: "PG_DB"
 	Database string
 }
 

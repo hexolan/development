@@ -5,6 +5,8 @@ import (
 )
 
 type KafkaConfig struct {
+	// Env Var: "KAFKA_BROKERS"
+	// Comma delimited from env var.
 	Brokers []string
 }
 

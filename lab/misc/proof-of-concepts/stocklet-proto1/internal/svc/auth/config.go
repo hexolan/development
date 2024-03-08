@@ -41,6 +41,8 @@ func NewServiceConfig() (*ServiceConfig, error) {
 
 // Auth-service specific config options
 type ServiceConfigOpts struct {
+	// Env Var: "AUTH_PRIVATE_KEY"
+	// to be provided in base64 format
 	PrivateKey *ecdsa.PrivateKey
 }
 
@@ -65,13 +67,13 @@ func (opts *ServiceConfigOpts) Load() error {
 // for use when validating the tokens at the API ingress.
 func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// PEM private key file exposed as an environment variable encoded in base64 
-	pkB64, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
+	opt, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
 	if err != nil {
 		return err
 	}
 
 	// Decode from base64
-	pkBytes, err := base64.StdEncoding.DecodeString(pkB64)
+	pkBytes, err := base64.StdEncoding.DecodeString(opt)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeService, "the provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
 	}

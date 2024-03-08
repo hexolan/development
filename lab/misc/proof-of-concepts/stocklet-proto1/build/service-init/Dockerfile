@@ -7,10 +7,10 @@ RUN go mod download
 
 # Build the service
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/configurator ./cmd/configurator
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/service-init ./cmd/service-init
 
 # Runtime Environment
 FROM gcr.io/distroless/static-debian12
-COPY --from=build /bin/configurator .
+COPY --from=build /bin/service-init .
 
-CMD ["./configurator"]
+CMD ["./service-init"]

@@ -28,6 +28,9 @@ func RequireFromEnv(name string) (string, error) {
 
 // Shared configuration implemented by all services
 type SharedConfig struct {
+	// Env Var: "MODE" (optional)
+	// 'dev' or 'development' -> true
+	// Defaults to false
 	DevMode bool
 	
 	Otel OtelConfig

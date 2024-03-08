@@ -41,8 +41,6 @@ services:
       start_period: 30s
     volumes:
       - kafka-volume:/bitnami/kafka
-    # for dev purposes.
-    # all svcs depend on "kafka" (the event bus) - and kafka won't be ready until otel-coll is (triggering other svcs)
     depends_on:
       - otel-collector
     networks:
@@ -54,21 +52,23 @@ services:
     environment:
       - BOOTSTRAP_SERVERS=kafka:19092
       - GROUP_ID=0
+      - CONFIG_STORAGE_TOPIC=debezium-config
+      - STATUS_STORAGE_TOPIC=debezium-status
+      - OFFSET_STORAGE_TOPIC=debezium-offset
     healthcheck:
-      test: ["CMD", "curl --silent --fail -X GET http://localhost:8083/connectors"]
+      test: ["CMD-SHELL", "curl --silent --fail -X GET http://localhost:8083/connectors"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 15s
     depends_on:
       kafka:
-        condition: service_healthy
-      auth-service-postgres:
         condition: service_healthy
       order-service-postgres:
         condition: service_healthy
     networks:
       - stocklet-network
+      - stocklet-order-network
 
   # Services
   auth-service:
@@ -77,10 +77,12 @@ services:
       context: ../../
       dockerfile: build/auth-service/Dockerfile
     depends_on:
+      init-auth-service:
+        condition: service_completed_successfully
+      auth-service-postgres:
+        condition: service_healthy
       kafka:
         condition: service_healthy
-      auth-service-migrations:
-        condition: service_completed_successfully
     env_file:
       - ../configs/auth.env
     networks:
@@ -93,10 +95,12 @@ services:
       context: ../../
       dockerfile: build/order-service/Dockerfile
     depends_on:
+      init-order-service:
+        condition: service_completed_successfully
+      order-service-postgres:
+        condition: service_healthy
       kafka:
         condition: service_healthy
-      order-service-migrations:
-        condition: service_completed_successfully
     env_file:
       - ../configs/order.env
     networks:
@@ -117,6 +121,7 @@ services:
       timeout: 15s
       retries: 3
       start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
     volumes:
       - auth-service-postgres-volume:/var/lib/postgresql
     networks:
@@ -135,32 +140,44 @@ services:
       timeout: 15s
       retries: 3
       start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
     volumes:
       - order-service-postgres-volume:/var/lib/postgresql
     networks:
       - stocklet-order-network
 
-  # Database Migrations
-  auth-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
+  # Service Init Containers
+  init-auth-service:
+    image: stocklet/service-init
+    build: 
+      context: ../../
+      dockerfile: build/service-init/Dockerfile
     volumes:
       - ../../schema/sql/auth:/migrations
     depends_on:
       auth-service-postgres:
         condition: service_healthy
+    env_file:
+      - ../configs/auth-init.env
     networks:
       - stocklet-auth-network
 
-  order-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@order-service-postgres:5432/postgres?sslmode=disable up"
+  init-order-service:
+    image: stocklet/service-init
+    build: 
+      context: ../../
+      dockerfile: build/service-init/Dockerfile
     volumes:
       - ../../schema/sql/order:/migrations
     depends_on:
+      debezium:
+        condition: service_healthy
       order-service-postgres:
         condition: service_healthy
+    env_file:
+      - ../configs/order-init.env
     networks:
+      - stocklet-network
       - stocklet-order-network
 
 networks:

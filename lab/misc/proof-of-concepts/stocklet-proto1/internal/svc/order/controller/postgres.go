@@ -159,7 +159,7 @@ func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order)
 		return nil, err
 	}
 
-	// Attach attrs to the order
+	// Attach attrs to the order object
 	orderObj.Id = id
 	orderObj.CreatedAt = time.Now().Unix()
 

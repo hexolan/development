@@ -32,9 +32,9 @@ func NewOrderService(cfg *ServiceConfig, strCtrl StorageController, evtCtrl Even
 func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.GetOrderResponse, error) {
 	// Validate the request args
 	//
-	// todo: unwrapping error (if validation error) to expose the argument issues in the response
+	// Provide the validation error to the user.
 	if err := svc.pbVal.Validate(req); err != nil {
-		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order request", err)
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
 	}
 	
 	// Get the order from the storage controller
@@ -48,10 +48,8 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 
 func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error) {
 	// Validate the request args
-	//
-	// todo: unwrapping error (if validation error) to expose the argument issues in the response
 	if err := svc.pbVal.Validate(req); err != nil {
-		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid orders request", err)
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
 	}
 	
 	// Get the orders from the storage controller
@@ -77,6 +75,7 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	req.Order.Status = pb.OrderStatus_ORDER_STATUS_PENDING
 	order, err := svc.StrCtrl.CreateOrder(ctx, req.Order)
 	if err != nil {
+		log.Error().Err(err).Msg("failed to create order")
 		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
 	}
 
@@ -93,16 +92,17 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
 	// Validating the core request
 	//
-	// Ensure that an order and mask object have been provided.
+	// Ensure that order and mask objects have been provided.
 	if req.Order == nil || req.Mask == nil {
 		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "malformed request")
 	}
 
-	// todo:
-	// Validating all the inputs specified in the UpdateMask
+	// Validating all the inputs specified in the mask
 	// ensuring that they are VALID and ALLOWED fields
 	//
-	// protovalidate has no support for FieldMask
+	// protovalidate does not ship with support for skipping 
+	// validation of fields using a field mask.
+	// GH Issue: https://github.com/bufbuild/protovalidate/issues/112
 	// think of solution to pull validation for individual fields
 	// defined in the proto file for the Order type
 
@@ -126,38 +126,10 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 	//
 	// although I still need to add checks to ensure that ID, CreatedAt and UpdatedAt are not being updated
 	// maliciously in that case
-	//
+
 	// since this is a user-facing operation, it cannot be willy-nilly allowed to update
 	// order.Status and etc...
-	// users will have to call a seperate UserOrders / OrderHandler service or something requesting they cancel their order
-	//
-	// need to think of how authentication is going to play out
-	// already have methods of checking if a request has come through gRPC gateway (so they can skip any user validation)
-	// - but for handling internally (aside events) - maybe there should be an OrderHandler service which users use to place their order
-	// 		> that can act as an orchestrator or whatever - this can still be called directly to view order details
-	//
-	// maybe also split services into:
-	// Order Service (business and validation logic)
-	//  > handles inbound gRPC calls
-	//  > performs validation before making data service calls
-	//
-	// ((( AS USING EVENT DRIVEN DESIGN )))
-	// 		Order service doesn't even need to call the Order Data Service via gRPC
-	// 		- the order service performs validation and dispatches created, updated and deleted events
-	// 		- the order consumer will then TELL the order data service to enact that event (however stipulations for generating unique ids)
-	// 		- for updates this could be entirely fine
-	//
-	// Order Data Service - called by Order Service thru gRPC - stores/retrieves stuff in databases // can also split into order-postgres-data-svc, order-mongo-data-svc
-	// 	> also acts as an outbox for Created, Updated, Deleted events
-	//  > as it is acting as an outbox (functionality also required by main Order Service)
-    //  	could splinter another service for Order Producer // split into order-kafka-producer, order-nats-producer
-	//
-	// Order Consumer (Service) - calls the Order Service upon reciept of events // can also split into order-kafka-consumer, order-nats-consumer
-	//
-	// This does mean that there is tight coupling (runtime-wise) between these services though.
-	//
-	// However there are benefits to having a separate data service // load balancing or sending repeat requests to different instances of data services (1 req -> Postgres and Mongo instances)
-	// In addition, requests could be routed by order ids - can coalesce requests
+
 	if err := svc.pbVal.Validate(req.Order); err != nil {
 		log.Error().Err(err).Msg("invalid order update err")
 		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order update", err)
