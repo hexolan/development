@@ -7,5 +7,3 @@ import (
 func ConfigureLogger() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 }
-
-// todo: open telemetry

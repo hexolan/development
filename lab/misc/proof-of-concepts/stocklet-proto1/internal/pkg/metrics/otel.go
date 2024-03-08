@@ -37,16 +37,16 @@ func InitTracerProvider(cfg *config.OtelConfig, svcName string) *sdktrace.Tracer
 }
 
 // Establishes a connection to otel-collector over gRPC
-func initTracerExporter(collectorGrpcAddr string) sdktrace.SpanExporter {
+func initTracerExporter(collectorEndpoint string) sdktrace.SpanExporter {
 	ctx := context.Background()
 
 	exporter, err := otlptracegrpc.New(
 		ctx,
-		otlptracegrpc.WithEndpoint(collectorGrpcAddr),
+		otlptracegrpc.WithEndpoint(collectorEndpoint),
 		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to start otlp grpc exporter")
+		log.Panic().Err(err).Msg("failed to start otlp grpc exporter")
 	}
 
 	return exporter
@@ -63,7 +63,7 @@ func initTracerResource(svcName string) *sdkresource.Resource {
 		),
 	)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create otel tracer resource")
+		log.Panic().Err(err).Msg("failed to create otel tracer resource")
 	}
 
 	return resource

@@ -45,7 +45,7 @@ func (e ServiceError) Code() ErrorCode {
 
 // Set the gRPC status to only expose the top error message.
 //
-// This is to prevent any full error contexts, from wrapped errors,
+// This is to prevent any full error contexts (from wrapped errors)
 // being exposed to users by the gateway.
 // e.g. "{"code":2,"message":"something went wrong scanning order: failed to connect to `host=postgres user=postgres database=postgres`: hostname resolving error (lookup postgres on 127.0.0.11:53: server misbehaving)","details":[]}"
 //

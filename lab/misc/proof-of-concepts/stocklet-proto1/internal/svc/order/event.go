@@ -47,12 +47,12 @@ func PrepareUpdatedEvent(order *pb.Order) ([]byte, string, error) {
 	return wireEvt, topic, nil
 }
 
-func PrepareDeletedEvent(req *pb.CancelOrderRequest) ([]byte, string, error) {
+func PrepareDeletedEvent(orderId string) ([]byte, string, error) {
 	topic := messaging.Order_State_Deleted_Topic
 	event := &pb.OrderStateEvent{
 		Type: pb.OrderStateEvent_TYPE_DELETED,
 		Payload: &pb.Order{
-			Id: req.GetId(),
+			Id: orderId,
 		},
 	}
 

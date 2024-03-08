@@ -1,4 +1,3 @@
 package controller
 
-// TODO: ensure (pluggable) event buses
-// implement support for NATS
+// todo: implement support for NATS

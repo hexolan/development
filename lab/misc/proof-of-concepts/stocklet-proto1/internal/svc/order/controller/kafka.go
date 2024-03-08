@@ -6,7 +6,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
 
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
@@ -18,7 +17,7 @@ type kafkaController struct {
 }
 
 func NewKafkaController(kCl *kgo.Client) order.EventController {
-	// ensure the required Kafka topics exist
+	// Ensure the required Kafka topics exist
 	err := messaging.EnsureKafkaTopics(
 		kCl,
 
@@ -27,108 +26,88 @@ func NewKafkaController(kCl *kgo.Client) order.EventController {
 		messaging.Order_State_Deleted_Topic,
 
 		messaging.Order_PlaceOrder_Order_Topic,
+		messaging.Order_PlaceOrder_Warehouse_Topic,
 		messaging.Order_PlaceOrder_Payment_Topic,
 		messaging.Order_PlaceOrder_Shipping_Topic,
-		messaging.Order_PlaceOrder_Warehouse_Topic,
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("raised attempting to creating Kafka topics")
+		log.Warn().Err(err).Msg("kafka: raised attempting to ensure svc topics")
 	}
 
-	// create the controller
+	// Create the controller
 	return kafkaController{kCl: kCl}
 }
 
 func (c kafkaController) PrepareConsumer(svc *order.OrderService) messaging.EventConsumerController {
-	return newKafkaConsumerController(svc, c.kCl)
-}
+	// Create a cancellable context for the consumer
+	ctx, ctxCancel := context.WithCancel(context.Background())
 
-func (c kafkaController) dispatchEvent(topic string, wireEvt []byte) {
-	ctx := context.Background()
-
-	c.kCl.Produce(
-		ctx,
-		&kgo.Record{
-			Topic: topic,
-			Value: wireEvt,
-		},
-		nil,
+	// Add the consumption topics
+	c.kCl.AddConsumeTopics(
+		messaging.Order_PlaceOrder_Warehouse_Topic,
+		messaging.Order_PlaceOrder_Payment_Topic,
+		messaging.Order_PlaceOrder_Shipping_Topic,
 	)
-}
 
-func (c kafkaController) marshalEvent(evt protoreflect.ProtoMessage) []byte {
-	wireEvt, err := proto.Marshal(evt)
-	if err != nil {
-		// todo: proper error handling
-		log.Panic().Err(err).Msg("error marshaling protobuf event")
+	// Create the consumer controller
+	return kafkaConsumerController{
+		svc: svc,
+		kCl: c.kCl,
+		
+		ctx: ctx,
+		ctxCancel: ctxCancel,
 	}
-
-	return wireEvt
 }
 
-func (c kafkaController) DispatchCreatedEvent(order *pb.Order) {
-	c.dispatchEvent(
-		messaging.Order_State_Created_Topic,
-		c.marshalEvent(
-			&pb.OrderStateEvent{
-				Type: pb.OrderStateEvent_TYPE_CREATED,
-				Payload: order,
-			},
-		),
-	)
+type kafkaConsumerController struct {
+	svc *order.OrderService
+	kCl *kgo.Client
+
+	ctx context.Context
+	ctxCancel context.CancelFunc
 }
 
-func (c kafkaController) DispatchUpdatedEvent(order *pb.Order) {
-	c.dispatchEvent(
-		messaging.Order_State_Updated_Topic,
-		c.marshalEvent(
-			&pb.OrderStateEvent{
-				Type: pb.OrderStateEvent_TYPE_UPDATED,
-				Payload: order,
-			},
-		),
-	)
+func (c kafkaConsumerController) Start() {
+	for {
+		fetches := c.kCl.PollFetches(c.ctx)
+		if errs := fetches.Errors(); len(errs) > 0 {
+			log.Panic().Any("kafka-errs", errs).Msg("consumer: unrecoverable kafka errors")
+		}
+
+		fetches.EachTopic(func(ft kgo.FetchTopic) {
+			switch ft.Topic {
+			case messaging.Order_PlaceOrder_Warehouse_Topic:
+				c.consumePlaceOrderTopic(ft)
+			case messaging.Order_PlaceOrder_Payment_Topic:
+				c.consumePlaceOrderTopic(ft)
+			case messaging.Order_PlaceOrder_Shipping_Topic:
+				c.consumePlaceOrderTopic(ft)
+			default:
+				log.Warn().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
+			}
+		})
+	}
 }
 
-func (c kafkaController) DispatchDeletedEvent(req *pb.CancelOrderRequest) {
-	// todo: improve assembly of payload (dispatch whole order?)
-	c.dispatchEvent(
-		messaging.Order_State_Deleted_Topic,
-		c.marshalEvent(
-			&pb.OrderStateEvent{
-				Type: pb.OrderStateEvent_TYPE_DELETED,
-				Payload: &pb.Order{
-					Id: req.GetId(),
-				},
-			},
-		),
-	)
+func (c kafkaConsumerController) Stop() {
+	// Cancel the consumer context
+	c.ctxCancel()
 }
 
-func (c kafkaController) DispatchNewlyPlacedOrderEvent(order *pb.Order) {
-	// todo:
-	c.dispatchEvent(
-		messaging.Order_PlaceOrder_Order_Topic,
-		c.marshalEvent(
-			&pb.PlaceOrderEvent{
-				Type: pb.PlaceOrderEvent_TYPE_UNSPECIFIED,
-				Status: pb.PlaceOrderEvent_STATUS_UNSPECIFIED,
-				Payload: &pb.PlaceOrderEventPayload{
-					OrderId: order.Id,
-					UserId: order.CustomerId,
-					// Items: order.Items  // todo: properly assemble items
-					PaymentId: nil,
-					ShippingId: nil,
-				},
-			},
-		),
-	)
-}
+func (c kafkaConsumerController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
+	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
-func (c kafkaController) DispatchPlaceOrderEvent(evt *pb.PlaceOrderEvent) {
-	// todo:
-	c.dispatchEvent(
-		messaging.Order_PlaceOrder_Order_Topic,
-		c.marshalEvent(evt),
-	)
+	// Process each message from the topic
+	ft.EachRecord(func(record *kgo.Record) {
+		// Unmarshal the event
+		var event pb.PlaceOrderEvent
+		err := proto.Unmarshal(record.Value, &event)
+		if err != nil {
+			log.Panic().Err(err).Msg("consumer: failed to unmarshal place order event")
+		}
+
+		// Process the event
+		ctx := context.Background()
+		c.svc.ProcessPlaceOrderEvent(ctx, &event)
+	})
 }

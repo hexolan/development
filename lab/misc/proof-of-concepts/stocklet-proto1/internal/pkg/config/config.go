@@ -28,23 +28,21 @@ func RequireFromEnv(name string) (string, error) {
 
 // Shared configuration implemented by all services
 type SharedConfig struct {
-	Otel OtelConfig
-
 	DevMode bool
+	
+	Otel OtelConfig
 }
 
 // Load the options in the shared config
 func (cfg *SharedConfig) Load() error {
-	// determine application mode
+	// Determine application mode
 	cfg.DevMode = false
-	if mode, err := RequireFromEnv("MODE"); err == nil {
-		if mode == "dev" || mode == "development" {
-			cfg.DevMode = true
-		}
+	if mode, err := RequireFromEnv("MODE"); err == nil && (mode == "dev" || mode == "development") {
+		cfg.DevMode = true
 	}
 	
 	// load the Open Telemetry config
-	//cfg.Otel = OtelConfig{}
+	cfg.Otel = OtelConfig{}
 	if err := cfg.Otel.Load(); err != nil {
 		return err
 	}

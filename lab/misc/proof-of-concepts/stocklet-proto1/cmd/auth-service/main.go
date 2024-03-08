@@ -10,13 +10,13 @@ import (
 )
 
 func loadConfig() *auth.ServiceConfig {
-	// load the main service configuration
+	// Load the main service configuration
 	cfg, err := auth.NewServiceConfig()
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// configure metrics (logging and OTEL)
+	// Configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
 	metrics.InitTracerProvider(
 		&cfg.Shared.Otel,
@@ -29,7 +29,7 @@ func loadConfig() *auth.ServiceConfig {
 func usePostgresController(cfg *auth.ServiceConfig) (*auth.StorageController, error) {
 	// load the postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// todo:

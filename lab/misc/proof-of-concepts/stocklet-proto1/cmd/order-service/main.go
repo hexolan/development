@@ -15,13 +15,13 @@ import (
 )
 
 func loadConfig() *order.ServiceConfig {
-	// load the core service configuration
+	// Load the core service configuration
 	cfg, err := order.NewServiceConfig()
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// configure metrics (logging and OTEL)
+	// Configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
 	metrics.InitTracerProvider(
 		&cfg.Shared.Otel,
@@ -31,27 +31,26 @@ func loadConfig() *order.ServiceConfig {
 	return cfg
 }
 
-func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController) (order.StorageController, *pgxpool.Pool) {
+func usePostgresController(cfg *order.ServiceConfig) (order.StorageController, *pgxpool.Pool) {
 	// load the Postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// open a Postgres connection
 	pCl, err := storage.NewPostgresConn(&cfg.Postgres)
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// create the data controller
-	dbC := controller.NewPostgresController(pCl, evtC)
-	return dbC, pCl
+	strC := controller.NewPostgresController(pCl)
+	return strC, pCl
 }
 
 func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
 	// load the Kafka configuration
 	if err := cfg.Kafka.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// open a Kafka connection
@@ -60,7 +59,7 @@ func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.C
 		kgo.ConsumerGroup("order-service"),
 	)
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// create the event controller
@@ -75,7 +74,7 @@ func main() {
 	evtC, kCl := useKafkaController(cfg)
 	defer kCl.Close()
 	
-	strC, pCl := usePostgresController(cfg, evtC)
+	strC, pCl := usePostgresController(cfg)
 	defer pCl.Close()
 
 	// Create the service

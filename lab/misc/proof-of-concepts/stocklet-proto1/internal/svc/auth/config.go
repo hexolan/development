@@ -85,7 +85,7 @@ func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// Parse the block to a ecdsa.PrivateKey object
 	privKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse the provided 'AUTH_PRIVATE_KEY' to an ECDSA private key", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse the provided 'AUTH_PRIVATE_KEY' to an EC private key", err)
 	}
 
 	opts.PrivateKey = privKey
