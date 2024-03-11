@@ -10,7 +10,7 @@ import "stocklet/order/v1/types.proto";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
 message GetOrderRequest {
-  // Request an order by specifying order id
+  // Order Id
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -65,6 +65,17 @@ message CancelOrderRequest {
 }
 
 message CancelOrderResponse {}
+
+///
+message GetOrderItemsRequest {
+  // Order Id
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message GetOrderItemsResponse {
+  map<string, int32> data = 1;
+}
+///
 
 // todo: cannot delete active orders - figure out GDPR safe method of handling
 // Internal Request Payload

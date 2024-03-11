@@ -49,7 +49,11 @@ service OrderService {
     option (google.api.http) = {delete: "/v1/order/{id}"};
   }
 
-  // internal method
+  rpc GetOrderItems(GetOrderItemsRequest) returns (GetOrderItemsResponse) {
+    option (google.api.http) = {get: "/v1/order/{id}/items"};
+  }
+
+  // Internal Service Methods
   rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }

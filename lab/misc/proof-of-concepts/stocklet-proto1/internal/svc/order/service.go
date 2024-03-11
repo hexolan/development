@@ -38,7 +38,7 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 	}
 	
 	// Get the order from the storage controller
-	order, err := svc.StrCtrl.GetOrderById(ctx, req.GetId())
+	order, err := svc.StrCtrl.GetOrder(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +97,10 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "malformed request")
 	}
 
+	// Take a copy of orderId
+	// The `req.Order` object will be overriden when filtering by field mask
+	orderId := req.Order.Id
+
 	// Validating all the inputs specified in the mask
 	// ensuring that they are VALID and ALLOWED fields
 	//
@@ -106,15 +110,16 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 	// think of solution to pull validation for individual fields
 	// defined in the proto file for the Order type
 
-	// Take a copy of orderId
-	// The `req.Order` object will be overriden when filtering by field mask
-	orderId := req.Order.Id
-
-	// Filter to only field mask elements 
+	// Validate the mask paths
+	maskPaths := req.Mask.GetPaths()
+	if len(maskPaths) == 0 {
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "no fields specified")
+	}
+	
 	// TODO: ensuring that Id, Items, CreatedAt and UpdatedAt cannot be specified
 	// items will be handled in a seperate str ctrl call
-	maskPaths := req.Mask.GetPaths()
-	log.Info().Any("paths", maskPaths).Msg("abc")
+
+	// Filter to only field mask elements 
 	fmutils.Filter(req.Order, maskPaths)
 
 	// protovalidate has no support for FieldMask
@@ -135,21 +140,11 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 		return nil, errors.WrapServiceError(errors.ErrCodeInvalidArgument, "invalid order update", err)
 	}
 
-	// Update the order (database level)
-	// TODO: remove after (temp)
-	err := svc.StrCtrl.UpdateOrder(ctx, orderId, req.Order, req.Mask)
+	// Update the order
+	order, err := svc.StrCtrl.UpdateOrder(ctx, orderId, req.Order, req.Mask)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
-
-	// get the updated order
-	order, err := svc.StrCtrl.GetOrderById(ctx, orderId)
-	if err != nil {
-		return nil, err
-	}
-
-	// todo: dispatching created,updated,deleted events at DB level on succesful updates
-	// on the storage controller level
 
 	return &pb.UpdateOrderResponse{Data: order}, nil
 }
@@ -172,7 +167,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	
 	// Mark the order as rejected if a failure status was reported at any stage.
 	if req.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
-		err := svc.StrCtrl.UpdateOrder(
+		_, err := svc.StrCtrl.UpdateOrder(
 			context.Background(),
 			req.GetPayload().GetOrderId(),
 			&pb.Order{Status: pb.OrderStatus_ORDER_STATUS_REJECTED},
@@ -188,7 +183,7 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	// Otherwise, if the event is from the last stage of the saga (shipping svc)
 	// ... then mark the order as succesful.
 	if req.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
-		err := svc.StrCtrl.UpdateOrder(
+		_, err := svc.StrCtrl.UpdateOrder(
 			context.Background(),
 			req.GetPayload().GetOrderId(),
 			&pb.Order{

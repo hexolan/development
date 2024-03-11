@@ -18,7 +18,7 @@ func applyPostgresMigrations(conf *config.PostgresConfig) {
     err = m.Up()
 	if err != nil {
 		if err.Error() == "no change" {
-			log.Info().Err(err).Msg("migrate: migrations up-to-date")
+			log.Info().Err(err).Msg("migrate: migrations up to date")
 		} else {
 			log.Panic().Err(err).Msg("migrate: raised when performing db migration")
 		}

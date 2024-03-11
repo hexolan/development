@@ -1,0 +1,6 @@
+documentation on event sagas
+overview of architecture in readme
+overview of libraries and technologies used
+kubernetes manifests (for kubernetes deployment)
+documentation on deployment methods (through docker compose or kubernetes)
+documentation on developer tool dependencies (method of installing buf - perhaps a Makefile to install)

@@ -28,7 +28,7 @@ type GetOrderRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Request an order by specifying order id
+	// Order Id
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -494,6 +494,102 @@ func (*CancelOrderResponse) Descriptor() ([]byte, []int) {
 	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{9}
 }
 
+///
+type GetOrderItemsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Order Id
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetOrderItemsRequest) Reset() {
+	*x = GetOrderItemsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_order_v1_requests_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetOrderItemsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderItemsRequest) ProtoMessage() {}
+
+func (x *GetOrderItemsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_order_v1_requests_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderItemsRequest.ProtoReflect.Descriptor instead.
+func (*GetOrderItemsRequest) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetOrderItemsRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetOrderItemsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Data map[string]int32 `protobuf:"bytes,1,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+}
+
+func (x *GetOrderItemsResponse) Reset() {
+	*x = GetOrderItemsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_stocklet_order_v1_requests_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetOrderItemsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderItemsResponse) ProtoMessage() {}
+
+func (x *GetOrderItemsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stocklet_order_v1_requests_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderItemsResponse.ProtoReflect.Descriptor instead.
+func (*GetOrderItemsResponse) Descriptor() ([]byte, []int) {
+	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetOrderItemsResponse) GetData() map[string]int32 {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 // todo: cannot delete active orders - figure out GDPR safe method of handling
 // Internal Request Payload
 type DeleteUserDataRequest struct {
@@ -505,7 +601,7 @@ type DeleteUserDataRequest struct {
 func (x *DeleteUserDataRequest) Reset() {
 	*x = DeleteUserDataRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_requests_proto_msgTypes[10]
+		mi := &file_stocklet_order_v1_requests_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -518,7 +614,7 @@ func (x *DeleteUserDataRequest) String() string {
 func (*DeleteUserDataRequest) ProtoMessage() {}
 
 func (x *DeleteUserDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_requests_proto_msgTypes[10]
+	mi := &file_stocklet_order_v1_requests_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -531,7 +627,7 @@ func (x *DeleteUserDataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserDataRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserDataRequest) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{10}
+	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{12}
 }
 
 // Internal Request Payload
@@ -544,7 +640,7 @@ type DeleteUserDataResponse struct {
 func (x *DeleteUserDataResponse) Reset() {
 	*x = DeleteUserDataResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_stocklet_order_v1_requests_proto_msgTypes[11]
+		mi := &file_stocklet_order_v1_requests_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -557,7 +653,7 @@ func (x *DeleteUserDataResponse) String() string {
 func (*DeleteUserDataResponse) ProtoMessage() {}
 
 func (x *DeleteUserDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stocklet_order_v1_requests_proto_msgTypes[11]
+	mi := &file_stocklet_order_v1_requests_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -570,7 +666,7 @@ func (x *DeleteUserDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserDataResponse.ProtoReflect.Descriptor instead.
 func (*DeleteUserDataResponse) Descriptor() ([]byte, []int) {
-	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{11}
+	return file_stocklet_order_v1_requests_proto_rawDescGZIP(), []int{13}
 }
 
 var File_stocklet_order_v1_requests_proto protoreflect.FileDescriptor
@@ -631,15 +727,28 @@ var file_stocklet_order_v1_requests_proto_rawDesc = []byte{
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x42, 0x07, 0xba, 0x48, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x02, 0x69, 0x64, 0x22,
 	0x15, 0x0a, 0x13, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x17, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
-	0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
-	0x18, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74,
-	0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x45, 0x5a, 0x43, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e, 0x2f,
-	0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61,
-	0x6c, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f, 0x6f,
-	0x72, 0x64, 0x65, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x76, 0x31,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2f, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x07, 0xba, 0x48, 0x04, 0x72,
+	0x02, 0x10, 0x01, 0x52, 0x02, 0x69, 0x64, 0x22, 0x98, 0x01, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x4f,
+	0x72, 0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x46, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x32, 0x2e, 0x73, 0x74, 0x6f, 0x63, 0x6b, 0x6c, 0x65, 0x74, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72,
+	0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x74, 0x65, 0x6d,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x37, 0x0a, 0x09, 0x44, 0x61, 0x74,
+	0x61, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02,
+	0x38, 0x01, 0x22, 0x17, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72,
+	0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x18, 0x0a, 0x16, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x45, 0x5a, 0x43, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x65, 0x78, 0x6f, 0x6c, 0x61, 0x6e, 0x2f, 0x73, 0x74, 0x6f, 0x63,
+	0x6b, 0x6c, 0x65, 0x74, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x70, 0x6b,
+	0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x67, 0x65, 0x6e, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72,
+	0x2f, 0x76, 0x31, 0x3b, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -654,7 +763,7 @@ func file_stocklet_order_v1_requests_proto_rawDescGZIP() []byte {
 	return file_stocklet_order_v1_requests_proto_rawDescData
 }
 
-var file_stocklet_order_v1_requests_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_stocklet_order_v1_requests_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_stocklet_order_v1_requests_proto_goTypes = []interface{}{
 	(*GetOrderRequest)(nil),        // 0: stocklet.order.v1.GetOrderRequest
 	(*GetOrderResponse)(nil),       // 1: stocklet.order.v1.GetOrderResponse
@@ -666,24 +775,28 @@ var file_stocklet_order_v1_requests_proto_goTypes = []interface{}{
 	(*UpdateOrderResponse)(nil),    // 7: stocklet.order.v1.UpdateOrderResponse
 	(*CancelOrderRequest)(nil),     // 8: stocklet.order.v1.CancelOrderRequest
 	(*CancelOrderResponse)(nil),    // 9: stocklet.order.v1.CancelOrderResponse
-	(*DeleteUserDataRequest)(nil),  // 10: stocklet.order.v1.DeleteUserDataRequest
-	(*DeleteUserDataResponse)(nil), // 11: stocklet.order.v1.DeleteUserDataResponse
-	(*Order)(nil),                  // 12: stocklet.order.v1.Order
-	(*fieldmaskpb.FieldMask)(nil),  // 13: google.protobuf.FieldMask
+	(*GetOrderItemsRequest)(nil),   // 10: stocklet.order.v1.GetOrderItemsRequest
+	(*GetOrderItemsResponse)(nil),  // 11: stocklet.order.v1.GetOrderItemsResponse
+	(*DeleteUserDataRequest)(nil),  // 12: stocklet.order.v1.DeleteUserDataRequest
+	(*DeleteUserDataResponse)(nil), // 13: stocklet.order.v1.DeleteUserDataResponse
+	nil,                            // 14: stocklet.order.v1.GetOrderItemsResponse.DataEntry
+	(*Order)(nil),                  // 15: stocklet.order.v1.Order
+	(*fieldmaskpb.FieldMask)(nil),  // 16: google.protobuf.FieldMask
 }
 var file_stocklet_order_v1_requests_proto_depIdxs = []int32{
-	12, // 0: stocklet.order.v1.GetOrderResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 1: stocklet.order.v1.GetOrdersResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 2: stocklet.order.v1.CreateOrderRequest.order:type_name -> stocklet.order.v1.Order
-	12, // 3: stocklet.order.v1.CreateOrderResponse.data:type_name -> stocklet.order.v1.Order
-	12, // 4: stocklet.order.v1.UpdateOrderRequest.order:type_name -> stocklet.order.v1.Order
-	13, // 5: stocklet.order.v1.UpdateOrderRequest.mask:type_name -> google.protobuf.FieldMask
-	12, // 6: stocklet.order.v1.UpdateOrderResponse.data:type_name -> stocklet.order.v1.Order
-	7,  // [7:7] is the sub-list for method output_type
-	7,  // [7:7] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	15, // 0: stocklet.order.v1.GetOrderResponse.data:type_name -> stocklet.order.v1.Order
+	15, // 1: stocklet.order.v1.GetOrdersResponse.data:type_name -> stocklet.order.v1.Order
+	15, // 2: stocklet.order.v1.CreateOrderRequest.order:type_name -> stocklet.order.v1.Order
+	15, // 3: stocklet.order.v1.CreateOrderResponse.data:type_name -> stocklet.order.v1.Order
+	15, // 4: stocklet.order.v1.UpdateOrderRequest.order:type_name -> stocklet.order.v1.Order
+	16, // 5: stocklet.order.v1.UpdateOrderRequest.mask:type_name -> google.protobuf.FieldMask
+	15, // 6: stocklet.order.v1.UpdateOrderResponse.data:type_name -> stocklet.order.v1.Order
+	14, // 7: stocklet.order.v1.GetOrderItemsResponse.data:type_name -> stocklet.order.v1.GetOrderItemsResponse.DataEntry
+	8,  // [8:8] is the sub-list for method output_type
+	8,  // [8:8] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_stocklet_order_v1_requests_proto_init() }
@@ -814,7 +927,7 @@ func file_stocklet_order_v1_requests_proto_init() {
 			}
 		}
 		file_stocklet_order_v1_requests_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteUserDataRequest); i {
+			switch v := v.(*GetOrderItemsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -826,6 +939,30 @@ func file_stocklet_order_v1_requests_proto_init() {
 			}
 		}
 		file_stocklet_order_v1_requests_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetOrderItemsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_order_v1_requests_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteUserDataRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_stocklet_order_v1_requests_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteUserDataResponse); i {
 			case 0:
 				return &v.state
@@ -844,7 +981,7 @@ func file_stocklet_order_v1_requests_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_stocklet_order_v1_requests_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

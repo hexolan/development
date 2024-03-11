@@ -24,12 +24,17 @@ type OrderService struct {
 //
 // Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
-	GetOrderById(ctx context.Context, orderId string) (*pb.Order, error)
-	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
-
+	GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
 	CreateOrder(ctx context.Context, orderObj *pb.Order) (*pb.Order, error)
-	UpdateOrder(ctx context.Context, orderId string, orderObj *pb.Order, mask *fieldmaskpb.FieldMask) error
-	DeleteOrderById(ctx context.Context, id string) error
+	UpdateOrder(ctx context.Context, orderId string, orderObj *pb.Order, mask *fieldmaskpb.FieldMask) (*pb.Order, error)
+	DeleteOrder(ctx context.Context, orderId string) error
+	
+	GetOrderItems(ctx context.Context, orderId string) (*map[string]int32, error)
+	SetOrderItems(ctx context.Context, orderId string, itemQuantities map[string]int32) (*map[string]int32, error)
+	SetOrderItem(ctx context.Context, orderId string, itemId string, quantity int32) (*map[string]int32, error)
+	DeleteOrderItem(ctx context.Context, orderId string, itemId string) (*map[string]int32, error)
+
+	GetOrdersByCustomerId(ctx context.Context, custId string) ([]*pb.Order, error)
 }
 
 // Interface for the messaging methods

@@ -1,0 +1,5 @@
+kubernetes manifests
+
+use skaffold
+
+and start using helm?

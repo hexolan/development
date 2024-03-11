@@ -1,0 +1,49 @@
+// Copyright 2024 Declan Teevan
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// 	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package stocklet.order.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_REJECTED = 2;
+  ORDER_STATUS_CANCELLED = 3;
+  ORDER_STATUS_APPROVED = 4;
+  ORDER_STATUS_SUCCESS = 5;
+}
+
+message Order {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+
+  OrderStatus status = 2 [(buf.validate.field).enum = {
+    defined_only: true,
+    not_in: [0]
+  }];
+
+  // Items mapped by quantity
+  map<string, int32> items = 3 [(buf.validate.field).map.values.int32.gt = 0];
+
+  string customer_id = 4 [(buf.validate.field).string.min_len = 1];
+
+  optional string transaction_id = 5 [(buf.validate.field).string.min_len = 1];
+
+  int64 created_at = 6;
+  optional int64 updated_at = 7;
+}

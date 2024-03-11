@@ -1,14 +1,7 @@
 version: "3.8"
 
 services:
-  # Core Infra
-  otel-collector:
-    image: stocklet/otel-collector
-    build:
-      context: ../../build/otel-collector
-    networks:
-      - stocklet-network
-
+  # Core
   edge-gateway:
     image: stocklet/edge-gateway
     build:
@@ -17,6 +10,13 @@ services:
       - 80:80
     depends_on:
       - otel-collector
+    networks:
+      - stocklet-network
+
+  otel-collector:
+    image: stocklet/otel-collector
+    build:
+      context: ../../build/otel-collector
     networks:
       - stocklet-network
 
@@ -39,10 +39,10 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    volumes:
-      - kafka-volume:/bitnami/kafka
     depends_on:
       - otel-collector
+    volumes:
+      - stocklet-kafka-volume:/bitnami/kafka
     networks:
       - stocklet-network
 
@@ -50,8 +50,8 @@ services:
     image: debezium/connect:latest
     restart: unless-stopped
     environment:
-      - BOOTSTRAP_SERVERS=kafka:19092
       - GROUP_ID=0
+      - BOOTSTRAP_SERVERS=kafka:19092
       - CONFIG_STORAGE_TOPIC=debezium-config
       - STATUS_STORAGE_TOPIC=debezium-status
       - OFFSET_STORAGE_TOPIC=debezium-offset
@@ -123,7 +123,7 @@ services:
       start_period: 30s
     command: ["postgres", "-c", "wal_level=logical"]
     volumes:
-      - auth-service-postgres-volume:/var/lib/postgresql
+      - stocklet-auth-postgres-volume:/var/lib/postgresql
     networks:
       - stocklet-auth-network
       
@@ -142,7 +142,7 @@ services:
       start_period: 30s
     command: ["postgres", "-c", "wal_level=logical"]
     volumes:
-      - order-service-postgres-volume:/var/lib/postgresql
+      - stocklet-order-postgres-volume:/var/lib/postgresql
     networks:
       - stocklet-order-network
 
@@ -152,13 +152,13 @@ services:
     build: 
       context: ../../
       dockerfile: build/service-init/Dockerfile
-    volumes:
-      - ../../schema/sql/auth:/migrations
     depends_on:
       auth-service-postgres:
         condition: service_healthy
     env_file:
       - ../configs/auth-init.env
+    volumes:
+      - ../../schema/sql/auth:/migrations
     networks:
       - stocklet-auth-network
 
@@ -167,8 +167,6 @@ services:
     build: 
       context: ../../
       dockerfile: build/service-init/Dockerfile
-    volumes:
-      - ../../schema/sql/order:/migrations
     depends_on:
       debezium:
         condition: service_healthy
@@ -176,6 +174,8 @@ services:
         condition: service_healthy
     env_file:
       - ../configs/order-init.env
+    volumes:
+      - ../../schema/sql/order:/migrations
     networks:
       - stocklet-network
       - stocklet-order-network
@@ -186,6 +186,6 @@ networks:
   stocklet-order-network:
 
 volumes:
-  kafka-volume:
-  auth-service-postgres-volume:
-  order-service-postgres-volume:
+  stocklet-kafka-volume:
+  stocklet-auth-postgres-volume:
+  stocklet-order-postgres-volume:
