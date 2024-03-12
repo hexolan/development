@@ -1,30 +1,35 @@
-// Copyright 2024 Declan Teevan
+// Copyright (C) 2024 Declan Teevan
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 syntax = "proto3";
 
 package stocklet.auth.v1;
 
-import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
-import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
-import "stocklet/auth/v1/types.proto";
+import "stocklet/auth/v1/requests.proto";
+import "stocklet/common/v1/requests.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
+// todo:
 service AuthService {
+  rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
+    option (google.api.http) = {get: "/v1/auth/service"};
+  }
+
   rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
     option (google.api.http) = {get: "/v1/auth/jwks"};
   }
@@ -49,52 +54,5 @@ service AuthService {
   }
 }
 
-message GetJwksRequest {}
-
-message GetJwksResponse {
-  repeated ECPublicJWK keys = 1;
-}
-
-message LoginPasswordRequest {
-  string user_id = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (buf.validate.field).string.min_len = 1
-  ];
-
-  string password = 2 [
-    (google.api.field_behavior) = REQUIRED,
-    (buf.validate.field).string = {
-      min_len: 1;
-      max_len: 64;
-    }
-  ];
-}
-
-message LoginPasswordResponse {
-  string detail = 1;
-  AuthToken data = 2;
-}
-
-message SetPasswordRequest {
-  string user_id = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (buf.validate.field).string.min_len = 1
-  ];
-
-  string password = 2 [
-    (google.api.field_behavior) = REQUIRED,
-    (buf.validate.field).string = {
-      min_len: 1;
-      max_len: 64;
-    }
-  ];
-}
-
-message SetPasswordResponse {
-  string detail = 1;
-}
-
 // todo:
-// Internal Request Payloads
-message DeleteUserDataRequest {}
-message DeleteUserDataResponse {}
+service AuthDataService {}

@@ -8,7 +8,7 @@ Dispatched upon create, update and delete actions to ``order`` entities.
 
 Used for implementing the [Event Sourcing](https://microservices.io/patterns/data/event-sourcing.html) pattern.
 
-**Schema** 
+**Schemas** 
 
 * [``/schema/protobufs/order/v1/events.proto``](/schema/protobufs/order/v1/events.proto)
 

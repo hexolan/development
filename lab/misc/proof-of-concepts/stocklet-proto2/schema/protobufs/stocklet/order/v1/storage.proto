@@ -1,0 +1,112 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+syntax = "proto3";
+
+package stocklet.order.v1;
+
+import "google/protobuf/field_mask.proto";
+import "stocklet/order/v1/types.proto";
+
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
+
+// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+service OrderStorageService {
+  rpc GetOrder(DbGetOrderRequest) returns (DbGetOrderResponse) {}
+  rpc CreateOrder(DbCreateOrderRequest) returns (DbCreateOrderResponse) {}
+  rpc UpdateOrder(DbUpdateOrderRequest) returns (DbUpdateOrderResponse) {}
+  rpc DeleteOrder(DbDeleteOrderRequest) returns (DbDeleteOrderResponse) {}
+
+  rpc GetOrderItems(DbGetOrderItemsRequest) returns (DbGetOrderItemsResponse) {}
+  rpc SetOrderItems(DbSetOrderItemsRequest) returns (DbSetOrderItemsResponse) {}
+  rpc DeleteOrderItem(DbDeleteOrderItemRequest) returns (DbDeleteOrderItemResponse) {}
+
+  rpc GetCustomerOrders(DbGetCustomerOrdersRequest) returns (DbGetCustomerOrdersResponse) {}
+}
+
+//
+message DbGetOrderRequest {
+  string order_id = 1;
+}
+
+message DbGetOrderResponse {
+  Order order = 1;
+}
+
+//
+message DbCreateOrderRequest {
+  Order order = 1;
+}
+
+message DbCreateOrderResponse {
+  Order order = 1;
+}
+
+//
+message DbUpdateOrderRequest {
+  string order_id = 1;
+  Order order = 2;
+  google.protobuf.FieldMask mask = 3;
+}
+
+message DbUpdateOrderResponse {
+  Order order = 1;
+}
+
+//
+message DbDeleteOrderRequest {
+  string order_id = 1;
+}
+
+message DbDeleteOrderResponse {}
+
+//
+message DbGetOrderItemsRequest {
+  string order_id = 1;
+}
+
+message DbGetOrderItemsResponse {
+  map<string, int32> items = 1;
+}
+
+//
+message DbSetOrderItemsRequest {
+  string order_id = 1;
+  map<string, int32> items = 2;
+}
+
+message DbSetOrderItemsResponse {
+  map<string, int32> items = 1;
+}
+
+//
+message DbDeleteOrderItemRequest {
+  string order_id = 1;
+  string item_id = 2;
+}
+
+message DbDeleteOrderItemResponse {
+  map<string, int32> items = 1;
+}
+
+//
+message DbGetCustomerOrdersRequest {
+  string customer_id = 1;
+}
+
+message DbGetCustomerOrdersResponse {
+  repeated Order orders = 1;
+}

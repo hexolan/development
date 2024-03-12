@@ -1,16 +1,17 @@
-// Copyright 2024 Declan Teevan
+// Copyright (C) 2024 Declan Teevan
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package main
 
@@ -49,57 +50,50 @@ func usePostgresController(cfg *order.ServiceConfig) (order.StorageController, *
 	}
 
 	// open a Postgres connection
-	pCl, err := storage.NewPostgresConn(&cfg.Postgres)
+	client, err := storage.NewPostgresConn(&cfg.Postgres)
 	if err != nil {
 		log.Panic().Err(err).Msg("")
 	}
 
-	strC := controller.NewPostgresController(pCl)
-	return strC, pCl
+	controller := controller.NewPostgresController(client)
+	return controller, client
 }
 
-func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
+func useKafkaController(cfg *order.ServiceConfig) (order.ConsumerController, *kgo.Client) {
 	// load the Kafka configuration
 	if err := cfg.Kafka.Load(); err != nil {
 		log.Panic().Err(err).Msg("")
 	}
 
 	// open a Kafka connection
-	kCl, err := messaging.NewKafkaConn(
-		&cfg.Kafka,
-		kgo.ConsumerGroup("order-service"),
-	)
+	client, err := messaging.NewKafkaConn(&cfg.Kafka, kgo.ConsumerGroup("order-service"))
 	if err != nil {
 		log.Panic().Err(err).Msg("")
 	}
 
-	// create the event controller
-	evtC := controller.NewKafkaController(kCl)
-	return evtC, kCl
+	controller := controller.NewKafkaController(client)
+	return controller, client
 }
 
 func main() {
 	cfg := loadConfig()
 
-	// Create the controllers
-	strC, pCl := usePostgresController(cfg)
-	defer pCl.Close()
+	// Create the storage controller
+	store, storeCl := usePostgresController(cfg)
+	defer storeCl.Close()
 
-	evtC, kCl := useKafkaController(cfg)
-	defer kCl.Close()
+	// Create the service (& API interfaces)
+	svc := order.NewOrderService(cfg, store)
+	grpcSvr := api.PrepareGrpc(cfg, svc)
+	gatewayMux := api.PrepareGateway(cfg)
 
-	// Create the service
-	svc := order.NewOrderService(cfg, strC, evtC)
+	// Create the consumer
+	consumer, consCl := useKafkaController(cfg)
+	defer consCl.Close()
+	consumer.Attach(svc)
 	
-	// Attach the API interfaces to the service
-	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
-	gwMux := api.AttachSvcToGateway(cfg, svc)
-
-	// Start the event consumer
-	consumer := svc.EvtCtrl.PrepareConsumer(svc)
+	// Serve/start the interfaces
 	go consumer.Start()
-
-	// Serve the API interfaces
-	go serve.Gateway(gwMux)
+	go serve.Gateway(gatewayMux)
 	serve.Grpc(grpcSvr)
 }

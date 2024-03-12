@@ -90,6 +90,8 @@ TODO: update later
 | [order](/internal/svc/order/) | ✔️ | ✔️ | ✔️ | ✔️ |
 | TODO | ✔️ | ✔️ | ✔️ | ✔️ |
 
+todo: update service list
+
 Each service is prepared by a [``service-init``](/cmd/service-init/) container, which is responsible for performing any database migrations and configuring the Debezium outbox connectors for that service.
 
 ### Events
@@ -110,8 +112,6 @@ todo: implement support for deploying with kubernetes
 
 ## ✍️ License and Contributing
 
-Contributions are always welcome! Please feel free to open an issue, or even a pull request, if you feel you have any ideas for improvement or further expansion of this demo project.
+Contributions are always welcome! Please feel free to open an issue or a pull request if you feel you have any ideas for improvement or further expansion of this demo project.
 
-TODO: license under AGPL? or similar license. - add an addendum, something like: Planning on using this project to build something in production? Would love to hear about it.
-
-This project is licensed under the [Apache License v2](/LICENSE).
+This project is licensed under the [GNU AGPL v3](/LICENSE).

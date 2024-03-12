@@ -5,6 +5,7 @@ info:
 tags:
   - name: AuthService
   - name: OrderService
+  - name: OrderStorageService
 consumes:
   - application/json
 produces:
@@ -64,6 +65,20 @@ paths:
             $ref: '#/definitions/v1SetPasswordRequest'
       tags:
         - AuthService
+  /v1/auth/service:
+    get:
+      operationId: AuthService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - AuthService
   /v1/order/list:
     get:
       operationId: OrderService_GetOrders
@@ -118,7 +133,6 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: id
-          description: Order Id
           in: path
           required: true
           type: string
@@ -247,6 +261,55 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/v1Order'
+  v1DbCreateOrderResponse:
+    type: object
+    properties:
+      order:
+        $ref: '#/definitions/v1Order'
+  v1DbDeleteOrderItemResponse:
+    type: object
+    properties:
+      items:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
+  v1DbDeleteOrderResponse:
+    type: object
+  v1DbGetCustomerOrdersResponse:
+    type: object
+    properties:
+      orders:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Order'
+  v1DbGetOrderItemsResponse:
+    type: object
+    properties:
+      items:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
+  v1DbGetOrderResponse:
+    type: object
+    properties:
+      order:
+        $ref: '#/definitions/v1Order'
+  v1DbSetOrderItemsResponse:
+    type: object
+    properties:
+      items:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
+  v1DbUpdateOrderResponse:
+    type: object
+    properties:
+      order:
+        $ref: '#/definitions/v1Order'
   v1ECPublicJWK:
     type: object
     properties:
@@ -346,6 +409,15 @@ definitions:
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
+  v1ServiceInfoResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      source:
+        type: string
+      sourceLicense:
+        type: string
   v1SetPasswordRequest:
     type: object
     properties:

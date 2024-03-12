@@ -1,16 +1,17 @@
-// Copyright 2024 Declan Teevan
+// Copyright (C) 2024 Declan Teevan
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// 	http://www.apache.org/licenses/LICENSE-2.0
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package controller
 
@@ -27,13 +28,21 @@ import (
 )
 
 type kafkaController struct {
-	kCl *kgo.Client
+	cl *kgo.Client
+
+	// used for event consumption
+	svc pb.OrderServiceServer
+	ctx context.Context
+	ctxCancel context.CancelFunc
 }
 
-func NewKafkaController(kCl *kgo.Client) order.EventController {
+func NewKafkaController(cl *kgo.Client) order.ConsumerController {
+	// Create a cancellable context for the consumer
+	ctx, ctxCancel := context.WithCancel(context.Background())
+	
 	// Ensure the required Kafka topics exist
 	err := messaging.EnsureKafkaTopics(
-		kCl,
+		cl,
 
 		messaging.Order_State_Created_Topic,
 		messaging.Order_State_Updated_Topic,
@@ -48,42 +57,27 @@ func NewKafkaController(kCl *kgo.Client) order.EventController {
 		log.Warn().Err(err).Msg("kafka: raised attempting to ensure svc topics")
 	}
 
-	// Create the controller
-	return kafkaController{kCl: kCl}
-}
-
-func (c kafkaController) PrepareConsumer(svc *order.OrderService) messaging.EventConsumerController {
-	// Create a cancellable context for the consumer
-	ctx, ctxCancel := context.WithCancel(context.Background())
-
 	// Add the consumption topics
-	c.kCl.AddConsumeTopics(
+	cl.AddConsumeTopics(
 		messaging.Order_PlaceOrder_Warehouse_Topic,
 		messaging.Order_PlaceOrder_Payment_Topic,
 		messaging.Order_PlaceOrder_Shipping_Topic,
 	)
 
-	// Create the consumer controller
-	return kafkaConsumerController{
-		svc: svc,
-		kCl: c.kCl,
-		
-		ctx: ctx,
-		ctxCancel: ctxCancel,
+	return kafkaController{cl: cl, ctx: ctx, ctxCancel: ctxCancel}
+}
+
+func (c kafkaController) Attach(svc pb.OrderServiceServer) {
+	c.svc = svc
+}
+
+func (c kafkaController) Start() {
+	if c.svc == nil {
+		log.Panic().Msg("consumer: no service interface attached")
 	}
-}
 
-type kafkaConsumerController struct {
-	svc *order.OrderService
-	kCl *kgo.Client
-
-	ctx context.Context
-	ctxCancel context.CancelFunc
-}
-
-func (c kafkaConsumerController) Start() {
 	for {
-		fetches := c.kCl.PollFetches(c.ctx)
+		fetches := c.cl.PollFetches(c.ctx)
 		if errs := fetches.Errors(); len(errs) > 0 {
 			log.Panic().Any("kafka-errs", errs).Msg("consumer: unrecoverable kafka errors")
 		}
@@ -103,12 +97,12 @@ func (c kafkaConsumerController) Start() {
 	}
 }
 
-func (c kafkaConsumerController) Stop() {
+func (c kafkaController) Stop() {
 	// Cancel the consumer context
 	c.ctxCancel()
 }
 
-func (c kafkaConsumerController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
+func (c kafkaController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
