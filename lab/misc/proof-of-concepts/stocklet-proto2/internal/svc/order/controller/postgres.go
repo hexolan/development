@@ -18,6 +18,7 @@ package controller
 import (
 	"time"
 	"context"
+	"slices"
 	"encoding/json"
 
 	"github.com/jackc/pgx/v5"
@@ -38,8 +39,6 @@ const (
 )
 
 type postgresController struct {
-	pb.UnimplementedOrderStorageServiceServer
-
 	cl *pgxpool.Pool
 }
 
@@ -50,54 +49,50 @@ func NewPostgresController(cl *pgxpool.Pool) order.StorageController {
 // Get an order by its specified id from the database.
 //
 // Internal method. Assumes inputs are valid.
-func (c postgresController) GetOrder(ctx context.Context, req *pb.DbGetOrderRequest) (*pb.DbGetOrderResponse, error) {
-	order, err := c.getOrder(ctx, nil, req.OrderId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.DbGetOrderResponse{Order: order}, nil 
+func (c postgresController) GetOrder(ctx context.Context, id string) (*pb.Order, error) {
+	return c.getOrder(ctx, nil, id)
 }
 
-func (c postgresController) getOrder(ctx context.Context, tx *pgx.Tx, orderId string) (*pb.Order, error) {
-	// Load the order data
+func (c postgresController) getOrder(ctx context.Context, tx *pgx.Tx, id string) (*pb.Order, error) {
+	// Query order
 	var row pgx.Row
 	if tx == nil {
-		row = c.cl.QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", orderId)
+		row = c.cl.QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", id)
 	} else {
-		row = (*tx).QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", orderId)	
+		row = (*tx).QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", id)	
 	}
-	orderObj, err := scanRowToOrder(row)
+
+	// Scan row to protobuf order
+	order, err := scanRowToOrder(row)
 	if err != nil {
 		return nil, err
 	}
 
-	// Add the order items and return
-	orderObj, err = c.appendItemsToOrderObj(ctx, tx, orderObj)
+	// Append the order items
+	order, err = c.appendItemsToOrderObj(ctx, tx, order)
 	if err != nil {
 		return nil, err
 	}
 
-	return orderObj, nil
+	return order, nil
 }
 
-// Create a new order in the Postgres database.
+// Create a new order in the database.
 //
 // Internal method. Validation is already assumed.
-func (c postgresController) CreateOrder(ctx context.Context, req *pb.DbCreateOrderRequest) (*pb.DbCreateOrderResponse, error) {
+func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order) (*pb.Order, error) {
 	// Begin a DB transaction
 	tx, err := c.cl.Begin(ctx)
 	if err != nil {
-		// todo: implement check to determine if database problem (likely is a connection problem)
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
 	}
 	defer tx.Rollback(ctx)
 
-	// Insert order query
+	// Prepare and perform insert query
 	newOrder := pb.Order{
-		Items: req.Order.Items,
-		Status: req.Order.Status,
-		CustomerId: req.Order.CustomerId,
+		Items: orderObj.Items,
+		Status: orderObj.Status,
+		CustomerId: orderObj.CustomerId,
 		CreatedAt: time.Now().Unix(),
 	}
 	err = tx.QueryRow(
@@ -127,13 +122,7 @@ func (c postgresController) CreateOrder(ctx context.Context, req *pb.DbCreateOrd
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
 	}
 
-	_, err = tx.Exec(
-		ctx,
-		"INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)",
-		newOrder.Id,
-		evtTopic,
-		evt,
-	)
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", newOrder.Id, evtTopic, evt)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to insert order event", err)
 	}
@@ -144,19 +133,14 @@ func (c postgresController) CreateOrder(ctx context.Context, req *pb.DbCreateOrd
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
 	}
 
-	return &pb.DbCreateOrderResponse{Order: &newOrder}, nil
+	return &newOrder, nil
 }
 
-// todo: FINISH IMPLEMENTING
+// Update an order in the database.
 //
 // Internal method. Inputs are assumed valid.
-func (c postgresController) UpdateOrder(ctx context.Context, req *pb.DbUpdateOrderRequest) (*pb.DbUpdateOrderResponse, error) {
-	order, err := c.updateOrder(ctx, req.OrderId, req.Order, req.Mask)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.DbUpdateOrderResponse{Order: order}, nil
+func (c postgresController) UpdateOrder(ctx context.Context, id string, order *pb.Order, mask *fieldmaskpb.FieldMask) (*pb.Order, error) {
+	return c.updateOrder(ctx, id, order, mask)
 }
 
 func (c postgresController) updateOrder(ctx context.Context, orderId string, orderObj *pb.Order, mask *fieldmaskpb.FieldMask) (*pb.Order, error) {
@@ -167,37 +151,38 @@ func (c postgresController) updateOrder(ctx context.Context, orderId string, ord
 	}
 	defer tx.Rollback(ctx)
 
+	// Forbidden attributes
+	if slices.Contains(mask.Paths, "id") {
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "cannot update primary key")
+	}
+
 	// Set the updatable attrs (TEMP ALL BELOW NEEDS CLEANING UP)
-	statementSetData := goqu.Record{"updated_at": goqu.L("timezone('utc', now())")}
+	updateVals := goqu.Record{"updated_at": goqu.L("timezone('utc', now())")}
 
-	// https://github.com/mennanov/fieldmask-utils
-	// https://github.com/mennanov/fmutils
+	// Check if order items are to be updated
+	if slices.Contains(mask.Paths, "items") {
+		err = c.setOrderItems(ctx, &tx, orderId, orderObj.Items)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update order items", err)
+		}
 
-	/*
-
-	maskPaths := mask.Paths
-	// todo: ensuring that order.Items is not in maskPath
-	// all order attrs (excluding Id, Items, CreatedAt and UpdatedAt)
-	//
-	// handle settings items in seperate DB route
-	// (maybe even in a seperate /v1/order/<order_id>/items route)
-	//
-	// disallow setting id / created_at / updated_at entirely
-
-	*/
+		// remove Items from orderObj
+		// to prevent (invalidly) being added to update statement below
+		orderObj.Items = nil
+	}
 
 	// put filtered mask order into patchData
 	marshalledMask, err := json.Marshal(orderObj)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst assembling patch data", err)
 	}
-	err = json.Unmarshal(marshalledMask, &statementSetData)
+	err = json.Unmarshal(marshalledMask, &updateVals)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst assembling patch data", err)
 	}
 
 	// Build an update statement
-	statement, args, err := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(statementSetData).Where(goqu.C("id").Eq(orderId)).ToSQL()
+	statement, args, err := goqu.Dialect("postgres").Update("orders").Prepared(true).Set(updateVals).Where(goqu.C("id").Eq(orderId)).ToSQL()
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to build SQL statement", err)
 	}
@@ -220,13 +205,7 @@ func (c postgresController) updateOrder(ctx context.Context, orderId string, ord
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
 	}
 
-	_, err = tx.Exec(
-		ctx,
-		"INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)",
-		orderObj.Id,
-		evtTopic,
-		evt,
-	)
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", orderObj.Id, evtTopic, evt)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to add order event", err)
 	}
@@ -240,30 +219,49 @@ func (c postgresController) updateOrder(ctx context.Context, orderId string, ord
 	return orderObj, nil
 }
 
-// Delete an order by its specified id.
-// TODO: implement
-func (c postgresController) DeleteOrder(ctx context.Context, req *pb.DbDeleteOrderRequest) (*pb.DbDeleteOrderResponse, error) {
-	err := c.deleteOrder(ctx, nil, req.OrderId)
+// Delete an order from the database
+func (c postgresController) DeleteOrder(ctx context.Context, id string) error {
+	// Begin a DB transaction
+	tx, err := c.cl.Begin(ctx)
 	if err != nil {
-		return nil, err
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Delete the order
+	cmdTag, err := tx.Exec(ctx, "DELETE FROM orders WHERE id=$1", id)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to execute delete query", err)
 	}
 
-	return &pb.DbDeleteOrderResponse{}, nil
-}
+	// Ensure an order was deleted
+	if cmdTag.RowsAffected() < 1 {
+		return errors.NewServiceError(errors.ErrCodeNotFound, "order does not exist")
+	}
 
-// todo: IMPLEMENT
-func (c postgresController) deleteOrder(ctx context.Context, tx *pgx.Tx, orderId string) error {
+	// Prepare an order deleted event.
+	evt, evtTopic, err := order.PrepareDeletedEvent(id)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
+	}
+
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", id, evtTopic, evt)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to add order event", err)
+	}
+	
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
+
 	return nil
 }
 
 // Get items included in an order (by order id)
-func (c postgresController) GetOrderItems(ctx context.Context, req *pb.DbGetOrderItemsRequest) (*pb.DbGetOrderItemsResponse, error) {
-	orderItems, err := c.getOrderItems(ctx, nil, req.OrderId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.DbGetOrderItemsResponse{Items: *orderItems}, nil
+func (c postgresController) GetOrderItems(ctx context.Context, id string) (*map[string]int32, error) {
+	return c.getOrderItems(ctx, nil, id)
 }
 
 // Internal controller method
@@ -284,46 +282,37 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching order items", err)
 	}
 
-	orderItems := make(map[string]int32)
+	items := make(map[string]int32)
 	for rows.Next() {
 		var (
-			productId string
-			productQuantity int32
+			itemId string
+			quantity int32
 		)
 		err := rows.Scan(
-			&productId,
-			&productQuantity,
+			&itemId,
+			&quantity,
 		)
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan an order item", err)
 		}
 		
-		orderItems[productId] = productQuantity
+		items[itemId] = quantity
 	}
 
 	if rows.Err() != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst scanning order item rows", rows.Err())
 	}
 
-	return &orderItems, nil
+	return &items, nil
 }
 
 // Sets the items attached to an order.
 //
 // Currently overrides any existing order items.
-// TODO: operate as a patch function with any existing items
 //
+// TODO: operate as a patch function with any existing items
 // TODO: ENSURING THAT THE ORDER ACTUALLY EXISTS
-func (c postgresController) SetOrderItems(ctx context.Context, req *pb.DbSetOrderItemsRequest) (*pb.DbSetOrderItemsResponse, error) {
-	orderItems, err := c.setOrderItems(ctx, req.OrderId, req.Items)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.DbSetOrderItemsResponse{Items: *orderItems}, nil
-}
-
-func (c postgresController) setOrderItems(ctx context.Context, orderId string, itemQuantities map[string]int32) (*map[string]int32, error) {
+func (c postgresController) SetOrderItems(ctx context.Context, orderId string, items map[string]int32) (*map[string]int32, error) {
 	// Begin a DB transaction
 	tx, err := c.cl.Begin(ctx)
 	if err != nil {
@@ -331,20 +320,11 @@ func (c postgresController) setOrderItems(ctx context.Context, orderId string, i
 	}
 	defer tx.Rollback(ctx)
 
-	// Delete any existing order items
-	_, err = tx.Exec(ctx, "DELETE FROM order_items WHERE order_id=$1", orderId)
-	if err != nil {
-		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to override existing items", err)
-	}
-
-	// Create the order items
-	err = c.createOrderItems(ctx, tx, orderId, itemQuantities)
-	if err != nil {
-		return nil, err
-	}
+	// Set the order items
+	c.setOrderItems(ctx, &tx, orderId, items)
 
 	// Prepare an updated event and add to outbox table.
-	evt, evtTopic, err := order.PrepareUpdatedEvent(&pb.Order{Items: itemQuantities})
+	evt, evtTopic, err := order.PrepareUpdatedEvent(&pb.Order{Items: items})
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
 	}
@@ -360,27 +340,48 @@ func (c postgresController) setOrderItems(ctx context.Context, orderId string, i
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
 	}
 
-	return &itemQuantities, nil
+	return &items, nil
+}
+
+func (c postgresController) setOrderItems(ctx context.Context, tx *pgx.Tx, orderId string, items map[string]int32) error {
+	// Delete any existing order items
+	var err error
+	if tx == nil {
+		_, err = c.cl.Exec(ctx, "DELETE FROM order_items WHERE order_id=$1", orderId)
+	} else {
+		_, err = (*tx).Exec(ctx, "DELETE FROM order_items WHERE order_id=$1", orderId)
+	}
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to override existing items", err)
+	}
+
+	// Create the order items
+	err = c.createOrderItems(ctx, *tx, orderId, items)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Set an order item's quantity.
-// or add an order item if it does not already exist.
-// todo: implement method
 func (c postgresController) SetOrderItem(ctx context.Context, orderId string, itemId string, quantity int32) (*map[string]int32, error) {
-	return nil, nil
-}
-
-///
-func (c postgresController) DeleteOrderItem(ctx context.Context, req *pb.DbDeleteOrderItemRequest) (*pb.DbDeleteOrderItemResponse, error) {
-	orderItems, err := c.deleteOrderItem(ctx, req.OrderId, req.ItemId)
+	items, err := c.getOrderItems(ctx, nil, orderId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.DbDeleteOrderItemResponse{Items: *orderItems}, nil
+	(*items)[itemId] = quantity
+	_, err = c.SetOrderItems(ctx, orderId, *items)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
 
-func (c postgresController) deleteOrderItem(ctx context.Context, orderId string, itemId string) (*map[string]int32, error) {
+// Delete an order item.
+func (c postgresController) DeleteOrderItem(ctx context.Context, orderId string, itemId string) (*map[string]int32, error) {
 	// Begin a DB transaction
 	tx, err := c.cl.Begin(ctx)
 	if err != nil {
@@ -400,7 +401,7 @@ func (c postgresController) deleteOrderItem(ctx context.Context, orderId string,
 		return nil, err
 	}
 	
-	// Create an order updated event.
+	// Prepare an order updated event.
 	evt, evtTopic, err := order.PrepareUpdatedEvent(orderObj)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create order event", err)
@@ -421,19 +422,10 @@ func (c postgresController) deleteOrderItem(ctx context.Context, orderId string,
 }
 
 // Get all orders related to a specified customer.
-// TODO: implement pagination - currently limited to showing first 10
-func (c postgresController) GetCustomerOrders(ctx context.Context, req *pb.DbGetCustomerOrdersRequest) (*pb.DbGetCustomerOrdersResponse, error) {
-	orders, err := c.getCustomerOrders(ctx, req.CustomerId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.DbGetCustomerOrdersResponse{Orders: orders}, nil
-}
-
 //
-func (c postgresController) getCustomerOrders(ctx context.Context, custId string) ([]*pb.Order, error) {
-	rows, err := c.cl.Query(ctx, pgOrderBaseQuery + " WHERE customer_id=$1 LIMIT 10", custId)
+// TODO: implement pagination - currently limited to showing first 10
+func (c postgresController) GetCustomerOrders(ctx context.Context, customerId string) ([]*pb.Order, error) {
+	rows, err := c.cl.Query(ctx, pgOrderBaseQuery + " WHERE customer_id=$1 LIMIT 10", customerId)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching customer orders", err)
 	}
@@ -478,12 +470,12 @@ func (c postgresController) appendItemsToOrderObj(ctx context.Context, tx *pgx.T
 	return orderObj, nil
 }
 
-// todo: proper documentation for all funcs
-func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, orderId string, itemQuantities map[string]int32) error {
-	// check if there are any items to add
-	if len(itemQuantities) > 1 {
+// Build and exec an insert statement for a map of order items
+func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, orderId string, items map[string]int32) error {
+	// check there are items to add
+	if len(items) > 1 {
 		statementVals := [][]interface{}{}
-		for product_id, quantity := range itemQuantities {
+		for product_id, quantity := range items {
 			statementVals = append(
 				statementVals, 
 				goqu.Vals{orderId, product_id, quantity},
@@ -515,32 +507,19 @@ func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, ord
 	return nil
 }
 
-// todo: IMPLEMENT FOLLOWING METHODS
-// addOrderItem( orderId, productId, quantity )
-// >	adds a new order item
-//
-// setOrderItem( orderId, productId, quantity )
-// >	sets an order item
-//
-// setOrderItems( orderId, orderItems, deletePrev )   (CHANGE FROM addOrderItems - when adding deletePrev false)
-// >	replace/add/update the items in an order
-//
-// removeOrderItem ( orderId, productId )
-// >	remove an order item
-
 // Scan a postgres row to a protobuf order object.
 func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
-	var orderObj pb.Order
+	var order pb.Order
 
 	// Temporary variables that require conversion
 	var tmpCreatedAt pgtype.Timestamp
 	var tmpUpdatedAt pgtype.Timestamp
 
 	err := row.Scan(
-		&orderObj.Id, 
-		&orderObj.Status, 
-		&orderObj.CustomerId,
-		&orderObj.TransactionId, 
+		&order.Id, 
+		&order.Status, 
+		&order.CustomerId,
+		&order.TransactionId, 
 		&tmpCreatedAt,
 		&tmpUpdatedAt,
 	)
@@ -556,15 +535,15 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 	//
 	// This includes converting postgres timestamps to unix format
 	if tmpCreatedAt.Valid {
-		orderObj.CreatedAt = tmpCreatedAt.Time.Unix()
+		order.CreatedAt = tmpCreatedAt.Time.Unix()
 	} else {
 		return nil, errors.NewServiceError(errors.ErrCodeUnknown, "failed to convert order (created_at) timestamp")
 	}
 
 	if tmpUpdatedAt.Valid {
 		unixUpdated := tmpUpdatedAt.Time.Unix()
-		orderObj.UpdatedAt = &unixUpdated
+		order.UpdatedAt = &unixUpdated
 	}
 	
-	return &orderObj, nil
+	return &order, nil
 }

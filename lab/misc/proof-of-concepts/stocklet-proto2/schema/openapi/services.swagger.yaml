@@ -5,7 +5,6 @@ info:
 tags:
   - name: AuthService
   - name: OrderService
-  - name: OrderStorageService
 consumes:
   - application/json
 produces:
@@ -117,6 +116,20 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/v1Order'
+      tags:
+        - OrderService
+  /v1/order/service:
+    get:
+      operationId: OrderService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
       tags:
         - OrderService
   /v1/order/{id}:
@@ -260,55 +273,6 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/v1Order'
-  v1DbCreateOrderResponse:
-    type: object
-    properties:
-      order:
-        $ref: '#/definitions/v1Order'
-  v1DbDeleteOrderItemResponse:
-    type: object
-    properties:
-      items:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int32
-  v1DbDeleteOrderResponse:
-    type: object
-  v1DbGetCustomerOrdersResponse:
-    type: object
-    properties:
-      orders:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/v1Order'
-  v1DbGetOrderItemsResponse:
-    type: object
-    properties:
-      items:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int32
-  v1DbGetOrderResponse:
-    type: object
-    properties:
-      order:
-        $ref: '#/definitions/v1Order'
-  v1DbSetOrderItemsResponse:
-    type: object
-    properties:
-      items:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int32
-  v1DbUpdateOrderResponse:
-    type: object
-    properties:
-      order:
         $ref: '#/definitions/v1Order'
   v1ECPublicJWK:
     type: object

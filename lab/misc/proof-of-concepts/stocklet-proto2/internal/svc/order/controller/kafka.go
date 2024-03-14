@@ -29,9 +29,8 @@ import (
 
 type kafkaController struct {
 	cl *kgo.Client
-
-	// used for event consumption
 	svc pb.OrderServiceServer
+	
 	ctx context.Context
 	ctxCancel context.CancelFunc
 }

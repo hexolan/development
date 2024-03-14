@@ -4,7 +4,7 @@ An event-driven microservices-based distributed e-commerce application written i
 
 ## 📘 About
 
-This project was originally to experiment with using event-driven architecture as a hobby project.
+This project was originally made to experiment with using event-driven architecture.
 
 But I hope it can serve as a beneficial demonstration of using the architecture and exemplify the implementation of some other microservice patterns.
 
@@ -13,8 +13,8 @@ Any ideas, contributions or suggestions to better conform with general and evolv
 ## 📝 Features
 
 * Monorepository layout
-* Event-driven architecture
 * Microservice architecture
+* Event-driven architecture
 * Schema-driven development
 * Interfacing with services using gRPC
 * User-facing RESTful HTTP APIs with gRPC-Gateway
@@ -23,18 +23,17 @@ Any ideas, contributions or suggestions to better conform with general and evolv
 * API gateway pattern using Envoy
 * Choreography-based sagas
 
-
 TODO: additional features
 * ... Idempotent consumers?
 * ... domain driven design (not currently true?)
 
-## 💻 Architecture
+## 🗃️ Architecture
 
-### Overview
+### 🔎 Overview
 
 TODO: diagram
 
-### Technical Stack
+### 🧰 Technical Stack
 
 **Libraries, Frameworks and Tools**
 
@@ -74,17 +73,17 @@ TODO: update later
   * [PostgreSQL](https://hub.docker.com/_/postgres)
   * [MongoDB](https://hub.docker.com/_/mongo) *(planned support)*
 * Miscellaneous
-  * [Envoy](https://www.envoyproxy.io/)
   * [OpenTelemetry](https://opentelemetry.io/)
+  * [Envoy](https://www.envoyproxy.io/)
   * [Debezium Connect](https://hub.docker.com/r/debezium/connect)
   * [Debezium Server](https://hub.docker.com/r/debezium/server) *(planned usage)*
 * Provisioning and Deployment
   * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
   * [Kubernetes](https://kubernetes.io/) *(planned usage)*
 
-### Services
+### 🧩 Services
 
-| Service | gRPC Server | gRPC Gateway | Produces Events | Consumes Events |
+| Name | gRPC Server | gRPC Gateway | Produces Events | Consumes Events |
 | --- | --- | --- | --- | --- |
 | [auth](/internal/svc/auth/) | ✔️ | ✔️ | ❌ | ✔️ |
 | [order](/internal/svc/order/) | ✔️ | ✔️ | ✔️ | ✔️ |
@@ -94,13 +93,13 @@ todo: update service list
 
 Each service is prepared by a [``service-init``](/cmd/service-init/) container, which is responsible for performing any database migrations and configuring the Debezium outbox connectors for that service.
 
-### Events
+### 📇 Events
 
 Events are serialised in [protocol buffer](https://protobuf.dev/) format. The current event schemas can be located with the following path pattern [``/schema/protobufs/stocklet/<serviceName>/v1/events.proto``](/schema/protobufs/).
 
 Further documentation on the events can be found in [``/docs/events/README.md``](/docs/events/README.md)
 
-## ⚡️ Deployment
+## 💻 Deployment
 
 ### Using Docker
 

@@ -26,6 +26,7 @@ import (
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
+	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
 )
 
 // Interface for the service
@@ -56,7 +57,40 @@ func NewAuthService(cfg *ServiceConfig, store StorageController) *AuthService {
 	return svc
 }
 
-// Converts the ECDSA key to a publica JWK.
+func (svc AuthService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
+	return &commonpb.ServiceInfoResponse{
+		Name: "auth",
+		Source: "https://github.com/hexolan/stocklet",
+		SourceLicense: "GNU AGPL v3",
+	}, nil
+}
+
+// Provide the JWK ECDSA public key as part of a JSON Web Key set.
+// This method is called by the API ingress for usage when validating inbound JWT tokens.
+func (svc AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
+	return &pb.GetJwksResponse{Keys: []*pb.ECPublicJWK{svc.publicJWK}}, nil
+}
+
+// todo: docs
+func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordRequest) (*pb.LoginPasswordResponse, error) {
+	// todo: implement
+	log.Info().Msg("testing")
+	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+}
+
+// todo: docs
+func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
+	// todo: implement
+	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+}
+
+// todo: docs
+func (svc AuthService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDataRequest) (*pb.DeleteUserDataResponse, error) {
+	// todo: implement
+	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+}
+
+// Converts the ECDSA key to a public JWK.
 func preparePublicJwk(cfg *ServiceConfig) *pb.ECPublicJWK {
 	// Assemble the public JWK
 	jwk, err := jwk.FromRaw(cfg.ServiceOpts.PrivateKey.PublicKey)
@@ -88,29 +122,4 @@ func preparePublicJwk(cfg *ServiceConfig) *pb.ECPublicJWK {
 	}
 
 	return &jwkPB
-}
-
-// Provide the JWK ECDSA public key as part of a JSON Web Key set.
-// This method is called by the API ingress for usage when validating inbound JWT tokens.
-func (svc *AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
-	return &pb.GetJwksResponse{Keys: []*pb.ECPublicJWK{svc.publicJWK}}, nil
-}
-
-// todo: docs
-func (svc *AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordRequest) (*pb.LoginPasswordResponse, error) {
-	// todo: implement
-	log.Info().Msg("testing")
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-// todo: docs
-func (svc *AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
-	// todo: implement
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-// todo: docs
-func (svc *AuthService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDataRequest) (*pb.DeleteUserDataResponse, error) {
-	// todo: implement
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }

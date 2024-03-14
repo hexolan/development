@@ -27,6 +27,7 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
 )
 
 // Interface for the service
@@ -40,7 +41,17 @@ type OrderService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
-	pb.OrderStorageServiceServer
+    GetOrder(ctx context.Context, id string) (*pb.Order, error)
+    CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error)
+    UpdateOrder(ctx context.Context, id string, order *pb.Order, mask *fieldmaskpb.FieldMask) (*pb.Order, error)
+    DeleteOrder(ctx context.Context, id string) error
+
+    GetOrderItems(ctx context.Context, id string) (*map[string]int32, error)
+    SetOrderItems(ctx context.Context, orderId string, items map[string]int32) (*map[string]int32, error)
+    SetOrderItem(ctx context.Context, orderId string, itemId string, quantity int32) (*map[string]int32, error)
+    DeleteOrderItem(ctx context.Context, orderId string, itemId string) (*map[string]int32, error)
+
+    GetCustomerOrders(ctx context.Context, customerId string) ([]*pb.Order, error)
 }
 
 // Interface for event consumption
@@ -66,6 +77,14 @@ func NewOrderService(cfg *ServiceConfig, store StorageController) *OrderService 
 	}
 }
 
+func (svc OrderService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
+	return &commonpb.ServiceInfoResponse{
+		Name: "order",
+		Source: "https://github.com/hexolan/stocklet",
+		SourceLicense: "GNU AGPL v3",
+	}, nil
+}
+
 func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (*pb.GetOrderResponse, error) {
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
@@ -74,12 +93,12 @@ func (svc OrderService) GetOrder(ctx context.Context, req *pb.GetOrderRequest) (
 	}
 	
 	// Get the order from the DB
-	res, err := svc.store.GetOrder(ctx, &pb.DbGetOrderRequest{OrderId: req.Id})
+	order, err := svc.store.GetOrder(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	
-	return &pb.GetOrderResponse{Data: res.Order}, nil
+	return &pb.GetOrderResponse{Data: order}, nil
 }
 
 func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error) {
@@ -90,12 +109,12 @@ func (svc OrderService) GetOrders(ctx context.Context, req *pb.GetOrdersRequest)
 	}
 	
 	// Get the orders from the storage controller
-	res, err := svc.store.GetCustomerOrders(ctx, &pb.DbGetCustomerOrdersRequest{CustomerId: req.CustomerId})
+	orders, err := svc.store.GetCustomerOrders(ctx, req.CustomerId)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetOrdersResponse{Data: res.Orders}, nil
+	return &pb.GetOrdersResponse{Data: orders}, nil
 }
 
 func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
@@ -104,21 +123,21 @@ func (svc OrderService) CreateOrder(ctx context.Context, req *pb.CreateOrderRequ
 	// ensure items are valid
 	// get prices of items
 
-
+	// when creating an order - the status can only be pending (so SAGA initiates)
 	req.Order.Status = pb.OrderStatus_ORDER_STATUS_PENDING
 
 	// Create the order.
 	//
 	// This will initiate a SAGA process involving
 	// the services required to create the order.
-	res, err := svc.store.CreateOrder(ctx, &pb.DbCreateOrderRequest{Order: req.Order})
+	order, err := svc.store.CreateOrder(ctx, req.Order)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create order")
 		return nil, errors.WrapServiceError(errors.ErrCodeUnknown, "failed to create order", err)
 	}
 
 	// Return the pending order
-	return &pb.CreateOrderResponse{Data: res.Order}, nil
+	return &pb.CreateOrderResponse{Data: order}, nil
 }
 
 // Update an order.
@@ -177,12 +196,12 @@ func (svc OrderService) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequ
 	}
 
 	// Update the order
-	res, err := svc.store.UpdateOrder(ctx, &pb.DbUpdateOrderRequest{OrderId: orderId, Order: req.Order, Mask: req.Mask})
+	order, err := svc.store.UpdateOrder(ctx, orderId, req.Order, req.Mask)
 	if err != nil {
 		return nil, errors.NewServiceError(errors.ErrCodeService, "failed to update order")
 	}
 
-	return &pb.UpdateOrderResponse{Data: res.Order}, nil
+	return &pb.UpdateOrderResponse{Data: order}, nil
 }
 
 func (svc OrderService) CancelOrder(ctx context.Context, req *pb.CancelOrderRequest) (*pb.CancelOrderResponse, error) {
@@ -203,11 +222,9 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	if req.Status == pb.PlaceOrderEvent_STATUS_FAILURE {
 		_, err := svc.store.UpdateOrder(
 			context.Background(),
-			&pb.DbUpdateOrderRequest{
-				OrderId: req.Payload.OrderId,
-				Order: &pb.Order{Status: pb.OrderStatus_ORDER_STATUS_REJECTED},
-				Mask: &fieldmaskpb.FieldMask{Paths: []string{"status"}},
-			},
+			req.Payload.OrderId,
+			&pb.Order{Status: pb.OrderStatus_ORDER_STATUS_REJECTED},
+			&fieldmaskpb.FieldMask{Paths: []string{"status"}},
 		)
 		if err != nil {
 			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as failed in response to PlaceOrderEvent")
@@ -221,11 +238,9 @@ func (svc OrderService) ProcessPlaceOrderEvent(ctx context.Context, req *pb.Plac
 	if req.Type == pb.PlaceOrderEvent_TYPE_SHIPPING {
 		_, err := svc.store.UpdateOrder(
 			context.Background(),
-			&pb.DbUpdateOrderRequest{
-				OrderId: req.Payload.OrderId,
-				Order: &pb.Order{Status: pb.OrderStatus_ORDER_STATUS_APPROVED},
-				Mask: &fieldmaskpb.FieldMask{Paths: []string{"status"}},
-			},
+			req.Payload.OrderId,
+			&pb.Order{Status: pb.OrderStatus_ORDER_STATUS_APPROVED},
+			&fieldmaskpb.FieldMask{Paths: []string{"status"}},
 		)
 		if err != nil {
 			log.Panic().Any("evt", req).Err(err).Msg("failed to mark order as successful in response to PlaceOrderEvent")

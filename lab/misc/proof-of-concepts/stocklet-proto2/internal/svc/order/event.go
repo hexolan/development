@@ -24,12 +24,12 @@ import (
 )
 
 func marshalEvent(event protoreflect.ProtoMessage) ([]byte, error) {
-	wireEvt, err := proto.Marshal(event)
+	wireEvent, err := proto.Marshal(event)
 	if err != nil {
 		return []byte{}, err
 	}
 
-	return wireEvt, nil
+	return wireEvent, nil
 }
 
 func PrepareCreatedEvent(order *pb.Order) ([]byte, string, error) {
@@ -39,12 +39,12 @@ func PrepareCreatedEvent(order *pb.Order) ([]byte, string, error) {
 		Payload: order,
 	}
 
-	wireEvt, err := marshalEvent(event)
+	wireEvent, err := marshalEvent(event)
 	if err != nil {
 		return []byte{}, "", err
 	}
 
-	return wireEvt, topic, nil
+	return wireEvent, topic, nil
 }
 
 func PrepareUpdatedEvent(order *pb.Order) ([]byte, string, error) {
@@ -54,12 +54,12 @@ func PrepareUpdatedEvent(order *pb.Order) ([]byte, string, error) {
 		Payload: order,
 	}
 
-	wireEvt, err := marshalEvent(event)
+	wireEvent, err := marshalEvent(event)
 	if err != nil {
 		return []byte{}, "", err
 	}
 
-	return wireEvt, topic, nil
+	return wireEvent, topic, nil
 }
 
 func PrepareDeletedEvent(orderId string) ([]byte, string, error) {
@@ -71,10 +71,10 @@ func PrepareDeletedEvent(orderId string) ([]byte, string, error) {
 		},
 	}
 
-	wireEvt, err := marshalEvent(event)
+	wireEvent, err := marshalEvent(event)
 	if err != nil {
 		return []byte{}, "", err
 	}
 
-	return wireEvt, topic, nil
+	return wireEvent, topic, nil
 }
