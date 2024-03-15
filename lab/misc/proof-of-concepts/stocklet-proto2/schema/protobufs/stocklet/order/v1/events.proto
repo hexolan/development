@@ -21,6 +21,7 @@ import "stocklet/order/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
+// Event Sourcing
 message OrderStateEvent {
   enum Type {
     TYPE_UNSPECIFIED = 0;
@@ -33,22 +34,7 @@ message OrderStateEvent {
   Order payload = 2;
 }
 
-message PlaceOrderEventPayload {
-  message OrderItemDetails {
-    int32 quantity = 1;
-    optional float price = 2;
-  }
-
-  string order_id = 1;
-  string user_id = 2; // User ID of the customer.
-
-  // mapping of item id to item details
-  map<string, OrderItemDetails> items = 3;
-
-  optional string payment_id = 4;
-  optional string shipping_id = 5;
-}
-
+//
 message PlaceOrderEvent {
   enum Type {
     TYPE_UNSPECIFIED = 0;
@@ -63,7 +49,23 @@ message PlaceOrderEvent {
     STATUS_FAILURE = 2;
   }
 
+  message Payload {
+    message OrderItemDetails {
+      int32 quantity = 1;
+      optional float price = 2;
+    }
+
+    string order_id = 1;
+    string user_id = 2; // User ID of the customer.
+
+    // mapping of item id to item details
+    map<string, OrderItemDetails> items = 3;
+
+    optional string payment_id = 4;
+    optional string shipping_id = 5;
+  }
+
   Type type = 1;
   Status status = 2;
-  PlaceOrderEventPayload payload = 3;
+  Payload payload = 3;
 }

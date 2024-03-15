@@ -8,7 +8,9 @@ This project was originally made to experiment with using event-driven architect
 
 But I hope it can serve as a beneficial demonstration of using the architecture and exemplify the implementation of some other microservice patterns.
 
-Any ideas, contributions or suggestions to better conform with general and evolving industry practices are very welcome and will be greatly appreciated, as I'd like for this project to be somewhat of a reflection of a production-ready enterprise application.
+Any ideas, contributions or suggestions to better conform with general and evolving industry practices are very welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
+
+Currently the application should be considered in the experimental state. As such breaking changes are to be expected as possible between future commits, in order to ease the development process and allow for clean refactoring of the project.
 
 ## 📝 Features
 

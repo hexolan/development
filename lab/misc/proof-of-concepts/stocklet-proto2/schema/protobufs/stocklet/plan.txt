@@ -1,0 +1,36 @@
+OrderStateEvent
+    Created
+    Updated
+    Deleted
+
+but also
+
+OrderPlacedEvent
+-> StockReservationEvent
+-> PaymentProcessedEvent
+-> ShippingAllocationEvent
+OrderConfirmedEvent
+-> ShippingDispatchedEvent
+
+OrderApprovedEvent
+OrderShippedEvent
+OrderCancelledEvent
+etc..
+
+
+----
+
+state: pending
+
+->
+    StockReservationEvent
+    PaymentProcessingEvent
+    ShippingAllocationEvent
+
+
+Order Created
+(prices of and existence of items fetched from product service)
+(stock for order reservered from warehouse service - if in stock)
+(payment for order is processed)
+(stock is consumed - no longer reserved - and moved to shipment service // shipping slot is allocated)
+(order is marked as confirmed)
