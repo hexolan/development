@@ -188,6 +188,7 @@ func (PlaceOrderEvent_Status) EnumDescriptor() ([]byte, []int) {
 	return file_stocklet_order_v1_events_proto_rawDescGZIP(), []int{1, 1}
 }
 
+// Event Sourcing
 type OrderStateEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -243,6 +244,7 @@ func (x *OrderStateEvent) GetPayload() *Order {
 	return nil
 }
 
+//
 type PlaceOrderEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

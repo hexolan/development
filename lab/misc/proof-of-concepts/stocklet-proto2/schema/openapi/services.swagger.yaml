@@ -5,6 +5,11 @@ info:
 tags:
   - name: AuthService
   - name: OrderService
+  - name: PaymentService
+  - name: ProductService
+  - name: ShippingService
+  - name: UserService
+  - name: WarehouseService
 consumes:
   - application/json
 produces:
@@ -237,6 +242,190 @@ paths:
           type: string
       tags:
         - OrderService
+  /v1/payment/service:
+    get:
+      operationId: PaymentService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - PaymentService
+  /v1/payment/transaction/{id}:
+    get:
+      operationId: PaymentService_ViewTransaction
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewTransactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - PaymentService
+  /v1/product/service:
+    get:
+      operationId: ProductService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - ProductService
+  /v1/product/{id}:
+    get:
+      operationId: ProductService_GetProduct
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetProductResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - ProductService
+  /v1/shipping/service:
+    get:
+      operationId: ShippingService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - ShippingService
+  /v1/shipping/shipment/{id}:
+    get:
+      operationId: ShippingService_ViewShipment
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewShipmentResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - ShippingService
+  /v1/shipping/shipment/{id}/manifest:
+    get:
+      operationId: ShippingService_ViewShipmentManifest
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewShipmentManifestResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - ShippingService
+  /v1/user/service:
+    get:
+      operationId: UserService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - UserService
+  /v1/user/{id}:
+    get:
+      operationId: UserService_GetUser
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetUserResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - UserService
+  /v1/warehouse/product/{id}:
+    get:
+      operationId: WarehouseService_GetProductStock
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetProductStockResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - WarehouseService
+  /v1/warehouse/service:
+    get:
+      operationId: WarehouseService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - WarehouseService
 definitions:
   googlerpcStatus:
     type: object
@@ -323,6 +512,21 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/v1Order'
+  v1GetProductResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Product'
+  v1GetProductStockResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1WarehouseStock'
+  v1GetUserResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1User'
   v1LoginPasswordRequest:
     type: object
     properties:
@@ -373,6 +577,24 @@ definitions:
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
+  v1Product:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+        format: float
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
   v1ServiceInfoResponse:
     type: object
     properties:
@@ -397,8 +619,95 @@ definitions:
     properties:
       detail:
         type: string
+  v1Shipment:
+    type: object
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      dispatched:
+        type: boolean
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  v1ShipmentItem:
+    type: object
+    properties:
+      shipmentId:
+        type: string
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
+  v1Transaction:
+    type: object
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      customerId:
+        type: string
+      amount:
+        type: number
+        format: float
+      processedAt:
+        type: string
+        format: int64
+      reversedAt:
+        type: string
+        format: int64
+        title: if timestamp is set - then the payment has been refunded
   v1UpdateOrderResponse:
     type: object
     properties:
       data:
         $ref: '#/definitions/v1Order'
+  v1User:
+    type: object
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  v1ViewShipmentManifestResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1ShipmentItem'
+  v1ViewShipmentResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Shipment'
+  v1ViewTransactionResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Transaction'
+  v1WarehouseStock:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32

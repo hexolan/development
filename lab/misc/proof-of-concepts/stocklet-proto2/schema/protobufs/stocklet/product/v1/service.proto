@@ -15,27 +15,29 @@
 
 syntax = "proto3";
 
-package stocklet.payment.v1;
+package stocklet.product.v1;
 
 import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "stocklet/common/v1/requests.proto";
+import "stocklet/product/v1/types.proto";
 
-option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1;payment_v1";
+option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1;product_v1";
 
-message CustomerBalance {
-  string customer_id = 1 [(buf.validate.field).string.min_len = 1];
-  float balance = 2 [(buf.validate.field).float.gte = 0.0];
+service ProductService {
+  rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
+    option (google.api.http) = {get: "/v1/product/service"};
+  }
+
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = {get: "/v1/product/{id}"};
+  }
 }
 
-message Transaction {
+message GetProductRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
+}
 
-  string order_id = 2 [(buf.validate.field).string.min_len = 1];
-  string customer_id = 3 [(buf.validate.field).string.min_len = 1];
-
-  float amount = 4 [(buf.validate.field).float.gte = 0.0];
-
-  int64 processed_at = 5;
-
-  // if timestamp is set - then the payment has been refunded
-  optional int64 reversed_at = 6;
+message GetProductResponse {
+  Product data = 1;
 }
