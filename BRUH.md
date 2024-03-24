@@ -81,4 +81,9 @@
 
 # Project Ideas
 
-TODO
+* Decentralised Social Media Application - similiar to twitter
+  * Text only - but maybe referencing images on the IPFS?
+  * Application Clients - user can add labels to certain public keys (thereby ascertaining who has posted what)
+  * Incentives for 'mining' - proof of stake/proof of work? - would maybe need to be built on top another blockchain such as eth
+    * look at how the IPFS (interplanetary file system) manages this?
+    * there are no incentives with the IPFS

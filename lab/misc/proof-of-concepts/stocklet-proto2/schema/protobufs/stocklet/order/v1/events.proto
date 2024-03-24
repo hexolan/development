@@ -35,6 +35,15 @@ message OrderStateEvent {
 }
 
 //
+message OrderPlacedEvent {
+  Order payload = 1;
+}
+
+message OrderConfirmedEvent {
+  Order payload = 1;
+}
+
+/////
 message PlaceOrderEvent {
   enum Type {
     TYPE_UNSPECIFIED = 0;

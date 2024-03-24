@@ -24,6 +24,7 @@ Currently the application should be considered in the experimental state. As suc
 * Transactional outbox pattern with Debezium
 * API gateway pattern using Envoy
 * Choreography-based sagas
+* Seperation of concerns allowing for interchangable infrastructure
 
 TODO: additional features
 * ... Idempotent consumers?
