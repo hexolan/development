@@ -1,4 +1,4 @@
-FROM golang:1.21 AS build
+FROM golang:1.22 AS build
 WORKDIR /app
 
 # Install required modules
@@ -12,5 +12,5 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /bin/auth-service ./cmd/au
 # Runtime Environment
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /bin/auth-service .
-EXPOSE 3000
+EXPOSE 90 9090
 CMD ["./auth-service"]

@@ -1,3 +1,18 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package main
 
 import (
@@ -10,20 +25,15 @@ import (
 )
 
 func loadConfig() *auth.ServiceConfig {
-	// load the main service configuration
+	// Load the main service configuration
 	cfg, err := auth.NewServiceConfig()
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// configure the logger
+	// Configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
-
-	// configure OTEL
-	metrics.InitTracerProvider(
-		cfg.Shared.Otel,
-		"auth",
-	)
+	metrics.InitTracerProvider(&cfg.Shared.Otel, "auth")
 
 	return cfg
 }
@@ -31,7 +41,7 @@ func loadConfig() *auth.ServiceConfig {
 func usePostgresController(cfg *auth.ServiceConfig) (*auth.StorageController, error) {
 	// load the postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// todo:
@@ -44,18 +54,17 @@ func usePostgresController(cfg *auth.ServiceConfig) (*auth.StorageController, er
 func main() {
 	cfg := loadConfig()
 
-	// Create the controllers
-	strC, _ := usePostgresController(cfg)
+	// Create the storage controller
+	// todo: defering client closure
+	store, _ := usePostgresController(cfg)
 
-	// Create the service
-	svc := auth.NewAuthService(cfg, strC)
-	
-	// Attach the API interfaces to the service
-	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
-	gwMux := api.AttachSvcToGateway(cfg, svc)
+	// Create the service (& API interfaces)
+	svc := auth.NewAuthService(cfg, store)
+	grpcSvr := api.PrepareGrpc(cfg, svc)
+	gatewayMux := api.PrepareGateway(cfg)
 
 	// Serve the API interfaces
-	go serve.Gateway(gwMux)
+	go serve.Gateway(gatewayMux)
 	serve.Grpc(grpcSvr)
 }
 

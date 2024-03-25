@@ -1,3 +1,18 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package metrics
 
 import (
@@ -37,16 +52,16 @@ func InitTracerProvider(cfg *config.OtelConfig, svcName string) *sdktrace.Tracer
 }
 
 // Establishes a connection to otel-collector over gRPC
-func initTracerExporter(collectorGrpcAddr string) sdktrace.SpanExporter {
+func initTracerExporter(collectorEndpoint string) sdktrace.SpanExporter {
 	ctx := context.Background()
 
 	exporter, err := otlptracegrpc.New(
 		ctx,
-		otlptracegrpc.WithEndpoint(collectorGrpcAddr),
+		otlptracegrpc.WithEndpoint(collectorEndpoint),
 		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to start otlp grpc exporter")
+		log.Panic().Err(err).Msg("failed to start otlp grpc exporter")
 	}
 
 	return exporter
@@ -63,7 +78,7 @@ func initTracerResource(svcName string) *sdkresource.Resource {
 		),
 	)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create otel tracer resource")
+		log.Panic().Err(err).Msg("failed to create otel tracer resource")
 	}
 
 	return resource

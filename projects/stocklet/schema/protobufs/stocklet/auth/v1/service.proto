@@ -1,14 +1,60 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 syntax = "proto3";
 
 package stocklet.auth.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
-import "buf/validate/validate.proto";
 import "stocklet/auth/v1/types.proto";
+import "stocklet/common/v1/requests.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
+
+// todo:
+service AuthService {
+  rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
+    option (google.api.http) = {get: "/v1/auth/service"};
+  }
+
+  rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
+    option (google.api.http) = {get: "/v1/auth/jwks"};
+  }
+
+  rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+
+  rpc SetPassword(SetPasswordRequest) returns (SetPasswordResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/password"
+      body: "*"
+    };
+  }
+
+  // internal method
+  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+}
 
 message GetJwksRequest {}
 
@@ -41,7 +87,7 @@ message SetPasswordRequest {
     (google.api.field_behavior) = REQUIRED,
     (buf.validate.field).string.min_len = 1
   ];
-  
+
   string password = 2 [
     (google.api.field_behavior) = REQUIRED,
     (buf.validate.field).string = {
@@ -59,31 +105,3 @@ message SetPasswordResponse {
 // Internal Request Payloads
 message DeleteUserDataRequest {}
 message DeleteUserDataResponse {}
-
-// Auth Service
-service AuthService {
-  rpc GetJwks(GetJwksRequest) returns (GetJwksResponse) {
-    option (google.api.http) = {
-      get: "/v1/auth/jwks"
-    };
-  }
-
-  rpc LoginPassword(LoginPasswordRequest) returns (LoginPasswordResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth/login"
-      body: "*"
-    };
-  }
-
-  rpc SetPassword(SetPasswordRequest) returns (SetPasswordResponse) {
-    option (google.api.http) = {
-      post: "/v1/auth/password"
-      body: "*"
-    };
-  }
-
-  // internal method
-  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
-    option (google.api.method_visibility).restriction = "INTERNAL";
-  }
-}

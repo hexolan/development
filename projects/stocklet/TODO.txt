@@ -1,0 +1,17 @@
+[*] fix and improve protobuf schemas
+    > https://protobuf.dev/programming-guides/dos-donts/
+    > common protobuf types such as address
+
+[*] separate structs for database objects
+    > convert from db struct to protobuf format
+    > converting from protobuf to db object | then storing with that db object
+
+[*] separation of update methods. e.g. UpdateOrder
+    > UpdateOrder
+        > calls individual update methods? (also makes validation simpler)
+
+        > UpdateOrderAddress (example, maybe something else updatable)
+        > UpdateOrderStatus
+            * dispatches its own OrderStatusEvent in 'order.state.status'
+
+[*] stop worrying about gRPC-gateway until after

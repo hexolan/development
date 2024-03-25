@@ -18,3 +18,11 @@ CREATE TABLE order_items (
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
 );
+
+CREATE TABLE event_outbox (
+    id bigserial PRIMARY KEY,
+
+    aggregateid varchar(128) NOT NULL,
+    aggregatetype varchar(128) NOT NULL,
+    payload bytea NOT NULL
+);

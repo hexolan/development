@@ -1,71 +1,117 @@
 # Stocklet
 
-An event-driven microservice e-commerce application.
+An event-driven microservices-based distributed e-commerce application written in Go.
 
-TODO: add support for using NATS (/ NATS + Liftbridge) for messaging instead of Kafka
+## 📘 About
 
-* <https://docs.nats.io/>
-* <https://liftbridge.io/docs/quick-start.html>
+This project was originally made to experiment with using event-driven architecture.
 
-todo: Apache -> AGPL
+But I hope it can serve as a beneficial demonstration of using the architecture and exemplify the implementation of some other microservice patterns.
 
-## About
+Any ideas, contributions or suggestions to better conform with general and evolving industry practices are very welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
 
-### Layout
+Currently the application should be considered in the experimental state. As such breaking changes are to be expected as possible between future commits, in order to ease the development process and allow for clean refactoring of the project.
 
-current state of README: rough outline
+## 📝 Features
 
-... project organised as a monorepo
+* Monorepository layout
+* Microservice architecture
+* Event-driven architecture
+* Schema-driven development
+* Interfacing with services using gRPC
+* User-facing RESTful HTTP APIs with gRPC-Gateway
+* Distributed tracing with OpenTelemetry
+* Transactional outbox pattern with Debezium
+* API gateway pattern using Envoy
+* Choreography-based sagas
+* Seperation of concerns allowing for interchangable infrastructure
 
-[diagram of project layout .... inventory service / order service -> kafka as 'event bus' ... service mesh]
+TODO: additional features
+* ... Idempotent consumers?
+* ... domain driven design (not currently true?)
 
-### Schema
+## 🗃️ Architecture
 
-(maybe add additional services such as shipping service -> showing eventual consistency)
-  > in that case rename this 'project' to event-driven-go-demo (can also create an event-driven-py-demo, etc..)
-  > might be a better angle (+ add more services // warehouse service // dispatch/delivery service // mark order delivered, etc)
-  > database access services? (-> gRPC)
-    > requesting coalescing
+### 🔎 Overview
 
-description of events (and invoked compensation transactions) + topics they are dispatched under
-  > e.g. 'order.created', 'order.updated' topics
+TODO: diagram
 
-discussion on protobuf schema of events
-  > potentially write event schema with <https://www.asyncapi.com/> (find way to integrate protobuf as it appears json-oriented)
+### 🧰 Technical Stack
 
-## Features
+#### Libraries, Frameworks and Tools
 
-technologies:
-> kafka
-> postgresql
-> (TODO) open telemetry
-> grpc
-> grpc gateway
-> protobuf
-> NATS support
-> "pluggable architecture"
+todo: update later
 
-maybe: description of patterns used
+* API Tooling
+  * [google.golang.org/grpc](https://pkg.go.dev/google.golang.org/grpc)
+  * [github.com/grpc-ecosystem/grpc-gateway/v2](https://pkg.go.dev/github.com/grpc-ecosystem/grpc-gateway/v2)
 
-event-driven architecture
+* Client Libraries
+  * [go.opentelemetry.io/otel](https://pkg.go.dev/go.opentelemetry.io/otel)
+  * [github.com/twmb/franz-go](https://pkg.go.dev/github.com/twmb/franz-go)
+  * [github.com/jackc/pgx/v5](https://pkg.go.dev/github.com/jackc/pgx/v5)
 
-description of choreography saga
-  > links to resources such as microservices.io
+* Protobuf Libraries
+  * [google.golang.org/protobuf](https://pkg.go.dev/google.golang.org/protobuf)
+  * [github.com/bufbuild/protovalidate-go](https://pkg.go.dev/github.com/bufbuild/protovalidate-go)
+  * [github.com/mennanov/fmutils](https://pkg.go.dev/github.com/mennanov/fmutils)
 
-difference between choreography and orchestration
+* Tools
+  * [github.com/bufbuild/buf/cmd/buf](https://buf.build/docs/installation)
+  * [github.com/golang-migrate/migrate/v4](https://pkg.go.dev/github.com/golang-migrate/migrate/v4#section-readme)
 
-* [ ] ABC
-* [ ] DEF
+* Miscellaneous
+  * [github.com/rs/zerolog](https://pkg.go.dev/github.com/rs/zerolog)
+  * [github.com/lestrrat-go/jwx/v2](https://pkg.go.dev/github.com/lestrrat-go/jwx/v2)
+  * [github.com/doug-martin/goqu/v9](https://pkg.go.dev/github.com/doug-martin/goqu/v9)
 
-## Deployment
+#### Infrastructure
 
-how to run project
-  > write docker compose file (add kafka and kafka ui)
+TODO: update later
 
-tracing method?
-  > some sort of request ID/transaction ID that spans all saga related events (though not needed - tracing could be performed using just order ID)
-  > <https://medium.com/dzerolabs/observability-journey-understanding-logs-events-traces-and-spans-836524d63172>
+* Message Brokers
+  * [Kafka](https://hub.docker.com/r/bitnami/kafka)
+  * [NATS](https://hub.docker.com/_/nats) *(planned support)*
+* Databases
+  * [PostgreSQL](https://hub.docker.com/_/postgres)
+  * [MongoDB](https://hub.docker.com/_/mongo) *(planned support)*
+* Miscellaneous
+  * [OpenTelemetry](https://opentelemetry.io/)
+  * [Envoy](https://www.envoyproxy.io/)
+  * [Debezium Connect](https://hub.docker.com/r/debezium/connect)
+  * [Debezium Server](https://hub.docker.com/r/debezium/server) *(planned usage)*
+* Provisioning and Deployment
+  * [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+  * [Kubernetes](https://kubernetes.io/) *(planned usage)*
 
-## License
+### 🧩 Services
 
-This project is distributed under the [XYZ License.](/LICENSE)
+| Name | gRPC Server | gRPC Gateway | Produces Events | Consumes Events |
+| --- | --- | --- | --- | --- |
+| [auth](/internal/svc/auth/) | ✔️ | ✔️ | ❌ | ✔️ |
+| [order](/internal/svc/order/) | ✔️ | ✔️ | ✔️ | ✔️ |
+| TODO | ✔️ | ✔️ | ✔️ | ✔️ |
+
+todo: update service list
+
+Each service is prepared by a [``service-init``](/cmd/service-init/) container, which is responsible for performing any database migrations and configuring the Debezium outbox connectors for that service.
+
+### 📇 Events
+
+The events are serialised using [protocol buffers](https://protobuf.dev/). Further documentation on the events can be found in [``/docs/events/README.md``](/docs/events/README.md)
+
+## 💻 Deployment
+
+### Using Docker
+
+todo: write-up on deployment with docker compose
+
+### Using Kubernetes
+
+todo: implement support for deploying with kubernetes
+
+## ✍️ License and Contributing
+
+Contributions are always welcome! Please feel free to open an issue or a pull request if you feel you have any ideas for improvement or further expansion of this demo project.
+
+This project is licensed under the [GNU AGPL v3](/LICENSE).

@@ -1,56 +1,43 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 syntax = "proto3";
 
 package stocklet.user.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
+import "stocklet/common/v1/requests.proto";
+import "stocklet/user/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;user_v1";
 
-// todo
-message GetUserRequest {
-  string user_id = 1;
-}
-message GetUserResponse {}
-
-message CreateUserRequest {}
-message CreateUserResponse {}
-
-message UpdateUserRequest {
-  string user_id = 1;
-}
-message UpdateUserResponse {}
-
-message DeleteUserRequest {
-  string user_id = 1;
-}
-message DeleteUserResponse {}
-
-// todo: set api annotations
-// api routes could do with improvement (this syntax is just messy) - review real world example
 service UserService {
+  rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
+    option (google.api.http) = {get: "/v1/user/service"};
+  }
+
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
-    option (google.api.http) = {
-      get: "/v1/user/id/{user_id}"
-    };
+    option (google.api.http) = {get: "/v1/user/{id}"};
   }
+}
 
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
-    option (google.api.http) = {
-      post: "/v1/user/new"
-      body: "*"
-    };
-  }
+message GetUserRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
 
-  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
-    option (google.api.http) = {
-      post: "/v1/user/id/{user_id}"
-      body: "*"
-    };
-  }
-
-  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
-    option (google.api.http) = {
-      delete: "/v1/user/id/{user_id}"
-    };
-  }
+message GetUserResponse {
+  User data = 1;
 }

@@ -1,196 +1,35 @@
 version: "3.8"
 
 services:
-  # Service Databases
-  auth-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - auth-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-auth-network
-      
-  order-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - order-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-order-network
-
-  payment-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - payment-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-payment-network
-
-  product-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - product-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-product-network
-
-  shipping-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - shipping-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-shipping-network
-
-  user-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - user-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-user-network
-
-  warehouse-service-postgres:
-    image: postgres:15-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    volumes:
-      - warehouse-service-postgres-volume:/var/lib/postgresql
-    networks:
-      - stocklet-warehouse-network
-
-  # Database Migrations
-  auth-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@auth-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/auth:/migrations
-    depends_on:
-      - auth-service-postgres
-    networks:
-      - stocklet-auth-network
-
-  order-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@order-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/order:/migrations
-    depends_on:
-      - order-service-postgres
-    networks:
-      - stocklet-order-network
-
-  payment-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@payment-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/payment:/migrations
-    depends_on:
-      - payment-service-postgres
-    networks:
-      - stocklet-payment-network
-
-  product-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@product-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/product:/migrations
-    depends_on:
-      - product-service-postgres
-    networks:
-      - stocklet-product-network
-
-  shipping-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@shipping-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/shipping:/migrations
-    depends_on:
-      - shipping-service-postgres
-    networks:
-      - stocklet-shipping-network
-
-  user-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@user-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/user:/migrations
-    depends_on:
-      - user-service-postgres
-    networks:
-      - stocklet-user-network
-
-  warehouse-service-migrations:
-    image: migrate/migrate:4
-    command: "-path=/migrations -database postgresql://postgres:postgres@warehouse-service-postgres:5432/postgres?sslmode=disable up"
-    volumes:
-      - ../schema/sql/warehouse:/migrations
-    depends_on:
-      - warehouse-service-postgres
-    networks:
-      - stocklet-warehouse-network
-
-  # Service Overrides (depend on migrations for startup)
+  # Services
   auth-service:
-    depends_on:
-      - auth-service-migrations
+    ports:
+      - 91:90
+      - 9091:9090
       
   order-service:
-    depends_on:
-      - order-service-migrations
+    ports:
+      - 92:90
+      - 9092:9090
 
-  payment-service:
-    depends_on:
-      - payment-service-migrations
+  # Development Utilities
+  dev-kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    restart: unless-stopped
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "kafka"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:19092"
+      DYNAMIC_CONFIG_ENABLED: "true"
+    ports:
+      - 8080:8080
+    networks:
+      - stocklet-network
 
-  product-service:
-    depends_on:
-      - product-service-migrations
-
-  shipping-service:
-    depends_on:
-      - shipping-service-migrations
-
-  user-service:
-    depends_on:
-      - user-service-migrations
-
-  warehouse-service:
-    depends_on:
-      - warehouse-service-migrations
-
-volumes:
-  auth-service-postgres-volume:
-  order-service-postgres-volume:
-  payment-service-postgres-volume:
-  product-service-postgres-volume:
-  shipping-service-postgres-volume:
-  user-service-postgres-volume:
-  warehouse-service-postgres-volume:
+  dev-adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+    networks:
+      - stocklet-auth-network
+      - stocklet-order-network

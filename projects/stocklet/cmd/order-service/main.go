@@ -1,3 +1,18 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package main
 
 import (
@@ -15,81 +30,70 @@ import (
 )
 
 func loadConfig() *order.ServiceConfig {
-	// load the core service configuration
+	// Load the core service configuration
 	cfg, err := order.NewServiceConfig()
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// configure the logger
+	// Configure metrics (logging and OTEL)
 	metrics.ConfigureLogger()
-
-	// configure OTEL
-	metrics.InitTracerProvider(
-		cfg.Shared.Otel,
-		"order",
-	)
+	metrics.InitTracerProvider(&cfg.Shared.Otel, "order")
 
 	return cfg
 }
 
-func usePostgresController(cfg *order.ServiceConfig, evtC order.EventController) (order.StorageController, *pgxpool.Pool) {
+func usePostgresController(cfg *order.ServiceConfig) (order.StorageController, *pgxpool.Pool) {
 	// load the Postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// open a Postgres connection
-	pCl, err := storage.NewPostgresConn(cfg.Postgres)
+	client, err := storage.NewPostgresConn(&cfg.Postgres)
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// create the data controller
-	dbC := controller.NewPostgresController(pCl, evtC)
-	return dbC, pCl
+	controller := controller.NewPostgresController(client)
+	return controller, client
 }
 
-func useKafkaController(cfg *order.ServiceConfig) (order.EventController, *kgo.Client) {
+func useKafkaController(cfg *order.ServiceConfig) (order.ConsumerController, *kgo.Client) {
 	// load the Kafka configuration
 	if err := cfg.Kafka.Load(); err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
 	// open a Kafka connection
-	kCl, err := messaging.NewKafkaConn(
-		cfg.Kafka,
-		kgo.ConsumerGroup("order-service"),
-	)
+	client, err := messaging.NewKafkaConn(&cfg.Kafka, kgo.ConsumerGroup("order-service"))
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Panic().Err(err).Msg("")
 	}
 
-	// create the event controller
-	evtC := controller.NewKafkaController(kCl)
-	return evtC, kCl
+	controller := controller.NewKafkaController(client)
+	return controller, client
 }
 
 func main() {
 	cfg := loadConfig()
 
-	// Create the controllers
-	evtC, kCl := useKafkaController(cfg)
-	defer kCl.Close()
-	
-	strC, pCl := usePostgresController(cfg, evtC)
-	defer pCl.Close()
+	// Create the storage controller
+	store, storeCl := usePostgresController(cfg)
+	defer storeCl.Close()
 
-	// Create the service
-	svc := order.NewOrderService(cfg, strC, evtC)
-	
-	// Attach the API interfaces to the service
-	grpcSvr := api.AttachSvcToGrpc(cfg, svc)
-	gwMux := api.AttachSvcToGateway(cfg, svc)
-	consCtrl := api.AttachSvcToConsumer(cfg, svc)
+	// Create the service (& API interfaces)
+	svc := order.NewOrderService(cfg, store)
+	grpcSvr := api.PrepareGrpc(cfg, svc)
+	gatewayMux := api.PrepareGateway(cfg)
 
-	// Serve the API interfaces
-	go serve.Gateway(gwMux)
-	go consCtrl.Start()  // todo: starting consumer after gRPC; though this should work for now since calling directly (goroutine/thread safety needs a look into though)
+	// Create the consumer
+	consumer, consCl := useKafkaController(cfg)
+	defer consCl.Close()
+	consumer.Attach(svc)
+	
+	// Serve/start the interfaces
+	go consumer.Start()
+	go serve.Gateway(gatewayMux)
 	serve.Grpc(grpcSvr)
 }

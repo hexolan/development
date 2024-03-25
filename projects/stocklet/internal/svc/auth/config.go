@@ -1,3 +1,18 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 package auth
 
 import (
@@ -13,16 +28,14 @@ import (
 // Auth Service Configuration
 type ServiceConfig struct {
 	// Core configuration
-	Shared *config.SharedConfig
-	ServiceOpts *ServiceConfigOpts
+	Shared config.SharedConfig
+	ServiceOpts ServiceConfigOpts
 
 	// Dynamically loaded configuration
-	Postgres *config.PostgresConfig
+	Postgres config.PostgresConfig
 }
 
-// load the base service configuration
-//
-// This involves loading the service specific options (ServiceConfigOpts)
+// load the service configuration
 func NewServiceConfig() (*ServiceConfig, error) {
 	cfg := ServiceConfig{}
 
@@ -41,6 +54,8 @@ func NewServiceConfig() (*ServiceConfig, error) {
 
 // Auth-service specific config options
 type ServiceConfigOpts struct {
+	// Env Var: "AUTH_PRIVATE_KEY"
+	// to be provided in base64 format
 	PrivateKey *ecdsa.PrivateKey
 }
 
@@ -65,27 +80,27 @@ func (opts *ServiceConfigOpts) Load() error {
 // for use when validating the tokens at the API ingress.
 func (opts *ServiceConfigOpts) loadPrivateKey() error {
 	// PEM private key file exposed as an environment variable encoded in base64 
-	pkB64, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
+	opt, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
 	if err != nil {
 		return err
 	}
 
 	// Decode from base64
-	pkBytes, err := base64.StdEncoding.DecodeString(pkB64)
+	pkBytes, err := base64.StdEncoding.DecodeString(opt)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "the provided 'AUTH_PRIVATE_KEY' is not valid base64", err)
 	}
 
 	// Decode the PEM key
 	pkBlock, _ := pem.Decode(pkBytes)
 	if pkBlock == nil {
-		return errors.NewServiceError(errors.ErrCodeService, "provided 'AUTH_PRIVATE_KEY' is not valid PEM format")
+		return errors.NewServiceError(errors.ErrCodeService, "the provided 'AUTH_PRIVATE_KEY' is not valid PEM format")
 	}
 
 	// Parse the block to a ecdsa.PrivateKey object
 	privKey, err := x509.ParseECPrivateKey(pkBlock.Bytes)
 	if err != nil {
-		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse provided 'AUTH_PRIVATE_KEY' to an ECDSA private key", err)
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to parse the provided 'AUTH_PRIVATE_KEY' to an EC private key", err)
 	}
 
 	opts.PrivateKey = privKey

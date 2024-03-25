@@ -1,60 +1,55 @@
+// Copyright (C) 2024 Declan Teevan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 syntax = "proto3";
 
 package stocklet.shipping.v1;
 
-import "google/protobuf/empty.proto";
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
-import "google/api/visibility.proto";
-import "stocklet/order/v1/events.proto";
+import "stocklet/common/v1/requests.proto";
+import "stocklet/shipping/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
-// todo: adjust to types
-message GetShippingDetailsRequest {
-  string order_id = 1;
-}
-
-message GetShippingDetailsResponse {
-  
-}
-
-message UpdateShippingStatusRequest {
-  string order_id = 1;
-}
-message UpdateShippingStatusResponse {}
-
-message NewShippingOrderRequest {}
-message NewShippingOrderResponse {}
-
 service ShippingService {
-  rpc GetShippingDetails(GetShippingDetailsRequest) returns (GetShippingDetailsResponse) {
-    option (google.api.http) = {
-      get: "/v1/shipping/order/{order_id}"
-    };
+  rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
+    option (google.api.http) = {get: "/v1/shipping/service"};
   }
 
-  rpc UpdateShippingStatus(UpdateShippingStatusRequest) returns (UpdateShippingStatusResponse) {
-    option (google.api.http) = {
-      post: "/v1/shipping/order/{order_id}"
-      body: "*"
-    };
+  rpc ViewShipment(ViewShipmentRequest) returns (ViewShipmentResponse) {
+    option (google.api.http) = {get: "/v1/shipping/shipment/{id}"};
   }
 
-  // todo: as internal method - find annotations
-  // todo: delete customer data from service after shipping fulfilled (so service is not responsible for GDPR compliance)
-  rpc NewShippingOrder(NewShippingOrderRequest) returns (NewShippingOrderResponse) {
-    option (google.api.method_visibility).restriction = "INTERNAL";
+  rpc ViewShipmentManifest(ViewShipmentManifestRequest) returns (ViewShipmentManifestResponse) {
+    option (google.api.http) = {get: "/v1/shipping/shipment/{id}/manifest"};
   }
+}
 
-  // Internal Method
-  //
-  // Processes PlaceOrderEvents.
-  // TODO: documentation
-  //
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc ProcessPlaceOrderEvent(stocklet.order.v1.PlaceOrderEvent) returns (google.protobuf.Empty) {
-    option (google.api.method_visibility).restriction = "INTERNAL";
-  }
+message ViewShipmentRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message ViewShipmentResponse {
+  Shipment data = 1;
+}
+
+message ViewShipmentManifestRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message ViewShipmentManifestResponse {
+  repeated ShipmentItem data = 1;
 }

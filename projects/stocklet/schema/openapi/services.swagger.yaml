@@ -69,6 +69,20 @@ paths:
             $ref: '#/definitions/v1SetPasswordRequest'
       tags:
         - AuthService
+  /v1/auth/service:
+    get:
+      operationId: AuthService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - AuthService
   /v1/order/list:
     get:
       operationId: OrderService_GetOrders
@@ -83,6 +97,7 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: customerId
+          description: Request a list of a customer's orders
           in: query
           required: false
           type: string
@@ -108,8 +123,80 @@ paths:
             $ref: '#/definitions/v1Order'
       tags:
         - OrderService
+  /v1/order/service:
+    get:
+      operationId: OrderService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - OrderService
+  /v1/order/{id}:
+    get:
+      operationId: OrderService_GetOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+    delete:
+      operationId: OrderService_CancelOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1CancelOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+  /v1/order/{id}/items:
+    get:
+      operationId: OrderService_GetOrderItems
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetOrderItemsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          description: Order Id
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
   /v1/order/{order.id}:
-    post:
+    patch:
+      summary: "todo: ensure proper implementation\r\n https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/\r\n option (google.api.http) = {\r\n   put: \"/v1/order/{order.id}\"\r\n   body: \"order\"\r\n   additional_bindings {\r\n     patch: \"/v1/order/{order.id}\"\r\n     body: \"order\"\r\n   }\r\n };"
       operationId: OrderService_UpdateOrder
       responses:
         "200":
@@ -134,10 +221,11 @@ paths:
               status:
                 $ref: '#/definitions/v1OrderStatus'
               items:
-                type: array
-                items:
-                  type: object
-                  $ref: '#/definitions/orderv1OrderItem'
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
+                title: Items mapped by quantity
               customerId:
                 type: string
               transactionId:
@@ -145,60 +233,63 @@ paths:
               createdAt:
                 type: string
                 format: int64
-      tags:
-        - OrderService
-  /v1/order/{orderId}:
-    get:
-      operationId: OrderService_GetOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1GetOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: orderId
-          in: path
-          required: true
+              updatedAt:
+                type: string
+                format: int64
+        - name: mask
+          in: query
+          required: false
           type: string
       tags:
         - OrderService
-    delete:
-      operationId: OrderService_CancelOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1CancelOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: orderId
-          in: path
-          required: true
-          type: string
-      tags:
-        - OrderService
-  /v1/payment/balance:
+  /v1/payment/service:
     get:
-      operationId: PaymentService_GetBalance
+      operationId: PaymentService_ServiceInfo
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetBalanceResponse'
+            $ref: '#/definitions/v1ServiceInfoResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
       tags:
         - PaymentService
-  /v1/product/item/{productId}:
+  /v1/payment/transaction/{id}:
+    get:
+      operationId: PaymentService_ViewTransaction
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewTransactionResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - PaymentService
+  /v1/product/service:
+    get:
+      operationId: ProductService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - ProductService
+  /v1/product/{id}:
     get:
       operationId: ProductService_GetProduct
       responses:
@@ -211,130 +302,79 @@ paths:
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: productId
+        - name: id
           in: path
           required: true
           type: string
       tags:
         - ProductService
-    delete:
-      operationId: ProductService_DeleteProduct
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1DeleteProductResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: productId
-          in: path
-          required: true
-          type: string
-      tags:
-        - ProductService
-    post:
-      operationId: ProductService_UpdateProduct
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1UpdateProductResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: productId
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-      tags:
-        - ProductService
-  /v1/product/items:
+  /v1/shipping/service:
     get:
-      operationId: ProductService_GetProducts
+      operationId: ShippingService_ServiceInfo
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetProductsResponse'
+            $ref: '#/definitions/v1ServiceInfoResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
       tags:
-        - ProductService
-  /v1/product/new:
-    post:
-      operationId: ProductService_CreateProduct
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1CreateProductResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/v1CreateProductRequest'
-      tags:
-        - ProductService
-  /v1/shipping/order/{orderId}:
+        - ShippingService
+  /v1/shipping/shipment/{id}:
     get:
-      operationId: ShippingService_GetShippingDetails
+      operationId: ShippingService_ViewShipment
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetShippingDetailsResponse'
+            $ref: '#/definitions/v1ViewShipmentResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: orderId
+        - name: id
           in: path
           required: true
           type: string
       tags:
         - ShippingService
-    post:
-      operationId: ShippingService_UpdateShippingStatus
+  /v1/shipping/shipment/{id}/manifest:
+    get:
+      operationId: ShippingService_ViewShipmentManifest
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1UpdateShippingStatusResponse'
+            $ref: '#/definitions/v1ViewShipmentManifestResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: orderId
+        - name: id
           in: path
           required: true
           type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
       tags:
         - ShippingService
-  /v1/user/id/{userId}:
+  /v1/user/service:
+    get:
+      operationId: UserService_ServiceInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ServiceInfoResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/googlerpcStatus'
+      tags:
+        - UserService
+  /v1/user/{id}:
     get:
       operationId: UserService_GetUser
       responses:
@@ -347,74 +387,13 @@ paths:
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: userId
+        - name: id
           in: path
           required: true
           type: string
       tags:
         - UserService
-    delete:
-      operationId: UserService_DeleteUser
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1DeleteUserResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          type: string
-      tags:
-        - UserService
-    post:
-      operationId: UserService_UpdateUser
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1UpdateUserResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
-      tags:
-        - UserService
-  /v1/user/new:
-    post:
-      operationId: UserService_CreateUser
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1CreateUserResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/v1CreateUserRequest'
-      tags:
-        - UserService
-  /v1/warehouse/product/{productId}:
+  /v1/warehouse/product/{id}:
     get:
       operationId: WarehouseService_GetProductStock
       responses:
@@ -427,33 +406,24 @@ paths:
           schema:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
-        - name: productId
+        - name: id
           in: path
           required: true
           type: string
       tags:
         - WarehouseService
-    post:
-      operationId: WarehouseService_UpdateProductStock
+  /v1/warehouse/service:
+    get:
+      operationId: WarehouseService_ServiceInfo
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1UpdateProductStockResponse'
+            $ref: '#/definitions/v1ServiceInfoResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: productId
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            type: object
       tags:
         - WarehouseService
 definitions:
@@ -470,14 +440,6 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/protobufAny'
-  orderv1OrderItem:
-    type: object
-    properties:
-      productId:
-        type: string
-      quantity:
-        type: integer
-        format: int32
   protobufAny:
     type: object
     properties:
@@ -501,18 +463,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/v1Order'
-  v1CreateProductRequest:
-    type: object
-  v1CreateProductResponse:
-    type: object
-  v1CreateUserRequest:
-    type: object
-  v1CreateUserResponse:
-    type: object
-  v1DeleteProductResponse:
-    type: object
-  v1DeleteUserResponse:
-    type: object
   v1ECPublicJWK:
     type: object
     properties:
@@ -528,14 +478,6 @@ definitions:
         type: string
       "y":
         type: string
-  v1GetBalanceResponse:
-    type: object
-    properties:
-      userId:
-        type: string
-      balance:
-        type: number
-        format: float
   v1GetJwksResponse:
     type: object
     properties:
@@ -544,6 +486,14 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/v1ECPublicJWK'
+  v1GetOrderItemsResponse:
+    type: object
+    properties:
+      data:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
   v1GetOrderResponse:
     type: object
     example:
@@ -564,14 +514,19 @@ definitions:
           $ref: '#/definitions/v1Order'
   v1GetProductResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Product'
   v1GetProductStockResponse:
     type: object
-  v1GetProductsResponse:
-    type: object
-  v1GetShippingDetailsResponse:
-    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1WarehouseStock'
   v1GetUserResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1User'
   v1LoginPasswordRequest:
     type: object
     properties:
@@ -597,15 +552,19 @@ definitions:
       status:
         $ref: '#/definitions/v1OrderStatus'
       items:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/orderv1OrderItem'
+        type: object
+        additionalProperties:
+          type: integer
+          format: int32
+        title: Items mapped by quantity
       customerId:
         type: string
       transactionId:
         type: string
       createdAt:
+        type: string
+        format: int64
+      updatedAt:
         type: string
         format: int64
   v1OrderStatus:
@@ -618,7 +577,33 @@ definitions:
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
-    title: "todo: work on models\r\ntodo: event schemas"
+  v1Product:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+        format: float
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  v1ServiceInfoResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      source:
+        type: string
+      sourceLicense:
+        type: string
   v1SetPasswordRequest:
     type: object
     properties:
@@ -634,13 +619,95 @@ definitions:
     properties:
       detail:
         type: string
+  v1Shipment:
+    type: object
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      dispatched:
+        type: boolean
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  v1ShipmentItem:
+    type: object
+    properties:
+      shipmentId:
+        type: string
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
+  v1Transaction:
+    type: object
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      customerId:
+        type: string
+      amount:
+        type: number
+        format: float
+      processedAt:
+        type: string
+        format: int64
+      reversedAt:
+        type: string
+        format: int64
+        title: if timestamp is set - then the payment has been refunded
   v1UpdateOrderResponse:
     type: object
-  v1UpdateProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
+  v1User:
     type: object
-  v1UpdateProductStockResponse:
+    properties:
+      id:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  v1ViewShipmentManifestResponse:
     type: object
-  v1UpdateShippingStatusResponse:
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1ShipmentItem'
+  v1ViewShipmentResponse:
     type: object
-  v1UpdateUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/v1Shipment'
+  v1ViewTransactionResponse:
     type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Transaction'
+  v1WarehouseStock:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
