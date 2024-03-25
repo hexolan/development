@@ -36,11 +36,11 @@ message OrderStateEvent {
 
 //
 message OrderPlacedEvent {
-  Order payload = 1;
+  Order order = 1;
 }
 
-message OrderConfirmedEvent {
-  Order payload = 1;
+message OrderStatusUpdatedEvent {
+  Order order = 1;
 }
 
 /////

@@ -21,8 +21,6 @@ import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/field_mask.proto";
-import "protoc-gen-openapiv2/options/annotations.proto";
 import "stocklet/common/v1/requests.proto";
 import "stocklet/order/v1/events.proto";
 import "stocklet/order/v1/types.proto";
@@ -34,58 +32,30 @@ service OrderService {
     option (google.api.http) = {get: "/v1/order/service"};
   }
 
-  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
-    option (google.api.http) = {get: "/v1/order/{id}"};
-  }
-
+  // todo: documentation and proper impl.
+  // request a list of a customer's orders
+  // or if accessed through the gRPC gateway - shows the current user's orders.
   rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
     option (google.api.http) = {get: "/v1/order/list"};
   }
 
-  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
-    option (google.api.http) = {
-      post: "/v1/order/new"
-      body: "order"
-    };
-  }
-
-  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
-    // todo: ensure proper implementation
-    // https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/
-    // option (google.api.http) = {
-    //   put: "/v1/order/{order.id}"
-    //   body: "order"
-    //   additional_bindings {
-    //     patch: "/v1/order/{order.id}"
-    //     body: "order"
-    //   }
-    // };
-
-    // with only patch (PUT requires full resource)
-    option (google.api.http) = {
-      patch: "/v1/order/{order.id}"
-      body: "order"
-    };
-  }
-
-  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
-    option (google.api.http) = {delete: "/v1/order/{id}"};
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {get: "/v1/order/{id}"};
   }
 
   rpc GetOrderItems(GetOrderItemsRequest) returns (GetOrderItemsResponse) {
     option (google.api.http) = {get: "/v1/order/{id}/items"};
   }
 
-  // Internal Service Methods
-  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
-    option (google.api.method_visibility).restriction = "INTERNAL";
+  rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/new"
+      body: "order"
+    };
   }
 
-  // Internal Event Methods
-  //
-  // Processes PlaceOrderEvents.
-  // > If a failure status is recieved then the order is updated and marked rejected.
-  // > If a success status is recieved, from the last stage of the SAGA, then the order is marked approved.
+  // For internal usage.
+  // A message consumer will call this method to processes received "PlaceOrderEvent"s
   //
   // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
@@ -95,24 +65,7 @@ service OrderService {
   }
 }
 
-message GetOrderRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-}
-
-message GetOrderResponse {
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
-    json_schema: {
-      title: "Order Response",
-      description: "abcdef"
-    },
-    example: "{\"data\": {\"id\": \"123\"}}"
-  };
-
-  Order data = 1;
-}
-
 message GetOrdersRequest {
-  // Request a list of a customer's orders
   string customer_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -120,31 +73,15 @@ message GetOrdersResponse {
   repeated Order data = 1;
 }
 
-message CreateOrderRequest {
-  Order order = 1;
-}
-
-message CreateOrderResponse {
-  Order data = 1;
-}
-
-message UpdateOrderRequest {
-  Order order = 1;
-  google.protobuf.FieldMask mask = 2;
-}
-
-message UpdateOrderResponse {
-  Order data = 1;
-}
-
-message CancelOrderRequest {
+message GetOrderRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
-message CancelOrderResponse {}
+message GetOrderResponse {
+  Order data = 1;
+}
 
 message GetOrderItemsRequest {
-  // Order Id
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -152,6 +89,11 @@ message GetOrderItemsResponse {
   map<string, int32> data = 1;
 }
 
-message DeleteUserDataRequest {}
+message PlaceOrderRequest {
+  Order order = 1;
+  string customer_id = 2;
+}
 
-message DeleteUserDataResponse {}
+message PlaceOrderResponse {
+  Order data = 1;
+}

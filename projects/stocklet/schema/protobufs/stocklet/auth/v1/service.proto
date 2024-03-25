@@ -59,7 +59,7 @@ service AuthService {
 message GetJwksRequest {}
 
 message GetJwksResponse {
-  repeated ECPublicJWK keys = 1;
+  repeated PublicEcdsaJWK keys = 1;
 }
 
 message LoginPasswordRequest {

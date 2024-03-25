@@ -38,17 +38,21 @@ const (
 	pgOrderItemsBaseQuery string = "SELECT product_id, quantity FROM order_items"
 )
 
+// The postgres controller is responsible for implementing the StorageController interface
+// to store and retrieve the requested items from the Postgres database.
+//
+// Other controllers can be implemented to interface with different database systems.
 type postgresController struct {
 	cl *pgxpool.Pool
 }
 
+// Creates a new postgresController that implements the StorageController interface.
 func NewPostgresController(cl *pgxpool.Pool) order.StorageController {
 	return postgresController{cl: cl}
 }
 
-// Get an order by its specified id from the database.
-//
-// Internal method. Assumes inputs are valid.
+// Internal method - Validation is assumed to have taken place already
+// Gets an order by its specified id from the database
 func (c postgresController) GetOrder(ctx context.Context, id string) (*pb.Order, error) {
 	return c.getOrder(ctx, nil, id)
 }
@@ -77,9 +81,8 @@ func (c postgresController) getOrder(ctx context.Context, tx *pgx.Tx, id string)
 	return order, nil
 }
 
-// Create a new order in the database.
-//
-// Internal method. Validation is already assumed.
+// Internal method - Inputs are assumed valid
+// Create a new order in the database
 func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order) (*pb.Order, error) {
 	// Begin a DB transaction
 	tx, err := c.cl.Begin(ctx)
@@ -136,9 +139,9 @@ func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order)
 	return &newOrder, nil
 }
 
-// Update an order in the database.
+// Internal method - Inputs are assumed valid
 //
-// Internal method. Inputs are assumed valid.
+// Update an order in the database
 func (c postgresController) UpdateOrder(ctx context.Context, id string, order *pb.Order, mask *fieldmaskpb.FieldMask) (*pb.Order, error) {
 	return c.updateOrder(ctx, id, order, mask)
 }

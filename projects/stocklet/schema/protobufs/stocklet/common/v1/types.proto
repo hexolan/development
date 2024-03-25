@@ -19,4 +19,9 @@ package stocklet.common.v1;
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1;common_v1";
 
-message Address {}
+message Address {
+  repeated string address_lines = 1;
+  string town = 2;
+  string country = 3;
+  string post_code = 4;
+}

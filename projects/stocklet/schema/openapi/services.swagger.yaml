@@ -85,6 +85,7 @@ paths:
         - AuthService
   /v1/order/list:
     get:
+      summary: "todo: documentation and proper impl.\r\nrequest a list of a customer's orders\r\nor if accessed through the gRPC gateway - shows the current user's orders."
       operationId: OrderService_GetOrders
       responses:
         "200":
@@ -97,7 +98,6 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: customerId
-          description: Request a list of a customer's orders
           in: query
           required: false
           type: string
@@ -105,12 +105,12 @@ paths:
         - OrderService
   /v1/order/new:
     post:
-      operationId: OrderService_CreateOrder
+      operationId: OrderService_PlaceOrder
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1CreateOrderResponse'
+            $ref: '#/definitions/v1PlaceOrderResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -121,6 +121,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/v1Order'
+        - name: customerId
+          in: query
+          required: false
+          type: string
       tags:
         - OrderService
   /v1/order/service:
@@ -156,24 +160,6 @@ paths:
           type: string
       tags:
         - OrderService
-    delete:
-      operationId: OrderService_CancelOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1CancelOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      tags:
-        - OrderService
   /v1/order/{id}/items:
     get:
       operationId: OrderService_GetOrderItems
@@ -188,57 +174,8 @@ paths:
             $ref: '#/definitions/googlerpcStatus'
       parameters:
         - name: id
-          description: Order Id
           in: path
           required: true
-          type: string
-      tags:
-        - OrderService
-  /v1/order/{order.id}:
-    patch:
-      summary: "todo: ensure proper implementation\r\n https://grpc-ecosystem.github.io/grpc-gateway/docs/mapping/patch_feature/\r\n option (google.api.http) = {\r\n   put: \"/v1/order/{order.id}\"\r\n   body: \"order\"\r\n   additional_bindings {\r\n     patch: \"/v1/order/{order.id}\"\r\n     body: \"order\"\r\n   }\r\n };"
-      operationId: OrderService_UpdateOrder
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1UpdateOrderResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: order.id
-          in: path
-          required: true
-          type: string
-        - name: order
-          in: body
-          required: true
-          schema:
-            type: object
-            properties:
-              status:
-                $ref: '#/definitions/v1OrderStatus'
-              items:
-                type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
-                title: Items mapped by quantity
-              customerId:
-                type: string
-              transactionId:
-                type: string
-              createdAt:
-                type: string
-                format: int64
-              updatedAt:
-                type: string
-                format: int64
-        - name: mask
-          in: query
-          required: false
           type: string
       tags:
         - OrderService
@@ -456,28 +393,6 @@ definitions:
       expiresIn:
         type: string
         format: int64
-  v1CancelOrderResponse:
-    type: object
-  v1CreateOrderResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/v1Order'
-  v1ECPublicJWK:
-    type: object
-    properties:
-      kty:
-        type: string
-      use:
-        type: string
-      alg:
-        type: string
-      crv:
-        type: string
-      x:
-        type: string
-      "y":
-        type: string
   v1GetJwksResponse:
     type: object
     properties:
@@ -485,7 +400,7 @@ definitions:
         type: array
         items:
           type: object
-          $ref: '#/definitions/v1ECPublicJWK'
+          $ref: '#/definitions/v1PublicEcdsaJWK'
   v1GetOrderItemsResponse:
     type: object
     properties:
@@ -496,14 +411,9 @@ definitions:
           format: int32
   v1GetOrderResponse:
     type: object
-    example:
-      data:
-        id: "123"
     properties:
       data:
         $ref: '#/definitions/v1Order'
-    description: abcdef
-    title: Order Response
   v1GetOrdersResponse:
     type: object
     properties:
@@ -556,10 +466,12 @@ definitions:
         additionalProperties:
           type: integer
           format: int32
-        title: Items mapped by quantity
+        description: '''items'' consists of a mapping of Product ID to Quantity.'
       customerId:
         type: string
       transactionId:
+        type: string
+      shippingId:
         type: string
       createdAt:
         type: string
@@ -571,12 +483,17 @@ definitions:
     type: string
     enum:
       - ORDER_STATUS_UNSPECIFIED
+      - ORDER_STATUS_PROCESSING
       - ORDER_STATUS_PENDING
       - ORDER_STATUS_REJECTED
-      - ORDER_STATUS_CANCELLED
       - ORDER_STATUS_APPROVED
       - ORDER_STATUS_SUCCESS
     default: ORDER_STATUS_UNSPECIFIED
+  v1PlaceOrderResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/v1Order'
   v1Product:
     type: object
     properties:
@@ -595,6 +512,21 @@ definitions:
       updatedAt:
         type: string
         format: int64
+  v1PublicEcdsaJWK:
+    type: object
+    properties:
+      kty:
+        type: string
+      use:
+        type: string
+      alg:
+        type: string
+      crv:
+        type: string
+      x:
+        type: string
+      "y":
+        type: string
   v1ServiceInfoResponse:
     type: object
     properties:
@@ -649,25 +581,20 @@ definitions:
     properties:
       id:
         type: string
+      amount:
+        type: number
+        format: float
       orderId:
         type: string
       customerId:
         type: string
-      amount:
-        type: number
-        format: float
       processedAt:
         type: string
         format: int64
       reversedAt:
         type: string
         format: int64
-        title: if timestamp is set - then the payment has been refunded
-  v1UpdateOrderResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/v1Order'
+        description: Optional - If set, then the transaction has been refunded.
   v1User:
     type: object
     properties:

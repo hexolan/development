@@ -15,3 +15,18 @@
             * dispatches its own OrderStatusEvent in 'order.state.status'
 
 [*] stop worrying about gRPC-gateway until after
+
+[*] implementing paginations
+    > ORDER BY id OR timestamp
+    > using LIMIT and OFFSET for pagination functionality
+    > checking returned row count to determine if further pagination is possible
+    > pagination tokens (as described in pb docs https://protobuf.dev/programming-guides/api/)
+
+[*] protobuf documentation
+    > https://protobuf.dev/programming-guides/api/#precisely-concisely
+
+[*] for now don't implement too many service methods - only implement whats needed for the minimum viable product
+    > just realised i've wasted too much time implementing methods like UpdateOrder, when they aren't needed yet
+    > can be implemented down the line - the key focus of this project is event-driven architecture, so I should get to implementing
+        sagas
+    > really just want this project in a somewhat complete stage at this point - feels too long has been spent on it
