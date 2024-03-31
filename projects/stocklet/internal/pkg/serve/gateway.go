@@ -21,11 +21,13 @@ import (
 	
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/credentials/insecure"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	
+	"github.com/hexolan/stocklet/internal/pkg/auth"
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
@@ -41,11 +43,36 @@ import (
 // bigger priorities on mind than focusing on that rn
 //
 // self-reminder: clear up this pkg and these notes later
-func withGatewayErrorHandler() runtime.ErrorHandlerFunc {
-	return func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
-		runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
-		log.Error().Err(err).Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
-	}
+func withGatewayErrorHandler() runtime.ServeMuxOption {
+	return runtime.WithErrorHandler(
+		func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+			runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
+			log.Error().Err(err).Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
+		},
+	)
+}
+
+func withGatewayMetadataOpt() runtime.ServeMuxOption {
+	return runtime.WithMetadata(
+		func(ctx context.Context, req *http.Request) metadata.MD {
+			return metadata.MD{"from-gateway": {"true"}}
+		},
+	)
+}
+
+func withGatewayHeaderOpt() runtime.ServeMuxOption {
+	return runtime.WithIncomingHeaderMatcher(
+		func(key string) (string, bool) {
+			switch key {
+			case auth.JWTPayloadHeader:
+				// Envoy will validate JWT tokens and provide a payload header
+				// containing a base64 string of the token claims.
+				return "jwt-payload", true
+			default:
+				return key, false
+			}
+		},
+	)
 }
 
 // todo: improve - http logger for debug
@@ -61,9 +88,9 @@ func withGatewayLogger(h http.Handler) http.Handler {
 func NewGatewayServeBase(cfg *config.SharedConfig) (*runtime.ServeMux, []grpc.DialOption) {
 	// create the base runtime ServeMux 
 	mux := runtime.NewServeMux(
-		runtime.WithErrorHandler(
-			withGatewayErrorHandler(),
-		),
+		withGatewayErrorHandler(),
+		withGatewayMetadataOpt(),
+		withGatewayHeaderOpt(),
 	)
 
 	// attach open telemetry instrumentation through the gRPC client options
@@ -92,7 +119,7 @@ func Gateway(mux *runtime.ServeMux) error {
 
 	// create gateway HTTP server
 	svr := &http.Server{
-		Addr: AddrToGateway("0.0.0.0"),
+		Addr: GetAddrToGateway("0.0.0.0"),
 		Handler: withGatewayLogger(handler),
 	}
 

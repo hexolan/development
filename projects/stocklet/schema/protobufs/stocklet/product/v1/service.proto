@@ -32,6 +32,10 @@ service ProductService {
   rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
     option (google.api.http) = {get: "/v1/product/{id}"};
   }
+
+  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse) {
+    option (google.api.http) = {get: "/v1/product/list"};
+  }
 }
 
 message GetProductRequest {
@@ -39,5 +43,11 @@ message GetProductRequest {
 }
 
 message GetProductResponse {
-  Product data = 1;
+  Product product = 1;
+}
+
+message GetProductsRequest {}
+
+message GetProductsResponse {
+  repeated Product products = 1;
 }

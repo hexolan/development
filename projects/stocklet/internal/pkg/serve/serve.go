@@ -21,12 +21,12 @@ const (
 	gatewayPort string = "90"
 )
 
-// Get an address to a gRPC server
-func AddrToGrpc(host string) string {
+// Get an address to a gRPC server using the standard port
+func GetAddrToGrpc(host string) string {
 	return host + ":" + grpcPort
 }
 
-// Get an address to a gRPC-gateway interface
-func AddrToGateway(host string) string {
+// Get an address to a gRPC-gateway interface using the standard port
+func GetAddrToGateway(host string) string {
 	return host + ":" + gatewayPort
 }

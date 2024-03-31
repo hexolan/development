@@ -17,6 +17,26 @@ syntax = "proto3";
 
 package stocklet.product.v1;
 
-import "stocklet/product/v1/types.proto";
-
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1;product_v1";
+
+message ProductCreatedEvent {
+  int32 revision = 1;
+
+  string product_id = 2;
+  string name = 3;
+  string description = 4;
+  float price = 5;
+}
+
+message ProductPriceUpdatedEvent {
+  int32 revision = 1;
+
+  string product_id = 2;
+  float price = 3;
+}
+
+message ProductDeletedEvent {
+  int32 revision = 1;
+
+  string product_id = 2;
+}

@@ -22,8 +22,10 @@ import "google/api/annotations.proto";
 import "google/api/visibility.proto";
 import "google/protobuf/empty.proto";
 import "stocklet/common/v1/requests.proto";
-import "stocklet/order/v1/events.proto";
 import "stocklet/order/v1/types.proto";
+import "stocklet/payment/v1/events.proto";
+import "stocklet/shipping/v1/events.proto";
+import "stocklet/warehouse/v1/events.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
@@ -33,18 +35,14 @@ service OrderService {
   }
 
   // todo: documentation and proper impl.
-  // request a list of a customer's orders
-  // or if accessed through the gRPC gateway - shows the current user's orders.
+  // Get a list of a customer's orders.
+  // If accessed through the gateway - shows the current user's orders.
   rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
     option (google.api.http) = {get: "/v1/order/list"};
   }
 
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
     option (google.api.http) = {get: "/v1/order/{id}"};
-  }
-
-  rpc GetOrderItems(GetOrderItemsRequest) returns (GetOrderItemsResponse) {
-    option (google.api.http) = {get: "/v1/order/{id}/items"};
   }
 
   rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse) {
@@ -54,13 +52,30 @@ service OrderService {
     };
   }
 
-  // For internal usage.
-  // A message consumer will call this method to processes received "PlaceOrderEvent"s
+  // A message consumer will call this method to process events.
   //
   // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc ProcessPlaceOrderEvent(PlaceOrderEvent) returns (google.protobuf.Empty) {
+  rpc ProcessPaymentProcessedEvent(stocklet.payment.v1.PaymentProcessedEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // A message consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessShipmentAllocatedEvent(stocklet.shipping.v1.ShipmentAllocatedEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // A message consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessStockReservationEvent(stocklet.warehouse.v1.StockReservationEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }
@@ -70,7 +85,7 @@ message GetOrdersRequest {
 }
 
 message GetOrdersResponse {
-  repeated Order data = 1;
+  repeated Order orders = 1;
 }
 
 message GetOrderRequest {
@@ -78,7 +93,7 @@ message GetOrderRequest {
 }
 
 message GetOrderResponse {
-  Order data = 1;
+  Order order = 1;
 }
 
 message GetOrderItemsRequest {
@@ -86,7 +101,7 @@ message GetOrderItemsRequest {
 }
 
 message GetOrderItemsResponse {
-  map<string, int32> data = 1;
+  map<string, int32> item_quantities = 1 [(buf.validate.field).map.values.int32.gt = 0];
 }
 
 message PlaceOrderRequest {
@@ -95,5 +110,5 @@ message PlaceOrderRequest {
 }
 
 message PlaceOrderResponse {
-  Order data = 1;
+  Order order = 1;
 }

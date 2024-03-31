@@ -4,9 +4,7 @@ An event-driven microservices-based distributed e-commerce application written i
 
 ## 📘 About
 
-This project was originally made to experiment with using event-driven architecture.
-
-But I hope it can serve as a beneficial demonstration of using the architecture and exemplify the implementation of some other microservice patterns.
+This project was originally made to experiment with using event-driven architecture. But I hope it can future serve as a beneficial demonstration of using the architecture and exemplify the implementation of some other microservice patterns.
 
 Any ideas, contributions or suggestions to better conform with general and evolving industry practices are very welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
 
@@ -17,7 +15,6 @@ Currently the application should be considered in the experimental state. As suc
 * Monorepository layout
 * Microservice architecture
 * Event-driven architecture
-* Schema-driven development
 * Interfacing with services using gRPC
 * User-facing RESTful HTTP APIs with gRPC-Gateway
 * Distributed tracing with OpenTelemetry
@@ -98,7 +95,7 @@ Each service is prepared by a [``service-init``](/cmd/service-init/) container, 
 
 ### 📇 Events
 
-The events are serialised using [protocol buffers](https://protobuf.dev/). Further documentation on the events can be found in [``/docs/events/README.md``](/docs/events/README.md)
+The events are serialised using [protocol buffers](https://protobuf.dev/). Further documentation can be found at [``/docs/events/README.md``](/docs/events/README.md)
 
 ## 💻 Deployment
 
@@ -106,12 +103,14 @@ The events are serialised using [protocol buffers](https://protobuf.dev/). Furth
 
 todo: write-up on deployment with docker compose
 
+``docker compose up -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml``
+
 ### Using Kubernetes
 
-todo: implement support for deploying with kubernetes
+todo: Implement support for deploying with Kubernetes
 
 ## ✍️ License and Contributing
 
-Contributions are always welcome! Please feel free to open an issue or a pull request if you feel you have any ideas for improvement or further expansion of this demo project.
+Contributions are always welcome! Please feel free to open an issue or a pull request if you feel you have any ideas for improvement or further expansion of this repository.
 
 This project is licensed under the [GNU AGPL v3](/LICENSE).

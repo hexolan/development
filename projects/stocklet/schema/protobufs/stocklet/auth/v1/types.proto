@@ -19,7 +19,7 @@ package stocklet.auth.v1;
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
-message PublicEcdsaJWK {
+message PublicEcJWK {
   string kty = 1;
   string use = 2;
   string alg = 3;

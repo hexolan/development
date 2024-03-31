@@ -24,10 +24,10 @@ option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;u
 message User {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 
-  string first_name = 2 [(buf.validate.field).string.min_len = 1];
-  string last_name = 3 [(buf.validate.field).string.min_len = 1];
+  string email = 2 [(buf.validate.field).string.email = true];
 
-  string email = 4 [(buf.validate.field).string.email = true];
+  string first_name = 3 [(buf.validate.field).string.min_len = 1];
+  string last_name = 4 [(buf.validate.field).string.min_len = 1];
 
   int64 created_at = 5;
   optional int64 updated_at = 6;

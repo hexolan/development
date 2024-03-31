@@ -26,7 +26,6 @@ import "stocklet/common/v1/requests.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
-// todo:
 service AuthService {
   rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
     option (google.api.http) = {get: "/v1/auth/service"};
@@ -59,7 +58,7 @@ service AuthService {
 message GetJwksRequest {}
 
 message GetJwksResponse {
-  repeated PublicEcdsaJWK keys = 1;
+  repeated PublicEcJWK keys = 1;
 }
 
 message LoginPasswordRequest {

@@ -30,7 +30,7 @@ func PrepareGateway(cfg *auth.ServiceConfig) *runtime.ServeMux {
 	mux, clientOpts := serve.NewGatewayServeBase(&cfg.Shared)
 
 	ctx := context.Background()
-	err := pb.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, serve.AddrToGrpc("localhost"), clientOpts)
+	err := pb.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, serve.GetAddrToGrpc("localhost"), clientOpts)
 	if err != nil {
 		log.Panic().Err(err).Msg("failed to register endpoint for gateway")
 	}

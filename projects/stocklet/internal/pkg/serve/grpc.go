@@ -51,7 +51,7 @@ func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 }
 
 func Grpc(svr *grpc.Server) {
-	lis, err := net.Listen("tcp", AddrToGrpc("0.0.0.0"))
+	lis, err := net.Listen("tcp", GetAddrToGrpc("0.0.0.0"))
 	if err != nil {
 		log.Panic().Err(err).Str("port", grpcPort).Msg("failed to listen on gRPC port")
 	}

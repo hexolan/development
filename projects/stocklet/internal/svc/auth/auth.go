@@ -34,7 +34,7 @@ type AuthService struct {
 	pb.UnimplementedAuthServiceServer
 
 	cfg *ServiceConfig
-	publicJWK *pb.ECPublicJWK
+	publicJWK *pb.PublicEcJWK
 	
 	store StorageController
 }
@@ -68,7 +68,7 @@ func (svc AuthService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInf
 // Provide the JWK ECDSA public key as part of a JSON Web Key set.
 // This method is called by the API ingress for usage when validating inbound JWT tokens.
 func (svc AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
-	return &pb.GetJwksResponse{Keys: []*pb.ECPublicJWK{svc.publicJWK}}, nil
+	return &pb.GetJwksResponse{Keys: []*pb.PublicEcJWK{svc.publicJWK}}, nil
 }
 
 // todo: docs
@@ -91,7 +91,7 @@ func (svc AuthService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDat
 }
 
 // Converts the ECDSA key to a public JWK.
-func preparePublicJwk(cfg *ServiceConfig) *pb.ECPublicJWK {
+func preparePublicJwk(cfg *ServiceConfig) *pb.PublicEcJWK {
 	// Assemble the public JWK
 	jwk, err := jwk.FromRaw(cfg.ServiceOpts.PrivateKey.PublicKey)
 	if err != nil {
@@ -115,7 +115,7 @@ func preparePublicJwk(cfg *ServiceConfig) *pb.ECPublicJWK {
 	}
 
 	// Unmarshal the JSON to Protobuf format
-	jwkPB := pb.ECPublicJWK{}
+	jwkPB := pb.PublicEcJWK{}
 	err = protojson.Unmarshal(jwkBytes, &jwkPB)
 	if err != nil {
 		log.Panic().Err(err).Msg("something went wrong preparing the public JWK (protonjson unmarshal)")

@@ -30,3 +30,10 @@
     > can be implemented down the line - the key focus of this project is event-driven architecture, so I should get to implementing
         sagas
     > really just want this project in a somewhat complete stage at this point - feels too long has been spent on it
+
+---
+
+missing stage:
+
+* price products (get total)
+* get shipping quote

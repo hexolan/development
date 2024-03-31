@@ -26,7 +26,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - AuthService
   /v1/auth/login:
@@ -40,7 +40,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: body
           in: body
@@ -60,7 +60,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: body
           in: body
@@ -80,12 +80,12 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - AuthService
   /v1/order/list:
     get:
-      summary: "todo: documentation and proper impl.\r\nrequest a list of a customer's orders\r\nor if accessed through the gRPC gateway - shows the current user's orders."
+      summary: "todo: documentation and proper impl.\r\nGet a list of a customer's orders.\r\nIf accessed through the gateway - shows the current user's orders."
       operationId: OrderService_GetOrders
       responses:
         "200":
@@ -95,7 +95,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: customerId
           in: query
@@ -114,7 +114,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: order
           in: body
@@ -138,7 +138,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - OrderService
   /v1/order/{id}:
@@ -152,26 +152,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      tags:
-        - OrderService
-  /v1/order/{id}/items:
-    get:
-      operationId: OrderService_GetOrderItems
-      responses:
-        "200":
-          description: A successful response.
-          schema:
-            $ref: '#/definitions/v1GetOrderItemsResponse'
-        default:
-          description: An unexpected error response.
-          schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -190,7 +171,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - PaymentService
   /v1/payment/transaction/{id}:
@@ -204,7 +185,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -212,6 +193,20 @@ paths:
           type: string
       tags:
         - PaymentService
+  /v1/product/list:
+    get:
+      operationId: ProductService_GetProducts
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1GetProductsResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - ProductService
   /v1/product/service:
     get:
       operationId: ProductService_ServiceInfo
@@ -223,7 +218,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - ProductService
   /v1/product/{id}:
@@ -237,7 +232,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -256,7 +251,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - ShippingService
   /v1/shipping/shipment/{id}:
@@ -270,7 +265,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -289,7 +284,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -308,7 +303,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - UserService
   /v1/user/{id}:
@@ -322,7 +317,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -341,7 +336,7 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       parameters:
         - name: id
           in: path
@@ -360,11 +355,17 @@ paths:
         default:
           description: An unexpected error response.
           schema:
-            $ref: '#/definitions/googlerpcStatus'
+            $ref: '#/definitions/rpcStatus'
       tags:
         - WarehouseService
 definitions:
-  googlerpcStatus:
+  protobufAny:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  rpcStatus:
     type: object
     properties:
       code:
@@ -377,12 +378,6 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/protobufAny'
-  protobufAny:
-    type: object
-    properties:
-      '@type':
-        type: string
-    additionalProperties: {}
   v1AuthToken:
     type: object
     properties:
@@ -400,24 +395,16 @@ definitions:
         type: array
         items:
           type: object
-          $ref: '#/definitions/v1PublicEcdsaJWK'
-  v1GetOrderItemsResponse:
-    type: object
-    properties:
-      data:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int32
+          $ref: '#/definitions/v1PublicEcJWK'
   v1GetOrderResponse:
     type: object
     properties:
-      data:
+      order:
         $ref: '#/definitions/v1Order'
   v1GetOrdersResponse:
     type: object
     properties:
-      data:
+      orders:
         type: array
         items:
           type: object
@@ -425,13 +412,21 @@ definitions:
   v1GetProductResponse:
     type: object
     properties:
-      data:
+      product:
         $ref: '#/definitions/v1Product'
   v1GetProductStockResponse:
     type: object
     properties:
       data:
         $ref: '#/definitions/v1WarehouseStock'
+  v1GetProductsResponse:
+    type: object
+    properties:
+      products:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Product'
   v1GetUserResponse:
     type: object
     properties:
@@ -492,7 +487,7 @@ definitions:
   v1PlaceOrderResponse:
     type: object
     properties:
-      data:
+      order:
         $ref: '#/definitions/v1Order'
   v1Product:
     type: object
@@ -512,7 +507,7 @@ definitions:
       updatedAt:
         type: string
         format: int64
-  v1PublicEcdsaJWK:
+  v1PublicEcJWK:
     type: object
     properties:
       kty:
@@ -600,11 +595,11 @@ definitions:
     properties:
       id:
         type: string
+      email:
+        type: string
       firstName:
         type: string
       lastName:
-        type: string
-      email:
         type: string
       createdAt:
         type: string

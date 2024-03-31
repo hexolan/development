@@ -17,16 +17,27 @@ syntax = "proto3";
 
 package stocklet.shipping.v1;
 
-import "stocklet/shipping/v1/types.proto";
-
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
 
 message ShipmentAllocatedEvent {
-  Shipment shipment = 1;
-  repeated ShipmentItem items = 2;
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_FAILED = 1;
+    TYPE_SHIPMENT_ALLOCATED = 2;
+  }
+
+  int32 revision = 1;
+  Type type = 2;
+
+  string shipment_id = 3;
+  string order_id = 4;
+  map<string, int32> product_quantities = 5;
 }
 
-message PackagingShipmentEvent {
-  Shipment shipment = 1;
-  repeated ShipmentItem items = 2;
+message ShipmentDispatchedEvent {
+  int32 revision = 1;
+
+  string shipment_id = 2;
+  string order_id = 3;
+  map<string, int32> product_quantities = 4;
 }

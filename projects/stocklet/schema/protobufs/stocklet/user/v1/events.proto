@@ -17,6 +17,27 @@ syntax = "proto3";
 
 package stocklet.user.v1;
 
-import "stocklet/user/v1/types.proto";
-
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1;user_v1";
+
+message UserCreatedEvent {
+  int32 revision = 1;
+
+  string user_id = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+message UserEmailUpdatedEvent {
+  int32 revision = 1;
+
+  string user_id = 2;
+  string email = 3;
+}
+
+message UserDeletedEvent {
+  int32 revision = 1;
+
+  string user_id = 2;
+  string email = 3;
+}
