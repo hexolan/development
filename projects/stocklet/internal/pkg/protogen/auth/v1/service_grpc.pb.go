@@ -24,9 +24,11 @@ package auth_v1
 import (
 	context "context"
 	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	v11 "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -35,11 +37,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_ServiceInfo_FullMethodName    = "/stocklet.auth.v1.AuthService/ServiceInfo"
-	AuthService_GetJwks_FullMethodName        = "/stocklet.auth.v1.AuthService/GetJwks"
-	AuthService_LoginPassword_FullMethodName  = "/stocklet.auth.v1.AuthService/LoginPassword"
-	AuthService_SetPassword_FullMethodName    = "/stocklet.auth.v1.AuthService/SetPassword"
-	AuthService_DeleteUserData_FullMethodName = "/stocklet.auth.v1.AuthService/DeleteUserData"
+	AuthService_ServiceInfo_FullMethodName             = "/stocklet.auth.v1.AuthService/ServiceInfo"
+	AuthService_GetJwks_FullMethodName                 = "/stocklet.auth.v1.AuthService/GetJwks"
+	AuthService_LoginPassword_FullMethodName           = "/stocklet.auth.v1.AuthService/LoginPassword"
+	AuthService_SetPassword_FullMethodName             = "/stocklet.auth.v1.AuthService/SetPassword"
+	AuthService_ProcessUserDeletedEvent_FullMethodName = "/stocklet.auth.v1.AuthService/ProcessUserDeletedEvent"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -50,8 +52,12 @@ type AuthServiceClient interface {
 	GetJwks(ctx context.Context, in *GetJwksRequest, opts ...grpc.CallOption) (*GetJwksResponse, error)
 	LoginPassword(ctx context.Context, in *LoginPasswordRequest, opts ...grpc.CallOption) (*LoginPasswordResponse, error)
 	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*SetPasswordResponse, error)
-	// internal method
-	DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessUserDeletedEvent(ctx context.Context, in *v11.UserDeletedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authServiceClient struct {
@@ -98,9 +104,9 @@ func (c *authServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequ
 	return out, nil
 }
 
-func (c *authServiceClient) DeleteUserData(ctx context.Context, in *DeleteUserDataRequest, opts ...grpc.CallOption) (*DeleteUserDataResponse, error) {
-	out := new(DeleteUserDataResponse)
-	err := c.cc.Invoke(ctx, AuthService_DeleteUserData_FullMethodName, in, out, opts...)
+func (c *authServiceClient) ProcessUserDeletedEvent(ctx context.Context, in *v11.UserDeletedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthService_ProcessUserDeletedEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +121,12 @@ type AuthServiceServer interface {
 	GetJwks(context.Context, *GetJwksRequest) (*GetJwksResponse, error)
 	LoginPassword(context.Context, *LoginPasswordRequest) (*LoginPasswordResponse, error)
 	SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error)
-	// internal method
-	DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessUserDeletedEvent(context.Context, *v11.UserDeletedEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -136,8 +146,8 @@ func (UnimplementedAuthServiceServer) LoginPassword(context.Context, *LoginPassw
 func (UnimplementedAuthServiceServer) SetPassword(context.Context, *SetPasswordRequest) (*SetPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
 }
-func (UnimplementedAuthServiceServer) DeleteUserData(context.Context, *DeleteUserDataRequest) (*DeleteUserDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserData not implemented")
+func (UnimplementedAuthServiceServer) ProcessUserDeletedEvent(context.Context, *v11.UserDeletedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessUserDeletedEvent not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -224,20 +234,20 @@ func _AuthService_SetPassword_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_DeleteUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserDataRequest)
+func _AuthService_ProcessUserDeletedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.UserDeletedEvent)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).DeleteUserData(ctx, in)
+		return srv.(AuthServiceServer).ProcessUserDeletedEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_DeleteUserData_FullMethodName,
+		FullMethod: AuthService_ProcessUserDeletedEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).DeleteUserData(ctx, req.(*DeleteUserDataRequest))
+		return srv.(AuthServiceServer).ProcessUserDeletedEvent(ctx, req.(*v11.UserDeletedEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -266,8 +276,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_SetPassword_Handler,
 		},
 		{
-			MethodName: "DeleteUserData",
-			Handler:    _AuthService_DeleteUserData_Handler,
+			MethodName: "ProcessUserDeletedEvent",
+			Handler:    _AuthService_ProcessUserDeletedEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

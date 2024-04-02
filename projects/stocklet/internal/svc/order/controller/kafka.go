@@ -25,6 +25,7 @@ import (
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 )
 
 type kafkaController struct {
@@ -44,13 +45,13 @@ func NewKafkaController(cl *kgo.Client) order.ConsumerController {
 		cl,
 
 		messaging.Order_State_Created_Topic,
-		messaging.Order_State_Updated_Topic,
-		messaging.Order_State_Deleted_Topic,
+		messaging.Order_State_Pending_Topic,
+		messaging.Order_State_Rejected_Topic,
+		messaging.Order_State_Approved_Topic,
 
-		messaging.Order_PlaceOrder_Order_Topic,
-		messaging.Order_PlaceOrder_Warehouse_Topic,
-		messaging.Order_PlaceOrder_Payment_Topic,
-		messaging.Order_PlaceOrder_Shipping_Topic,
+		messaging.Warehouse_Reservation_Failed_Topic,
+		messaging.Shipping_Shipment_Allocation_Topic,
+		messaging.Payment_Processing_Topic,
 	)
 	if err != nil {
 		log.Warn().Err(err).Msg("kafka: raised attempting to ensure svc topics")
@@ -58,9 +59,10 @@ func NewKafkaController(cl *kgo.Client) order.ConsumerController {
 
 	// Add the consumption topics
 	cl.AddConsumeTopics(
-		messaging.Order_PlaceOrder_Warehouse_Topic,
-		messaging.Order_PlaceOrder_Payment_Topic,
-		messaging.Order_PlaceOrder_Shipping_Topic,
+		messaging.Product_PriceQuotation_Topic,
+		messaging.Warehouse_Reservation_Failed_Topic,
+		messaging.Shipping_Shipment_Allocation_Topic,
+		messaging.Payment_Processing_Topic,
 	)
 
 	return kafkaController{cl: cl, ctx: ctx, ctxCancel: ctxCancel}
@@ -83,12 +85,14 @@ func (c kafkaController) Start() {
 
 		fetches.EachTopic(func(ft kgo.FetchTopic) {
 			switch ft.Topic {
-			case messaging.Order_PlaceOrder_Warehouse_Topic:
-				c.consumePlaceOrderTopic(ft)
-			case messaging.Order_PlaceOrder_Payment_Topic:
-				c.consumePlaceOrderTopic(ft)
-			case messaging.Order_PlaceOrder_Shipping_Topic:
-				c.consumePlaceOrderTopic(ft)
+			case messaging.Product_PriceQuotation_Topic:
+				c.consumeProductPriceQuoteEventTopic(ft)
+			case messaging.Warehouse_Reservation_Failed_Topic:
+				c.consumeStockReservationEventTopic(ft)
+			case messaging.Shipping_Shipment_Allocation_Topic:
+				c.consumeShipmentAllocatedEventTopic(ft)
+			case messaging.Payment_Processing_Topic:
+				c.consumePaymentProcessedEventTopic(ft)
 			default:
 				log.Warn().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
 			}
@@ -101,20 +105,74 @@ func (c kafkaController) Stop() {
 	c.ctxCancel()
 }
 
-func (c kafkaController) consumePlaceOrderTopic(ft kgo.FetchTopic) {
+func (c kafkaController) consumeProductPriceQuoteEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
-		var event pb.PlaceOrderEvent
+		var event eventpb.ProductPriceQuoteEvent
 		err := proto.Unmarshal(record.Value, &event)
 		if err != nil {
-			log.Panic().Err(err).Msg("consumer: failed to unmarshal place order event")
+			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
 		}
 
 		// Process the event
 		ctx := context.Background()
-		c.svc.ProcessPlaceOrderEvent(ctx, &event)
+		c.svc.ProcessProductPriceQuoteEvent(ctx, &event)
+	})
+}
+
+func (c kafkaController) consumeStockReservationEventTopic(ft kgo.FetchTopic) {
+	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
+
+	// Process each message from the topic
+	ft.EachRecord(func(record *kgo.Record) {
+		// Unmarshal the event
+		var event eventpb.StockReservationEvent
+		err := proto.Unmarshal(record.Value, &event)
+		if err != nil {
+			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
+		}
+
+		// Process the event
+		ctx := context.Background()
+		c.svc.ProcessStockReservationEvent(ctx, &event)
+	})
+}
+
+func (c kafkaController) consumeShipmentAllocatedEventTopic(ft kgo.FetchTopic) {
+	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
+
+	// Process each message from the topic
+	ft.EachRecord(func(record *kgo.Record) {
+		// Unmarshal the event
+		var event eventpb.ShipmentAllocatedEvent
+		err := proto.Unmarshal(record.Value, &event)
+		if err != nil {
+			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
+		}
+
+		// Process the event
+		ctx := context.Background()
+		c.svc.ProcessShipmentAllocatedEvent(ctx, &event)
+	})
+}
+
+func (c kafkaController) consumePaymentProcessedEventTopic(ft kgo.FetchTopic) {
+	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
+
+	// Process each message from the topic
+	ft.EachRecord(func(record *kgo.Record) {
+		// Unmarshal the event
+		var event eventpb.PaymentProcessedEvent
+		err := proto.Unmarshal(record.Value, &event)
+		if err != nil {
+			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
+		}
+
+		// Process the event
+		ctx := context.Background()
+		c.svc.ProcessPaymentProcessedEvent(ctx, &event)
 	})
 }

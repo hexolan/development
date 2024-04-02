@@ -3,7 +3,11 @@ CREATE TABLE orders (
     status smallint NOT NULL,
 
     customer_id varchar(64) NOT NULL,
+    shipment_id varchar(64),
     transaction_id varchar(64),
+
+    items_price money,
+    total_price money,
 
     created_at timestamp NOT NULL DEFAULT timezone('utc', now()),
     updated_at timestamp

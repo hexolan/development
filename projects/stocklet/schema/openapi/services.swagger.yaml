@@ -85,13 +85,13 @@ paths:
         - AuthService
   /v1/order/list:
     get:
-      summary: "todo: documentation and proper impl.\r\nGet a list of a customer's orders.\r\nIf accessed through the gateway - shows the current user's orders."
-      operationId: OrderService_GetOrders
+      summary: "Get a list of a customer's orders.\r\nIf accessed through the gateway - shows the current user's orders."
+      operationId: OrderService_ViewOrders
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetOrdersResponse'
+            $ref: '#/definitions/v1ViewOrdersResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -103,7 +103,26 @@ paths:
           type: string
       tags:
         - OrderService
-  /v1/order/new:
+  /v1/order/orders/{orderId}:
+    get:
+      operationId: OrderService_ViewOrder
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewOrderResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          type: string
+      tags:
+        - OrderService
+  /v1/order/place:
     post:
       operationId: OrderService_PlaceOrder
       responses:
@@ -116,11 +135,14 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: order
+        - name: cart
           in: body
           required: true
           schema:
-            $ref: '#/definitions/v1Order'
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
         - name: customerId
           in: query
           required: false
@@ -141,25 +163,25 @@ paths:
             $ref: '#/definitions/rpcStatus'
       tags:
         - OrderService
-  /v1/order/{id}:
+  /v1/payment/balance/{customerId}:
     get:
-      operationId: OrderService_GetOrder
+      operationId: PaymentService_ViewBalance
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetOrderResponse'
+            $ref: '#/definitions/v1ViewBalanceResponse'
         default:
           description: An unexpected error response.
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: customerId
           in: path
           required: true
           type: string
       tags:
-        - OrderService
+        - PaymentService
   /v1/payment/service:
     get:
       operationId: PaymentService_ServiceInfo
@@ -174,7 +196,7 @@ paths:
             $ref: '#/definitions/rpcStatus'
       tags:
         - PaymentService
-  /v1/payment/transaction/{id}:
+  /v1/payment/transaction/{transactionId}:
     get:
       operationId: PaymentService_ViewTransaction
       responses:
@@ -187,7 +209,7 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: transactionId
           in: path
           required: true
           type: string
@@ -195,12 +217,12 @@ paths:
         - PaymentService
   /v1/product/list:
     get:
-      operationId: ProductService_GetProducts
+      operationId: ProductService_ViewProducts
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetProductsResponse'
+            $ref: '#/definitions/v1ViewProductsResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -223,12 +245,12 @@ paths:
         - ProductService
   /v1/product/{id}:
     get:
-      operationId: ProductService_GetProduct
+      operationId: ProductService_ViewProduct
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetProductResponse'
+            $ref: '#/definitions/v1ViewProductResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -292,6 +314,37 @@ paths:
           type: string
       tags:
         - ShippingService
+  /v1/user/register:
+    post:
+      operationId: UserService_RegisterUser
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1RegisterUserResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: firstName
+          in: query
+          required: true
+          type: string
+        - name: lastName
+          in: query
+          required: true
+          type: string
+        - name: email
+          in: query
+          required: true
+          type: string
+        - name: password
+          in: query
+          required: true
+          type: string
+      tags:
+        - UserService
   /v1/user/service:
     get:
       operationId: UserService_ServiceInfo
@@ -306,14 +359,14 @@ paths:
             $ref: '#/definitions/rpcStatus'
       tags:
         - UserService
-  /v1/user/{id}:
+  /v1/user/users/{id}:
     get:
-      operationId: UserService_GetUser
+      operationId: UserService_ViewUser
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetUserResponse'
+            $ref: '#/definitions/v1ViewUserResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -327,12 +380,31 @@ paths:
         - UserService
   /v1/warehouse/product/{id}:
     get:
-      operationId: WarehouseService_GetProductStock
+      operationId: WarehouseService_ViewProductStock
       responses:
         "200":
           description: A successful response.
           schema:
-            $ref: '#/definitions/v1GetProductStockResponse'
+            $ref: '#/definitions/v1ViewProductStockResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - WarehouseService
+  /v1/warehouse/reservation/{id}:
+    get:
+      operationId: WarehouseService_ViewReservation
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1ViewReservationResponse'
         default:
           description: An unexpected error response.
           schema:
@@ -388,6 +460,14 @@ definitions:
       expiresIn:
         type: string
         format: int64
+  v1CustomerBalance:
+    type: object
+    properties:
+      customerId:
+        type: string
+      balance:
+        type: number
+        format: float
   v1GetJwksResponse:
     type: object
     properties:
@@ -396,42 +476,6 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/v1PublicEcJWK'
-  v1GetOrderResponse:
-    type: object
-    properties:
-      order:
-        $ref: '#/definitions/v1Order'
-  v1GetOrdersResponse:
-    type: object
-    properties:
-      orders:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/v1Order'
-  v1GetProductResponse:
-    type: object
-    properties:
-      product:
-        $ref: '#/definitions/v1Product'
-  v1GetProductStockResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/v1WarehouseStock'
-  v1GetProductsResponse:
-    type: object
-    properties:
-      products:
-        type: array
-        items:
-          type: object
-          $ref: '#/definitions/v1Product'
-  v1GetUserResponse:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/v1User'
   v1LoginPasswordRequest:
     type: object
     properties:
@@ -482,8 +526,11 @@ definitions:
       - ORDER_STATUS_PENDING
       - ORDER_STATUS_REJECTED
       - ORDER_STATUS_APPROVED
-      - ORDER_STATUS_SUCCESS
+      - ORDER_STATUS_COMPLETED
     default: ORDER_STATUS_UNSPECIFIED
+    title: |-
+      - ORDER_STATUS_PROCESSING: awaiting price quotes for products
+       - ORDER_STATUS_PENDING: awaiting stock allocation, shipping allotment and payment
   v1PlaceOrderResponse:
     type: object
     properties:
@@ -507,6 +554,14 @@ definitions:
       updatedAt:
         type: string
         format: int64
+  v1ProductStock:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
   v1PublicEcJWK:
     type: object
     properties:
@@ -522,6 +577,31 @@ definitions:
         type: string
       "y":
         type: string
+  v1RegisterUserResponse:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/v1User'
+  v1Reservation:
+    type: object
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      reservedStock:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1ReservationStock'
+  v1ReservationStock:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: integer
+        format: int32
   v1ServiceInfoResponse:
     type: object
     properties:
@@ -583,13 +663,13 @@ definitions:
         type: string
       customerId:
         type: string
-      processedAt:
-        type: string
-        format: int64
       reversedAt:
         type: string
         format: int64
         description: Optional - If set, then the transaction has been refunded.
+      processedAt:
+        type: string
+        format: int64
   v1User:
     type: object
     properties:
@@ -607,6 +687,47 @@ definitions:
       updatedAt:
         type: string
         format: int64
+  v1ViewBalanceResponse:
+    type: object
+    properties:
+      balance:
+        $ref: '#/definitions/v1CustomerBalance'
+  v1ViewOrderResponse:
+    type: object
+    properties:
+      order:
+        $ref: '#/definitions/v1Order'
+  v1ViewOrdersResponse:
+    type: object
+    properties:
+      orders:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Order'
+  v1ViewProductResponse:
+    type: object
+    properties:
+      product:
+        $ref: '#/definitions/v1Product'
+  v1ViewProductStockResponse:
+    type: object
+    properties:
+      stock:
+        $ref: '#/definitions/v1ProductStock'
+  v1ViewProductsResponse:
+    type: object
+    properties:
+      products:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/v1Product'
+  v1ViewReservationResponse:
+    type: object
+    properties:
+      reservation:
+        $ref: '#/definitions/v1Reservation'
   v1ViewShipmentManifestResponse:
     type: object
     properties:
@@ -623,13 +744,10 @@ definitions:
   v1ViewTransactionResponse:
     type: object
     properties:
-      data:
+      transaction:
         $ref: '#/definitions/v1Transaction'
-  v1WarehouseStock:
+  v1ViewUserResponse:
     type: object
     properties:
-      productId:
-        type: string
-      quantity:
-        type: integer
-        format: int32
+      user:
+        $ref: '#/definitions/v1User'

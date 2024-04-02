@@ -37,3 +37,33 @@ missing stage:
 
 * price products (get total)
 * get shipping quote
+
+TODO:
+checking the scan value of monetary type from postgres (payment svc migrations)
+and product 
+
+todo: on user delete
+move balance to a closed balances table with email
+
+if new user or user changed email to that email - move that closed balance to a new user balance
+
+-------
+=======
+-------
+
+Warehouse Service:
+	OrderPendingEvent (to start SAGA)
+	-> StockReservationEvent (produces)
+	ShipmentAllocatedEvent (for failure)
+	PaymentProcessedEvent (for failure)
+	>>>>> StockReservationEvent (returned)
+
+Shipping Service:
+	StockReservationEvent (init)
+	-> ShipmentAllocatedEvent (produces)
+	PaymentProcessedEvent (for failure)
+	>>>>> ShipmentAllocatedEvent (allocation released)
+
+Payment Service:
+	ShipmentAllocatedEvent (init)
+	PaymentProcessedEvent (produces)

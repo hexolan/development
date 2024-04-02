@@ -15,6 +15,11 @@
 
 package messaging
 
+import (
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+)
+
 type ConsumerController interface {
 	Start()
 	Stop()
@@ -49,9 +54,11 @@ const (
 	Product_Attribute_Topic = "product.attr"
 	Product_Attribute_Price_Topic = Product_Attribute_Topic + ".price"
 
+	Product_PriceQuotation_Topic = "product.pricequotation"
+
 	// Shipping Topics
 	Shipping_Shipment_Topic = "shipping.shipment"
-	Shipping_Shipment_Allocated_Topic = Shipping_Shipment_Topic + ".allocated"
+	Shipping_Shipment_Allocation_Topic = Shipping_Shipment_Topic + ".allocation"
 	Shipping_Shipment_Dispatched_Topic = Shipping_Shipment_Topic + ".dispatched"
 
 	// User Topics
@@ -74,3 +81,12 @@ const (
 	Warehouse_Reservation_Returned_Topic = Warehouse_Reservation_Topic + ".returned"
 	Warehouse_Reservation_Consumed_Topic = Warehouse_Reservation_Topic + ".consumed"
 )
+
+func MarshalEvent(event protoreflect.ProtoMessage, topic string) ([]byte, string, error) {
+	wireEvent, err := proto.Marshal(event)
+	if err != nil {
+		return []byte{}, "", err
+	}
+
+	return wireEvent, topic, nil
+}

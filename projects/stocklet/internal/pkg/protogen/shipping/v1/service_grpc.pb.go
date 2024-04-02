@@ -24,9 +24,11 @@ package shipping_v1
 import (
 	context "context"
 	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	v11 "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -35,9 +37,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ShippingService_ServiceInfo_FullMethodName          = "/stocklet.shipping.v1.ShippingService/ServiceInfo"
-	ShippingService_ViewShipment_FullMethodName         = "/stocklet.shipping.v1.ShippingService/ViewShipment"
-	ShippingService_ViewShipmentManifest_FullMethodName = "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest"
+	ShippingService_ServiceInfo_FullMethodName                  = "/stocklet.shipping.v1.ShippingService/ServiceInfo"
+	ShippingService_ViewShipment_FullMethodName                 = "/stocklet.shipping.v1.ShippingService/ViewShipment"
+	ShippingService_ViewShipmentManifest_FullMethodName         = "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest"
+	ShippingService_ProcessStockReservationEvent_FullMethodName = "/stocklet.shipping.v1.ShippingService/ProcessStockReservationEvent"
+	ShippingService_ProcessPaymentProcessedEvent_FullMethodName = "/stocklet.shipping.v1.ShippingService/ProcessPaymentProcessedEvent"
 )
 
 // ShippingServiceClient is the client API for ShippingService service.
@@ -47,6 +51,18 @@ type ShippingServiceClient interface {
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewShipment(ctx context.Context, in *ViewShipmentRequest, opts ...grpc.CallOption) (*ViewShipmentResponse, error)
 	ViewShipmentManifest(ctx context.Context, in *ViewShipmentManifestRequest, opts ...grpc.CallOption) (*ViewShipmentManifestResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessStockReservationEvent(ctx context.Context, in *v11.StockReservationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPaymentProcessedEvent(ctx context.Context, in *v11.PaymentProcessedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type shippingServiceClient struct {
@@ -84,6 +100,24 @@ func (c *shippingServiceClient) ViewShipmentManifest(ctx context.Context, in *Vi
 	return out, nil
 }
 
+func (c *shippingServiceClient) ProcessStockReservationEvent(ctx context.Context, in *v11.StockReservationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ShippingService_ProcessStockReservationEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *shippingServiceClient) ProcessPaymentProcessedEvent(ctx context.Context, in *v11.PaymentProcessedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ShippingService_ProcessPaymentProcessedEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ShippingServiceServer is the server API for ShippingService service.
 // All implementations must embed UnimplementedShippingServiceServer
 // for forward compatibility
@@ -91,6 +125,18 @@ type ShippingServiceServer interface {
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewShipment(context.Context, *ViewShipmentRequest) (*ViewShipmentResponse, error)
 	ViewShipmentManifest(context.Context, *ViewShipmentManifestRequest) (*ViewShipmentManifestResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessStockReservationEvent(context.Context, *v11.StockReservationEvent) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedShippingServiceServer()
 }
 
@@ -106,6 +152,12 @@ func (UnimplementedShippingServiceServer) ViewShipment(context.Context, *ViewShi
 }
 func (UnimplementedShippingServiceServer) ViewShipmentManifest(context.Context, *ViewShipmentManifestRequest) (*ViewShipmentManifestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewShipmentManifest not implemented")
+}
+func (UnimplementedShippingServiceServer) ProcessStockReservationEvent(context.Context, *v11.StockReservationEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessStockReservationEvent not implemented")
+}
+func (UnimplementedShippingServiceServer) ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPaymentProcessedEvent not implemented")
 }
 func (UnimplementedShippingServiceServer) mustEmbedUnimplementedShippingServiceServer() {}
 
@@ -174,6 +226,42 @@ func _ShippingService_ViewShipmentManifest_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ShippingService_ProcessStockReservationEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.StockReservationEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).ProcessStockReservationEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_ProcessStockReservationEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).ProcessStockReservationEvent(ctx, req.(*v11.StockReservationEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ShippingService_ProcessPaymentProcessedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.PaymentProcessedEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).ProcessPaymentProcessedEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_ProcessPaymentProcessedEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).ProcessPaymentProcessedEvent(ctx, req.(*v11.PaymentProcessedEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ShippingService_ServiceDesc is the grpc.ServiceDesc for ShippingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +280,14 @@ var ShippingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ViewShipmentManifest",
 			Handler:    _ShippingService_ViewShipmentManifest_Handler,
+		},
+		{
+			MethodName: "ProcessStockReservationEvent",
+			Handler:    _ShippingService_ProcessStockReservationEvent_Handler,
+		},
+		{
+			MethodName: "ProcessPaymentProcessedEvent",
+			Handler:    _ShippingService_ProcessPaymentProcessedEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

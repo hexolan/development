@@ -28,21 +28,22 @@ import (
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// todo: logger for GRPC
 func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
-	// attach OTEL metrics middleware
+	// Attach OTEL metrics middleware
 	svr := grpc.NewServer(
 		grpc.StatsHandler(
 			otelgrpc.NewServerHandler(),
 		),
 	)
 
-	// attach the health service
+	// todo: error logging middleware
+
+	// Attach the health service
 	svc := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(svr, svc)
 	
-	// enable reflection in dev mode
-	// this is to make testing easier with tools like grpcurl and grpcui
+	// Enable reflection in dev mode
+	// Eases usage of tools like grpcurl and grpcui
 	if cfg.DevMode {
 		reflection.Register(svr)
 	}

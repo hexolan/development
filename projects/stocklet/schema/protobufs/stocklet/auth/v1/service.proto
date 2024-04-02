@@ -21,8 +21,10 @@ import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/visibility.proto";
+import "google/protobuf/empty.proto";
 import "stocklet/auth/v1/types.proto";
 import "stocklet/common/v1/requests.proto";
+import "stocklet/events/v1/user.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
@@ -49,8 +51,12 @@ service AuthService {
     };
   }
 
-  // internal method
-  rpc DeleteUserData(DeleteUserDataRequest) returns (DeleteUserDataResponse) {
+  // A consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessUserDeletedEvent(stocklet.events.v1.UserDeletedEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }
@@ -99,8 +105,3 @@ message SetPasswordRequest {
 message SetPasswordResponse {
   string detail = 1;
 }
-
-// todo:
-// Internal Request Payloads
-message DeleteUserDataRequest {}
-message DeleteUserDataResponse {}

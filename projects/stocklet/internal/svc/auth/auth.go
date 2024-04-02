@@ -61,7 +61,7 @@ func (svc AuthService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInf
 	return &commonpb.ServiceInfoResponse{
 		Name: "auth",
 		Source: "https://github.com/hexolan/stocklet",
-		SourceLicense: "GNU AGPL v3",
+		SourceLicense: "AGPL-3.0",
 	}, nil
 }
 
@@ -80,12 +80,6 @@ func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordR
 
 // todo: docs
 func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
-	// todo: implement
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
-}
-
-// todo: docs
-func (svc AuthService) DeleteUserData(ctx context.Context, req *pb.DeleteUserDataRequest) (*pb.DeleteUserDataResponse, error) {
 	// todo: implement
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }

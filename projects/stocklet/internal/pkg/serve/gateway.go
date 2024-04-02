@@ -27,27 +27,15 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	
-	"github.com/hexolan/stocklet/internal/pkg/auth"
+	"github.com/hexolan/stocklet/internal/pkg/gwauth"
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
 
-// overriding gRPC status has prevented leaking of internal error information
-// so this just shows generic user facing error msgs (from the gRPC status returned from rpc calls to actual gRPC svc)
-//
-// todo: changing layout of gateway error messages
-// though have to bear in mind format of error messages from failed JWT checks performed by envoy (may use standard gRPC
-//   error interface)
-//
-// although the format doesn't really matter right now.
-// it could just stay as is - more a beautification thing
-// bigger priorities on mind than focusing on that rn
-//
-// self-reminder: clear up this pkg and these notes later
 func withGatewayErrorHandler() runtime.ServeMuxOption {
 	return runtime.WithErrorHandler(
 		func(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
 			runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
-			log.Error().Err(err).Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
+			log.Error().Err(err).Stack().Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
 		},
 	)
 }
@@ -64,7 +52,7 @@ func withGatewayHeaderOpt() runtime.ServeMuxOption {
 	return runtime.WithIncomingHeaderMatcher(
 		func(key string) (string, bool) {
 			switch key {
-			case auth.JWTPayloadHeader:
+			case gwauth.JWTPayloadHeader:
 				// Envoy will validate JWT tokens and provide a payload header
 				// containing a base64 string of the token claims.
 				return "jwt-payload", true
@@ -75,7 +63,6 @@ func withGatewayHeaderOpt() runtime.ServeMuxOption {
 	)
 }
 
-// todo: improve - http logger for debug
 func withGatewayLogger(h http.Handler) http.Handler {
     return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -86,14 +73,14 @@ func withGatewayLogger(h http.Handler) http.Handler {
 }
 
 func NewGatewayServeBase(cfg *config.SharedConfig) (*runtime.ServeMux, []grpc.DialOption) {
-	// create the base runtime ServeMux 
+	// Create the base runtime ServeMux 
 	mux := runtime.NewServeMux(
 		withGatewayErrorHandler(),
 		withGatewayMetadataOpt(),
 		withGatewayHeaderOpt(),
 	)
 
-	// attach open telemetry instrumentation through the gRPC client options
+	// Attach open telemetry instrumentation through the gRPC client options
 	clientOpts := []grpc.DialOption{
 		grpc.WithStatsHandler(
 			otelgrpc.NewClientHandler(),
@@ -106,7 +93,7 @@ func NewGatewayServeBase(cfg *config.SharedConfig) (*runtime.ServeMux, []grpc.Di
 }
 
 func Gateway(mux *runtime.ServeMux) error {
-	// create OTEL instrumentation handler
+	// Create OTEL instrumentation handler
 	handler := otelhttp.NewHandler(
 		mux,
 		"grpc-gateway",
@@ -117,12 +104,11 @@ func Gateway(mux *runtime.ServeMux) error {
 		),
 	)
 
-	// create gateway HTTP server
+	// Create gateway HTTP server
 	svr := &http.Server{
 		Addr: GetAddrToGateway("0.0.0.0"),
 		Handler: withGatewayLogger(handler),
 	}
 
-	// serve
 	return svr.ListenAndServe()
 }

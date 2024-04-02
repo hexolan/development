@@ -19,7 +19,10 @@ package stocklet.product.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/empty.proto";
 import "stocklet/common/v1/requests.proto";
+import "stocklet/events/v1/order.proto";
 import "stocklet/product/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1;product_v1";
@@ -29,25 +32,34 @@ service ProductService {
     option (google.api.http) = {get: "/v1/product/service"};
   }
 
-  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+  rpc ViewProduct(ViewProductRequest) returns (ViewProductResponse) {
     option (google.api.http) = {get: "/v1/product/{id}"};
   }
 
-  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse) {
+  rpc ViewProducts(ViewProductsRequest) returns (ViewProductsResponse) {
     option (google.api.http) = {get: "/v1/product/list"};
+  }
+
+  // A consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessOrderCreatedEvent(stocklet.events.v1.OrderCreatedEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }
 
-message GetProductRequest {
+message ViewProductRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
-message GetProductResponse {
+message ViewProductResponse {
   Product product = 1;
 }
 
-message GetProductsRequest {}
+message ViewProductsRequest {}
 
-message GetProductsResponse {
+message ViewProductsResponse {
   repeated Product products = 1;
 }

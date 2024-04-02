@@ -29,10 +29,10 @@ message Transaction {
   string order_id = 3 [(buf.validate.field).string.min_len = 1];
   string customer_id = 4 [(buf.validate.field).string.min_len = 1];
 
-  int64 processed_at = 5;
-
   // Optional - If set, then the transaction has been refunded.
-  optional int64 reversed_at = 6;
+  optional int64 reversed_at = 5;
+
+  int64 processed_at = 6;
 }
 
 message CustomerBalance {

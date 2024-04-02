@@ -24,9 +24,11 @@ package order_v1
 import (
 	context "context"
 	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	v11 "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -35,10 +37,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OrderService_ServiceInfo_FullMethodName = "/stocklet.order.v1.OrderService/ServiceInfo"
-	OrderService_GetOrders_FullMethodName   = "/stocklet.order.v1.OrderService/GetOrders"
-	OrderService_GetOrder_FullMethodName    = "/stocklet.order.v1.OrderService/GetOrder"
-	OrderService_PlaceOrder_FullMethodName  = "/stocklet.order.v1.OrderService/PlaceOrder"
+	OrderService_ServiceInfo_FullMethodName                   = "/stocklet.order.v1.OrderService/ServiceInfo"
+	OrderService_ViewOrder_FullMethodName                     = "/stocklet.order.v1.OrderService/ViewOrder"
+	OrderService_ViewOrders_FullMethodName                    = "/stocklet.order.v1.OrderService/ViewOrders"
+	OrderService_PlaceOrder_FullMethodName                    = "/stocklet.order.v1.OrderService/PlaceOrder"
+	OrderService_ProcessProductPriceQuoteEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessProductPriceQuoteEvent"
+	OrderService_ProcessStockReservationEvent_FullMethodName  = "/stocklet.order.v1.OrderService/ProcessStockReservationEvent"
+	OrderService_ProcessShipmentAllocatedEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessShipmentAllocatedEvent"
+	OrderService_ProcessPaymentProcessedEvent_FullMethodName  = "/stocklet.order.v1.OrderService/ProcessPaymentProcessedEvent"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -46,12 +52,35 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
-	// todo: documentation and proper impl.
+	ViewOrder(ctx context.Context, in *ViewOrderRequest, opts ...grpc.CallOption) (*ViewOrderResponse, error)
 	// Get a list of a customer's orders.
 	// If accessed through the gateway - shows the current user's orders.
-	GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error)
-	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
+	ViewOrders(ctx context.Context, in *ViewOrdersRequest, opts ...grpc.CallOption) (*ViewOrdersResponse, error)
 	PlaceOrder(ctx context.Context, in *PlaceOrderRequest, opts ...grpc.CallOption) (*PlaceOrderResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessProductPriceQuoteEvent(ctx context.Context, in *v11.ProductPriceQuoteEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessStockReservationEvent(ctx context.Context, in *v11.StockReservationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPaymentProcessedEvent(ctx context.Context, in *v11.PaymentProcessedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -71,18 +100,18 @@ func (c *orderServiceClient) ServiceInfo(ctx context.Context, in *v1.ServiceInfo
 	return out, nil
 }
 
-func (c *orderServiceClient) GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
-	out := new(GetOrdersResponse)
-	err := c.cc.Invoke(ctx, OrderService_GetOrders_FullMethodName, in, out, opts...)
+func (c *orderServiceClient) ViewOrder(ctx context.Context, in *ViewOrderRequest, opts ...grpc.CallOption) (*ViewOrderResponse, error) {
+	out := new(ViewOrderResponse)
+	err := c.cc.Invoke(ctx, OrderService_ViewOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *orderServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
-	out := new(GetOrderResponse)
-	err := c.cc.Invoke(ctx, OrderService_GetOrder_FullMethodName, in, out, opts...)
+func (c *orderServiceClient) ViewOrders(ctx context.Context, in *ViewOrdersRequest, opts ...grpc.CallOption) (*ViewOrdersResponse, error) {
+	out := new(ViewOrdersResponse)
+	err := c.cc.Invoke(ctx, OrderService_ViewOrders_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,17 +127,76 @@ func (c *orderServiceClient) PlaceOrder(ctx context.Context, in *PlaceOrderReque
 	return out, nil
 }
 
+func (c *orderServiceClient) ProcessProductPriceQuoteEvent(ctx context.Context, in *v11.ProductPriceQuoteEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ProcessProductPriceQuoteEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ProcessStockReservationEvent(ctx context.Context, in *v11.StockReservationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ProcessStockReservationEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ProcessShipmentAllocatedEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ProcessPaymentProcessedEvent(ctx context.Context, in *v11.PaymentProcessedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ProcessPaymentProcessedEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
-	// todo: documentation and proper impl.
+	ViewOrder(context.Context, *ViewOrderRequest) (*ViewOrderResponse, error)
 	// Get a list of a customer's orders.
 	// If accessed through the gateway - shows the current user's orders.
-	GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error)
-	GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error)
+	ViewOrders(context.Context, *ViewOrdersRequest) (*ViewOrdersResponse, error)
 	PlaceOrder(context.Context, *PlaceOrderRequest) (*PlaceOrderResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessProductPriceQuoteEvent(context.Context, *v11.ProductPriceQuoteEvent) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessStockReservationEvent(context.Context, *v11.StockReservationEvent) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -119,14 +207,26 @@ type UnimplementedOrderServiceServer struct {
 func (UnimplementedOrderServiceServer) ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ServiceInfo not implemented")
 }
-func (UnimplementedOrderServiceServer) GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
+func (UnimplementedOrderServiceServer) ViewOrder(context.Context, *ViewOrderRequest) (*ViewOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewOrder not implemented")
 }
-func (UnimplementedOrderServiceServer) GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+func (UnimplementedOrderServiceServer) ViewOrders(context.Context, *ViewOrdersRequest) (*ViewOrdersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewOrders not implemented")
 }
 func (UnimplementedOrderServiceServer) PlaceOrder(context.Context, *PlaceOrderRequest) (*PlaceOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PlaceOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) ProcessProductPriceQuoteEvent(context.Context, *v11.ProductPriceQuoteEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessProductPriceQuoteEvent not implemented")
+}
+func (UnimplementedOrderServiceServer) ProcessStockReservationEvent(context.Context, *v11.StockReservationEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessStockReservationEvent not implemented")
+}
+func (UnimplementedOrderServiceServer) ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocatedEvent not implemented")
+}
+func (UnimplementedOrderServiceServer) ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessPaymentProcessedEvent not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 
@@ -159,38 +259,38 @@ func _OrderService_ServiceInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrdersRequest)
+func _OrderService_ViewOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderServiceServer).GetOrders(ctx, in)
+		return srv.(OrderServiceServer).ViewOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderService_GetOrders_FullMethodName,
+		FullMethod: OrderService_ViewOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrders(ctx, req.(*GetOrdersRequest))
+		return srv.(OrderServiceServer).ViewOrder(ctx, req.(*ViewOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrderRequest)
+func _OrderService_ViewOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewOrdersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderServiceServer).GetOrder(ctx, in)
+		return srv.(OrderServiceServer).ViewOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderService_GetOrder_FullMethodName,
+		FullMethod: OrderService_ViewOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrder(ctx, req.(*GetOrderRequest))
+		return srv.(OrderServiceServer).ViewOrders(ctx, req.(*ViewOrdersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -213,6 +313,78 @@ func _OrderService_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_ProcessProductPriceQuoteEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ProductPriceQuoteEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ProcessProductPriceQuoteEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ProcessProductPriceQuoteEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ProcessProductPriceQuoteEvent(ctx, req.(*v11.ProductPriceQuoteEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ProcessStockReservationEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.StockReservationEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ProcessStockReservationEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ProcessStockReservationEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ProcessStockReservationEvent(ctx, req.(*v11.StockReservationEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ProcessShipmentAllocatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ShipmentAllocatedEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ProcessShipmentAllocatedEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ProcessShipmentAllocatedEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ProcessShipmentAllocatedEvent(ctx, req.(*v11.ShipmentAllocatedEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ProcessPaymentProcessedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.PaymentProcessedEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ProcessPaymentProcessedEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ProcessPaymentProcessedEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ProcessPaymentProcessedEvent(ctx, req.(*v11.PaymentProcessedEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -225,16 +397,32 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrderService_ServiceInfo_Handler,
 		},
 		{
-			MethodName: "GetOrders",
-			Handler:    _OrderService_GetOrders_Handler,
+			MethodName: "ViewOrder",
+			Handler:    _OrderService_ViewOrder_Handler,
 		},
 		{
-			MethodName: "GetOrder",
-			Handler:    _OrderService_GetOrder_Handler,
+			MethodName: "ViewOrders",
+			Handler:    _OrderService_ViewOrders_Handler,
 		},
 		{
 			MethodName: "PlaceOrder",
 			Handler:    _OrderService_PlaceOrder_Handler,
+		},
+		{
+			MethodName: "ProcessProductPriceQuoteEvent",
+			Handler:    _OrderService_ProcessProductPriceQuoteEvent_Handler,
+		},
+		{
+			MethodName: "ProcessStockReservationEvent",
+			Handler:    _OrderService_ProcessStockReservationEvent_Handler,
+		},
+		{
+			MethodName: "ProcessShipmentAllocatedEvent",
+			Handler:    _OrderService_ProcessShipmentAllocatedEvent_Handler,
+		},
+		{
+			MethodName: "ProcessPaymentProcessedEvent",
+			Handler:    _OrderService_ProcessPaymentProcessedEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

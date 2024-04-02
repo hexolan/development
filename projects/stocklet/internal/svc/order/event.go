@@ -16,25 +16,14 @@
 package order
 
 import (
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
-
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 )
-
-func marshalEvent(event protoreflect.ProtoMessage, topic string) ([]byte, string, error) {
-	wireEvent, err := proto.Marshal(event)
-	if err != nil {
-		return []byte{}, "", err
-	}
-
-	return wireEvent, topic, nil
-}
 
 func PrepareOrderCreatedEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Created_Topic
-	event := &pb.OrderCreatedEvent{
+	event := &eventspb.OrderCreatedEvent{
 		Revision: 1,
 
 		OrderId: order.Id,
@@ -42,12 +31,12 @@ func PrepareOrderCreatedEvent(order *pb.Order) ([]byte, string, error) {
 		ItemQuantities: order.Items,
 	}
 
-	return marshalEvent(event, topic)
+	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareOrderPlacedEvent(order *pb.Order) ([]byte, string, error) {
+func PrepareOrderPendingEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Pending_Topic
-	event := &pb.OrderPlacedEvent{
+	event := &eventspb.OrderPendingEvent{
 		Revision: 1,
 
 		OrderId: order.Id,
@@ -55,31 +44,31 @@ func PrepareOrderPlacedEvent(order *pb.Order) ([]byte, string, error) {
 		ItemQuantities: order.Items,
 	}
 
-	return marshalEvent(event, topic)
+	return messaging.MarshalEvent(event, topic)
 }
 
 func PrepareOrderRejectedEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Rejected_Topic
-	event := &pb.OrderRejectedEvent{
+	event := &eventspb.OrderRejectedEvent{
 		Revision: 1,
 
 		OrderId: order.Id,
-		TransactionId: nil, // todo:
-		ShippingId: nil, // todo:
+		TransactionId: order.TransactionId,
+		ShippingId: order.ShippingId,
 	}
 
-	return marshalEvent(event, topic)
+	return messaging.MarshalEvent(event, topic)
 }
 
 func PrepareOrderApprovedEvent(order *pb.Order) ([]byte, string, error) {
 	topic := messaging.Order_State_Approved_Topic
-	event := &pb.OrderApprovedEvent{
+	event := &eventspb.OrderApprovedEvent{
 		Revision: 1,
 
 		OrderId: order.Id,
-		TransactionId: "", // todo:
-		ShippingId: "", // todo:
+		TransactionId: order.GetTransactionId(),
+		ShippingId: order.GetShippingId(),
 	}
 
-	return marshalEvent(event, topic)
+	return messaging.MarshalEvent(event, topic)
 }

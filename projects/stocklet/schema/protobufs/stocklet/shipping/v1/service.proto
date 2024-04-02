@@ -19,7 +19,11 @@ package stocklet.shipping.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
+import "google/api/visibility.proto";
+import "google/protobuf/empty.proto";
 import "stocklet/common/v1/requests.proto";
+import "stocklet/events/v1/payment.proto";
+import "stocklet/events/v1/warehouse.proto";
 import "stocklet/shipping/v1/types.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1;shipping_v1";
@@ -35,6 +39,24 @@ service ShippingService {
 
   rpc ViewShipmentManifest(ViewShipmentManifestRequest) returns (ViewShipmentManifestResponse) {
     option (google.api.http) = {get: "/v1/shipping/shipment/{id}/manifest"};
+  }
+
+  // A consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessStockReservationEvent(stocklet.events.v1.StockReservationEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
+  }
+
+  // A consumer will call this method to process events.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ProcessPaymentProcessedEvent(stocklet.events.v1.PaymentProcessedEvent) returns (google.protobuf.Empty) {
+    option (google.api.method_visibility).restriction = "INTERNAL";
   }
 }
 

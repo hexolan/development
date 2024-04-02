@@ -24,9 +24,11 @@ package product_v1
 import (
 	context "context"
 	v1 "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	v11 "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -35,9 +37,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ProductService_ServiceInfo_FullMethodName = "/stocklet.product.v1.ProductService/ServiceInfo"
-	ProductService_GetProduct_FullMethodName  = "/stocklet.product.v1.ProductService/GetProduct"
-	ProductService_GetProducts_FullMethodName = "/stocklet.product.v1.ProductService/GetProducts"
+	ProductService_ServiceInfo_FullMethodName              = "/stocklet.product.v1.ProductService/ServiceInfo"
+	ProductService_ViewProduct_FullMethodName              = "/stocklet.product.v1.ProductService/ViewProduct"
+	ProductService_ViewProducts_FullMethodName             = "/stocklet.product.v1.ProductService/ViewProducts"
+	ProductService_ProcessOrderCreatedEvent_FullMethodName = "/stocklet.product.v1.ProductService/ProcessOrderCreatedEvent"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -45,8 +48,14 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
-	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
-	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
+	ViewProduct(ctx context.Context, in *ViewProductRequest, opts ...grpc.CallOption) (*ViewProductResponse, error)
+	ViewProducts(ctx context.Context, in *ViewProductsRequest, opts ...grpc.CallOption) (*ViewProductsResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessOrderCreatedEvent(ctx context.Context, in *v11.OrderCreatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type productServiceClient struct {
@@ -66,18 +75,27 @@ func (c *productServiceClient) ServiceInfo(ctx context.Context, in *v1.ServiceIn
 	return out, nil
 }
 
-func (c *productServiceClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
-	out := new(GetProductResponse)
-	err := c.cc.Invoke(ctx, ProductService_GetProduct_FullMethodName, in, out, opts...)
+func (c *productServiceClient) ViewProduct(ctx context.Context, in *ViewProductRequest, opts ...grpc.CallOption) (*ViewProductResponse, error) {
+	out := new(ViewProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_ViewProduct_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *productServiceClient) GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error) {
-	out := new(GetProductsResponse)
-	err := c.cc.Invoke(ctx, ProductService_GetProducts_FullMethodName, in, out, opts...)
+func (c *productServiceClient) ViewProducts(ctx context.Context, in *ViewProductsRequest, opts ...grpc.CallOption) (*ViewProductsResponse, error) {
+	out := new(ViewProductsResponse)
+	err := c.cc.Invoke(ctx, ProductService_ViewProducts_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) ProcessOrderCreatedEvent(ctx context.Context, in *v11.OrderCreatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ProductService_ProcessOrderCreatedEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,8 +107,14 @@ func (c *productServiceClient) GetProducts(ctx context.Context, in *GetProductsR
 // for forward compatibility
 type ProductServiceServer interface {
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
-	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
-	GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error)
+	ViewProduct(context.Context, *ViewProductRequest) (*ViewProductResponse, error)
+	ViewProducts(context.Context, *ViewProductsRequest) (*ViewProductsResponse, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessOrderCreatedEvent(context.Context, *v11.OrderCreatedEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -101,11 +125,14 @@ type UnimplementedProductServiceServer struct {
 func (UnimplementedProductServiceServer) ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ServiceInfo not implemented")
 }
-func (UnimplementedProductServiceServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
+func (UnimplementedProductServiceServer) ViewProduct(context.Context, *ViewProductRequest) (*ViewProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewProduct not implemented")
 }
-func (UnimplementedProductServiceServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
+func (UnimplementedProductServiceServer) ViewProducts(context.Context, *ViewProductsRequest) (*ViewProductsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewProducts not implemented")
+}
+func (UnimplementedProductServiceServer) ProcessOrderCreatedEvent(context.Context, *v11.OrderCreatedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessOrderCreatedEvent not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -138,38 +165,56 @@ func _ProductService_ServiceInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProductRequest)
+func _ProductService_ViewProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewProductRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetProduct(ctx, in)
+		return srv.(ProductServiceServer).ViewProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_GetProduct_FullMethodName,
+		FullMethod: ProductService_ViewProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetProduct(ctx, req.(*GetProductRequest))
+		return srv.(ProductServiceServer).ViewProduct(ctx, req.(*ViewProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_GetProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProductsRequest)
+func _ProductService_ViewProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewProductsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServiceServer).GetProducts(ctx, in)
+		return srv.(ProductServiceServer).ViewProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductService_GetProducts_FullMethodName,
+		FullMethod: ProductService_ViewProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetProducts(ctx, req.(*GetProductsRequest))
+		return srv.(ProductServiceServer).ViewProducts(ctx, req.(*ViewProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_ProcessOrderCreatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.OrderCreatedEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).ProcessOrderCreatedEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_ProcessOrderCreatedEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).ProcessOrderCreatedEvent(ctx, req.(*v11.OrderCreatedEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -186,12 +231,16 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProductService_ServiceInfo_Handler,
 		},
 		{
-			MethodName: "GetProduct",
-			Handler:    _ProductService_GetProduct_Handler,
+			MethodName: "ViewProduct",
+			Handler:    _ProductService_ViewProduct_Handler,
 		},
 		{
-			MethodName: "GetProducts",
-			Handler:    _ProductService_GetProducts_Handler,
+			MethodName: "ViewProducts",
+			Handler:    _ProductService_ViewProducts_Handler,
+		},
+		{
+			MethodName: "ProcessOrderCreatedEvent",
+			Handler:    _ProductService_ProcessOrderCreatedEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

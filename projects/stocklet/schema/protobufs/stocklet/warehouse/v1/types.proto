@@ -21,16 +21,19 @@ import "buf/validate/validate.proto";
 
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1;warehouse_v1";
 
-message WarehouseStock {
+message ProductStock {
   string product_id = 1 [(buf.validate.field).string.min_len = 1];
   int32 quantity = 2 [(buf.validate.field).int32.gte = 0];
 }
 
-message WarehouseStockReservation {
+message Reservation {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 
   string order_id = 2 [(buf.validate.field).string.min_len = 1];
+  repeated ReservationStock reserved_stock = 3;
+}
 
-  string product_id = 3 [(buf.validate.field).string.min_len = 1];
-  int32 quantity = 4 [(buf.validate.field).int32.gt = 0];
+message ReservationStock {
+  string product_id = 1 [(buf.validate.field).string.min_len = 1];
+  int32 quantity = 2 [(buf.validate.field).int32.gte = 0];
 }
