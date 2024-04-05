@@ -1,14 +1,14 @@
 # Stocklet
 
-An event-driven microservices-based distributed e-commerce application written in Golang.
+An event-driven microservices-based distributed e-commerce example application written in Golang.
 
 ## 📘 About
 
-This project was originally built to experiment with event-driven architecture. But I hope it can future serve as a beneficial demonstration of utilising the architecture and exemplify the implementation of some other microservice patterns.
+This project was originally built as an experiment with event-driven architecture. But I hope it can future serve as a beneficial demonstration of utilising the architecture and exemplify the implementation of some other miscellaneous microservice patterns.
 
 Any ideas, suggestions or direct contributions to better conform with general and evolving industry practices are welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
 
-The application should be considered in the experimental state. As such breaking changes are to be expected between future commits, in order to ease the development process and allow for clean refactoring of the project.
+The application should be considered in the experimental stage. As such breaking changes are to be expected between future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
 
 ## 📝 Features
 
@@ -83,16 +83,26 @@ Each service is prepared by a [``service-init``](/cmd/service-init/) container; 
 
 ### 📇 Events
 
-The events are serialised using [protocol buffers](https://protobuf.dev/). Further documentation can be found at [``/docs/events/README.md``](/docs/events/README.md)
+The events are schemed and serialised using [protocol buffers](https://protobuf.dev/). They are dispatched using the [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) with [Debezium](https://debezium.io/) used as a relay to read and publish events from database outbox tables to the message broker.
+
+Further documentation on the events can be found at [``/docs/events/README.md``](/docs/events/README.md)
 
 ## 💻 Deployment
 
 ### Using Docker
 
-The application can be deployed using [Docker Compose](https://docs.docker.com/compose/) with the files located in [``/deploy/docker/``](/deploy/docker/)
+The application can be deployed using [Docker Compose](https://docs.docker.com/compose/) with the config files located in [``/deploy/docker/``](/deploy/docker/)
 
 ``docker compose up -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml``
 
-## ✍️ License
+## 🧪 Contributing
 
-This project is licensed under the [GNU AGPL v3](/LICENSE).
+As stated above, all forms of feedback and contributions are welcome and appreciated!
+
+Some of the current implemented functionality is quite bare-bones. If I come to revisit this project at a later date, I might look to implement other features such as a notification service (i.e. sending emails on updates to order statuses), ensuring idempotetency in the consumers, a more realistic shipping fulfilment process or a frontend user interface.
+
+Have any ideas for improvements? Looking to implement a feature? Please don't hesistate to open an issue to discuss or a pull request with your enhancements.
+
+## 📓 License
+
+This project is licensed under the [GNU Affero General Public License v3](/LICENSE).

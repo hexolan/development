@@ -69,6 +69,11 @@ services:
     networks:
       - stocklet-network
       - stocklet-order-network
+      - stocklet-payment-network
+      - stocklet-product-network
+      - stocklet-shipping-network
+      - stocklet-user-network
+      - stocklet-warehouse-network
 
   # Services
   auth-service:
