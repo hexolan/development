@@ -8,7 +8,7 @@ This project was originally built as an experiment with event-driven architectur
 
 Any ideas, suggestions or direct contributions to better conform with general and evolving industry practices are welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
 
-The application should be considered in the experimental stage. As such breaking changes are to be expected between future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
+The application should be considered in the experimental stage. As such breaking changes can be expected between future commits to this repo, to ease the development process and allow for clean refactoring of the project. Please keep in mind if you're planning on using this project as a baseplate for a production application.
 
 ## 📝 Features
 

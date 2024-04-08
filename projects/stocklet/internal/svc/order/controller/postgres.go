@@ -325,23 +325,6 @@ func (c postgresController) SetOrderShipmentId(ctx context.Context, orderId stri
 	return nil
 }
 
-// Internal controller method
-//
-// Appends order items to an order object.
-func (c postgresController) appendItemsToOrderObj(ctx context.Context, tx *pgx.Tx, orderObj *pb.Order) (*pb.Order, error) {
-	// Load the order items
-	orderItems, err := c.getOrderItems(ctx, tx, orderObj.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	// Add the order items to the order protobuf
-	orderObj.Items = *orderItems
-
-	// Return the order
-	return orderObj, nil
-}
-
 // Build and exec an insert statement for a map of order items
 func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, orderId string, items map[string]int32) error {
 	// check there are items to add
@@ -415,6 +398,22 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 	}
 
 	return &items, nil
+}
+
+
+// Appends order items to an order object.
+func (c postgresController) appendItemsToOrderObj(ctx context.Context, tx *pgx.Tx, orderObj *pb.Order) (*pb.Order, error) {
+	// Load the order items
+	orderItems, err := c.getOrderItems(ctx, tx, orderObj.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add the order items to the order protobuf
+	orderObj.Items = *orderItems
+
+	// Return the order
+	return orderObj, nil
 }
 
 // Scan a postgres row to a protobuf order object.

@@ -47,6 +47,7 @@ func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
 		messaging.Payment_Balance_Created_Topic,
 		messaging.Payment_Balance_Credited_Topic,
 		messaging.Payment_Balance_Debited_Topic,
+		messaging.Payment_Balance_Closed_Topic,
 		messaging.Payment_Transaction_Created_Topic,
 		messaging.Payment_Transaction_Reversed_Topic,
 		messaging.Payment_Processing_Topic,
@@ -88,7 +89,7 @@ func (c kafkaController) Start() {
 			case messaging.User_State_Created_Topic:
 				c.consumeUserCreatedEventTopic(ft)
 			case messaging.Shipping_Shipment_Allocation_Topic:
-				c.consumeShipmentAllocatedEventTopic(ft)
+				c.consumeShipmentAllocationEventTopic(ft)
 			default:
 				log.Warn().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
 			}
@@ -119,13 +120,13 @@ func (c kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
 	})
 }
 
-func (c kafkaController) consumeShipmentAllocatedEventTopic(ft kgo.FetchTopic) {
+func (c kafkaController) consumeShipmentAllocationEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
-		var event eventpb.ShipmentAllocatedEvent
+		var event eventpb.ShipmentAllocationEvent
 		err := proto.Unmarshal(record.Value, &event)
 		if err != nil {
 			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
@@ -133,6 +134,6 @@ func (c kafkaController) consumeShipmentAllocatedEventTopic(ft kgo.FetchTopic) {
 
 		// Process the event
 		ctx := context.Background()
-		c.svc.ProcessShipmentAllocatedEvent(ctx, &event)
+		c.svc.ProcessShipmentAllocationEvent(ctx, &event)
 	})
 }

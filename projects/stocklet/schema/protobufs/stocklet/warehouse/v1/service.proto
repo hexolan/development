@@ -56,7 +56,7 @@ service WarehouseService {
   // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc ProcessShipmentAllocatedEvent(stocklet.events.v1.ShipmentAllocatedEvent) returns (google.protobuf.Empty) {
+  rpc ProcessShipmentAllocationEvent(stocklet.events.v1.ShipmentAllocationEvent) returns (google.protobuf.Empty) {
     option (google.api.method_visibility).restriction = "INTERNAL";
   }
 

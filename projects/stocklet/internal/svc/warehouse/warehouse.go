@@ -86,7 +86,7 @@ func (svc WarehouseService) ProcessOrderPendingEvent(ctx context.Context, req *e
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 
-func (svc WarehouseService) ProcessShipmentAllocatedEvent(ctx context.Context, req *eventpb.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
+func (svc WarehouseService) ProcessShipmentAllocationEvent(ctx context.Context, req *eventpb.ShipmentAllocationEvent) (*emptypb.Empty, error) {
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 

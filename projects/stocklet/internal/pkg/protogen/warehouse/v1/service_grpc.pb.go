@@ -37,12 +37,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	WarehouseService_ServiceInfo_FullMethodName                   = "/stocklet.warehouse.v1.WarehouseService/ServiceInfo"
-	WarehouseService_ViewProductStock_FullMethodName              = "/stocklet.warehouse.v1.WarehouseService/ViewProductStock"
-	WarehouseService_ViewReservation_FullMethodName               = "/stocklet.warehouse.v1.WarehouseService/ViewReservation"
-	WarehouseService_ProcessOrderPendingEvent_FullMethodName      = "/stocklet.warehouse.v1.WarehouseService/ProcessOrderPendingEvent"
-	WarehouseService_ProcessShipmentAllocatedEvent_FullMethodName = "/stocklet.warehouse.v1.WarehouseService/ProcessShipmentAllocatedEvent"
-	WarehouseService_ProcessPaymentProcessedEvent_FullMethodName  = "/stocklet.warehouse.v1.WarehouseService/ProcessPaymentProcessedEvent"
+	WarehouseService_ServiceInfo_FullMethodName                    = "/stocklet.warehouse.v1.WarehouseService/ServiceInfo"
+	WarehouseService_ViewProductStock_FullMethodName               = "/stocklet.warehouse.v1.WarehouseService/ViewProductStock"
+	WarehouseService_ViewReservation_FullMethodName                = "/stocklet.warehouse.v1.WarehouseService/ViewReservation"
+	WarehouseService_ProcessOrderPendingEvent_FullMethodName       = "/stocklet.warehouse.v1.WarehouseService/ProcessOrderPendingEvent"
+	WarehouseService_ProcessShipmentAllocationEvent_FullMethodName = "/stocklet.warehouse.v1.WarehouseService/ProcessShipmentAllocationEvent"
+	WarehouseService_ProcessPaymentProcessedEvent_FullMethodName   = "/stocklet.warehouse.v1.WarehouseService/ProcessPaymentProcessedEvent"
 )
 
 // WarehouseServiceClient is the client API for WarehouseService service.
@@ -63,7 +63,7 @@ type WarehouseServiceClient interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -116,9 +116,9 @@ func (c *warehouseServiceClient) ProcessOrderPendingEvent(ctx context.Context, i
 	return out, nil
 }
 
-func (c *warehouseServiceClient) ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *warehouseServiceClient) ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, WarehouseService_ProcessShipmentAllocatedEvent_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, WarehouseService_ProcessShipmentAllocationEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ type WarehouseServiceServer interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -178,8 +178,8 @@ func (UnimplementedWarehouseServiceServer) ViewReservation(context.Context, *Vie
 func (UnimplementedWarehouseServiceServer) ProcessOrderPendingEvent(context.Context, *v11.OrderPendingEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessOrderPendingEvent not implemented")
 }
-func (UnimplementedWarehouseServiceServer) ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocatedEvent not implemented")
+func (UnimplementedWarehouseServiceServer) ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocationEvent not implemented")
 }
 func (UnimplementedWarehouseServiceServer) ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessPaymentProcessedEvent not implemented")
@@ -269,20 +269,20 @@ func _WarehouseService_ProcessOrderPendingEvent_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WarehouseService_ProcessShipmentAllocatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.ShipmentAllocatedEvent)
+func _WarehouseService_ProcessShipmentAllocationEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ShipmentAllocationEvent)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WarehouseServiceServer).ProcessShipmentAllocatedEvent(ctx, in)
+		return srv.(WarehouseServiceServer).ProcessShipmentAllocationEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: WarehouseService_ProcessShipmentAllocatedEvent_FullMethodName,
+		FullMethod: WarehouseService_ProcessShipmentAllocationEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WarehouseServiceServer).ProcessShipmentAllocatedEvent(ctx, req.(*v11.ShipmentAllocatedEvent))
+		return srv.(WarehouseServiceServer).ProcessShipmentAllocationEvent(ctx, req.(*v11.ShipmentAllocationEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -329,8 +329,8 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WarehouseService_ProcessOrderPendingEvent_Handler,
 		},
 		{
-			MethodName: "ProcessShipmentAllocatedEvent",
-			Handler:    _WarehouseService_ProcessShipmentAllocatedEvent_Handler,
+			MethodName: "ProcessShipmentAllocationEvent",
+			Handler:    _WarehouseService_ProcessShipmentAllocationEvent_Handler,
 		},
 		{
 			MethodName: "ProcessPaymentProcessedEvent",

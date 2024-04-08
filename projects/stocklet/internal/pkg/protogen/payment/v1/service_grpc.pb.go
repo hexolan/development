@@ -37,12 +37,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PaymentService_ServiceInfo_FullMethodName                   = "/stocklet.payment.v1.PaymentService/ServiceInfo"
-	PaymentService_ViewTransaction_FullMethodName               = "/stocklet.payment.v1.PaymentService/ViewTransaction"
-	PaymentService_ViewBalance_FullMethodName                   = "/stocklet.payment.v1.PaymentService/ViewBalance"
-	PaymentService_ProcessUserCreatedEvent_FullMethodName       = "/stocklet.payment.v1.PaymentService/ProcessUserCreatedEvent"
-	PaymentService_ProcessUserDeletedEvent_FullMethodName       = "/stocklet.payment.v1.PaymentService/ProcessUserDeletedEvent"
-	PaymentService_ProcessShipmentAllocatedEvent_FullMethodName = "/stocklet.payment.v1.PaymentService/ProcessShipmentAllocatedEvent"
+	PaymentService_ServiceInfo_FullMethodName                    = "/stocklet.payment.v1.PaymentService/ServiceInfo"
+	PaymentService_ViewTransaction_FullMethodName                = "/stocklet.payment.v1.PaymentService/ViewTransaction"
+	PaymentService_ViewBalance_FullMethodName                    = "/stocklet.payment.v1.PaymentService/ViewBalance"
+	PaymentService_ProcessUserCreatedEvent_FullMethodName        = "/stocklet.payment.v1.PaymentService/ProcessUserCreatedEvent"
+	PaymentService_ProcessUserDeletedEvent_FullMethodName        = "/stocklet.payment.v1.PaymentService/ProcessUserDeletedEvent"
+	PaymentService_ProcessShipmentAllocationEvent_FullMethodName = "/stocklet.payment.v1.PaymentService/ProcessShipmentAllocationEvent"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -69,7 +69,7 @@ type PaymentServiceClient interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type paymentServiceClient struct {
@@ -125,9 +125,9 @@ func (c *paymentServiceClient) ProcessUserDeletedEvent(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *paymentServiceClient) ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *paymentServiceClient) ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PaymentService_ProcessShipmentAllocatedEvent_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, PaymentService_ProcessShipmentAllocationEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ type PaymentServiceServer interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -181,8 +181,8 @@ func (UnimplementedPaymentServiceServer) ProcessUserCreatedEvent(context.Context
 func (UnimplementedPaymentServiceServer) ProcessUserDeletedEvent(context.Context, *v11.UserDeletedEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessUserDeletedEvent not implemented")
 }
-func (UnimplementedPaymentServiceServer) ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocatedEvent not implemented")
+func (UnimplementedPaymentServiceServer) ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocationEvent not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 
@@ -287,20 +287,20 @@ func _PaymentService_ProcessUserDeletedEvent_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentService_ProcessShipmentAllocatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.ShipmentAllocatedEvent)
+func _PaymentService_ProcessShipmentAllocationEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ShipmentAllocationEvent)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentServiceServer).ProcessShipmentAllocatedEvent(ctx, in)
+		return srv.(PaymentServiceServer).ProcessShipmentAllocationEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentService_ProcessShipmentAllocatedEvent_FullMethodName,
+		FullMethod: PaymentService_ProcessShipmentAllocationEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ProcessShipmentAllocatedEvent(ctx, req.(*v11.ShipmentAllocatedEvent))
+		return srv.(PaymentServiceServer).ProcessShipmentAllocationEvent(ctx, req.(*v11.ShipmentAllocationEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -333,8 +333,8 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PaymentService_ProcessUserDeletedEvent_Handler,
 		},
 		{
-			MethodName: "ProcessShipmentAllocatedEvent",
-			Handler:    _PaymentService_ProcessShipmentAllocatedEvent_Handler,
+			MethodName: "ProcessShipmentAllocationEvent",
+			Handler:    _PaymentService_ProcessShipmentAllocationEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

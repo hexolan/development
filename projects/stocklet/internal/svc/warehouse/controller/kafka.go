@@ -90,7 +90,7 @@ func (c kafkaController) Start() {
 			case messaging.Order_State_Pending_Topic:
 				c.consumeOrderPendingEventTopic(ft)
 			case messaging.Shipping_Shipment_Allocation_Topic:
-				c.consumeShipmentAllocatedEventTopic(ft)
+				c.consumeShipmentAllocationEventTopic(ft)
 			case messaging.Payment_Processing_Topic:
 				c.consumePaymentProcessedEventTopic(ft)
 			default:
@@ -123,13 +123,13 @@ func (c kafkaController) consumeOrderPendingEventTopic(ft kgo.FetchTopic) {
 	})
 }
 
-func (c kafkaController) consumeShipmentAllocatedEventTopic(ft kgo.FetchTopic) {
+func (c kafkaController) consumeShipmentAllocationEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
-		var event eventpb.ShipmentAllocatedEvent
+		var event eventpb.ShipmentAllocationEvent
 		err := proto.Unmarshal(record.Value, &event)
 		if err != nil {
 			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
@@ -137,7 +137,7 @@ func (c kafkaController) consumeShipmentAllocatedEventTopic(ft kgo.FetchTopic) {
 
 		// Process the event
 		ctx := context.Background()
-		c.svc.ProcessShipmentAllocatedEvent(ctx, &event)
+		c.svc.ProcessShipmentAllocationEvent(ctx, &event)
 	})
 }
 

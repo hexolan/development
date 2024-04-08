@@ -594,6 +594,9 @@ definitions:
         items:
           type: object
           $ref: '#/definitions/v1ReservationStock'
+      createdAt:
+        type: string
+        format: int64
   v1ReservationStock:
     type: object
     properties:

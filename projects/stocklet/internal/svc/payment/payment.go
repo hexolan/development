@@ -40,7 +40,15 @@ type PaymentService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
+    GetBalance(ctx context.Context, customerId string) (*pb.CustomerBalance, error)
+	GetTransaction(ctx context.Context, orderId string) (*pb.Transaction, error)
 	
+    CreateBalance(ctx context.Context, customerId string) error
+    CreditBalance(ctx context.Context, customerId string, amount float32) error
+    DebitBalance(ctx context.Context, customerId string, amount float32) error
+    CloseBalance(ctx context.Context, customerId string) error
+
+    PaymentForOrder(ctx context.Context, orderId string, customerId string, amount float32) error
 }
 
 // Interface for event consumption
@@ -83,13 +91,28 @@ func (svc PaymentService) ViewBalance(ctx context.Context, req *pb.ViewBalanceRe
 }
 
 func (svc PaymentService) ProcessUserCreatedEvent(ctx context.Context, req *eventpb.UserCreatedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	err := svc.store.CreateBalance(ctx, req.UserId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (svc PaymentService) ProcessUserDeletedEvent(ctx context.Context, req *eventpb.UserDeletedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	err := svc.store.CloseBalance(ctx, req.UserId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
-func (svc PaymentService) ProcessShipmentAllocatedEvent(ctx context.Context, req *eventpb.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+func (svc PaymentService) ProcessShipmentAllocationEvent(ctx context.Context, req *eventpb.ShipmentAllocationEvent) (*emptypb.Empty, error) {
+	err := svc.store.PaymentForOrder(ctx, req.OrderId, req.OrderMetadata.CustomerId, req.OrderMetadata.TotalPrice)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }

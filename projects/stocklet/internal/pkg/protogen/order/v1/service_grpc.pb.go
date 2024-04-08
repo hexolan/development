@@ -37,14 +37,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OrderService_ServiceInfo_FullMethodName                   = "/stocklet.order.v1.OrderService/ServiceInfo"
-	OrderService_ViewOrder_FullMethodName                     = "/stocklet.order.v1.OrderService/ViewOrder"
-	OrderService_ViewOrders_FullMethodName                    = "/stocklet.order.v1.OrderService/ViewOrders"
-	OrderService_PlaceOrder_FullMethodName                    = "/stocklet.order.v1.OrderService/PlaceOrder"
-	OrderService_ProcessProductPriceQuoteEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessProductPriceQuoteEvent"
-	OrderService_ProcessStockReservationEvent_FullMethodName  = "/stocklet.order.v1.OrderService/ProcessStockReservationEvent"
-	OrderService_ProcessShipmentAllocatedEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessShipmentAllocatedEvent"
-	OrderService_ProcessPaymentProcessedEvent_FullMethodName  = "/stocklet.order.v1.OrderService/ProcessPaymentProcessedEvent"
+	OrderService_ServiceInfo_FullMethodName                    = "/stocklet.order.v1.OrderService/ServiceInfo"
+	OrderService_ViewOrder_FullMethodName                      = "/stocklet.order.v1.OrderService/ViewOrder"
+	OrderService_ViewOrders_FullMethodName                     = "/stocklet.order.v1.OrderService/ViewOrders"
+	OrderService_PlaceOrder_FullMethodName                     = "/stocklet.order.v1.OrderService/PlaceOrder"
+	OrderService_ProcessProductPriceQuoteEvent_FullMethodName  = "/stocklet.order.v1.OrderService/ProcessProductPriceQuoteEvent"
+	OrderService_ProcessStockReservationEvent_FullMethodName   = "/stocklet.order.v1.OrderService/ProcessStockReservationEvent"
+	OrderService_ProcessShipmentAllocationEvent_FullMethodName = "/stocklet.order.v1.OrderService/ProcessShipmentAllocationEvent"
+	OrderService_ProcessPaymentProcessedEvent_FullMethodName   = "/stocklet.order.v1.OrderService/ProcessPaymentProcessedEvent"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -74,7 +74,7 @@ type OrderServiceClient interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -145,9 +145,9 @@ func (c *orderServiceClient) ProcessStockReservationEvent(ctx context.Context, i
 	return out, nil
 }
 
-func (c *orderServiceClient) ProcessShipmentAllocatedEvent(ctx context.Context, in *v11.ShipmentAllocatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *orderServiceClient) ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderService_ProcessShipmentAllocatedEvent_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, OrderService_ProcessShipmentAllocationEvent_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +190,7 @@ type OrderServiceServer interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error)
+	ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -222,8 +222,8 @@ func (UnimplementedOrderServiceServer) ProcessProductPriceQuoteEvent(context.Con
 func (UnimplementedOrderServiceServer) ProcessStockReservationEvent(context.Context, *v11.StockReservationEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessStockReservationEvent not implemented")
 }
-func (UnimplementedOrderServiceServer) ProcessShipmentAllocatedEvent(context.Context, *v11.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocatedEvent not implemented")
+func (UnimplementedOrderServiceServer) ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessShipmentAllocationEvent not implemented")
 }
 func (UnimplementedOrderServiceServer) ProcessPaymentProcessedEvent(context.Context, *v11.PaymentProcessedEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessPaymentProcessedEvent not implemented")
@@ -349,20 +349,20 @@ func _OrderService_ProcessStockReservationEvent_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderService_ProcessShipmentAllocatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.ShipmentAllocatedEvent)
+func _OrderService_ProcessShipmentAllocationEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ShipmentAllocationEvent)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrderServiceServer).ProcessShipmentAllocatedEvent(ctx, in)
+		return srv.(OrderServiceServer).ProcessShipmentAllocationEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OrderService_ProcessShipmentAllocatedEvent_FullMethodName,
+		FullMethod: OrderService_ProcessShipmentAllocationEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).ProcessShipmentAllocatedEvent(ctx, req.(*v11.ShipmentAllocatedEvent))
+		return srv.(OrderServiceServer).ProcessShipmentAllocationEvent(ctx, req.(*v11.ShipmentAllocationEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -417,8 +417,8 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrderService_ProcessStockReservationEvent_Handler,
 		},
 		{
-			MethodName: "ProcessShipmentAllocatedEvent",
-			Handler:    _OrderService_ProcessShipmentAllocatedEvent_Handler,
+			MethodName: "ProcessShipmentAllocationEvent",
+			Handler:    _OrderService_ProcessShipmentAllocationEvent_Handler,
 		},
 		{
 			MethodName: "ProcessPaymentProcessedEvent",

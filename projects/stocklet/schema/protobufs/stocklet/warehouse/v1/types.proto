@@ -31,6 +31,8 @@ message Reservation {
 
   string order_id = 2 [(buf.validate.field).string.min_len = 1];
   repeated ReservationStock reserved_stock = 3;
+
+  int64 created_at = 4;
 }
 
 message ReservationStock {

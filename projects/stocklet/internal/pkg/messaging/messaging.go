@@ -39,6 +39,7 @@ const (
 	Payment_Balance_Created_Topic = Payment_Balance_Topic + ".created"
 	Payment_Balance_Credited_Topic = Payment_Balance_Topic + ".credited"
 	Payment_Balance_Debited_Topic = Payment_Balance_Topic + ".debited"
+	Payment_Balance_Closed_Topic = Payment_Balance_Topic + ".closed"
 
 	Payment_Transaction_Topic = "payment.transaction"
 	Payment_Transaction_Created_Topic = Payment_Transaction_Topic + ".created"

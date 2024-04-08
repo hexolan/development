@@ -188,15 +188,15 @@ func (svc OrderService) ProcessStockReservationEvent(ctx context.Context, req *e
 	return &emptypb.Empty{}, nil
 }
 
-func (svc OrderService) ProcessShipmentAllocatedEvent(ctx context.Context, req *eventpb.ShipmentAllocatedEvent) (*emptypb.Empty, error) {
-	if req.Type == eventpb.ShipmentAllocatedEvent_TYPE_FAILED {
+func (svc OrderService) ProcessShipmentAllocationEvent(ctx context.Context, req *eventpb.ShipmentAllocationEvent) (*emptypb.Empty, error) {
+	if req.Type == eventpb.ShipmentAllocationEvent_TYPE_FAILED {
 		// Set order status to rejected (from processing)
 		// Dispatch OrderRejectedEvent
 		_, err := svc.store.RejectOrder(ctx, req.OrderId)
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update in response to event", err)
 		}
-	} else if req.Type == eventpb.ShipmentAllocatedEvent_TYPE_SHIPMENT_ALLOCATED {
+	} else if req.Type == eventpb.ShipmentAllocationEvent_TYPE_SHIPMENT_ALLOCATED {
 		// Append shipment id to order
 		err := svc.store.SetOrderShipmentId(ctx, req.OrderId, req.ShipmentId)
 		if err != nil {
