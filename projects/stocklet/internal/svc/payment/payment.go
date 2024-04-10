@@ -41,11 +41,11 @@ type PaymentService struct {
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
     GetBalance(ctx context.Context, customerId string) (*pb.CustomerBalance, error)
-	GetTransaction(ctx context.Context, orderId string) (*pb.Transaction, error)
+	GetTransaction(ctx context.Context, transactionId string) (*pb.Transaction, error)
 	
     CreateBalance(ctx context.Context, customerId string) error
     CreditBalance(ctx context.Context, customerId string, amount float32) error
-    DebitBalance(ctx context.Context, customerId string, amount float32) error
+    DebitBalance(ctx context.Context, customerId string, amount float32, orderId *string) (*pb.Transaction, error)
     CloseBalance(ctx context.Context, customerId string) error
 
     PaymentForOrder(ctx context.Context, orderId string, customerId string, amount float32) error
@@ -83,11 +83,25 @@ func (svc PaymentService) ServiceInfo(ctx context.Context, req *commonpb.Service
 }
 
 func (svc PaymentService) ViewTransaction(ctx context.Context, req *pb.ViewTransactionRequest) (*pb.ViewTransactionResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Attempt to get the transaction from the db
+	transaction, err := svc.store.GetTransaction(ctx, req.TransactionId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewTransactionResponse{Transaction: transaction}, nil
 }
 
 func (svc PaymentService) ViewBalance(ctx context.Context, req *pb.ViewBalanceRequest) (*pb.ViewBalanceResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// todo: permission checking
+
+	// Attempt to get the balance from the db
+	balance, err := svc.store.GetBalance(ctx, req.CustomerId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewBalanceResponse{Balance: balance}, nil
 }
 
 func (svc PaymentService) ProcessUserCreatedEvent(ctx context.Context, req *eventpb.UserCreatedEvent) (*emptypb.Empty, error) {

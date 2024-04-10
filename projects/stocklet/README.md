@@ -1,6 +1,6 @@
 # Stocklet
 
-An event-driven microservices-based distributed e-commerce example application written in Golang.
+An event-driven microservices-based distributed e-commerce example application written in Golang. *(mouthful)*
 
 ## 📘 About
 
@@ -8,7 +8,7 @@ This project was originally built as an experiment with event-driven architectur
 
 Any ideas, suggestions or direct contributions to better conform with general and evolving industry practices are welcome and will be greatly appreciated, as I'd like for this project to evolve to be somewhat a reflection of a production-ready enterprise application.
 
-The application should be considered in the experimental stage. As such breaking changes can be expected between future commits to this repo, to ease the development process and allow for clean refactoring of the project. Please keep in mind if you're planning on using this project as a baseplate for a production application.
+⚠️ The application should be considered in the experimental stage; breaking changes can be expected between future commits to this repo, to ease the development process and allow for clean refactoring of the project.
 
 ## 📝 Features
 
@@ -26,7 +26,7 @@ The application should be considered in the experimental stage. As such breaking
 
 ### 🔎 Overview
 
-TODO: diagram
+todo: overview diagram
 
 ### 🧰 Technical Stack
 
@@ -83,9 +83,9 @@ Each service is prepared by a [``service-init``](/cmd/service-init/) container; 
 
 ### 📇 Events
 
-The events are schemed and serialised using [protocol buffers](https://protobuf.dev/). They are dispatched using the [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) with [Debezium](https://debezium.io/) used as a relay to read and publish events from database outbox tables to the message broker.
+The events are schemed and serialised using [protocol buffers](https://protobuf.dev/). They are dispatched using the [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html), with [Debezium](https://debezium.io/) used as a relay to read and publish events from database outbox tables to the message broker.
 
-Further documentation on the events can be found at [``/docs/events/README.md``](/docs/events/README.md)
+Further documentation on the events can be found at [``/docs/EVENTS.md``](/docs/EVENTS.md)
 
 ## 💻 Deployment
 
@@ -97,11 +97,9 @@ The application can be deployed using [Docker Compose](https://docs.docker.com/c
 
 ## 🧪 Contributing
 
-As stated above, all forms of feedback and contributions are welcome and appreciated!
+As stated above, all forms of feedback and contributions are welcome and appreciated! If you like this project then please leave a ⭐ to show support.
 
-Some of the current implemented functionality is quite bare-bones. If I come to revisit this project at a later date, I might look to implement other features such as a notification service (i.e. sending emails on updates to order statuses), ensuring idempotetency in the consumers, a more realistic shipping fulfilment process or a frontend user interface.
-
-Have any ideas for improvements? Looking to implement a feature? Please don't hesistate to open an issue to discuss or a pull request with your enhancements.
+Have any [ideas for improvements?](/docs/ROADMAP.md) Looking to implement a feature? Please don't hesistate to open an issue to discuss or a pull request with your enhancements.
 
 ## 📓 License
 

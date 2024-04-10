@@ -12,8 +12,8 @@ CREATE TABLE transactions (
 
 CREATE TABLE customer_balances (
     customer_id varchar(64) PRIMARY KEY,
-    balance money NOT NULL,
-)
+    balance money NOT NULL
+);
 
 CREATE TABLE event_outbox (
     id bigserial PRIMARY KEY,

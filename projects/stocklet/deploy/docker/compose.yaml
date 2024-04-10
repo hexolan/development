@@ -221,7 +221,7 @@ services:
       - stocklet-auth-postgres-volume:/var/lib/postgresql
     networks:
       - stocklet-auth-network
-      
+
   order-service-postgres:
     image: postgres:16-bookworm
     restart: unless-stopped
@@ -240,6 +240,101 @@ services:
       - stocklet-order-postgres-volume:/var/lib/postgresql
     networks:
       - stocklet-order-network
+
+  payment-service-postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - stocklet-payment-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-payment-network
+
+  product-service-postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - stocklet-product-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-product-network
+
+  shipping-service-postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - stocklet-shipping-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-shipping-network
+
+  user-service-postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - stocklet-user-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-user-network
+
+  warehouse-service-postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      - stocklet-warehouse-postgres-volume:/var/lib/postgresql
+    networks:
+      - stocklet-warehouse-network
 
   # Service Init Containers
   init-auth-service:

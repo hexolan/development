@@ -30,6 +30,7 @@ import (
 
 type kafkaController struct {
 	cl *kgo.Client
+
 	svc pb.PaymentServiceServer
 	
 	ctx context.Context
@@ -66,16 +67,17 @@ func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
 		messaging.Shipping_Shipment_Allocation_Topic,
 	)
 
-	return kafkaController{cl: cl, ctx: ctx, ctxCancel: ctxCancel}
+	return &kafkaController{cl: cl, ctx: ctx, ctxCancel: ctxCancel}
 }
 
-func (c kafkaController) Attach(svc pb.PaymentServiceServer) {
+// todo: update pointer reciever on all others
+func (c *kafkaController) Attach(svc pb.PaymentServiceServer) {
 	c.svc = svc
 }
 
-func (c kafkaController) Start() {
+func (c *kafkaController) Start() {
 	if c.svc == nil {
-		log.Panic().Msg("consumer: no service interface attached")
+		log.Panic().Msg("consumer: no service interface attached (==nil)")
 	}
 
 	for {
@@ -97,12 +99,12 @@ func (c kafkaController) Start() {
 	}
 }
 
-func (c kafkaController) Stop() {
+func (c *kafkaController) Stop() {
 	// Cancel the consumer context
 	c.ctxCancel()
 }
 
-func (c kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
+func (c *kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
@@ -120,7 +122,7 @@ func (c kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
 	})
 }
 
-func (c kafkaController) consumeShipmentAllocationEventTopic(ft kgo.FetchTopic) {
+func (c *kafkaController) consumeShipmentAllocationEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic

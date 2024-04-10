@@ -69,7 +69,6 @@ func GetGatewayUser(md *metadata.MD) (*JWTClaims, error) {
 		return nil, errors.WrapServiceError(errors.ErrCodeUnauthorised, "malformed jwt", err)
 	}
 
-
 	return &claims, nil
 }
 

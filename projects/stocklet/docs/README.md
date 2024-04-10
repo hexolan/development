@@ -1,7 +1,6 @@
-# Stocklet Documentation
-
-An overview of this project can be found in [``/README.md``](/README.md)
+# Stocklet: Docs
 
 ## Table of Contents
 
-* [Events](/docs/events/README.md)
+* [Events](/docs/EVENTS.md)
+* [Feature Roadmap](/docs/ROADMAP.md)

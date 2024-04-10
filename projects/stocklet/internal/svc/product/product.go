@@ -40,7 +40,10 @@ type ProductService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
+	GetProduct(ctx context.Context, productId string) (*pb.Product, error)
+    GetProducts(ctx context.Context) ([]*pb.Product, error)
 
+    PriceOrderProducts(ctx context.Context, orderId string, customerId string, amount float32) error
 }
 
 // Interface for event consumption

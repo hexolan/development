@@ -1,0 +1,24 @@
+# Stocklet: Feature Roadmap
+
+This document should be considered a brainstorm of ideas.
+
+There is no guarantee that I will implement any listed features or functionality below. After all, I initially made this application as an experiment with EDA. Though some of the current implemented functionality is quite bare-bones so if I come to revisit this project at a later date, this document is where I'd first look.
+
+However, contributions are welcome; if you feel like implementing something (already below or not), or otherwise spot other areas that could use improvement, then please feel free to open an issue to discuss, or a pull request with your implementation.
+
+## Feature Ideas
+
+* Front-end user interface
+  * Allow interfaces with the application through alternatives means
+* Notification service
+  * Send notifications to users (e.g. through a mock email or a unread messages mechanism) upon reciept of events related to order status changes (i.e. OrderApprovedEvent)
+* Product recommendation service
+  * Provide a list of recommended products catered to specific customers
+
+## Miscellaneous Ideas
+
+* Ensured idempotency in event consumers (service-side)
+* Kubernetes deployment
+* Interchangable infrastructure
+  * Support for NATS as a message broker
+  * Support for MongoDB as a database
