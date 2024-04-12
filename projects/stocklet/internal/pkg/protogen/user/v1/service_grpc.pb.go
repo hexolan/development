@@ -44,6 +44,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewUser(ctx context.Context, in *ViewUserRequest, opts ...grpc.CallOption) (*ViewUserResponse, error)
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
@@ -88,6 +91,9 @@ func (c *userServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRe
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewUser(context.Context, *ViewUserRequest) (*ViewUserResponse, error)
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)

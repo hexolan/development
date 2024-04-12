@@ -40,7 +40,11 @@ type ShippingService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
+	GetShipment(ctx context.Context, shipmentId string) (*pb.Shipment, error)
+    GetShipmentProducts(ctx context.Context) ([]*pb.ShipmentItem, error)
 
+    AllocateOrderShipment(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
+    CancelOrderShipment(ctx context.Context, orderId string) error
 }
 
 // Interface for event consumption

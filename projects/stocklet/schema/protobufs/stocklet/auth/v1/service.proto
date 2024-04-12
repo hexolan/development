@@ -29,6 +29,9 @@ import "stocklet/events/v1/user.proto";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1;auth_v1";
 
 service AuthService {
+  // View information about the service.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
     option (google.api.http) = {get: "/v1/auth/service"};
   }

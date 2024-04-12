@@ -22,7 +22,10 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* OrderCreatedEvent
+* OrderPendingEvent
+* OrderRejectedEvent
+* OrderApprovedEvent
 
 **Consumes:**
 
@@ -35,7 +38,13 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* BalanceCreatedEvent
+* BalanceCreditedEvent
+* BalanceDebitedEvent
+* BalanceClosedEvent
+* TransactionLoggedEvent
+* TransactionReversedEvent *(currently unused)*
+* PaymentProcessedEvent
 
 **Consumes:**
 
@@ -47,7 +56,10 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* ProductCreatedEvent
+* ProductPriceUpdatedEvent
+* ProductDeletedEvent
+* ProductPriceQuoteEvent
 
 **Consumes:**
 
@@ -57,7 +69,8 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* ShipmentAllocationEvent
+* ShipmentDispatchedEvent *(currently unused)*
 
 **Consumes:**
 
@@ -68,7 +81,9 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* UserCreatedEvent
+* UserEmailUpdatedEvent
+* UserDeletedEvent
 
 **Consumes:**
 
@@ -78,7 +93,10 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 **Produces:**
 
-* todo:
+* StockCreatedEvent
+* StockAddedEvent *(currently unused)*
+* StockRemovedEvent *(currently unused)*
+* StockReservationEvent
 
 **Consumes:**
 
@@ -90,4 +108,4 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 ### Place Order Saga
 
-todo: documentation
+todo: documentation and diagram

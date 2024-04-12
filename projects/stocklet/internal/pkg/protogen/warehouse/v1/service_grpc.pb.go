@@ -40,6 +40,7 @@ const (
 	WarehouseService_ServiceInfo_FullMethodName                    = "/stocklet.warehouse.v1.WarehouseService/ServiceInfo"
 	WarehouseService_ViewProductStock_FullMethodName               = "/stocklet.warehouse.v1.WarehouseService/ViewProductStock"
 	WarehouseService_ViewReservation_FullMethodName                = "/stocklet.warehouse.v1.WarehouseService/ViewReservation"
+	WarehouseService_ProcessProductCreatedEvent_FullMethodName     = "/stocklet.warehouse.v1.WarehouseService/ProcessProductCreatedEvent"
 	WarehouseService_ProcessOrderPendingEvent_FullMethodName       = "/stocklet.warehouse.v1.WarehouseService/ProcessOrderPendingEvent"
 	WarehouseService_ProcessShipmentAllocationEvent_FullMethodName = "/stocklet.warehouse.v1.WarehouseService/ProcessShipmentAllocationEvent"
 	WarehouseService_ProcessPaymentProcessedEvent_FullMethodName   = "/stocklet.warehouse.v1.WarehouseService/ProcessPaymentProcessedEvent"
@@ -49,6 +50,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WarehouseServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewProductStock(ctx context.Context, in *ViewProductStockRequest, opts ...grpc.CallOption) (*ViewProductStockResponse, error)
 	ViewReservation(ctx context.Context, in *ViewReservationRequest, opts ...grpc.CallOption) (*ViewReservationResponse, error)
@@ -57,11 +61,17 @@ type WarehouseServiceClient interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessOrderPendingEvent(ctx context.Context, in *v11.OrderPendingEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ProcessProductCreatedEvent(ctx context.Context, in *v11.ProductCreatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessOrderPendingEvent(ctx context.Context, in *v11.OrderPendingEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	ProcessShipmentAllocationEvent(ctx context.Context, in *v11.ShipmentAllocationEvent, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
@@ -107,6 +117,15 @@ func (c *warehouseServiceClient) ViewReservation(ctx context.Context, in *ViewRe
 	return out, nil
 }
 
+func (c *warehouseServiceClient) ProcessProductCreatedEvent(ctx context.Context, in *v11.ProductCreatedEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, WarehouseService_ProcessProductCreatedEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *warehouseServiceClient) ProcessOrderPendingEvent(ctx context.Context, in *v11.OrderPendingEvent, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, WarehouseService_ProcessOrderPendingEvent_FullMethodName, in, out, opts...)
@@ -138,6 +157,9 @@ func (c *warehouseServiceClient) ProcessPaymentProcessedEvent(ctx context.Contex
 // All implementations must embed UnimplementedWarehouseServiceServer
 // for forward compatibility
 type WarehouseServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewProductStock(context.Context, *ViewProductStockRequest) (*ViewProductStockResponse, error)
 	ViewReservation(context.Context, *ViewReservationRequest) (*ViewReservationResponse, error)
@@ -146,11 +168,17 @@ type WarehouseServiceServer interface {
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-	ProcessOrderPendingEvent(context.Context, *v11.OrderPendingEvent) (*emptypb.Empty, error)
+	ProcessProductCreatedEvent(context.Context, *v11.ProductCreatedEvent) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
 	//
 	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ProcessOrderPendingEvent(context.Context, *v11.OrderPendingEvent) (*emptypb.Empty, error)
+	// A consumer will call this method to process events.
+	//
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	ProcessShipmentAllocationEvent(context.Context, *v11.ShipmentAllocationEvent) (*emptypb.Empty, error)
 	// A consumer will call this method to process events.
@@ -174,6 +202,9 @@ func (UnimplementedWarehouseServiceServer) ViewProductStock(context.Context, *Vi
 }
 func (UnimplementedWarehouseServiceServer) ViewReservation(context.Context, *ViewReservationRequest) (*ViewReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewReservation not implemented")
+}
+func (UnimplementedWarehouseServiceServer) ProcessProductCreatedEvent(context.Context, *v11.ProductCreatedEvent) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProcessProductCreatedEvent not implemented")
 }
 func (UnimplementedWarehouseServiceServer) ProcessOrderPendingEvent(context.Context, *v11.OrderPendingEvent) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProcessOrderPendingEvent not implemented")
@@ -251,6 +282,24 @@ func _WarehouseService_ViewReservation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WarehouseService_ProcessProductCreatedEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ProductCreatedEvent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).ProcessProductCreatedEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_ProcessProductCreatedEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).ProcessProductCreatedEvent(ctx, req.(*v11.ProductCreatedEvent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WarehouseService_ProcessOrderPendingEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.OrderPendingEvent)
 	if err := dec(in); err != nil {
@@ -323,6 +372,10 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ViewReservation",
 			Handler:    _WarehouseService_ViewReservation_Handler,
+		},
+		{
+			MethodName: "ProcessProductCreatedEvent",
+			Handler:    _WarehouseService_ProcessProductCreatedEvent_Handler,
 		},
 		{
 			MethodName: "ProcessOrderPendingEvent",

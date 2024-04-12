@@ -48,6 +48,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ShippingServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewShipment(ctx context.Context, in *ViewShipmentRequest, opts ...grpc.CallOption) (*ViewShipmentResponse, error)
 	ViewShipmentManifest(ctx context.Context, in *ViewShipmentManifestRequest, opts ...grpc.CallOption) (*ViewShipmentManifestResponse, error)
@@ -122,6 +125,9 @@ func (c *shippingServiceClient) ProcessPaymentProcessedEvent(ctx context.Context
 // All implementations must embed UnimplementedShippingServiceServer
 // for forward compatibility
 type ShippingServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewShipment(context.Context, *ViewShipmentRequest) (*ViewShipmentResponse, error)
 	ViewShipmentManifest(context.Context, *ViewShipmentManifestRequest) (*ViewShipmentManifestResponse, error)

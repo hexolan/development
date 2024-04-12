@@ -49,6 +49,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PaymentServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewTransaction(ctx context.Context, in *ViewTransactionRequest, opts ...grpc.CallOption) (*ViewTransactionResponse, error)
 	ViewBalance(ctx context.Context, in *ViewBalanceRequest, opts ...grpc.CallOption) (*ViewBalanceResponse, error)
@@ -138,6 +141,9 @@ func (c *paymentServiceClient) ProcessShipmentAllocationEvent(ctx context.Contex
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
 type PaymentServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewTransaction(context.Context, *ViewTransactionRequest) (*ViewTransactionResponse, error)
 	ViewBalance(context.Context, *ViewBalanceRequest) (*ViewBalanceResponse, error)

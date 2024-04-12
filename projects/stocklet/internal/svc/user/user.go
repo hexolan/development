@@ -38,7 +38,12 @@ type UserService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
+	GetUser(ctx context.Context, userId string) (*pb.User, error)
+	
+	RegisterUser(ctx context.Context, email string, password string, firstName string, lastName string) (*pb.User, error)
+	UpdateUserEmail(ctx context.Context, userId string, email string) error
 
+	DeleteUser(ctx context.Context, userId string) (*pb.User, error)
 }
 
 // Interface for event consumption
@@ -77,5 +82,9 @@ func (svc UserService) ViewUser(ctx context.Context, req *pb.ViewUserRequest) (*
 }
 
 func (svc UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserResponse, error) {
+	// todo: create user in database
+	// add password auth method for user
+	// if succesful commit transaction with event
+
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }

@@ -31,6 +31,8 @@ func main() {
 	// If migrations or debezium are enabled,
 	// then a database configuration will be required.
 	if cfg.ApplyMigrations || cfg.ApplyDebezium {
+		// Support for dynamic loading of configuration
+		// (e.g. mongo config instead of postgres config)
 		pgConf := config.PostgresConfig{}
 		if err := pgConf.Load(); err == nil {
 			// Using postgres as a database.

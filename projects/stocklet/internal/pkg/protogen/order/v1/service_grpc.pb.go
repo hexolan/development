@@ -51,6 +51,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewOrder(ctx context.Context, in *ViewOrderRequest, opts ...grpc.CallOption) (*ViewOrderResponse, error)
 	// Get a list of a customer's orders.
@@ -167,6 +170,9 @@ func (c *orderServiceClient) ProcessPaymentProcessedEvent(ctx context.Context, i
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewOrder(context.Context, *ViewOrderRequest) (*ViewOrderResponse, error)
 	// Get a list of a customer's orders.

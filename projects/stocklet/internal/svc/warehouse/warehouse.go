@@ -40,8 +40,15 @@ type WarehouseService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
+	GetProductStock(ctx context.Context, productId string) (*pb.ProductStock, error)
+	GetReservation(ctx context.Context, reservationId string) (*pb.Reservation, error)
 
-}
+	CreateProductStock(ctx context.Context, productId string, startingQuantity int32) error
+	
+	ReserveOrderStock(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
+	ReturnReservedOrderStock(ctx context.Context, orderId string) error
+	ConsumeReservedOrderStock(ctx context.Context, orderId string) error
+}	
 
 // Interface for event consumption
 // Flexibility for seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
@@ -79,6 +86,10 @@ func (svc WarehouseService) ViewProductStock(ctx context.Context, req *pb.ViewPr
 }
 
 func (svc WarehouseService) ViewReservation(ctx context.Context, req *pb.ViewReservationRequest) (*pb.ViewReservationResponse, error) {
+	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+}
+
+func (svc WarehouseService) ProcessProductCreatedEvent(ctx context.Context, req *eventpb.ProductCreatedEvent) (*emptypb.Empty, error) {
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 

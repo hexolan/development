@@ -47,6 +47,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(ctx context.Context, in *v1.ServiceInfoRequest, opts ...grpc.CallOption) (*v1.ServiceInfoResponse, error)
 	ViewProduct(ctx context.Context, in *ViewProductRequest, opts ...grpc.CallOption) (*ViewProductResponse, error)
 	ViewProducts(ctx context.Context, in *ViewProductsRequest, opts ...grpc.CallOption) (*ViewProductsResponse, error)
@@ -106,6 +109,9 @@ func (c *productServiceClient) ProcessOrderCreatedEvent(ctx context.Context, in 
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
+	// View information about the service.
+	//
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ServiceInfo(context.Context, *v1.ServiceInfoRequest) (*v1.ServiceInfoResponse, error)
 	ViewProduct(context.Context, *ViewProductRequest) (*ViewProductResponse, error)
 	ViewProducts(context.Context, *ViewProductsRequest) (*ViewProductsResponse, error)

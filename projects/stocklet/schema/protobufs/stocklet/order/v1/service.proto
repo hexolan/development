@@ -31,6 +31,9 @@ import "stocklet/order/v1/types.proto";
 option go_package = "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1;order_v1";
 
 service OrderService {
+  // View information about the service.
+  //
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   rpc ServiceInfo(stocklet.common.v1.ServiceInfoRequest) returns (stocklet.common.v1.ServiceInfoResponse) {
     option (google.api.http) = {get: "/v1/order/service"};
   }

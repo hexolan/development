@@ -23,7 +23,7 @@ message ShipmentAllocationEvent {
   enum Type {
     TYPE_UNSPECIFIED = 0;
     TYPE_FAILED = 1;
-    TYPE_SHIPMENT_ALLOCATED = 2;
+    TYPE_ALLOCATED = 2;
     TYPE_ALLOCATION_RELEASED = 3;
   }
 

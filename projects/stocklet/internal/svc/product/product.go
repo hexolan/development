@@ -42,8 +42,11 @@ type ProductService struct {
 type StorageController interface {
 	GetProduct(ctx context.Context, productId string) (*pb.Product, error)
     GetProducts(ctx context.Context) ([]*pb.Product, error)
+	
+	UpdateProductPrice(ctx context.Context, productId string, price float32) (*pb.Product, error)
+	DeleteProduct(ctx context.Context, productId string) error
 
-    PriceOrderProducts(ctx context.Context, orderId string, customerId string, amount float32) error
+    PriceOrderProducts(ctx context.Context, orderId string, customerId string, itemQuantities map[string]int32) error
 }
 
 // Interface for event consumption
