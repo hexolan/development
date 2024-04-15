@@ -17,6 +17,7 @@ package shipping
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 )
 
@@ -63,7 +64,12 @@ func PrepareShipmentAllocationEvent_Allocated(orderId string, orderMetadata Even
 	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareShipmentAllocationEvent_AllocationReleased(orderId string, shipmentId string, productQuantities map[string]int32) ([]byte, string, error) {
+func PrepareShipmentAllocationEvent_AllocationReleased(orderId string, shipmentId string, shipmentItems []*pb.ShipmentItem) ([]byte, string, error) {
+	productQuantities := make(map[string]int32)
+	for _, item := range shipmentItems {
+		productQuantities[item.ProductId] = item.Quantity
+	}
+	
 	topic := messaging.Shipping_Shipment_Allocation_Topic
 	event := &eventspb.ShipmentAllocationEvent{
 		Revision: 1,

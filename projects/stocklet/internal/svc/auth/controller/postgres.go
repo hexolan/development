@@ -16,6 +16,8 @@
 package controller
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/hexolan/stocklet/internal/svc/auth"
@@ -31,3 +33,16 @@ func NewPostgresController(cl *pgxpool.Pool) auth.StorageController {
 }
 
 // todo: implement
+func (c postgresController) SetPassword(ctx context.Context, userId string, password string) error {
+	return nil
+}
+
+// todo: implement
+func (c postgresController) VerifyPassword(ctx context.Context, userId string, password string) (bool, error) {
+	return false, nil
+}
+
+// todo: implement
+func (c postgresController) DeleteAuthMethods(ctx context.Context, userId string) error {
+	return nil
+}

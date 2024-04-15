@@ -78,13 +78,34 @@ func (svc UserService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInf
 }
 
 func (svc UserService) ViewUser(ctx context.Context, req *pb.ViewUserRequest) (*pb.ViewUserResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// Get user from DB 
+	user, err := svc.store.GetUser(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewUserResponse{User: user}, nil
 }
 
 func (svc UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserResponse, error) {
-	// todo: create user in database
-	// add password auth method for user
-	// if succesful commit transaction with event
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
 
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Attempt to register the user
+	// This process involves calling the auth service to add an auth method for the user
+	user, err := svc.store.RegisterUser(ctx, req.Email, req.Password, req.FirstName, req.LastName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.RegisterUserResponse{User: user}, nil
 }

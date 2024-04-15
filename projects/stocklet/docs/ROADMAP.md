@@ -4,7 +4,7 @@ This document should be considered a brainstorm of ideas.
 
 There is no guarantee that I will implement any listed features or functionality below. After all, I initially made this application as an experiment with EDA, and there are areas that could use improvement and expansion (the application is a prototype in current format). Some of the current implemented functionality is quite bare-bones, so if I come to revisit this project at a later date this document is where I'd first look.
 
-However, contributions are welcome; if you feel like implementing something (already below or not), or otherwise spot other areas that could use improvement, then please feel free to open an issue to discuss, or a pull request with your implementation.
+However, contributions are welcome; if you feel like implementing something (already below or not), or otherwise spot other areas that could use improvement, then please feel free to open an issue to discuss or a pull request with your implementation.
 
 ## Feature Ideas
 

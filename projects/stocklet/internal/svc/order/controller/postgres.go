@@ -329,11 +329,11 @@ func (c postgresController) SetOrderShipmentId(ctx context.Context, orderId stri
 func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, orderId string, items map[string]int32) error {
 	// check there are items to add
 	if len(items) > 1 {
-		statementVals := [][]interface{}{}
-		for product_id, quantity := range items {
-			statementVals = append(
-				statementVals, 
-				goqu.Vals{orderId, product_id, quantity},
+		vals := [][]interface{}{}
+		for productId, quantity := range items {
+			vals = append(
+				vals, 
+				goqu.Vals{orderId, productId, quantity},
 			)
 		}
 
@@ -344,7 +344,7 @@ func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, ord
 			"product_id",
 			"quantity",
 		).Vals(
-			statementVals...
+			vals...
 		).Prepared(
 			true,
 		).ToSQL()

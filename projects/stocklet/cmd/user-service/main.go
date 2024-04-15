@@ -53,7 +53,7 @@ func usePostgresController(cfg *user.ServiceConfig) (user.StorageController, *pg
 		log.Panic().Err(err).Msg("")
 	}
 
-	controller := controller.NewPostgresController(client)
+	controller := controller.NewPostgresController(client, &cfg.ServiceOpts)
 	return controller, client
 }
 

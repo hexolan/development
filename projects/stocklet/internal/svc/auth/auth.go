@@ -23,9 +23,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
 )
 
@@ -42,7 +45,18 @@ type AuthService struct {
 // Interface for database methods
 // Allows implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
-	
+	SetPassword(ctx context.Context, userId string, password string) error
+	VerifyPassword(ctx context.Context, userId string, password string) (bool, error)
+
+	DeleteAuthMethods(ctx context.Context, userId string) error
+}
+
+// Interface for event consumption
+// Flexibility for seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
+type ConsumerController interface {
+	messaging.ConsumerController
+
+	Attach(svc pb.AuthServiceServer)
 }
 
 // Create the auth service
@@ -81,6 +95,11 @@ func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordR
 // todo: docs
 func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
 	// todo: implement
+	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+}
+
+// todo: implement
+func (svc AuthService) ProcessUserDeletedEvent(ctx context.Context, req *eventpb.UserDeletedEvent) (*emptypb.Empty, error) {
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 

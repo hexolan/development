@@ -41,7 +41,7 @@ type ShippingService struct {
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
 	GetShipment(ctx context.Context, shipmentId string) (*pb.Shipment, error)
-    GetShipmentProducts(ctx context.Context) ([]*pb.ShipmentItem, error)
+    GetShipmentItems(ctx context.Context, shipmentId string) ([]*pb.ShipmentItem, error)
 
     AllocateOrderShipment(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
     CancelOrderShipment(ctx context.Context, orderId string) error
@@ -72,24 +72,76 @@ func NewShippingService(cfg *ServiceConfig, store StorageController) *ShippingSe
 
 func (svc ShippingService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "product",
+		Name: "shipping",
 		Source: "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
 
 func (svc ShippingService) ViewShipment(ctx context.Context, req *pb.ViewShipmentRequest) (*pb.ViewShipmentResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// todo: permission checking?
+
+	// Get shipment from DB 
+	shipment, err := svc.store.GetShipment(ctx, req.ShipmentId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewShipmentResponse{Shipment: shipment}, nil
 }
 
 func (svc ShippingService) ViewShipmentManifest(ctx context.Context, req *pb.ViewShipmentManifestRequest) (*pb.ViewShipmentManifestResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// todo: permission checking?
+
+	shipmentItems, err := svc.store.GetShipmentItems(ctx, req.ShipmentId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewShipmentManifestResponse{Manifest: shipmentItems}, nil
 }
 
 func (svc ShippingService) ProcessStockReservationEvent(ctx context.Context, req *eventpb.StockReservationEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	if req.Type == eventpb.StockReservationEvent_TYPE_STOCK_RESERVED {
+		err := svc.store.AllocateOrderShipment(
+			ctx,
+			req.OrderId,
+			EventOrderMetadata{
+				CustomerId: req.OrderMetadata.CustomerId,
+				ItemsPrice: req.OrderMetadata.ItemsPrice,
+				TotalPrice: req.OrderMetadata.TotalPrice,
+			},
+			req.ReservationStock,
+		)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update in response to event", err)
+		}
+
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (svc ShippingService) ProcessPaymentProcessedEvent(ctx context.Context, req *eventpb.PaymentProcessedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	if req.Type == eventpb.PaymentProcessedEvent_TYPE_FAILED {
+		err := svc.store.CancelOrderShipment(ctx, req.OrderId)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update in response to event", err)
+		}
+
+	}
+
+	return &emptypb.Empty{}, nil
 }

@@ -31,11 +31,10 @@ message StockAddedEvent {
 
   string product_id = 2;
   int32 amount = 3;
-  int32 new_quantity = 4;
 
   // If the stock is returned as a result of a stock reservation outcome,
   // then the reservation id will be included for reference.
-  optional string reservation_id = 5;
+  optional string reservation_id = 4;
 }
 
 message StockRemovedEvent {
@@ -43,11 +42,10 @@ message StockRemovedEvent {
 
   string product_id = 2;
   int32 amount = 3;
-  int32 new_quantity = 4;
 
   // If the stock is removed as a result of a stock reservation being closed,
   // then the reservation id will be included for reference.
-  optional string reservation_id = 5;
+  optional string reservation_id = 4;
 }
 
 message StockReservationEvent {

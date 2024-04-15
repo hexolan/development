@@ -135,7 +135,7 @@ func (svc OrderService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReques
 	// Create the order.
 	//
 	// This will initiate a SAGA process involving
-	// the services required to create the order.
+	// all the services required to create the order
 	order, err := svc.store.CreateOrder(
 		ctx,
 		&pb.Order{

@@ -39,11 +39,11 @@ service WarehouseService {
   }
 
   rpc ViewProductStock(ViewProductStockRequest) returns (ViewProductStockResponse) {
-    option (google.api.http) = {get: "/v1/warehouse/product/{id}"};
+    option (google.api.http) = {get: "/v1/warehouse/product/{product_id}"};
   }
 
   rpc ViewReservation(ViewReservationRequest) returns (ViewReservationResponse) {
-    option (google.api.http) = {get: "/v1/warehouse/reservation/{id}"};
+    option (google.api.http) = {get: "/v1/warehouse/reservation/{reservation_id}"};
   }
 
   // A consumer will call this method to process events.
@@ -84,7 +84,7 @@ service WarehouseService {
 }
 
 message ViewProductStockRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string product_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message ViewProductStockResponse {
@@ -92,7 +92,7 @@ message ViewProductStockResponse {
 }
 
 message ViewReservationRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string reservation_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message ViewReservationResponse {

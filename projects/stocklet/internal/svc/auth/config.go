@@ -33,6 +33,7 @@ type ServiceConfig struct {
 
 	// Dynamically loaded configuration
 	Postgres config.PostgresConfig
+	Kafka config.KafkaConfig
 }
 
 // load the service configuration
@@ -52,7 +53,7 @@ func NewServiceConfig() (*ServiceConfig, error) {
 	return &cfg, nil
 }
 
-// Auth-service specific config options
+// Service specific config options
 type ServiceConfigOpts struct {
 	// Env Var: "AUTH_PRIVATE_KEY"
 	// to be provided in base64 format

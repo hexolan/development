@@ -16,9 +16,14 @@
 package controller
 
 import (
+	"context"
+	"golang.org/x/exp/maps"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 
 	"github.com/hexolan/stocklet/internal/svc/product"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -35,23 +40,233 @@ func NewPostgresController(cl *pgxpool.Pool) product.StorageController {
 	return postgresController{cl: cl}
 }
 
-//
-// todo: implement
-//
+func (c postgresController) GetProduct(ctx context.Context, productId string) (*pb.Product, error) {
+	return c.getProduct(ctx, nil, productId)
+}
+
+func (c postgresController) getProduct(ctx context.Context, tx *pgx.Tx, productId string) (*pb.Product, error) {
+	// Determine if a db transaction is being used
+	var row pgx.Row
+	const query = pgProductBaseQuery + " WHERE id=$1"
+	if tx == nil {
+		row = c.cl.QueryRow(ctx, query, productId)
+	} else {
+		row = (*tx).QueryRow(ctx, query, productId)	
+	}
+
+	// Scan row to protobuf obj
+	product, err := scanRowToProduct(row)
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
+}
+
+// todo: implementing pagination mechanism
+func (c postgresController) GetProducts(ctx context.Context) ([]*pb.Product, error) {
+	rows, err := c.cl.Query(ctx, pgProductBaseQuery + " LIMIT 10")
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error", err)
+	}
+
+	products := []*pb.Product{}
+	for rows.Next() {
+		productObj, err := scanRowToProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		products = append(products, productObj)
+	}
+
+	if rows.Err() != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "error whilst scanning rows", rows.Err())
+	}
+
+	return products, nil
+}
+
+// Update a product price.
+func (c postgresController) UpdateProductPrice(ctx context.Context, productId string, price float32) (*pb.Product, error) {
+	// Begin a DB transaction
+	tx, err := c.cl.Begin(ctx)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Update product price
+	_, err = tx.Exec(ctx, "UPDATE products SET price=$1 WHERE id=$2", price, productId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update product price", err)
+	}
+
+	// Get updated product
+	productObj, err := c.getProduct(ctx, &tx, productId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add the event to the outbox table with the transaction
+	evt, evtTopic, err := product.PrepareProductPriceUpdatedEvent(productObj)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to create event", err)
+	}
+
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", productObj.Id, evtTopic, evt)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to insert event", err)
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
+
+	return productObj, nil
+}
+
+// Delete a product by its specified id.
+func (c postgresController) DeleteProduct(ctx context.Context, productId string) error {
+	// Begin a DB transaction
+	tx, err := c.cl.Begin(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Get product
+	productObj, err := c.getProduct(ctx, &tx, productId)
+	if err != nil {
+		return err
+	}
+
+	// Delete product
+	_, err = tx.Exec(ctx, "DELETE FROM products WHERE id=$1", productId)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to delete product", err)
+	}
+
+	// Add the event to the outbox table with the transaction
+	evt, evtTopic, err := product.PrepareProductDeletedEvent(productObj)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to create event", err)
+	}
+
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", productObj.Id, evtTopic, evt)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to insert event", err)
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
+
+	return nil
+}
+
+func (c postgresController) PriceOrderProducts(ctx context.Context, orderId string, customerId string, productQuantities map[string]int32) error {
+	// Begin a DB transaction
+	tx, err := c.cl.Begin(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to begin transaction", err)
+	}
+	defer tx.Rollback(ctx)
+
+	// Get prices of all specified products (in productQuantities)
+	productIds := maps.Keys(productQuantities)
+	statement, args, err := goqu.Dialect("postgres").From("products").Select("id", "price").Where(goqu.C("id").In(productIds)).Prepared(true).ToSQL()
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to build statement", err)
+	}
+
+	rows, err := tx.Query(ctx, statement, args...)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to fetch price quotes", err)
+	}
+	
+	var productPrices map[string]float32
+	for rows.Next() {
+		var productId string
+		var productPrice float32
+		err := rows.Scan(&productId, &productPrice)
+		if err != nil {
+			return errors.WrapServiceError(errors.ErrCodeNotFound, "failed to fetch price quotes: error whilst scanning row", err)
+		}
+
+		productPrices[productId] = productPrice
+	}
+
+	if rows.Err() != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to fetch price quotes: error whilst scanning rows", rows.Err())
+	}
+
+	// Calculate total price
+	// Also ensuring that all items in the itemQuantities have a fetched price
+	var totalPrice float32
+	for productId, quantity := range productQuantities {
+		productPrice, ok := productPrices[productId]
+		if !ok {
+			// Prepare and dispatch failure product pricing event
+			evt, evtTopic, err := product.PrepareProductPriceQuoteEvent_Unavaliable(orderId)
+			if err != nil {
+				return errors.WrapServiceError(errors.ErrCodeService, "failed to create event", err)
+			}
+
+			_, err = c.cl.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", orderId, evtTopic, evt)
+			if err != nil {
+				return errors.WrapServiceError(errors.ErrCodeExtService, "failed to insert event", err)
+			}
+
+			return nil
+		}
+
+		// Add to total price
+		totalPrice += productPrice * float32(quantity)
+	}
+
+	// Prepare and dispatch succesful product pricing event
+	evt, evtTopic, err := product.PrepareProductPriceQuoteEvent_Avaliable(
+		orderId,
+		productQuantities,
+		productPrices,
+		totalPrice,
+	)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeService, "failed to create event", err)
+	}
+
+	_, err = tx.Exec(ctx, "INSERT INTO event_outbox (aggregateid, aggregatetype, payload) VALUES ($1, $2, $3)", orderId, evtTopic, evt)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to insert event", err)
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to commit transaction", err)
+	}
+
+	return nil
+}
 
 // Scan a postgres row to a protobuf object
 func scanRowToProduct(row pgx.Row) (*pb.Product, error) {
-	var product pb.Product
+	var productObj pb.Product
 
 	// Temporary variables that require conversion
 	var tmpCreatedAt pgtype.Timestamp
 	var tmpUpdatedAt pgtype.Timestamp
 
 	err := row.Scan(
-		&product.Id,
-		&product.Name,
-		&product.Description,
-		&product.Price,
+		&productObj.Id,
+		&productObj.Name,
+		&productObj.Description,
+		&productObj.Price,
 		&tmpCreatedAt,
 		&tmpUpdatedAt,
 	)
@@ -65,15 +280,15 @@ func scanRowToProduct(row pgx.Row) (*pb.Product, error) {
 
 	// convert postgres timestamps to unix format
 	if tmpCreatedAt.Valid {
-		product.CreatedAt = tmpCreatedAt.Time.Unix()
+		productObj.CreatedAt = tmpCreatedAt.Time.Unix()
 	} else {
 		return nil, errors.NewServiceError(errors.ErrCodeUnknown, "failed to scan object from database (timestamp conversion)")
 	}
 
 	if tmpUpdatedAt.Valid {
 		unixUpdated := tmpUpdatedAt.Time.Unix()
-		product.UpdatedAt = &unixUpdated
+		productObj.UpdatedAt = &unixUpdated
 	}
 	
-	return &product, nil
+	return &productObj, nil
 }

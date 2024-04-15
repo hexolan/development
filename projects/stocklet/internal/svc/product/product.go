@@ -46,7 +46,7 @@ type StorageController interface {
 	UpdateProductPrice(ctx context.Context, productId string, price float32) (*pb.Product, error)
 	DeleteProduct(ctx context.Context, productId string) error
 
-    PriceOrderProducts(ctx context.Context, orderId string, customerId string, itemQuantities map[string]int32) error
+    PriceOrderProducts(ctx context.Context, orderId string, customerId string, productQuantities map[string]int32) error
 }
 
 // Interface for event consumption
@@ -81,13 +81,36 @@ func (svc ProductService) ServiceInfo(ctx context.Context, req *commonpb.Service
 }
 
 func (svc ProductService) ViewProduct(ctx context.Context, req *pb.ViewProductRequest) (*pb.ViewProductResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// Get product from DB
+	product, err := svc.store.GetProduct(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewProductResponse{Product: product}, nil
 }
 
 func (svc ProductService) ViewProducts(ctx context.Context, req *pb.ViewProductsRequest) (*pb.ViewProductsResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// todo: pagination mechanism
+	products, err := svc.store.GetProducts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewProductsResponse{Products: products}, nil
 }
 
-func (svc ProductService) ProcessOrderCreatedEvent(ctx context.Context, in *eventpb.OrderCreatedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+func (svc ProductService) ProcessOrderCreatedEvent(ctx context.Context, req *eventpb.OrderCreatedEvent) (*emptypb.Empty, error) {
+	err := svc.store.PriceOrderProducts(ctx, req.OrderId, req.CustomerId, req.ItemQuantities)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }

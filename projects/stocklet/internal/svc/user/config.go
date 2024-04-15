@@ -23,6 +23,7 @@ import (
 type ServiceConfig struct {
 	// Core Configuration
 	Shared config.SharedConfig
+	ServiceOpts ServiceConfigOpts
 
 	// Dynamically loaded configuration
 	Postgres config.PostgresConfig
@@ -37,5 +38,28 @@ func NewServiceConfig() (*ServiceConfig, error) {
 		return nil, err
 	}
 
+	// load the service config opts
+	if err := cfg.ServiceOpts.Load(); err != nil {
+		return nil, err
+	}
+
 	return &cfg, nil
+}
+
+// Service specific config options
+type ServiceConfigOpts struct {
+	// Env Var: "AUTH_SERVICE_GRPC"
+	AuthServiceGrpc string
+}
+
+// Load the ServiceConfigOpts
+func (opts *ServiceConfigOpts) Load() error {
+	// Load configurations from env
+	if authServiceGrpc, err := config.RequireFromEnv("AUTH_SERVICE_GRPC"); err == nil {
+		opts.AuthServiceGrpc = authServiceGrpc
+	} else {
+		return err
+	}
+
+	return nil
 }

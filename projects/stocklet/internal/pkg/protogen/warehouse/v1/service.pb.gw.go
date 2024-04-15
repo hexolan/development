@@ -61,14 +61,14 @@ func request_WarehouseService_ViewProductStock_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["product_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ProductId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
 	}
 
 	msg, err := client.ViewProductStock(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -87,14 +87,14 @@ func local_request_WarehouseService_ViewProductStock_0(ctx context.Context, mars
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["product_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ProductId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
 	}
 
 	msg, err := server.ViewProductStock(ctx, &protoReq)
@@ -113,14 +113,14 @@ func request_WarehouseService_ViewReservation_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["reservation_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "reservation_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ReservationId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "reservation_id", err)
 	}
 
 	msg, err := client.ViewReservation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -139,14 +139,14 @@ func local_request_WarehouseService_ViewReservation_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["reservation_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "reservation_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ReservationId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "reservation_id", err)
 	}
 
 	msg, err := server.ViewReservation(ctx, &protoReq)
@@ -193,7 +193,7 @@ func RegisterWarehouseServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewProductStock", runtime.WithHTTPPathPattern("/v1/warehouse/product/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewProductStock", runtime.WithHTTPPathPattern("/v1/warehouse/product/{product_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -218,7 +218,7 @@ func RegisterWarehouseServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewReservation", runtime.WithHTTPPathPattern("/v1/warehouse/reservation/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewReservation", runtime.WithHTTPPathPattern("/v1/warehouse/reservation/{reservation_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -304,7 +304,7 @@ func RegisterWarehouseServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewProductStock", runtime.WithHTTPPathPattern("/v1/warehouse/product/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewProductStock", runtime.WithHTTPPathPattern("/v1/warehouse/product/{product_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -326,7 +326,7 @@ func RegisterWarehouseServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewReservation", runtime.WithHTTPPathPattern("/v1/warehouse/reservation/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.warehouse.v1.WarehouseService/ViewReservation", runtime.WithHTTPPathPattern("/v1/warehouse/reservation/{reservation_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -348,9 +348,9 @@ func RegisterWarehouseServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 var (
 	pattern_WarehouseService_ServiceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "warehouse", "service"}, ""))
 
-	pattern_WarehouseService_ViewProductStock_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "warehouse", "product", "id"}, ""))
+	pattern_WarehouseService_ViewProductStock_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "warehouse", "product", "product_id"}, ""))
 
-	pattern_WarehouseService_ViewReservation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "warehouse", "reservation", "id"}, ""))
+	pattern_WarehouseService_ViewReservation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "warehouse", "reservation", "reservation_id"}, ""))
 )
 
 var (

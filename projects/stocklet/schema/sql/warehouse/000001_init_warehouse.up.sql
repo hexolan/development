@@ -6,7 +6,7 @@ CREATE TABLE product_stock (
 CREATE TABLE reservations (
     id bigserial PRIMARY KEY,
     
-    order_id varchar(64),
+    order_id varchar(64) NOT NULL,
 
     created_at timestamp NOT NULL DEFAULT timezone('utc', now())
 );

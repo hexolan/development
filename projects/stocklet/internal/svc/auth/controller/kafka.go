@@ -22,22 +22,22 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/hexolan/stocklet/internal/svc/payment"
+	"github.com/hexolan/stocklet/internal/svc/auth"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
 	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 )
 
 type kafkaController struct {
 	cl *kgo.Client
 
-	svc pb.PaymentServiceServer
+	svc pb.AuthServiceServer
 	
 	ctx context.Context
 	ctxCancel context.CancelFunc
 }
 
-func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
+func NewKafkaController(cl *kgo.Client) auth.ConsumerController {
 	// Create a cancellable context for the consumer
 	ctx, ctxCancel := context.WithCancel(context.Background())
 	
@@ -45,17 +45,7 @@ func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
 	err := messaging.EnsureKafkaTopics(
 		cl,
 
-		messaging.Payment_Balance_Created_Topic,
-		messaging.Payment_Balance_Credited_Topic,
-		messaging.Payment_Balance_Debited_Topic,
-		messaging.Payment_Balance_Closed_Topic,
-		messaging.Payment_Transaction_Created_Topic,
-		messaging.Payment_Transaction_Reversed_Topic,
-		messaging.Payment_Processing_Topic,
-
-		messaging.User_State_Created_Topic,
-
-		messaging.Shipping_Shipment_Allocation_Topic,
+		messaging.User_State_Deleted_Topic,
 	)
 	if err != nil {
 		log.Warn().Err(err).Msg("kafka: raised attempting to ensure svc topics")
@@ -63,14 +53,13 @@ func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
 
 	// Add the consumption topics
 	cl.AddConsumeTopics(
-		messaging.User_State_Created_Topic,
-		messaging.Shipping_Shipment_Allocation_Topic,
+		messaging.User_State_Deleted_Topic,
 	)
 
 	return &kafkaController{cl: cl, ctx: ctx, ctxCancel: ctxCancel}
 }
 
-func (c *kafkaController) Attach(svc pb.PaymentServiceServer) {
+func (c *kafkaController) Attach(svc pb.AuthServiceServer) {
 	c.svc = svc
 }
 
@@ -87,10 +76,8 @@ func (c *kafkaController) Start() {
 
 		fetches.EachTopic(func(ft kgo.FetchTopic) {
 			switch ft.Topic {
-			case messaging.User_State_Created_Topic:
-				c.consumeUserCreatedEventTopic(ft)
-			case messaging.Shipping_Shipment_Allocation_Topic:
-				c.consumeShipmentAllocationEventTopic(ft)
+			case messaging.User_State_Deleted_Topic:
+				c.consumeUserDeletedEventTopic(ft)
 			default:
 				log.Warn().Str("topic", ft.Topic).Msg("consumer: recieved records from unexpected topic")
 			}
@@ -103,13 +90,13 @@ func (c *kafkaController) Stop() {
 	c.ctxCancel()
 }
 
-func (c *kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
+func (c *kafkaController) consumeUserDeletedEventTopic(ft kgo.FetchTopic) {
 	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
 
 	// Process each message from the topic
 	ft.EachRecord(func(record *kgo.Record) {
 		// Unmarshal the event
-		var event eventpb.UserCreatedEvent
+		var event eventpb.UserDeletedEvent
 		err := proto.Unmarshal(record.Value, &event)
 		if err != nil {
 			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
@@ -117,24 +104,6 @@ func (c *kafkaController) consumeUserCreatedEventTopic(ft kgo.FetchTopic) {
 
 		// Process the event
 		ctx := context.Background()
-		c.svc.ProcessUserCreatedEvent(ctx, &event)
-	})
-}
-
-func (c *kafkaController) consumeShipmentAllocationEventTopic(ft kgo.FetchTopic) {
-	log.Info().Str("topic", ft.Topic).Msg("consumer: recieved records from topic")
-
-	// Process each message from the topic
-	ft.EachRecord(func(record *kgo.Record) {
-		// Unmarshal the event
-		var event eventpb.ShipmentAllocationEvent
-		err := proto.Unmarshal(record.Value, &event)
-		if err != nil {
-			log.Panic().Err(err).Msg("consumer: failed to unmarshal event")
-		}
-
-		// Process the event
-		ctx := context.Background()
-		c.svc.ProcessShipmentAllocationEvent(ctx, &event)
+		c.svc.ProcessUserDeletedEvent(ctx, &event)
 	})
 }

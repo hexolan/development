@@ -39,28 +39,26 @@ func PrepareStockCreatedEvent(productStock *pb.ProductStock) ([]byte, string, er
 	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareStockAddedEvent(productId string, amount int32, newQuantity int32, reservationId *string) ([]byte, string, error) {
+func PrepareStockAddedEvent(productId string, amount int32, reservationId *string) ([]byte, string, error) {
 	topic := messaging.Warehouse_Stock_Added_Topic
 	event := &eventspb.StockAddedEvent{
 		Revision: 1,
 
 		ProductId: productId,
 		Amount: amount,
-		NewQuantity: newQuantity,
 		ReservationId: reservationId,
 	}
 
 	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareStockRemovedEvent(productId string, amount int32, newQuantity int32, reservationId *string) ([]byte, string, error) {
+func PrepareStockRemovedEvent(productId string, amount int32, reservationId *string) ([]byte, string, error) {
 	topic := messaging.Warehouse_Stock_Removed_Topic
 	event := &eventspb.StockRemovedEvent{
 		Revision: 1,
 
 		ProductId: productId,
 		Amount: amount,
-		NewQuantity: newQuantity,
 		ReservationId: reservationId,
 	}
 
@@ -104,7 +102,12 @@ func PrepareStockReservationEvent_Reserved(orderId string, orderMetadata EventOr
 	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareStockReservationEvent_Returned(orderId string, reservationId string, reservationStock map[string]int32) ([]byte, string, error) {
+func PrepareStockReservationEvent_Returned(orderId string, reservationId string, reservedStock []*pb.ReservationStock) ([]byte, string, error) {
+	reservationStock := make(map[string]int32)
+	for _, item := range reservedStock {
+		reservationStock[item.ProductId] = item.Quantity
+	}
+
 	topic := messaging.Warehouse_Reservation_Returned_Topic
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,
@@ -118,7 +121,12 @@ func PrepareStockReservationEvent_Returned(orderId string, reservationId string,
 	return messaging.MarshalEvent(event, topic)
 }
 
-func PrepareStockReservationEvent_Consumed(orderId string, reservationId string, reservationStock map[string]int32) ([]byte, string, error) {
+func PrepareStockReservationEvent_Consumed(orderId string, reservationId string, reservedStock []*pb.ReservationStock) ([]byte, string, error) {
+	reservationStock := make(map[string]int32)
+	for _, item := range reservedStock {
+		reservationStock[item.ProductId] = item.Quantity
+	}
+
 	topic := messaging.Warehouse_Reservation_Consumed_Topic
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,

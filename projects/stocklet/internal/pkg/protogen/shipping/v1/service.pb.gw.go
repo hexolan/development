@@ -61,14 +61,14 @@ func request_ShippingService_ViewShipment_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["shipment_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ShipmentId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
 	}
 
 	msg, err := client.ViewShipment(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -87,14 +87,14 @@ func local_request_ShippingService_ViewShipment_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["shipment_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ShipmentId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
 	}
 
 	msg, err := server.ViewShipment(ctx, &protoReq)
@@ -113,14 +113,14 @@ func request_ShippingService_ViewShipmentManifest_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["shipment_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ShipmentId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
 	}
 
 	msg, err := client.ViewShipmentManifest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -139,14 +139,14 @@ func local_request_ShippingService_ViewShipmentManifest_0(ctx context.Context, m
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["shipment_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "shipment_id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.ShipmentId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "shipment_id", err)
 	}
 
 	msg, err := server.ViewShipmentManifest(ctx, &protoReq)
@@ -193,7 +193,7 @@ func RegisterShippingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipment", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipment", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{shipment_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -218,7 +218,7 @@ func RegisterShippingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{id}/manifest"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{shipment_id}/manifest"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -304,7 +304,7 @@ func RegisterShippingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipment", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipment", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{shipment_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -326,7 +326,7 @@ func RegisterShippingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{id}/manifest"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/stocklet.shipping.v1.ShippingService/ViewShipmentManifest", runtime.WithHTTPPathPattern("/v1/shipping/shipment/{shipment_id}/manifest"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -348,9 +348,9 @@ func RegisterShippingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 var (
 	pattern_ShippingService_ServiceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "shipping", "service"}, ""))
 
-	pattern_ShippingService_ViewShipment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "shipping", "shipment", "id"}, ""))
+	pattern_ShippingService_ViewShipment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "shipping", "shipment", "shipment_id"}, ""))
 
-	pattern_ShippingService_ViewShipmentManifest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "shipping", "shipment", "id", "manifest"}, ""))
+	pattern_ShippingService_ViewShipmentManifest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "shipping", "shipment", "shipment_id", "manifest"}, ""))
 )
 
 var (

@@ -17,11 +17,16 @@ package main
 
 import (
 	"github.com/rs/zerolog/log"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/twmb/franz-go/pkg/kgo"
 
+	"github.com/hexolan/stocklet/internal/pkg/serve"
+	"github.com/hexolan/stocklet/internal/pkg/storage"
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/auth"
 	"github.com/hexolan/stocklet/internal/svc/auth/api"
-	"github.com/hexolan/stocklet/internal/pkg/serve"
-	"github.com/hexolan/stocklet/internal/pkg/metrics"
+	"github.com/hexolan/stocklet/internal/svc/auth/controller"
 )
 
 func loadConfig() *auth.ServiceConfig {
@@ -38,33 +43,57 @@ func loadConfig() *auth.ServiceConfig {
 	return cfg
 }
 
-func usePostgresController(cfg *auth.ServiceConfig) (*auth.StorageController, error) {
-	// load the postgres configuration
+func usePostgresController(cfg *auth.ServiceConfig) (auth.StorageController, *pgxpool.Pool) {
+	// load the Postgres configuration
 	if err := cfg.Postgres.Load(); err != nil {
 		log.Panic().Err(err).Msg("")
 	}
 
-	// todo:
-	// instead of error return client
+	// open a Postgres connection
+	client, err := storage.NewPostgresConn(&cfg.Postgres)
+	if err != nil {
+		log.Panic().Err(err).Msg("")
+	}
 
-	// postgresController{}, client
-	return nil, nil
+	controller := controller.NewPostgresController(client)
+	return controller, client
+}
+
+func useKafkaController(cfg *auth.ServiceConfig) (auth.ConsumerController, *kgo.Client) {
+	// load the Kafka configuration
+	if err := cfg.Kafka.Load(); err != nil {
+		log.Panic().Err(err).Msg("")
+	}
+
+	// open a Kafka connection
+	client, err := messaging.NewKafkaConn(&cfg.Kafka, kgo.ConsumerGroup("auth-service"))
+	if err != nil {
+		log.Panic().Err(err).Msg("")
+	}
+
+	controller := controller.NewKafkaController(client)
+	return controller, client
 }
 
 func main() {
 	cfg := loadConfig()
 
 	// Create the storage controller
-	// todo: defering client closure
-	store, _ := usePostgresController(cfg)
+	store, storeCl := usePostgresController(cfg)
+	defer storeCl.Close()
 
 	// Create the service (& API interfaces)
 	svc := auth.NewAuthService(cfg, store)
 	grpcSvr := api.PrepareGrpc(cfg, svc)
 	gatewayMux := api.PrepareGateway(cfg)
 
+	// Create the consumer
+	consumer, consCl := useKafkaController(cfg)
+	defer consCl.Close()
+	consumer.Attach(svc)
+
 	// Serve the API interfaces
+	go consumer.Start()
 	go serve.Gateway(gatewayMux)
 	serve.Grpc(grpcSvr)
 }
-

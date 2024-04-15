@@ -82,25 +82,87 @@ func (svc WarehouseService) ServiceInfo(ctx context.Context, req *commonpb.Servi
 }
 
 func (svc WarehouseService) ViewProductStock(ctx context.Context, req *pb.ViewProductStockRequest) (*pb.ViewProductStockResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// Get stock from db
+	stock, err := svc.store.GetProductStock(ctx, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewProductStockResponse{Stock: stock}, nil
 }
 
 func (svc WarehouseService) ViewReservation(ctx context.Context, req *pb.ViewReservationRequest) (*pb.ViewReservationResponse, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// Provide the validation error to the user.
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+	}
+
+	// Get reservation from db
+	reservation, err := svc.store.GetReservation(ctx, req.ReservationId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ViewReservationResponse{Reservation: reservation}, nil
 }
 
 func (svc WarehouseService) ProcessProductCreatedEvent(ctx context.Context, req *eventpb.ProductCreatedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	err := svc.store.CreateProductStock(ctx, req.ProductId, 0)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (svc WarehouseService) ProcessOrderPendingEvent(ctx context.Context, req *eventpb.OrderPendingEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	err := svc.store.ReserveOrderStock(
+		ctx,
+		req.OrderId,
+		EventOrderMetadata{
+			CustomerId: req.CustomerId,
+			ItemsPrice: req.ItemsPrice,
+			TotalPrice: req.TotalPrice,
+		},
+		req.ItemQuantities,
+	)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (svc WarehouseService) ProcessShipmentAllocationEvent(ctx context.Context, req *eventpb.ShipmentAllocationEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	if req.Type == eventpb.ShipmentAllocationEvent_TYPE_FAILED {
+		err := svc.store.ReturnReservedOrderStock(ctx, req.OrderId)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+		}
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (svc WarehouseService) ProcessPaymentProcessedEvent(ctx context.Context, req *eventpb.PaymentProcessedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	if req.Type == eventpb.PaymentProcessedEvent_TYPE_FAILED {
+		err := svc.store.ReturnReservedOrderStock(ctx, req.OrderId)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+		}
+	} else if req.Type == eventpb.PaymentProcessedEvent_TYPE_SUCCESS {
+		err := svc.store.ConsumeReservedOrderStock(ctx, req.OrderId)
+		if err != nil {
+			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
+		}
+	}
+	
+	return &emptypb.Empty{}, nil
 }

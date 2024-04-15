@@ -287,7 +287,7 @@ paths:
             $ref: '#/definitions/rpcStatus'
       tags:
         - ShippingService
-  /v1/shipping/shipment/{id}:
+  /v1/shipping/shipment/{shipmentId}:
     get:
       operationId: ShippingService_ViewShipment
       responses:
@@ -300,13 +300,13 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: shipmentId
           in: path
           required: true
           type: string
       tags:
         - ShippingService
-  /v1/shipping/shipment/{id}/manifest:
+  /v1/shipping/shipment/{shipmentId}/manifest:
     get:
       operationId: ShippingService_ViewShipmentManifest
       responses:
@@ -319,7 +319,7 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: shipmentId
           in: path
           required: true
           type: string
@@ -390,7 +390,7 @@ paths:
           type: string
       tags:
         - UserService
-  /v1/warehouse/product/{id}:
+  /v1/warehouse/product/{productId}:
     get:
       operationId: WarehouseService_ViewProductStock
       responses:
@@ -403,13 +403,13 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: productId
           in: path
           required: true
           type: string
       tags:
         - WarehouseService
-  /v1/warehouse/reservation/{id}:
+  /v1/warehouse/reservation/{reservationId}:
     get:
       operationId: WarehouseService_ViewReservation
       responses:
@@ -422,7 +422,7 @@ paths:
           schema:
             $ref: '#/definitions/rpcStatus'
       parameters:
-        - name: id
+        - name: reservationId
           in: path
           required: true
           type: string
@@ -747,7 +747,7 @@ definitions:
   v1ViewShipmentManifestResponse:
     type: object
     properties:
-      data:
+      manifest:
         type: array
         items:
           type: object
@@ -755,7 +755,7 @@ definitions:
   v1ViewShipmentResponse:
     type: object
     properties:
-      data:
+      shipment:
         $ref: '#/definitions/v1Shipment'
   v1ViewTransactionResponse:
     type: object

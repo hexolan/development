@@ -37,11 +37,11 @@ service ShippingService {
   }
 
   rpc ViewShipment(ViewShipmentRequest) returns (ViewShipmentResponse) {
-    option (google.api.http) = {get: "/v1/shipping/shipment/{id}"};
+    option (google.api.http) = {get: "/v1/shipping/shipment/{shipment_id}"};
   }
 
   rpc ViewShipmentManifest(ViewShipmentManifestRequest) returns (ViewShipmentManifestResponse) {
-    option (google.api.http) = {get: "/v1/shipping/shipment/{id}/manifest"};
+    option (google.api.http) = {get: "/v1/shipping/shipment/{shipment_id}/manifest"};
   }
 
   // A consumer will call this method to process events.
@@ -64,17 +64,17 @@ service ShippingService {
 }
 
 message ViewShipmentRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string shipment_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message ViewShipmentResponse {
-  Shipment data = 1;
+  Shipment shipment = 1;
 }
 
 message ViewShipmentManifestRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string shipment_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message ViewShipmentManifestResponse {
-  repeated ShipmentItem data = 1;
+  repeated ShipmentItem manifest = 1;
 }
