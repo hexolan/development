@@ -32,9 +32,9 @@ func (cfg *KafkaConfig) Load() error {
 		return err
 	}
 
-	// comma seperate the kafka brokers
+	// Comma seperate the kafka brokers
 	cfg.Brokers = strings.Split(brokersOpt, ",")
 
-	// config options were succesfully set and loaded
+	// Config options were succesfully loaded
 	return nil
 }

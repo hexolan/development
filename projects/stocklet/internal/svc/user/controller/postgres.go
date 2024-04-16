@@ -17,10 +17,12 @@ package controller
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -66,7 +68,11 @@ func (c postgresController) getUser(ctx context.Context, tx *pgx.Tx, userId stri
 
 func (c postgresController) RegisterUser(ctx context.Context, email string, password string, firstName string, lastName string) (*pb.User, error) {
 	// Establish connection with auth service
-	authConn, err := grpc.Dial(c.serviceOpts.AuthServiceGrpc, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.Dial(
+		c.serviceOpts.AuthServiceGrpc,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+	)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to establish connection to auth service", err)
 	}
@@ -111,7 +117,9 @@ func (c postgresController) RegisterUser(ctx context.Context, email string, pass
 	}
 
 	// Attempt to add auth method for user
-	_, err = authCl.SetPassword(ctx, &authpb.SetPasswordRequest{UserId: userObj.Id, Password: password})
+	authCtx, authCtxCancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer authCtxCancel()
+	_, err = authCl.SetPassword(authCtx, &authpb.SetPasswordRequest{UserId: userObj.Id, Password: password})
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error registering user: failed to set auth method", err)
 	}

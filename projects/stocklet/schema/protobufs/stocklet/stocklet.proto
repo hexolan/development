@@ -34,4 +34,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
       url: "https://github.com/hexolan/stocklet/blob/main/LICENSE";
     }
   };
+  host: "localhost";
+  schemes: HTTP;
 };

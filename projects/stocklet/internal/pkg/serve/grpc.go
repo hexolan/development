@@ -36,8 +36,6 @@ func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 		),
 	)
 
-	// todo: error logging middleware
-
 	// Attach the health service
 	svc := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(svr, svc)

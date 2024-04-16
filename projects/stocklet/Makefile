@@ -10,4 +10,4 @@ format:
 	gofmt -w -s .
 
 deploy-docker:
-	docker compose up -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml
+	docker compose -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml up --build

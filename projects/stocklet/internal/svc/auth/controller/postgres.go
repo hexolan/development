@@ -48,21 +48,26 @@ func (c postgresController) SetPassword(ctx context.Context, userId string, pass
 		return errors.WrapServiceError(errors.ErrCodeInvalidArgument, "unable to hash password", err)
 	}
 
-	// check if auth method already exists
+	// Check if auth method already exists
 	var statement string
 	_, err = c.getPasswordAuthMethod(ctx, userId)
 	if err != nil {
-		// auth method does not exist
+		// Auth method does not exist
 		statement = "INSERT INTO auth_methods (user_id, hashed_password) VALUES ($1, $2)"
 	} else {
-		// auth method already exists
+		// Auth method already exists
 		statement = "UPDATE auth_methods SET hashed_password=$2 WHERE user_id=$1"
 	}
 
-	// exec statement
-	_, err = c.cl.Exec(ctx, statement, userId, hashedPassword)
+	// Execute statement
+	result, err := c.cl.Exec(ctx, statement, userId, hashedPassword)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to set password", err)
+	}
+
+	// Ensure a row was affected
+	if result.RowsAffected() != 1 {
+		return errors.WrapServiceError(errors.ErrCodeExtService, "auth methods unaffected", err)
 	}
 
 	return nil

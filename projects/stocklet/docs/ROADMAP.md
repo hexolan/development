@@ -1,4 +1,13 @@
-# Stocklet: Feature Roadmap
+# Stocklet Docs: Feature Roadmap
+
+## Table of Contents
+
+* [Repository Overview](/README.md)
+* [Documentation: Overview](/docs/README.md)
+* [Documentation: Events](/docs/EVENTS.md)
+* [Documentation: Feature Roadmap](/docs/ROADMAP.md)
+
+## Prologue
 
 This document should be considered a brainstorm of ideas.
 
@@ -20,7 +29,7 @@ However, contributions are welcome; if you feel like implementing something (alr
 * Integration tests
 * Ensured idempotency in event consumers (service-side)
 * Clear-up of event processes
-* Kubernetes deployment
+* Kubernetes deployment (prepare manifest files)
 * Interchangable infrastructure
   * Support for NATS as a message broker
   * Support for MongoDB as a database

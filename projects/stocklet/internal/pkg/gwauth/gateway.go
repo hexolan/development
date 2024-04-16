@@ -34,7 +34,7 @@ type JWTClaims struct {
 }
 
 func IsGatewayRequest(ctx context.Context) (bool, *metadata.MD) {
-	// check the gRPC request has metadata
+	// Check the gRPC request has metadata
 	md, exists := metadata.FromIncomingContext(ctx)
 	if !exists {
 		return false, nil
@@ -48,15 +48,15 @@ func IsGatewayRequest(ctx context.Context) (bool, *metadata.MD) {
 }
 
 func GetGatewayUser(md *metadata.MD) (*JWTClaims, error) {
-	// check a token payload has been passed down
-	// Envoy validates JWT tokens and provides a "X-JWT-Payload" header. (containing base64 JWT token claims)
+	// Check a token payload has been passed down
+	// Envoy validates JWT tokens and provides a "X-JWT-Payload" header (containing base64 JWT token claims)
 	authorization := md.Get("jwt-payload")
 	if len(authorization) != 1 {
 		return nil, errors.NewServiceError(errors.ErrCodeUnauthorised, "invalid jwt")
 	}
 
-	// user is authenticated
-	// attempt to decode the jwt-payload
+	// User is authenticated
+	// Attempt to decode the jwt-payload
 	bytes, err := base64.StdEncoding.DecodeString(authorization[0])
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeUnauthorised, "malformed jwt", err)

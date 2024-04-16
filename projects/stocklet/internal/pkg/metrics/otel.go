@@ -31,13 +31,11 @@ import (
 
 // Initiate the OpenTelemetry tracer provider
 func InitTracerProvider(cfg *config.OtelConfig, svcName string) *sdktrace.TracerProvider {
-	// create resoure
+	// Create resource and trace exporter (to otel-collector)
 	resource := initTracerResource(svcName)
-
-	// create trace exporter (to OTEL-collector)
 	exporter := initTracerExporter(cfg.CollectorGrpc)
 
-	// create trace provider with exporter
+	// Create the trace provider
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
 
@@ -45,7 +43,6 @@ func InitTracerProvider(cfg *config.OtelConfig, svcName string) *sdktrace.Tracer
 	)
 
 	otel.SetTracerProvider(tp)
-
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 
 	return tp
@@ -61,7 +58,7 @@ func initTracerExporter(collectorEndpoint string) sdktrace.SpanExporter {
 		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Panic().Err(err).Msg("failed to start otlp grpc exporter")
+		log.Panic().Err(err).Msg("otel: failed to start otlp gRPC exporter")
 	}
 
 	return exporter
@@ -78,7 +75,7 @@ func initTracerResource(svcName string) *sdkresource.Resource {
 		),
 	)
 	if err != nil {
-		log.Panic().Err(err).Msg("failed to create otel tracer resource")
+		log.Panic().Err(err).Msg("otel: failed to create tracer resource")
 	}
 
 	return resource

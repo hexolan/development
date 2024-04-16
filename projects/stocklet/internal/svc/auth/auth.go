@@ -109,6 +109,7 @@ func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordReque
 	// then perform permission checking
 	gatewayRequest, gwMd := gwauth.IsGatewayRequest(ctx)
 	if gatewayRequest {
+		log.Info().Msg("is a gateway request")
 		// Ensure user is authenticated
 		claims, err := gwauth.GetGatewayUser(gwMd)
 		if err != nil {
@@ -123,6 +124,12 @@ func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordReque
 	if err := svc.pbVal.Validate(req); err != nil {
 		// provide validation err context to user
 		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
+	}
+
+	// Set the password
+	err := svc.store.SetPassword(ctx, req.UserId, req.Password)
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.SetPasswordResponse{Detail: "Successfully updated password"}, nil

@@ -8,7 +8,7 @@ This project was originally built as an experiment with event-driven architectur
 
 Any ideas, suggestions or direct contributions to better conform with general and evolving industry practices are welcome and will be greatly appreciated, as I'd like for this project to evolve to the stage of being somewhat a reflection of a production-ready enterprise application.
 
-⚠️ The application should be considered in the experimental prototype stage. Breaking changes can be expected between future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
+⚠️ The application should be considered in the experimental prototype stage. Breaking changes can be expected between any future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
 
 ## 📝 Features
 
@@ -51,10 +51,10 @@ Any ideas, suggestions or direct contributions to better conform with general an
   * [github.com/golang-migrate/migrate/v4](https://pkg.go.dev/github.com/golang-migrate/migrate/v4#section-readme)
 
 * Miscellaneous
+  * [golang.org/x/crypto/bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
   * [github.com/rs/zerolog](https://pkg.go.dev/github.com/rs/zerolog)
   * [github.com/lestrrat-go/jwx/v2](https://pkg.go.dev/github.com/lestrrat-go/jwx/v2)
   * [github.com/doug-martin/goqu/v9](https://pkg.go.dev/github.com/doug-martin/goqu/v9)
-  * [golang.org/x/crypto/bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
 
 #### Infrastructure
 
@@ -93,13 +93,13 @@ Further documentation on the events can be found at [``/docs/EVENTS.md``](/docs/
 
 ### Using Docker
 
-The application can be deployed using [Docker Compose](https://docs.docker.com/compose/) with the config files located in [``/deploy/docker/``](/deploy/docker/)
+The application can be deployed using [Docker Compose](https://docs.docker.com/compose/) (with the compose files located in [``/deploy/docker/``](/deploy/docker/)). Ensure the correct configuration is in place by copying and removing ``.example`` from the end of the example environment files located in [``/deploy/configs/``](/deploy/configs/).
 
-``docker compose up -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml``
+Deploy using the following command: ``docker compose -f deploy/docker/compose.yaml -f deploy/docker/compose.override.yaml up --build``
 
 ## 🧪 Contributing
 
-All forms of feedback and contributions are welcome and appreciated! If you like this project then please leave a ⭐ to show your support.
+If you like this project then please leave a ⭐ to show your support. All forms of feedback and contributions are welcome and greatly appreciated!
 
 Have any [ideas for improvements?](/docs/ROADMAP.md) Please don't hesistate to [open an issue](https://github.com/hexolan/stocklet/issues/new) to discuss, or a [pull request](https://github.com/hexolan/stocklet/compare) with [enhancements](https://github.com/hexolan/stocklet/fork).
 

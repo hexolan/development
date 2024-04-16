@@ -65,6 +65,6 @@ func (cfg *SharedConfig) Load() error {
 		return err
 	}
 
-	// config succesfully loaded
+	// Config succesfully loaded
 	return nil
 }
