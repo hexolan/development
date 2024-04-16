@@ -16,10 +16,10 @@
 package auth
 
 import (
-	"crypto/x509"
 	"crypto/ecdsa"
-	"encoding/pem"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
@@ -28,12 +28,12 @@ import (
 // Auth Service Configuration
 type ServiceConfig struct {
 	// Core configuration
-	Shared config.SharedConfig
+	Shared      config.SharedConfig
 	ServiceOpts ServiceConfigOpts
 
 	// Dynamically loaded configuration
 	Postgres config.PostgresConfig
-	Kafka config.KafkaConfig
+	Kafka    config.KafkaConfig
 }
 
 // load the service configuration
@@ -80,8 +80,8 @@ func (opts *ServiceConfigOpts) Load() error {
 // The public key is also served in JWK format, from this service,
 // for use when validating the tokens at the API ingress.
 func (opts *ServiceConfigOpts) loadPrivateKey() error {
-	// PEM private key file exposed as an environment variable encoded in base64 
-	opt, err := config.RequireFromEnv("AUTH_PRIVATE_KEY") 
+	// PEM private key file exposed as an environment variable encoded in base64
+	opt, err := config.RequireFromEnv("AUTH_PRIVATE_KEY")
 	if err != nil {
 		return err
 	}

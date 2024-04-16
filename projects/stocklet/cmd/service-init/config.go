@@ -25,7 +25,7 @@ type InitConfig struct {
 	//
 	// Env Var: "INIT_SVC_NAME"
 	ServiceName string
-	
+
 	// Env Var: "INIT_MIGRATIONS" (optional. accepts 'false')
 	// Defaults to true
 	ApplyMigrations bool
@@ -36,12 +36,12 @@ type InitConfig struct {
 	// Env Var: "INIT_DEBEZIUM_HOST" (optional)
 	// e.g. "http://debezium:8083"
 	ApplyDebezium bool
-	DebeziumHost string
+	DebeziumHost  string
 }
 
 func (opts *InitConfig) Load() error {
 	// ServiceName
-	opt, err := config.RequireFromEnv("INIT_SVC_NAME") 
+	opt, err := config.RequireFromEnv("INIT_SVC_NAME")
 	if err != nil {
 		return err
 	}

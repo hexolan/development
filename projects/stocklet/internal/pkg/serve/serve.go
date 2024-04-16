@@ -17,7 +17,7 @@ package serve
 
 // Port Definitions
 const (
-	grpcPort string = "9090"
+	grpcPort    string = "9090"
 	gatewayPort string = "90"
 )
 

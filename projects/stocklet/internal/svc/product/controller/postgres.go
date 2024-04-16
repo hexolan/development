@@ -19,15 +19,15 @@ import (
 	"context"
 	"golang.org/x/exp/maps"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 
-	"github.com/hexolan/stocklet/internal/svc/product"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
+	"github.com/hexolan/stocklet/internal/svc/product"
 )
 
 const pgProductBaseQuery string = "SELECT id, name, description, price, created_at, updated_at FROM products"
@@ -51,7 +51,7 @@ func (c postgresController) getProduct(ctx context.Context, tx *pgx.Tx, productI
 	if tx == nil {
 		row = c.cl.QueryRow(ctx, query, productId)
 	} else {
-		row = (*tx).QueryRow(ctx, query, productId)	
+		row = (*tx).QueryRow(ctx, query, productId)
 	}
 
 	// Scan row to protobuf obj
@@ -65,7 +65,7 @@ func (c postgresController) getProduct(ctx context.Context, tx *pgx.Tx, productI
 
 // todo: implementing pagination mechanism
 func (c postgresController) GetProducts(ctx context.Context) ([]*pb.Product, error) {
-	rows, err := c.cl.Query(ctx, pgProductBaseQuery + " LIMIT 10")
+	rows, err := c.cl.Query(ctx, pgProductBaseQuery+" LIMIT 10")
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error", err)
 	}
@@ -188,7 +188,7 @@ func (c postgresController) PriceOrderProducts(ctx context.Context, orderId stri
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to fetch price quotes", err)
 	}
-	
+
 	var productPrices map[string]float32
 	for rows.Next() {
 		var productId string
@@ -289,6 +289,6 @@ func scanRowToProduct(row pgx.Row) (*pb.Product, error) {
 		unixUpdated := tmpUpdatedAt.Time.Unix()
 		productObj.UpdatedAt = &unixUpdated
 	}
-	
+
 	return &productObj, nil
 }

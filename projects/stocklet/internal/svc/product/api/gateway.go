@@ -18,12 +18,12 @@ package api
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/zerolog/log"
 
-	"github.com/hexolan/stocklet/internal/svc/product"
-	"github.com/hexolan/stocklet/internal/pkg/serve"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
+	"github.com/hexolan/stocklet/internal/pkg/serve"
+	"github.com/hexolan/stocklet/internal/svc/product"
 )
 
 func PrepareGateway(cfg *product.ServiceConfig) *runtime.ServeMux {

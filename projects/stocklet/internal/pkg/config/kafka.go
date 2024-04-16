@@ -34,7 +34,7 @@ func (cfg *KafkaConfig) Load() error {
 
 	// comma seperate the kafka brokers
 	cfg.Brokers = strings.Split(brokersOpt, ",")
-	
+
 	// config options were succesfully set and loaded
 	return nil
 }

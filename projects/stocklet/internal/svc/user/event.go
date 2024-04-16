@@ -17,8 +17,8 @@ package user
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
 )
 
 func PrepareUserCreatedEvent(user *pb.User) ([]byte, string, error) {
@@ -26,10 +26,10 @@ func PrepareUserCreatedEvent(user *pb.User) ([]byte, string, error) {
 	event := &eventspb.UserCreatedEvent{
 		Revision: 1,
 
-		UserId: user.Id,
-		Email: user.Email,
+		UserId:    user.Id,
+		Email:     user.Email,
 		FirstName: user.FirstName,
-		LastName: user.LastName,
+		LastName:  user.LastName,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -41,7 +41,7 @@ func PrepareUserEmailUpdatedEvent(userId string, email string) ([]byte, string, 
 		Revision: 1,
 
 		UserId: userId,
-		Email: email,
+		Email:  email,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -53,7 +53,7 @@ func PrepareUserDeletedEvent(user *pb.User) ([]byte, string, error) {
 		Revision: 1,
 
 		UserId: user.Id,
-		Email: user.Email,
+		Email:  user.Email,
 	}
 
 	return messaging.MarshalEvent(event, topic)

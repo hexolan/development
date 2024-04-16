@@ -17,8 +17,8 @@ package payment
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
 )
 
 func PrepareBalanceCreatedEvent(bal *pb.CustomerBalance) ([]byte, string, error) {
@@ -27,7 +27,7 @@ func PrepareBalanceCreatedEvent(bal *pb.CustomerBalance) ([]byte, string, error)
 		Revision: 1,
 
 		CustomerId: bal.CustomerId,
-		Balance: bal.Balance,
+		Balance:    bal.Balance,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -39,7 +39,7 @@ func PrepareBalanceCreditedEvent(customerId string, amount float32, newBalance f
 		Revision: 1,
 
 		CustomerId: customerId,
-		Amount: amount,
+		Amount:     amount,
 		NewBalance: newBalance,
 	}
 
@@ -52,7 +52,7 @@ func PrepareBalanceDebitedEvent(customerId string, amount float32, newBalance fl
 		Revision: 1,
 
 		CustomerId: customerId,
-		Amount: amount,
+		Amount:     amount,
 		NewBalance: newBalance,
 	}
 
@@ -65,7 +65,7 @@ func PrepareBalanceClosedEvent(bal *pb.CustomerBalance) ([]byte, string, error) 
 		Revision: 1,
 
 		CustomerId: bal.CustomerId,
-		Balance: bal.Balance,
+		Balance:    bal.Balance,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -77,9 +77,9 @@ func PrepareTransactionLoggedEvent(transaction *pb.Transaction) ([]byte, string,
 		Revision: 1,
 
 		TransactionId: transaction.Id,
-		Amount: transaction.Amount,
-		OrderId: transaction.OrderId,
-		CustomerId: transaction.CustomerId,
+		Amount:        transaction.Amount,
+		OrderId:       transaction.OrderId,
+		CustomerId:    transaction.CustomerId,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -91,9 +91,9 @@ func PrepareTransactionReversedEvent(transaction *pb.Transaction) ([]byte, strin
 		Revision: 1,
 
 		TransactionId: transaction.Id,
-		Amount: transaction.Amount,
-		OrderId: transaction.OrderId,
-		CustomerId: transaction.CustomerId,
+		Amount:        transaction.Amount,
+		OrderId:       transaction.OrderId,
+		CustomerId:    transaction.CustomerId,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -104,10 +104,10 @@ func PreparePaymentProcessedEvent_Success(transaction *pb.Transaction) ([]byte, 
 	event := &eventspb.PaymentProcessedEvent{
 		Revision: 1,
 
-		Type: eventspb.PaymentProcessedEvent_TYPE_SUCCESS,
-		OrderId: transaction.OrderId,
-		CustomerId: transaction.CustomerId,
-		Amount: transaction.Amount,
+		Type:          eventspb.PaymentProcessedEvent_TYPE_SUCCESS,
+		OrderId:       transaction.OrderId,
+		CustomerId:    transaction.CustomerId,
+		Amount:        transaction.Amount,
 		TransactionId: &transaction.Id,
 	}
 
@@ -119,10 +119,10 @@ func PreparePaymentProcessedEvent_Failure(orderId string, customerId string, amo
 	event := &eventspb.PaymentProcessedEvent{
 		Revision: 1,
 
-		Type: eventspb.PaymentProcessedEvent_TYPE_FAILED,
-		OrderId: orderId,
+		Type:       eventspb.PaymentProcessedEvent_TYPE_FAILED,
+		OrderId:    orderId,
 		CustomerId: customerId,
-		Amount: amount,
+		Amount:     amount,
 	}
 
 	return messaging.MarshalEvent(event, topic)

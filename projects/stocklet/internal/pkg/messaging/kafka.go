@@ -18,8 +18,8 @@ package messaging
 import (
 	"context"
 
-	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/kadm"
+	"github.com/twmb/franz-go/pkg/kgo"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 	"github.com/hexolan/stocklet/internal/pkg/errors"

@@ -20,11 +20,11 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/propagation"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
@@ -33,7 +33,7 @@ import (
 func InitTracerProvider(cfg *config.OtelConfig, svcName string) *sdktrace.TracerProvider {
 	// create resoure
 	resource := initTracerResource(svcName)
-	
+
 	// create trace exporter (to OTEL-collector)
 	exporter := initTracerExporter(cfg.CollectorGrpc)
 

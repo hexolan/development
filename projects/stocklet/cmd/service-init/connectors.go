@@ -17,8 +17,8 @@ package main
 
 import (
 	"bytes"
-	"net/http"
 	"encoding/json"
+	"net/http"
 
 	"github.com/rs/zerolog/log"
 
@@ -27,26 +27,26 @@ import (
 
 func applyPostgresOutbox(cfg *InitConfig, conf *config.PostgresConfig) {
 	payloadB, err := json.Marshal(map[string]string{
-		"connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-		"plugin.name": "pgoutput",
-		"tasks.max": "1",
-		"table.include.list": "public.event_outbox",
-		"transforms": "outbox",
+		"connector.class":        "io.debezium.connector.postgresql.PostgresConnector",
+		"plugin.name":            "pgoutput",
+		"tasks.max":              "1",
+		"table.include.list":     "public.event_outbox",
+		"transforms":             "outbox",
 		"transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
 		"transforms.outbox.route.topic.replacement": "${routedByValue}",
 		"value.converter": "io.debezium.converters.BinaryDataConverter",
-		
-		"topic.prefix": cfg.ServiceName,
+
+		"topic.prefix":      cfg.ServiceName,
 		"database.hostname": conf.Host,
-		"database.port": conf.Port,
-		"database.user": conf.Username,
+		"database.port":     conf.Port,
+		"database.user":     conf.Username,
 		"database.password": conf.Password,
-		"database.dbname": conf.Database,
+		"database.dbname":   conf.Database,
 	})
 	if err != nil {
 		log.Panic().Err(err).Msg("debezium connect: failed to marshal debezium cfg")
 	}
-	
+
 	url := cfg.DebeziumHost + "/connectors/" + cfg.ServiceName + "-outbox/config"
 	log.Info().Str("url", url).Msg("debezium url")
 	req, err := http.NewRequest(

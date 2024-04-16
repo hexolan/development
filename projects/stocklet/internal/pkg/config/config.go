@@ -47,7 +47,7 @@ type SharedConfig struct {
 	// 'dev' or 'development' -> true
 	// Defaults to false
 	DevMode bool
-	
+
 	Otel OtelConfig
 }
 
@@ -58,7 +58,7 @@ func (cfg *SharedConfig) Load() error {
 	if mode, err := RequireFromEnv("MODE"); err == nil && (mode == "dev" || mode == "development") {
 		cfg.DevMode = true
 	}
-	
+
 	// load the Open Telemetry config
 	cfg.Otel = OtelConfig{}
 	if err := cfg.Otel.Load(); err != nil {

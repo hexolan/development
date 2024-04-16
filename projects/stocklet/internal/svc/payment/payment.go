@@ -18,21 +18,21 @@ package payment
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
 )
 
 // Interface for the service
 type PaymentService struct {
 	pb.UnimplementedPaymentServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -40,15 +40,15 @@ type PaymentService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
-    GetBalance(ctx context.Context, customerId string) (*pb.CustomerBalance, error)
+	GetBalance(ctx context.Context, customerId string) (*pb.CustomerBalance, error)
 	GetTransaction(ctx context.Context, transactionId string) (*pb.Transaction, error)
-	
-    CreateBalance(ctx context.Context, customerId string) error
-    CreditBalance(ctx context.Context, customerId string, amount float32) error
-    DebitBalance(ctx context.Context, customerId string, amount float32, orderId *string) (*pb.Transaction, error)
-    CloseBalance(ctx context.Context, customerId string) error
 
-    PaymentForOrder(ctx context.Context, orderId string, customerId string, amount float32) error
+	CreateBalance(ctx context.Context, customerId string) error
+	CreditBalance(ctx context.Context, customerId string, amount float32) error
+	DebitBalance(ctx context.Context, customerId string, amount float32, orderId *string) (*pb.Transaction, error)
+	CloseBalance(ctx context.Context, customerId string) error
+
+	PaymentForOrder(ctx context.Context, orderId string, customerId string, amount float32) error
 }
 
 // Interface for event consumption
@@ -76,8 +76,8 @@ func NewPaymentService(cfg *ServiceConfig, store StorageController) *PaymentServ
 
 func (svc PaymentService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "payment",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "payment",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }

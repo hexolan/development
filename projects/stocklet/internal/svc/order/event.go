@@ -17,8 +17,8 @@ package order
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 func PrepareOrderCreatedEvent(order *pb.Order) ([]byte, string, error) {
@@ -26,8 +26,8 @@ func PrepareOrderCreatedEvent(order *pb.Order) ([]byte, string, error) {
 	event := &eventspb.OrderCreatedEvent{
 		Revision: 1,
 
-		OrderId: order.Id,
-		CustomerId: order.CustomerId,
+		OrderId:        order.Id,
+		CustomerId:     order.CustomerId,
 		ItemQuantities: order.Items,
 	}
 
@@ -39,8 +39,8 @@ func PrepareOrderPendingEvent(order *pb.Order) ([]byte, string, error) {
 	event := &eventspb.OrderPendingEvent{
 		Revision: 1,
 
-		OrderId: order.Id,
-		CustomerId: order.CustomerId,
+		OrderId:        order.Id,
+		CustomerId:     order.CustomerId,
 		ItemQuantities: order.Items,
 	}
 
@@ -52,9 +52,9 @@ func PrepareOrderRejectedEvent(order *pb.Order) ([]byte, string, error) {
 	event := &eventspb.OrderRejectedEvent{
 		Revision: 1,
 
-		OrderId: order.Id,
+		OrderId:       order.Id,
 		TransactionId: order.TransactionId,
-		ShippingId: order.ShippingId,
+		ShippingId:    order.ShippingId,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -65,9 +65,9 @@ func PrepareOrderApprovedEvent(order *pb.Order) ([]byte, string, error) {
 	event := &eventspb.OrderApprovedEvent{
 		Revision: 1,
 
-		OrderId: order.Id,
+		OrderId:       order.Id,
 		TransactionId: order.GetTransactionId(),
-		ShippingId: order.GetShippingId(),
+		ShippingId:    order.GetShippingId(),
 	}
 
 	return messaging.MarshalEvent(event, topic)

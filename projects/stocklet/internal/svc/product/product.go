@@ -18,21 +18,21 @@ package product
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
 )
 
 // Interface for the service
 type ProductService struct {
 	pb.UnimplementedProductServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -41,12 +41,12 @@ type ProductService struct {
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
 	GetProduct(ctx context.Context, productId string) (*pb.Product, error)
-    GetProducts(ctx context.Context) ([]*pb.Product, error)
-	
+	GetProducts(ctx context.Context) ([]*pb.Product, error)
+
 	UpdateProductPrice(ctx context.Context, productId string, price float32) (*pb.Product, error)
 	DeleteProduct(ctx context.Context, productId string) error
 
-    PriceOrderProducts(ctx context.Context, orderId string, customerId string, productQuantities map[string]int32) error
+	PriceOrderProducts(ctx context.Context, orderId string, customerId string, productQuantities map[string]int32) error
 }
 
 // Interface for event consumption
@@ -74,8 +74,8 @@ func NewProductService(cfg *ServiceConfig, store StorageController) *ProductServ
 
 func (svc ProductService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "product",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "product",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
@@ -84,7 +84,7 @@ func (svc ProductService) ViewProduct(ctx context.Context, req *pb.ViewProductRe
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// Get product from DB

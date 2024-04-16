@@ -22,25 +22,25 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
 type kafkaController struct {
 	cl *kgo.Client
 
 	svc pb.OrderServiceServer
-	
-	ctx context.Context
+
+	ctx       context.Context
 	ctxCancel context.CancelFunc
 }
 
 func NewKafkaController(cl *kgo.Client) order.ConsumerController {
 	// Create a cancellable context for the consumer
 	ctx, ctxCancel := context.WithCancel(context.Background())
-	
+
 	// Ensure the required Kafka topics exist
 	err := messaging.EnsureKafkaTopics(
 		cl,

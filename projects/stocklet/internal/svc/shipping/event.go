@@ -17,8 +17,8 @@ package shipping
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
 )
 
 type EventOrderMetadata struct {
@@ -32,7 +32,7 @@ func PrepareShipmentAllocationEvent_Failed(orderId string, orderMetadata EventOr
 	event := &eventspb.ShipmentAllocationEvent{
 		Revision: 1,
 
-		Type: eventspb.ShipmentAllocationEvent_TYPE_FAILED,
+		Type:    eventspb.ShipmentAllocationEvent_TYPE_FAILED,
 		OrderId: orderId,
 		OrderMetadata: &eventspb.ShipmentAllocationEvent_OrderMetadata{
 			CustomerId: orderMetadata.CustomerId,
@@ -50,14 +50,14 @@ func PrepareShipmentAllocationEvent_Allocated(orderId string, orderMetadata Even
 	event := &eventspb.ShipmentAllocationEvent{
 		Revision: 1,
 
-		Type: eventspb.ShipmentAllocationEvent_TYPE_ALLOCATED,
+		Type:    eventspb.ShipmentAllocationEvent_TYPE_ALLOCATED,
 		OrderId: orderId,
 		OrderMetadata: &eventspb.ShipmentAllocationEvent_OrderMetadata{
 			CustomerId: orderMetadata.CustomerId,
 			ItemsPrice: orderMetadata.ItemsPrice,
 			TotalPrice: orderMetadata.TotalPrice,
 		},
-		ShipmentId: shipmentId,
+		ShipmentId:        shipmentId,
 		ProductQuantities: productQuantities,
 	}
 
@@ -69,14 +69,14 @@ func PrepareShipmentAllocationEvent_AllocationReleased(orderId string, shipmentI
 	for _, item := range shipmentItems {
 		productQuantities[item.ProductId] = item.Quantity
 	}
-	
+
 	topic := messaging.Shipping_Shipment_Allocation_Topic
 	event := &eventspb.ShipmentAllocationEvent{
 		Revision: 1,
 
-		Type: eventspb.ShipmentAllocationEvent_TYPE_ALLOCATION_RELEASED,
-		OrderId: orderId,
-		ShipmentId: shipmentId,
+		Type:              eventspb.ShipmentAllocationEvent_TYPE_ALLOCATION_RELEASED,
+		OrderId:           orderId,
+		ShipmentId:        shipmentId,
 		ProductQuantities: productQuantities,
 	}
 
@@ -88,8 +88,8 @@ func PrepareShipmentDispatchedEvent(orderId string, shipmentId string, productQu
 	event := &eventspb.ShipmentDispatchedEvent{
 		Revision: 1,
 
-		OrderId: orderId,
-		ShipmentId: shipmentId,
+		OrderId:           orderId,
+		ShipmentId:        shipmentId,
 		ProductQuantities: productQuantities,
 	}
 

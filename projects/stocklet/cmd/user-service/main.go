@@ -16,12 +16,12 @@
 package main
 
 import (
-	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
 	"github.com/hexolan/stocklet/internal/pkg/serve"
 	"github.com/hexolan/stocklet/internal/pkg/storage"
-	"github.com/hexolan/stocklet/internal/pkg/metrics"
 	"github.com/hexolan/stocklet/internal/svc/user"
 	"github.com/hexolan/stocklet/internal/svc/user/api"
 	"github.com/hexolan/stocklet/internal/svc/user/controller"
@@ -68,7 +68,7 @@ func main() {
 	svc := user.NewUserService(cfg, store)
 	grpcSvr := api.PrepareGrpc(cfg, svc)
 	gatewayMux := api.PrepareGateway(cfg)
-	
+
 	// Serve/start the interfaces
 	go serve.Gateway(gatewayMux)
 	serve.Grpc(grpcSvr)

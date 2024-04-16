@@ -32,7 +32,7 @@ type PostgresConfig struct {
 	// Env Var: "PG_PORT" (optional)
 	// Defaults to "5432"
 	Port string
-	
+
 	// Env Var: "PG_DB"
 	Database string
 }
@@ -77,7 +77,7 @@ func (cfg *PostgresConfig) Load() error {
 	if opt, err := RequireFromEnv("PG_DB"); err != nil {
 		return err
 	} else {
-		cfg.Database = opt		
+		cfg.Database = opt
 	}
 
 	// config properties succesfully loaded

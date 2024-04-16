@@ -16,30 +16,32 @@
 package auth
 
 import (
-	"fmt"
 	"context"
 	"encoding/json"
+	"fmt"
 
-	"github.com/rs/zerolog/log"
+	"github.com/bufbuild/protovalidate-go"
 	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 )
 
 // Interface for the service
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
 
-	cfg *ServiceConfig
+	cfg       *ServiceConfig
 	publicJWK *pb.PublicEcJWK
-	
+
 	store StorageController
+	pbVal *protovalidate.Validator
 }
 
 // Interface for database methods
@@ -62,9 +64,16 @@ type ConsumerController interface {
 // Create the auth service
 func NewAuthService(cfg *ServiceConfig, store StorageController) *AuthService {
 	publicJWK := preparePublicJwk(cfg)
-	
+
+	// Initialise the protobuf validator
+	pbVal, err := protovalidate.New()
+	if err != nil {
+		log.Panic().Err(err).Msg("failed to initialise protobuf validator")
+	}
+
 	svc := &AuthService{
-		store: store,
+		store:     store,
+		pbVal:     pbVal,
 		publicJWK: publicJWK,
 	}
 
@@ -73,34 +82,83 @@ func NewAuthService(cfg *ServiceConfig, store StorageController) *AuthService {
 
 func (svc AuthService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "auth",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "auth",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
 
-// Provide the JWK ECDSA public key as part of a JSON Web Key set.
-// This method is called by the API ingress for usage when validating inbound JWT tokens.
-func (svc AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
-	return &pb.GetJwksResponse{Keys: []*pb.PublicEcJWK{svc.publicJWK}}, nil
-}
-
-// todo: docs
+// todo: implement
 func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordRequest) (*pb.LoginPasswordResponse, error) {
-	// todo: implement
-	log.Info().Msg("testing")
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// provide validation err context to user
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
+	}
+
+	// Verify password
+	match, err := svc.store.VerifyPassword(ctx, req.UserId, req.Password)
+	if err != nil || match == false {
+		return nil, errors.WrapServiceError(errors.ErrCodeForbidden, "invalid user id or password", err)
+	}
+
+	// Issue token for the user
+	token, err := issueToken(svc.cfg, req.UserId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "error issuing token", err)
+	}
+
+	return &pb.LoginPasswordResponse{Detail: "Success", Data: token}, nil
 }
 
-// todo: docs
+// todo: implement
 func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
-	// todo: implement
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// provide validation err context to user
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
+	}
+
+	// todo: permission checking
+	// ensuring not gateway request - or if it is, then ensure current user only
+
 	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
 }
 
 // todo: implement
 func (svc AuthService) ProcessUserDeletedEvent(ctx context.Context, req *eventpb.UserDeletedEvent) (*emptypb.Empty, error) {
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	// Validate the request args
+	if err := svc.pbVal.Validate(req); err != nil {
+		// provide validation err context to user
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
+	}
+
+	err := svc.store.DeleteAuthMethods(ctx, req.UserId)
+	if err != nil {
+		return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to process event", err)
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// Provide the JWK ECDSA public key as part of a JSON Web Key set.
+// This method is called by the API gateway for usage when validating inbound JWT tokens.
+func (svc AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
+	return &pb.GetJwksResponse{Keys: []*pb.PublicEcJWK{svc.publicJWK}}, nil
+}
+
+// Issues a JWT token
+func issueToken(cfg *ServiceConfig, sub string) (*pb.AuthToken, error) {
+	const expiryTime = 86400 // 1 day
+
+	// todo: gen token
+	accessToken := "todo"
+
+	return &pb.AuthToken{
+		TokenType:   "Bearer",
+		AccessToken: accessToken,
+		ExpiresIn:   expiryTime,
+	}, nil
 }
 
 // Converts the ECDSA key to a public JWK.

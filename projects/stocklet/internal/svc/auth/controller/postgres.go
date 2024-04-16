@@ -34,6 +34,7 @@ func NewPostgresController(cl *pgxpool.Pool) auth.StorageController {
 
 // todo: implement
 func (c postgresController) SetPassword(ctx context.Context, userId string, password string) error {
+	unimplemented
 	return nil
 }
 

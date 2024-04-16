@@ -17,8 +17,8 @@ package warehouse
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1"
 )
 
 type EventOrderMetadata struct {
@@ -33,7 +33,7 @@ func PrepareStockCreatedEvent(productStock *pb.ProductStock) ([]byte, string, er
 		Revision: 1,
 
 		ProductId: productStock.ProductId,
-		Quantity: productStock.Quantity,
+		Quantity:  productStock.Quantity,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -44,8 +44,8 @@ func PrepareStockAddedEvent(productId string, amount int32, reservationId *strin
 	event := &eventspb.StockAddedEvent{
 		Revision: 1,
 
-		ProductId: productId,
-		Amount: amount,
+		ProductId:     productId,
+		Amount:        amount,
 		ReservationId: reservationId,
 	}
 
@@ -57,8 +57,8 @@ func PrepareStockRemovedEvent(productId string, amount int32, reservationId *str
 	event := &eventspb.StockRemovedEvent{
 		Revision: 1,
 
-		ProductId: productId,
-		Amount: amount,
+		ProductId:     productId,
+		Amount:        amount,
 		ReservationId: reservationId,
 	}
 
@@ -70,7 +70,7 @@ func PrepareStockReservationEvent_Failed(orderId string, orderMetadata EventOrde
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,
 
-		Type: eventspb.StockReservationEvent_TYPE_INSUFFICIENT_STOCK,
+		Type:    eventspb.StockReservationEvent_TYPE_INSUFFICIENT_STOCK,
 		OrderId: orderId,
 		OrderMetadata: &eventspb.StockReservationEvent_OrderMetadata{
 			CustomerId: orderMetadata.CustomerId,
@@ -88,14 +88,14 @@ func PrepareStockReservationEvent_Reserved(orderId string, orderMetadata EventOr
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,
 
-		Type: eventspb.StockReservationEvent_TYPE_STOCK_RESERVED,
+		Type:    eventspb.StockReservationEvent_TYPE_STOCK_RESERVED,
 		OrderId: orderId,
 		OrderMetadata: &eventspb.StockReservationEvent_OrderMetadata{
 			CustomerId: orderMetadata.CustomerId,
 			ItemsPrice: orderMetadata.ItemsPrice,
 			TotalPrice: orderMetadata.TotalPrice,
 		},
-		ReservationId: reservationId,
+		ReservationId:    reservationId,
 		ReservationStock: reservationStock,
 	}
 
@@ -112,9 +112,9 @@ func PrepareStockReservationEvent_Returned(orderId string, reservationId string,
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,
 
-		Type: eventspb.StockReservationEvent_TYPE_STOCK_RESERVED,
-		OrderId: orderId,
-		ReservationId: reservationId,
+		Type:             eventspb.StockReservationEvent_TYPE_STOCK_RESERVED,
+		OrderId:          orderId,
+		ReservationId:    reservationId,
 		ReservationStock: reservationStock,
 	}
 
@@ -131,9 +131,9 @@ func PrepareStockReservationEvent_Consumed(orderId string, reservationId string,
 	event := &eventspb.StockReservationEvent{
 		Revision: 1,
 
-		Type: eventspb.StockReservationEvent_TYPE_STOCK_CONSUMED,
-		OrderId: orderId,
-		ReservationId: reservationId,
+		Type:             eventspb.StockReservationEvent_TYPE_STOCK_CONSUMED,
+		OrderId:          orderId,
+		ReservationId:    reservationId,
 		ReservationStock: reservationStock,
 	}
 

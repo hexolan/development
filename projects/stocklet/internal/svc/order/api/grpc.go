@@ -18,9 +18,9 @@ package api
 import (
 	"google.golang.org/grpc"
 
-	"github.com/hexolan/stocklet/internal/svc/order"
-	"github.com/hexolan/stocklet/internal/pkg/serve"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	"github.com/hexolan/stocklet/internal/pkg/serve"
+	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
 func PrepareGrpc(cfg *order.ServiceConfig, svc *order.OrderService) *grpc.Server {

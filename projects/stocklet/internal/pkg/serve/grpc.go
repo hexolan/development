@@ -19,11 +19,11 @@ import (
 	"net"
 
 	"github.com/rs/zerolog/log"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 )
@@ -41,7 +41,7 @@ func NewGrpcServeBase(cfg *config.SharedConfig) *grpc.Server {
 	// Attach the health service
 	svc := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(svr, svc)
-	
+
 	// Enable reflection in dev mode
 	// Eases usage of tools like grpcurl and grpcui
 	if cfg.DevMode {

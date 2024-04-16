@@ -8,7 +8,7 @@ This project was originally built as an experiment with event-driven architectur
 
 Any ideas, suggestions or direct contributions to better conform with general and evolving industry practices are welcome and will be greatly appreciated, as I'd like for this project to evolve to the stage of being somewhat a reflection of a production-ready enterprise application.
 
-⚠️ The application should be considered in the experimental stage. Breaking changes can be expected between future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
+⚠️ The application should be considered in the experimental prototype stage. Breaking changes can be expected between future commits to this repo, in order to ease the development process and allow for clean refactoring of the project.
 
 ## 📝 Features
 
@@ -26,7 +26,7 @@ Any ideas, suggestions or direct contributions to better conform with general an
 
 ### 🔎 Overview
 
-todo: overview diagram
+![Architecture Overview](/docs/imgs/overview.svg)
 
 ### 🧰 Technical Stack
 
@@ -99,7 +99,7 @@ The application can be deployed using [Docker Compose](https://docs.docker.com/c
 
 All forms of feedback and contributions are welcome and appreciated! If you like this project then please leave a ⭐ to show your support.
 
-Have any [ideas for improvements?](/docs/ROADMAP.md) Looking to implement a feature? Please don't hesistate to [open an issue](https://github.com/hexolan/stocklet/issues/new) to discuss or a [pull request](https://github.com/hexolan/stocklet/compare) with your [enhancements.](https://github.com/hexolan/stocklet/fork)
+Have any [ideas for improvements?](/docs/ROADMAP.md) Please don't hesistate to [open an issue](https://github.com/hexolan/stocklet/issues/new) to discuss, or a [pull request](https://github.com/hexolan/stocklet/compare) with [enhancements](https://github.com/hexolan/stocklet/fork).
 
 ## 📓 License
 

@@ -18,17 +18,17 @@ package serve
 import (
 	"context"
 	"net/http"
-	
-	"github.com/rs/zerolog/log"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/credentials/insecure"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	
-	"github.com/hexolan/stocklet/internal/pkg/gwauth"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
+
 	"github.com/hexolan/stocklet/internal/pkg/config"
+	"github.com/hexolan/stocklet/internal/pkg/gwauth"
 )
 
 func withGatewayErrorHandler() runtime.ServeMuxOption {
@@ -64,7 +64,7 @@ func withGatewayHeaderOpt() runtime.ServeMuxOption {
 }
 
 func withGatewayLogger(h http.Handler) http.Handler {
-    return http.HandlerFunc(
+	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 			log.Info().Str("path", r.URL.Path).Str("reqURI", r.RequestURI).Str("remoteAddr", r.RemoteAddr).Msg("")
@@ -73,7 +73,7 @@ func withGatewayLogger(h http.Handler) http.Handler {
 }
 
 func NewGatewayServeBase(cfg *config.SharedConfig) (*runtime.ServeMux, []grpc.DialOption) {
-	// Create the base runtime ServeMux 
+	// Create the base runtime ServeMux
 	mux := runtime.NewServeMux(
 		withGatewayErrorHandler(),
 		withGatewayMetadataOpt(),
@@ -98,7 +98,7 @@ func Gateway(mux *runtime.ServeMux) error {
 		mux,
 		"grpc-gateway",
 		otelhttp.WithSpanNameFormatter(
-			func (operation string, r *http.Request) string {
+			func(operation string, r *http.Request) string {
 				return operation + ": " + r.RequestURI
 			},
 		),
@@ -106,7 +106,7 @@ func Gateway(mux *runtime.ServeMux) error {
 
 	// Create gateway HTTP server
 	svr := &http.Server{
-		Addr: GetAddrToGateway("0.0.0.0"),
+		Addr:    GetAddrToGateway("0.0.0.0"),
 		Handler: withGatewayLogger(handler),
 	}
 

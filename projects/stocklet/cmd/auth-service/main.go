@@ -16,14 +16,14 @@
 package main
 
 import (
-	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
 	"github.com/hexolan/stocklet/internal/pkg/serve"
 	"github.com/hexolan/stocklet/internal/pkg/storage"
-	"github.com/hexolan/stocklet/internal/pkg/metrics"
-	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/auth"
 	"github.com/hexolan/stocklet/internal/svc/auth/api"
 	"github.com/hexolan/stocklet/internal/svc/auth/controller"

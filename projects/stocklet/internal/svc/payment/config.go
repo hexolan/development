@@ -26,7 +26,7 @@ type ServiceConfig struct {
 
 	// Dynamically loaded configuration
 	Postgres config.PostgresConfig
-	Kafka config.KafkaConfig
+	Kafka    config.KafkaConfig
 }
 
 // load the base service configuration

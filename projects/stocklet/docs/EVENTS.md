@@ -95,7 +95,7 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 * StockCreatedEvent
 * StockAddedEvent *(currently unused)*
-* StockRemovedEvent *(currently unused)*
+* StockRemovedEvent
 * StockReservationEvent
 
 **Consumes:**
@@ -108,4 +108,6 @@ They are dispatched using the [transactional outbox pattern](https://microservic
 
 ### Place Order Saga
 
-todo: documentation and diagram
+The place order [saga](https://microservices.io/patterns/data/saga.html) is initiated when a new order is created.
+
+![Place Order Saga](/docs/imgs/placeordersaga.svg)

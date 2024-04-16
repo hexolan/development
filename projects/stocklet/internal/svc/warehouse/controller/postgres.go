@@ -22,14 +22,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/hexolan/stocklet/internal/svc/warehouse"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1"
+	"github.com/hexolan/stocklet/internal/svc/warehouse"
 )
 
 const (
-	pgProductStockBaseQuery string = "SELECT product_id, quantity FROM product_stock"
-	pgReservationBaseQuery string = "SELECT id, order_id, created_at FROM reservations"
+	pgProductStockBaseQuery     string = "SELECT product_id, quantity FROM product_stock"
+	pgReservationBaseQuery      string = "SELECT id, order_id, created_at FROM reservations"
 	pgReservationItemsBaseQuery string = "SELECT product_id, quantity FROM reservation_items"
 )
 
@@ -216,7 +216,7 @@ func (c postgresController) reserveStock(ctx context.Context, tx *pgx.Tx, reserv
 	// Determine if a transaction has already been provided
 	var (
 		funcTx pgx.Tx
-		err error
+		err    error
 	)
 	if tx != nil {
 		funcTx = *tx
@@ -314,7 +314,7 @@ func (c postgresController) returnReservedStock(ctx context.Context, tx *pgx.Tx,
 	// Determine if a transaction has already been provided
 	var (
 		funcTx pgx.Tx
-		err error
+		err    error
 	)
 	if tx != nil {
 		funcTx = *tx
@@ -412,7 +412,7 @@ func (c postgresController) getReservationItems(ctx context.Context, tx *pgx.Tx,
 	} else {
 		rows, err = (*tx).Query(ctx, query, reservationId)
 	}
-	
+
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching reserved items", err)
 	}
@@ -428,7 +428,7 @@ func (c postgresController) getReservationItems(ctx context.Context, tx *pgx.Tx,
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan a reservation item", err)
 		}
-		
+
 		items = append(items, &reservStock)
 	}
 
@@ -495,6 +495,6 @@ func scanRowToReservation(row pgx.Row) (*pb.Reservation, error) {
 	if tmpCreatedAt.Valid {
 		reservation.CreatedAt = tmpCreatedAt.Time.Unix()
 	}
-	
+
 	return &reservation, nil
 }

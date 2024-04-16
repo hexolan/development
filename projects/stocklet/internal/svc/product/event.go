@@ -17,8 +17,8 @@ package product
 
 import (
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
 	eventspb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/product/v1"
 )
 
 func PrepareProductCreatedEvent(product *pb.Product) ([]byte, string, error) {
@@ -26,10 +26,10 @@ func PrepareProductCreatedEvent(product *pb.Product) ([]byte, string, error) {
 	event := &eventspb.ProductCreatedEvent{
 		Revision: 1,
 
-		ProductId: product.Id,
-		Name: product.Name,
+		ProductId:   product.Id,
+		Name:        product.Name,
 		Description: product.Description,
-		Price: product.Price,
+		Price:       product.Price,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -41,7 +41,7 @@ func PrepareProductPriceUpdatedEvent(product *pb.Product) ([]byte, string, error
 		Revision: 1,
 
 		ProductId: product.Id,
-		Price: product.Price,
+		Price:     product.Price,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -63,11 +63,11 @@ func PrepareProductPriceQuoteEvent_Avaliable(orderId string, productQuantities m
 	event := &eventspb.ProductPriceQuoteEvent{
 		Revision: 1,
 
-		Type: eventspb.ProductPriceQuoteEvent_TYPE_AVALIABLE,
-		OrderId: orderId,
+		Type:              eventspb.ProductPriceQuoteEvent_TYPE_AVALIABLE,
+		OrderId:           orderId,
 		ProductQuantities: productQuantities,
-		ProductPrices: productPrices,
-		TotalPrice: totalPrice,
+		ProductPrices:     productPrices,
+		TotalPrice:        totalPrice,
 	}
 
 	return messaging.MarshalEvent(event, topic)
@@ -78,7 +78,7 @@ func PrepareProductPriceQuoteEvent_Unavaliable(orderId string) ([]byte, string, 
 	event := &eventspb.ProductPriceQuoteEvent{
 		Revision: 1,
 
-		Type: eventspb.ProductPriceQuoteEvent_TYPE_UNAVALIABLE,
+		Type:    eventspb.ProductPriceQuoteEvent_TYPE_UNAVALIABLE,
 		OrderId: orderId,
 	}
 

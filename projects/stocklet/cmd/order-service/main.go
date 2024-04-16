@@ -16,14 +16,14 @@
 package main
 
 import (
-	"github.com/rs/zerolog/log"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
+	"github.com/hexolan/stocklet/internal/pkg/messaging"
+	"github.com/hexolan/stocklet/internal/pkg/metrics"
 	"github.com/hexolan/stocklet/internal/pkg/serve"
 	"github.com/hexolan/stocklet/internal/pkg/storage"
-	"github.com/hexolan/stocklet/internal/pkg/metrics"
-	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/svc/order/api"
 	"github.com/hexolan/stocklet/internal/svc/order/controller"
@@ -91,7 +91,7 @@ func main() {
 	consumer, consCl := useKafkaController(cfg)
 	defer consCl.Close()
 	consumer.Attach(svc)
-	
+
 	// Serve/start the interfaces
 	go consumer.Start()
 	go serve.Gateway(gatewayMux)

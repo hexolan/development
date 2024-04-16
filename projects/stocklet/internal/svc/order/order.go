@@ -18,22 +18,22 @@ package order
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/hexolan/stocklet/internal/pkg/gwauth"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
+	"github.com/hexolan/stocklet/internal/pkg/gwauth"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
 )
 
 // Interface for the service
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -41,14 +41,14 @@ type OrderService struct {
 // Interface for database methods
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
-    GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
-    GetCustomerOrders(ctx context.Context, customerId string) ([]*pb.Order, error)
+	GetOrder(ctx context.Context, orderId string) (*pb.Order, error)
+	GetCustomerOrders(ctx context.Context, customerId string) ([]*pb.Order, error)
 
-    CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error)
-    ApproveOrder(ctx context.Context, orderId string, transactionId string) (*pb.Order, error)
-    ProcessOrder(ctx context.Context, orderId string, itemsPrice float32) (*pb.Order, error)
-    RejectOrder(ctx context.Context, orderId string) (*pb.Order, error)
-    SetOrderShipmentId(ctx context.Context, orderId string, shippingId string) error
+	CreateOrder(ctx context.Context, order *pb.Order) (*pb.Order, error)
+	ApproveOrder(ctx context.Context, orderId string, transactionId string) (*pb.Order, error)
+	ProcessOrder(ctx context.Context, orderId string, itemsPrice float32) (*pb.Order, error)
+	RejectOrder(ctx context.Context, orderId string) (*pb.Order, error)
+	SetOrderShipmentId(ctx context.Context, orderId string, shippingId string) error
 }
 
 // Interface for event consumption
@@ -76,8 +76,8 @@ func NewOrderService(cfg *ServiceConfig, store StorageController) *OrderService 
 
 func (svc OrderService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "order",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "order",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
@@ -86,15 +86,15 @@ func (svc OrderService) ViewOrder(ctx context.Context, req *pb.ViewOrderRequest)
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
-	
+
 	// Get the order from the DB
 	order, err := svc.store.GetOrder(ctx, req.OrderId)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &pb.ViewOrderResponse{Order: order}, nil
 }
 
@@ -102,9 +102,9 @@ func (svc OrderService) ViewOrders(ctx context.Context, req *pb.ViewOrdersReques
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// provide validation err context to user
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
-	
+
 	// Get the orders from the storage controller
 	orders, err := svc.store.GetCustomerOrders(ctx, req.CustomerId)
 	if err != nil {
@@ -129,7 +129,7 @@ func (svc OrderService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReques
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// provide validation err context to user
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// Create the order.
@@ -139,8 +139,8 @@ func (svc OrderService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReques
 	order, err := svc.store.CreateOrder(
 		ctx,
 		&pb.Order{
-			Status: pb.OrderStatus_ORDER_STATUS_PROCESSING,
-			Items: req.Cart,
+			Status:     pb.OrderStatus_ORDER_STATUS_PROCESSING,
+			Items:      req.Cart,
 			CustomerId: req.CustomerId,
 		},
 	)
@@ -201,7 +201,7 @@ func (svc OrderService) ProcessShipmentAllocationEvent(ctx context.Context, req 
 		err := svc.store.SetOrderShipmentId(ctx, req.OrderId, req.ShipmentId)
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update in response to event", err)
-		}	
+		}
 	}
 
 	return &emptypb.Empty{}, nil
@@ -223,6 +223,6 @@ func (svc OrderService) ProcessPaymentProcessedEvent(ctx context.Context, req *e
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to update in response to event", err)
 		}
 	}
-	
+
 	return &emptypb.Empty{}, nil
 }

@@ -18,21 +18,21 @@ package shipping
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
 )
 
 // Interface for the service
 type ShippingService struct {
 	pb.UnimplementedShippingServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -41,10 +41,10 @@ type ShippingService struct {
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
 	GetShipment(ctx context.Context, shipmentId string) (*pb.Shipment, error)
-    GetShipmentItems(ctx context.Context, shipmentId string) ([]*pb.ShipmentItem, error)
+	GetShipmentItems(ctx context.Context, shipmentId string) ([]*pb.ShipmentItem, error)
 
-    AllocateOrderShipment(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
-    CancelOrderShipment(ctx context.Context, orderId string) error
+	AllocateOrderShipment(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
+	CancelOrderShipment(ctx context.Context, orderId string) error
 }
 
 // Interface for event consumption
@@ -72,8 +72,8 @@ func NewShippingService(cfg *ServiceConfig, store StorageController) *ShippingSe
 
 func (svc ShippingService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "shipping",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "shipping",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
@@ -82,12 +82,12 @@ func (svc ShippingService) ViewShipment(ctx context.Context, req *pb.ViewShipmen
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// todo: permission checking?
 
-	// Get shipment from DB 
+	// Get shipment from DB
 	shipment, err := svc.store.GetShipment(ctx, req.ShipmentId)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (svc ShippingService) ViewShipmentManifest(ctx context.Context, req *pb.Vie
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// todo: permission checking?

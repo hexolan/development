@@ -17,8 +17,8 @@ package gwauth
 
 import (
 	"context"
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 
 	"google.golang.org/grpc/metadata"
 
@@ -29,9 +29,9 @@ const JWTPayloadHeader string = "X-JWT-Payload"
 
 // todo: sync claims with auth svc
 type JWTClaims struct {
-	Subject string `json:"sub"`
-	IssuedAt int64 `json:"iat"`
-	Expiry int64 `json:"exp"`
+	Subject  string `json:"sub"`
+	IssuedAt int64  `json:"iat"`
+	Expiry   int64  `json:"exp"`
 }
 
 func IsGatewayRequest(ctx context.Context) (bool, *metadata.MD) {
@@ -73,7 +73,7 @@ func GetGatewayUser(md *metadata.MD) (*JWTClaims, error) {
 }
 
 func getTokenPayload(md *metadata.MD) (*JWTClaims, error) {
-	// Envoy validates JWT tokens and provides a header containing 
+	// Envoy validates JWT tokens and provides a header containing
 	// valid auth token claims in base64 format.
 	authorization := md.Get("jwt-payload")
 	if len(authorization) != 1 {

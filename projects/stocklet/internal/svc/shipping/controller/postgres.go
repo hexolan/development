@@ -18,19 +18,19 @@ package controller
 import (
 	"context"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 
-	"github.com/hexolan/stocklet/internal/svc/shipping"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/shipping/v1"
+	"github.com/hexolan/stocklet/internal/svc/shipping"
 )
 
 const (
-	pgShipmentBaseQuery string = "SELECT id, order_id, dispatched, created_at FROM shipments"
+	pgShipmentBaseQuery      string = "SELECT id, order_id, dispatched, created_at FROM shipments"
 	pgShipmentItemsBaseQuery string = "SELECT shipment_id, product_id, quantity FROM shipment_items"
 )
 
@@ -72,7 +72,7 @@ func (c postgresController) getShipmentByOrderId(ctx context.Context, tx *pgx.Tx
 	if tx == nil {
 		row = c.cl.QueryRow(ctx, query, orderId)
 	} else {
-		row = (*tx).QueryRow(ctx, query, orderId)	
+		row = (*tx).QueryRow(ctx, query, orderId)
 	}
 
 	// Scan row to protobuf obj
@@ -93,11 +93,11 @@ func (c postgresController) getShipmentItems(ctx context.Context, tx *pgx.Tx, sh
 	var rows pgx.Rows
 	var err error
 	if tx == nil {
-		rows, err = c.cl.Query(ctx, pgShipmentItemsBaseQuery + " WHERE shipment_id=$1", shipmentId)
+		rows, err = c.cl.Query(ctx, pgShipmentItemsBaseQuery+" WHERE shipment_id=$1", shipmentId)
 	} else {
-		rows, err = (*tx).Query(ctx, pgShipmentItemsBaseQuery + " WHERE shipment_id=$1", shipmentId)
+		rows, err = (*tx).Query(ctx, pgShipmentItemsBaseQuery+" WHERE shipment_id=$1", shipmentId)
 	}
-	
+
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching items", err)
 	}
@@ -113,7 +113,7 @@ func (c postgresController) getShipmentItems(ctx context.Context, tx *pgx.Tx, sh
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan an order item", err)
 		}
-		
+
 		shipmentItems = append(shipmentItems, &shipmentItem)
 	}
 
@@ -143,7 +143,7 @@ func (c postgresController) AllocateOrderShipment(ctx context.Context, orderId s
 	vals := [][]interface{}{}
 	for productId, quantity := range productQuantities {
 		vals = append(
-			vals, 
+			vals,
 			goqu.Vals{shipmentId, productId, quantity},
 		)
 	}
@@ -152,7 +152,7 @@ func (c postgresController) AllocateOrderShipment(ctx context.Context, orderId s
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeService, "failed to build statement", err)
 	}
-	
+
 	_, err = tx.Exec(ctx, statement, args...)
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeExtService, "failed to add shipment items", err)
@@ -232,8 +232,8 @@ func scanRowToShipment(row pgx.Row) (*pb.Shipment, error) {
 	var tmpCreatedAt pgtype.Timestamp
 
 	err := row.Scan(
-		&shipment.Id, 
-		&shipment.OrderId, 
+		&shipment.Id,
+		&shipment.OrderId,
 		&shipment.Dispatched,
 		&tmpCreatedAt,
 	)
@@ -251,6 +251,6 @@ func scanRowToShipment(row pgx.Row) (*pb.Shipment, error) {
 	} else {
 		return nil, errors.NewServiceError(errors.ErrCodeUnknown, "something went wrong scanning object (timestamp conversion error)")
 	}
-	
+
 	return &shipment, nil
 }

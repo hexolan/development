@@ -16,22 +16,22 @@
 package controller
 
 import (
-	"time"
 	"context"
+	"time"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 
-	"github.com/hexolan/stocklet/internal/svc/order"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/order/v1"
+	"github.com/hexolan/stocklet/internal/svc/order"
 )
 
 const (
-	pgOrderBaseQuery string = "SELECT id, status, customer_id, shipping_id, transaction_id, created_at, updated_at FROM orders"
+	pgOrderBaseQuery      string = "SELECT id, status, customer_id, shipping_id, transaction_id, created_at, updated_at FROM orders"
 	pgOrderItemsBaseQuery string = "SELECT product_id, quantity FROM order_items"
 )
 
@@ -58,9 +58,9 @@ func (c postgresController) getOrder(ctx context.Context, tx *pgx.Tx, orderId st
 	// Query order
 	var row pgx.Row
 	if tx == nil {
-		row = c.cl.QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", orderId)
+		row = c.cl.QueryRow(ctx, pgOrderBaseQuery+" WHERE id=$1", orderId)
 	} else {
-		row = (*tx).QueryRow(ctx, pgOrderBaseQuery + " WHERE id=$1", orderId)	
+		row = (*tx).QueryRow(ctx, pgOrderBaseQuery+" WHERE id=$1", orderId)
 	}
 
 	// Scan row to protobuf order
@@ -90,10 +90,10 @@ func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order)
 
 	// Prepare and perform insert query
 	newOrder := pb.Order{
-		Items: orderObj.Items,
-		Status: orderObj.Status,
+		Items:      orderObj.Items,
+		Status:     orderObj.Status,
 		CustomerId: orderObj.CustomerId,
-		CreatedAt: time.Now().Unix(),
+		CreatedAt:  time.Now().Unix(),
 	}
 	err = tx.QueryRow(
 		ctx,
@@ -139,7 +139,7 @@ func (c postgresController) CreateOrder(ctx context.Context, orderObj *pb.Order)
 // Get all orders related to a specified customer.
 // TODO: implement pagination
 func (c postgresController) GetCustomerOrders(ctx context.Context, customerId string) ([]*pb.Order, error) {
-	rows, err := c.cl.Query(ctx, pgOrderBaseQuery + " WHERE customer_id=$1 LIMIT 10", customerId)
+	rows, err := c.cl.Query(ctx, pgOrderBaseQuery+" WHERE customer_id=$1 LIMIT 10", customerId)
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching customer orders", err)
 	}
@@ -332,7 +332,7 @@ func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, ord
 		vals := [][]interface{}{}
 		for productId, quantity := range items {
 			vals = append(
-				vals, 
+				vals,
 				goqu.Vals{orderId, productId, quantity},
 			)
 		}
@@ -344,14 +344,14 @@ func (c postgresController) createOrderItems(ctx context.Context, tx pgx.Tx, ord
 			"product_id",
 			"quantity",
 		).Vals(
-			vals...
+			vals...,
 		).Prepared(
 			true,
 		).ToSQL()
 		if err != nil {
 			return errors.WrapServiceError(errors.ErrCodeService, "failed to build SQL statement", err)
 		}
-		
+
 		// Execute the statement on the transaction
 		_, err = tx.Exec(ctx, statement, args...)
 		if err != nil {
@@ -367,11 +367,11 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 	var rows pgx.Rows
 	var err error
 	if tx == nil {
-		rows, err = c.cl.Query(ctx, pgOrderItemsBaseQuery + " WHERE order_id=$1", orderId)
+		rows, err = c.cl.Query(ctx, pgOrderItemsBaseQuery+" WHERE order_id=$1", orderId)
 	} else {
-		rows, err = (*tx).Query(ctx, pgOrderItemsBaseQuery + " WHERE order_id=$1", orderId)
+		rows, err = (*tx).Query(ctx, pgOrderItemsBaseQuery+" WHERE order_id=$1", orderId)
 	}
-	
+
 	if err != nil {
 		return nil, errors.WrapServiceError(errors.ErrCodeService, "query error whilst fetching order items", err)
 	}
@@ -379,7 +379,7 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 	items := make(map[string]int32)
 	for rows.Next() {
 		var (
-			itemId string
+			itemId   string
 			quantity int32
 		)
 		err := rows.Scan(
@@ -389,7 +389,7 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 		if err != nil {
 			return nil, errors.WrapServiceError(errors.ErrCodeService, "failed to scan an order item", err)
 		}
-		
+
 		items[itemId] = quantity
 	}
 
@@ -399,7 +399,6 @@ func (c postgresController) getOrderItems(ctx context.Context, tx *pgx.Tx, order
 
 	return &items, nil
 }
-
 
 // Appends order items to an order object.
 func (c postgresController) appendItemsToOrderObj(ctx context.Context, tx *pgx.Tx, orderObj *pb.Order) (*pb.Order, error) {
@@ -425,11 +424,11 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 	var tmpUpdatedAt pgtype.Timestamp
 
 	err := row.Scan(
-		&order.Id, 
-		&order.Status, 
+		&order.Id,
+		&order.Status,
 		&order.CustomerId,
 		&order.ShippingId,
-		&order.TransactionId, 
+		&order.TransactionId,
 		&tmpCreatedAt,
 		&tmpUpdatedAt,
 	)
@@ -454,6 +453,6 @@ func scanRowToOrder(row pgx.Row) (*pb.Order, error) {
 		unixUpdated := tmpUpdatedAt.Time.Unix()
 		order.UpdatedAt = &unixUpdated
 	}
-	
+
 	return &order, nil
 }

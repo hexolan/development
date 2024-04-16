@@ -18,19 +18,19 @@ package user
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
 )
 
 // Interface for the service
 type UserService struct {
 	pb.UnimplementedUserServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -39,7 +39,7 @@ type UserService struct {
 // Flexibility for implementing seperate controllers for different databases (e.g. Postgres, MongoDB, etc)
 type StorageController interface {
 	GetUser(ctx context.Context, userId string) (*pb.User, error)
-	
+
 	RegisterUser(ctx context.Context, email string, password string, firstName string, lastName string) (*pb.User, error)
 	UpdateUserEmail(ctx context.Context, userId string, email string) error
 
@@ -71,8 +71,8 @@ func NewUserService(cfg *ServiceConfig, store StorageController) *UserService {
 
 func (svc UserService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "user",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "user",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
@@ -81,10 +81,10 @@ func (svc UserService) ViewUser(ctx context.Context, req *pb.ViewUserRequest) (*
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
-	// Get user from DB 
+	// Get user from DB
 	user, err := svc.store.GetUser(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func (svc UserService) RegisterUser(ctx context.Context, req *pb.RegisterUserReq
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// Attempt to register the user

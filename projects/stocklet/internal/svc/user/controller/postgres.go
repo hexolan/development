@@ -18,22 +18,22 @@ package controller
 import (
 	"context"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/hexolan/stocklet/internal/svc/user"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
 	authpb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/user/v1"
+	"github.com/hexolan/stocklet/internal/svc/user"
 )
 
 const pgUserBaseQuery string = "SELECT id, first_name, last_name, email, created_at, updated_at FROM users"
 
 type postgresController struct {
-	cl *pgxpool.Pool
+	cl          *pgxpool.Pool
 	serviceOpts *user.ServiceConfigOpts
 }
 
@@ -52,7 +52,7 @@ func (c postgresController) getUser(ctx context.Context, tx *pgx.Tx, userId stri
 	if tx == nil {
 		row = c.cl.QueryRow(ctx, query, userId)
 	} else {
-		row = (*tx).QueryRow(ctx, query, userId)	
+		row = (*tx).QueryRow(ctx, query, userId)
 	}
 
 	// Scan row to protobuf obj
@@ -234,6 +234,6 @@ func scanRowToUser(row pgx.Row) (*pb.User, error) {
 		unixUpdated := tmpUpdatedAt.Time.Unix()
 		user.UpdatedAt = &unixUpdated
 	}
-	
+
 	return &user, nil
 }

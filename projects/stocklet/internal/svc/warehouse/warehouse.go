@@ -18,21 +18,21 @@ package warehouse
 import (
 	"context"
 
-	"github.com/rs/zerolog/log"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1"
-	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
+	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/warehouse/v1"
 )
 
 // Interface for the service
 type WarehouseService struct {
 	pb.UnimplementedWarehouseServiceServer
-	
+
 	store StorageController
 	pbVal *protovalidate.Validator
 }
@@ -44,11 +44,11 @@ type StorageController interface {
 	GetReservation(ctx context.Context, reservationId string) (*pb.Reservation, error)
 
 	CreateProductStock(ctx context.Context, productId string, startingQuantity int32) error
-	
+
 	ReserveOrderStock(ctx context.Context, orderId string, orderMetadata EventOrderMetadata, productQuantities map[string]int32) error
 	ReturnReservedOrderStock(ctx context.Context, orderId string) error
 	ConsumeReservedOrderStock(ctx context.Context, orderId string) error
-}	
+}
 
 // Interface for event consumption
 // Flexibility for seperate controllers for different messaging systems (e.g. Kafka, NATS, etc)
@@ -75,8 +75,8 @@ func NewWarehouseService(cfg *ServiceConfig, store StorageController) *Warehouse
 
 func (svc WarehouseService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInfoRequest) (*commonpb.ServiceInfoResponse, error) {
 	return &commonpb.ServiceInfoResponse{
-		Name: "warehouse",
-		Source: "https://github.com/hexolan/stocklet",
+		Name:          "warehouse",
+		Source:        "https://github.com/hexolan/stocklet",
 		SourceLicense: "AGPL-3.0",
 	}, nil
 }
@@ -85,7 +85,7 @@ func (svc WarehouseService) ViewProductStock(ctx context.Context, req *pb.ViewPr
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// Get stock from db
@@ -101,7 +101,7 @@ func (svc WarehouseService) ViewReservation(ctx context.Context, req *pb.ViewRes
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// Provide the validation error to the user.
-		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: " + err.Error())
+		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
 	// Get reservation from db
@@ -163,6 +163,6 @@ func (svc WarehouseService) ProcessPaymentProcessedEvent(ctx context.Context, re
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "error processing event", err)
 		}
 	}
-	
+
 	return &emptypb.Empty{}, nil
 }

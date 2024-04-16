@@ -16,20 +16,20 @@
 package controller
 
 import (
-	"strings"
 	"context"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/hexolan/stocklet/internal/svc/payment"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
+	"github.com/hexolan/stocklet/internal/svc/payment"
 )
 
 const (
-	pgTransactionBaseQuery string = "SELECT id, order_id, customer_id, amount, reversed_at, processed_at FROM transactions"
+	pgTransactionBaseQuery     string = "SELECT id, order_id, customer_id, amount, reversed_at, processed_at FROM transactions"
 	pgCustomerBalanceBaseQuery string = "SELECT customer_id, balance FROM customer_balances"
 )
 
@@ -52,7 +52,7 @@ func (c postgresController) getBalance(ctx context.Context, tx *pgx.Tx, customer
 	if tx == nil {
 		row = c.cl.QueryRow(ctx, query, customerId)
 	} else {
-		row = (*tx).QueryRow(ctx, query, customerId)	
+		row = (*tx).QueryRow(ctx, query, customerId)
 	}
 
 	// Scan row to protobuf obj
@@ -75,7 +75,7 @@ func (c postgresController) getTransaction(ctx context.Context, tx *pgx.Tx, tran
 	if tx == nil {
 		row = c.cl.QueryRow(ctx, query, transactionId)
 	} else {
-		row = (*tx).QueryRow(ctx, query, transactionId)	
+		row = (*tx).QueryRow(ctx, query, transactionId)
 	}
 
 	// Scan row to protobuf obj
@@ -182,7 +182,7 @@ func (c postgresController) debitBalance(ctx context.Context, tx *pgx.Tx, custom
 	// Determine if a transaction has already been provided
 	var (
 		funcTx pgx.Tx
-		err error
+		err    error
 	)
 	if tx != nil {
 		funcTx = *tx
@@ -309,7 +309,7 @@ func (c postgresController) PaymentForOrder(ctx context.Context, orderId string,
 
 	// Prepare response event
 	var (
-		evt []byte
+		evt      []byte
 		evtTopic string
 	)
 	if transaction != nil {
@@ -320,7 +320,7 @@ func (c postgresController) PaymentForOrder(ctx context.Context, orderId string,
 		// - result of insufficient/non-existent balance
 		evt, evtTopic, err = payment.PreparePaymentProcessedEvent_Failure(orderId, customerId, amount)
 	}
-	
+
 	// Ensure the event was prepared succesfully
 	if err != nil {
 		return errors.WrapServiceError(errors.ErrCodeService, "failed to create event", err)
@@ -345,7 +345,7 @@ func (c postgresController) createTransaction(ctx context.Context, tx *pgx.Tx, o
 	// Determine if a transaction has already been provided
 	var (
 		funcTx pgx.Tx
-		err error
+		err    error
 	)
 	if tx != nil {
 		funcTx = *tx
@@ -356,7 +356,7 @@ func (c postgresController) createTransaction(ctx context.Context, tx *pgx.Tx, o
 		}
 		defer funcTx.Rollback(ctx)
 	}
-	
+
 	// Insert the transaction
 	var transactionId string
 	err = funcTx.QueryRow(
@@ -434,7 +434,7 @@ func scanRowToTransaction(row pgx.Row) (*pb.Transaction, error) {
 		unixReversed := tmpReversedAt.Time.Unix()
 		transaction.ReversedAt = &unixReversed
 	}
-	
+
 	return &transaction, nil
 }
 
@@ -453,6 +453,6 @@ func scanRowToCustomerBalance(row pgx.Row) (*pb.CustomerBalance, error) {
 			return nil, errors.WrapServiceError(errors.ErrCodeExtService, "failed to scan object from database", err)
 		}
 	}
-	
+
 	return &balance, nil
 }

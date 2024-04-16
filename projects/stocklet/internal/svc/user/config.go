@@ -22,7 +22,7 @@ import (
 // Order Service Configuration
 type ServiceConfig struct {
 	// Core Configuration
-	Shared config.SharedConfig
+	Shared      config.SharedConfig
 	ServiceOpts ServiceConfigOpts
 
 	// Dynamically loaded configuration

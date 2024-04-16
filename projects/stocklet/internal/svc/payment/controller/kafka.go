@@ -22,25 +22,25 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/hexolan/stocklet/internal/svc/payment"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
-	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
 	eventpb "github.com/hexolan/stocklet/internal/pkg/protogen/events/v1"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/payment/v1"
+	"github.com/hexolan/stocklet/internal/svc/payment"
 )
 
 type kafkaController struct {
 	cl *kgo.Client
 
 	svc pb.PaymentServiceServer
-	
-	ctx context.Context
+
+	ctx       context.Context
 	ctxCancel context.CancelFunc
 }
 
 func NewKafkaController(cl *kgo.Client) payment.ConsumerController {
 	// Create a cancellable context for the consumer
 	ctx, ctxCancel := context.WithCancel(context.Background())
-	
+
 	// Ensure the required Kafka topics exist
 	err := messaging.EnsureKafkaTopics(
 		cl,
