@@ -46,6 +46,7 @@ Any ideas, suggestions or direct contributions to better conform with general an
   * [github.com/bufbuild/protovalidate-go](https://pkg.go.dev/github.com/bufbuild/protovalidate-go)
 
 * Tools
+  * [plantuml.com](https://plantuml.com/)
   * [github.com/bufbuild/buf/cmd/buf](https://buf.build/docs/installation)
   * [github.com/golang-migrate/migrate/v4](https://pkg.go.dev/github.com/golang-migrate/migrate/v4#section-readme)
 
@@ -53,6 +54,7 @@ Any ideas, suggestions or direct contributions to better conform with general an
   * [github.com/rs/zerolog](https://pkg.go.dev/github.com/rs/zerolog)
   * [github.com/lestrrat-go/jwx/v2](https://pkg.go.dev/github.com/lestrrat-go/jwx/v2)
   * [github.com/doug-martin/goqu/v9](https://pkg.go.dev/github.com/doug-martin/goqu/v9)
+  * [golang.org/x/crypto/bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt)
 
 #### Infrastructure
 

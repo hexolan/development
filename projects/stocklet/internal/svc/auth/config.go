@@ -19,10 +19,17 @@ import (
 	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/pem"
+	"fmt"
+
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/hexolan/stocklet/internal/pkg/config"
 	"github.com/hexolan/stocklet/internal/pkg/errors"
+	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
 )
 
 // Auth Service Configuration
@@ -58,6 +65,9 @@ type ServiceConfigOpts struct {
 	// Env Var: "AUTH_PRIVATE_KEY"
 	// to be provided in base64 format
 	PrivateKey *ecdsa.PrivateKey
+
+	// Generated from PrivateKey
+	PublicJwk *pb.PublicEcJWK
 }
 
 // Load the ServiceConfigOpts
@@ -70,6 +80,9 @@ func (opts *ServiceConfigOpts) Load() error {
 	if err := opts.loadPrivateKey(); err != nil {
 		return err
 	}
+
+	// prepare the JWK public key
+	opts.PublicJwk = preparePublicJwk(opts.PrivateKey)
 
 	return nil
 }
@@ -106,4 +119,38 @@ func (opts *ServiceConfigOpts) loadPrivateKey() error {
 
 	opts.PrivateKey = privKey
 	return nil
+}
+
+// Converts the ECDSA key to a public JWK.
+func preparePublicJwk(privateKey *ecdsa.PrivateKey) *pb.PublicEcJWK {
+	// Assemble the public JWK
+	jwk, err := jwk.FromRaw(privateKey.PublicKey)
+	if err != nil {
+		log.Panic().Err(err).Msg("something went wrong parsing public key from private key")
+	}
+
+	// denote use for signatures
+	jwk.Set("use", "sig")
+
+	// envoy includes support for ES256, ES384 and ES512
+	alg := fmt.Sprintf("ES%v", privateKey.Curve.Params().BitSize)
+	if alg != "ES256" && alg != "ES384" && alg != "ES512" {
+		log.Panic().Err(err).Msg("unsupported bitsize for private key")
+	}
+	jwk.Set("alg", alg)
+
+	// Convert the JWK to JSON
+	jwkBytes, err := json.Marshal(jwk)
+	if err != nil {
+		log.Panic().Err(err).Msg("something went wrong preparing the public JWK (json marshal)")
+	}
+
+	// Unmarshal the JSON to Protobuf format
+	publicJwkPB := pb.PublicEcJWK{}
+	err = protojson.Unmarshal(jwkBytes, &publicJwkPB)
+	if err != nil {
+		log.Panic().Err(err).Msg("something went wrong preparing the public JWK (protonjson unmarshal)")
+	}
+
+	return &publicJwkPB
 }

@@ -118,6 +118,7 @@ func (svc OrderService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReques
 	// If the request is through the gateway, then substitute req.CustomerId for current user
 	gatewayRequest, gwMd := gwauth.IsGatewayRequest(ctx)
 	if gatewayRequest {
+		// ensure user is authenticated
 		claims, err := gwauth.GetGatewayUser(gwMd)
 		if err != nil {
 			return nil, err

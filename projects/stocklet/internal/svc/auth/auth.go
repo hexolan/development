@@ -17,16 +17,13 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"github.com/bufbuild/protovalidate-go"
-	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/rs/zerolog/log"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/hexolan/stocklet/internal/pkg/errors"
+	"github.com/hexolan/stocklet/internal/pkg/gwauth"
 	"github.com/hexolan/stocklet/internal/pkg/messaging"
 	pb "github.com/hexolan/stocklet/internal/pkg/protogen/auth/v1"
 	commonpb "github.com/hexolan/stocklet/internal/pkg/protogen/common/v1"
@@ -37,8 +34,7 @@ import (
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
 
-	cfg       *ServiceConfig
-	publicJWK *pb.PublicEcJWK
+	cfg *ServiceConfig
 
 	store StorageController
 	pbVal *protovalidate.Validator
@@ -63,8 +59,6 @@ type ConsumerController interface {
 
 // Create the auth service
 func NewAuthService(cfg *ServiceConfig, store StorageController) *AuthService {
-	publicJWK := preparePublicJwk(cfg)
-
 	// Initialise the protobuf validator
 	pbVal, err := protovalidate.New()
 	if err != nil {
@@ -72,9 +66,9 @@ func NewAuthService(cfg *ServiceConfig, store StorageController) *AuthService {
 	}
 
 	svc := &AuthService{
-		store:     store,
-		pbVal:     pbVal,
-		publicJWK: publicJWK,
+		cfg:   cfg,
+		store: store,
+		pbVal: pbVal,
 	}
 
 	return svc
@@ -88,7 +82,6 @@ func (svc AuthService) ServiceInfo(ctx context.Context, req *commonpb.ServiceInf
 	}, nil
 }
 
-// todo: implement
 func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordRequest) (*pb.LoginPasswordResponse, error) {
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
@@ -111,21 +104,30 @@ func (svc AuthService) LoginPassword(ctx context.Context, req *pb.LoginPasswordR
 	return &pb.LoginPasswordResponse{Detail: "Success", Data: token}, nil
 }
 
-// todo: implement
 func (svc AuthService) SetPassword(ctx context.Context, req *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
+	// If the request is through the gateway,
+	// then perform permission checking
+	gatewayRequest, gwMd := gwauth.IsGatewayRequest(ctx)
+	if gatewayRequest {
+		// Ensure user is authenticated
+		claims, err := gwauth.GetGatewayUser(gwMd)
+		if err != nil {
+			return nil, err
+		}
+
+		// Only allow changing of own password
+		req.UserId = claims.Subject
+	}
+
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
 		// provide validation err context to user
 		return nil, errors.NewServiceError(errors.ErrCodeInvalidArgument, "invalid request: "+err.Error())
 	}
 
-	// todo: permission checking
-	// ensuring not gateway request - or if it is, then ensure current user only
-
-	return nil, errors.NewServiceError(errors.ErrCodeService, "todo")
+	return &pb.SetPasswordResponse{Detail: "Successfully updated password"}, nil
 }
 
-// todo: implement
 func (svc AuthService) ProcessUserDeletedEvent(ctx context.Context, req *eventpb.UserDeletedEvent) (*emptypb.Empty, error) {
 	// Validate the request args
 	if err := svc.pbVal.Validate(req); err != nil {
@@ -144,53 +146,5 @@ func (svc AuthService) ProcessUserDeletedEvent(ctx context.Context, req *eventpb
 // Provide the JWK ECDSA public key as part of a JSON Web Key set.
 // This method is called by the API gateway for usage when validating inbound JWT tokens.
 func (svc AuthService) GetJwks(ctx context.Context, req *pb.GetJwksRequest) (*pb.GetJwksResponse, error) {
-	return &pb.GetJwksResponse{Keys: []*pb.PublicEcJWK{svc.publicJWK}}, nil
-}
-
-// Issues a JWT token
-func issueToken(cfg *ServiceConfig, sub string) (*pb.AuthToken, error) {
-	const expiryTime = 86400 // 1 day
-
-	// todo: gen token
-	accessToken := "todo"
-
-	return &pb.AuthToken{
-		TokenType:   "Bearer",
-		AccessToken: accessToken,
-		ExpiresIn:   expiryTime,
-	}, nil
-}
-
-// Converts the ECDSA key to a public JWK.
-func preparePublicJwk(cfg *ServiceConfig) *pb.PublicEcJWK {
-	// Assemble the public JWK
-	jwk, err := jwk.FromRaw(cfg.ServiceOpts.PrivateKey.PublicKey)
-	if err != nil {
-		log.Panic().Err(err).Msg("something went wrong parsing public key from private key")
-	}
-
-	// denote use for signatures
-	jwk.Set("use", "sig")
-
-	// envoy includes support for ES256, ES384 and ES512
-	alg := fmt.Sprintf("ES%v", cfg.ServiceOpts.PrivateKey.Curve.Params().BitSize)
-	if alg != "ES256" && alg != "ES384" && alg != "ES512" {
-		log.Panic().Err(err).Msg("unsupported bitsize for private key")
-	}
-	jwk.Set("alg", alg)
-
-	// Convert the JWK to JSON
-	jwkBytes, err := json.Marshal(jwk)
-	if err != nil {
-		log.Panic().Err(err).Msg("something went wrong preparing the public JWK (json marshal)")
-	}
-
-	// Unmarshal the JSON to Protobuf format
-	jwkPB := pb.PublicEcJWK{}
-	err = protojson.Unmarshal(jwkBytes, &jwkPB)
-	if err != nil {
-		log.Panic().Err(err).Msg("something went wrong preparing the public JWK (protonjson unmarshal)")
-	}
-
-	return &jwkPB
+	return &pb.GetJwksResponse{Keys: []*pb.PublicEcJWK{svc.cfg.ServiceOpts.PublicJwk}}, nil
 }

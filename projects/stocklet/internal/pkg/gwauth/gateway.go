@@ -27,7 +27,6 @@ import (
 
 const JWTPayloadHeader string = "X-JWT-Payload"
 
-// todo: sync claims with auth svc
 type JWTClaims struct {
 	Subject  string `json:"sub"`
 	IssuedAt int64  `json:"iat"`
