@@ -85,5 +85,12 @@
   * Text only - but maybe referencing images on the IPFS?
   * Application Clients - user can add labels to certain public keys (thereby ascertaining who has posted what)
   * Incentives for 'mining' - proof of stake/proof of work? - would maybe need to be built on top another blockchain such as eth
-    * look at how the IPFS (interplanetary file system) manages this?
-    * there are no incentives with the IPFS
+    * there are no incentives with the IPFS (interplanetary file system)
+	
+https://www.youtube.com/watch?v=yeatOU5vVsA
+* "My goto project is always a music player, it has networking, file management, byte stream management, all kind of data structures can be used for playlists, database access. Basically a simple to visualise project that covers everything."
+
+Simple things such as a checkers/chess game
+* use websockets, dealing with networking, making scalable
+* can build frontend in Svelete/similar
+* can build backend in anything (potentially try Java/C++)
