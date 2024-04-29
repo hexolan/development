@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Formulator.Application
+namespace Formulator.Core.Entities
 {
-    public static class DependencyInjection
+    public class ApplicationUser
     {
-        public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
-        {
-            return services;
-        }
+        public int Id { get; set; }
+
+        public string? Username { get; set; }
+
+        public string? Email { get; set; }
+
+        public string? Password { get; set; }
     }
 }

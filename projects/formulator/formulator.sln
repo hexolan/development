@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formulator.Domain", "src\Formulator.Domain\Formulator.Domain.csproj", "{AA917936-1B8F-4F0E-BD2C-E26BD147BE76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formulator.Core", "src\Formulator.Core\Formulator.Core.csproj", "{AA917936-1B8F-4F0E-BD2C-E26BD147BE76}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formulator.Application", "src\Formulator.Application\Formulator.Application.csproj", "{5A986A5C-6253-4CBB-A9BC-4D103560E028}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D4878C52-8DBA-4CC5-ABD5-F84BA7E5F411}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formulator.Infrastructure", "src\Formulator.Infrastructure\Formulator.Infrastructure.csproj", "{1180F54A-5517-4EE6-96EF-949A064760CF}"
 EndProject

@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.DependencyInjection;
+using Formulator.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Formulator.Application
+namespace Formulator.Infrastructure.Data
 {
-    public static class DependencyInjection
+    internal class ApplicationDbContext : DbContext 
     {
-        public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            return services;
+
         }
+
+        public DbSet<ApplicationUser> Users { get; set; }
     }
 }

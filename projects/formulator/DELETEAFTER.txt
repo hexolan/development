@@ -1,0 +1,6 @@
+npx tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --minify
+
+npx tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --watch
+
+Add-Migration InitialCreate
+(default project set to: Formulator.Infrastructure)

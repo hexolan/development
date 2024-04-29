@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Extensions.DependencyInjection;
+using Formulator.Core.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Formulator.Application
+namespace Formulator.Application.Services;
+
+public class FormService : IFormService
 {
-    public static class DependencyInjection
-    {
-        public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
-        {
-            return services;
-        }
-    }
 }
