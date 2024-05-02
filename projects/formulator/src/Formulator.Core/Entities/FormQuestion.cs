@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Formulator.Core.Entities
 {
-    public class ApplicationUser : Entity
+    public class FormQuestion : Entity
     {
-        public int Id { get; set; }
+        [Key]
+        public int QuestionId { get; set; }
 
-        public string? DisplayName { get; set; }
+        public int FormId { get; set; }
+        public Form Form { get; set; } = null!;
 
-        public string? Email { get; set; }
+        public required string Text { get; set; }
+        public string? Description { get; set; }
+
+        public bool Required { get; set; } = false;
     }
 }

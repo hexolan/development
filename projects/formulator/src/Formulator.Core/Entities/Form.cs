@@ -14,12 +14,20 @@
 
 namespace Formulator.Core.Entities
 {
-    public class ApplicationUser : Entity
+    public class Form : Entity
     {
         public int Id { get; set; }
 
-        public string? DisplayName { get; set; }
+        public int CreatorId { get; set; }
+        public ApplicationUser? Creator { get; set; }
 
-        public string? Email { get; set; }
+        public required string Title { get; set; }
+        public string? Description { get; set; }
+
+        public bool RequiresAuth { get; set; }
+
+        // todo: review proper way of doing these
+        public ICollection<FormQuestion> Questions { get; } = new List<FormQuestion>();
+        public ICollection<FormSubmission> Submissions { get; } = new List<FormSubmission>();
     }
 }

@@ -17,15 +17,35 @@
 
 <PageTitle>Formulator | Form</PageTitle>
 
-<div class="container mx-auto py-5">
-    <h1>Form</h1>
-    <!-- allow disabling this with a form option? | then there's the option of subscriptions, etc -->
-    <p>Built with Formulator</p>
+@if (form == null)
+{
+    <p>Loading Form</p>
+} else
+{
+    <div class="container mx-auto py-5">
+        <h1>Form Title: @form.Title</h1>
+        <p>@form.Description</p>
 
-    <!--
-        TODO:
-        * actual (aesthetically pleasing) layout
-        * building form based on a Form domain object?
-        * taking form inputs and converting into a FormEntry object?
-    -->
-</div>
+        <!--
+            TODO:
+            * actual (aesthetically pleasing) layout
+            * building form based on a Form domain object?
+            * taking form inputs and converting into a FormEntry object?
+        -->
+    </div>
+}
+
+
+@code {
+    private Form? form;
+    /*
+    Form form = Form.NewDraftForm();
+    form.Id = 1;
+
+    Form? form = new Form{
+        Id = 1,
+        Name = "Test",
+        Description = "Lorem ipsum blah blah blah"
+    };
+    */
+}

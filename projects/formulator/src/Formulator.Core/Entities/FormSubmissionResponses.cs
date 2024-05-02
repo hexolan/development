@@ -14,12 +14,14 @@
 
 namespace Formulator.Core.Entities
 {
-    public class ApplicationUser : Entity
+    public class FormSubmissionResponse : Entity
     {
-        public int Id { get; set; }
+        public int SubmissionId { get; set; }
+        public FormSubmission Submission { get; set; } = null!;
 
-        public string? DisplayName { get; set; }
+        public int QuestionId { get; set; }
+        public FormQuestion Question { get; set; } = null!;
 
-        public string? Email { get; set; }
+        public required string Value { get; set; }
     }
 }

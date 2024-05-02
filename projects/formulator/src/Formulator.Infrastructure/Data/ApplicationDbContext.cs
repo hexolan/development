@@ -24,6 +24,18 @@ namespace Formulator.Infrastructure.Data
 
         }
 
+        public DbSet<Form> Forms { get; set; }
+        public DbSet<FormQuestion> FormQuestions { get; set; }
+
+        public DbSet<FormSubmission> FormSubmissions { get; set; }
+        public DbSet<FormSubmissionResponse> FormSubmissionResponses { get; set; }
+
         public DbSet<ApplicationUser> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<FormSubmissionResponse>()
+                .HasKey(m => new { m.SubmissionId, m.QuestionId });
+        }
     }
 }

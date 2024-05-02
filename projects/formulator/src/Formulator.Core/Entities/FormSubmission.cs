@@ -12,14 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Formulator.Core.Entities
 {
-    public class ApplicationUser : Entity
+    public class FormSubmission : Entity
     {
-        public int Id { get; set; }
+        [Key]
+        public int SubmissionId { get; set; }
 
-        public string? DisplayName { get; set; }
+        public int FormId { get; set; }
+        public Form Form { get; set; } = null!;
 
-        public string? Email { get; set; }
+        public int? SubmittorId { get; set; }
+        public ApplicationUser Submittor { get; set; } = null!;
+
+        // todo: review proper way of doing this
+        public ICollection<FormSubmissionResponse> Responses { get; } = new List<FormSubmissionResponse>();
     }
 }
