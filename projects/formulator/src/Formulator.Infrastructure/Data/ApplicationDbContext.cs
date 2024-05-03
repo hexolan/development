@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Formulator.Infrastructure.Data
 {
-    internal class ApplicationDbContext : DbContext 
+    public class ApplicationDbContext : DbContext 
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

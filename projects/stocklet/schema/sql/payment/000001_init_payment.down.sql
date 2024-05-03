@@ -1,3 +1,0 @@
-DROP TABLE IF EXISTS transactions CASCADE;
-DROP TABLE IF EXISTS customer_balances CASCADE;
-DROP TABLE IF EXISTS event_outbox CASCADE;

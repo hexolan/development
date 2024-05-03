@@ -26,13 +26,6 @@ namespace Formulator.Infrastructure
             var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            /*
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString,
-                builder => builder.MigrationsAssembly()));
-
-            // todo: migrations
-            */
 
             return services;
         }

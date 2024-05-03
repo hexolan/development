@@ -1,26 +1,19 @@
 # Formulator
 
-A form creator and survey management tool built with C#, .NET 8 and Blazor.
-
-built with clean architecture principles
+A full-stack form creator and survey management tool built with C#, .NET 8 and Blazor.
 
 ## 📝 Features
 
 TODO: implement
 
-* Domain driven design
-* Clean architecture principles
-
 ## 🧰 Technologies
 
 * C#
-* .NET 8
-* ASP.NET Core Blazor
+* [ASP.NET Core 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
 
-* Microsoft SQL Server
-
-* Tailwind CSS
-* Daisy UI
+* [Tailwind CSS](https://tailwindcss.com/) with [Daisy UI](https://daisyui.com/)
+* Microsoft SQL Server 2022
 
 ## 💻 Usage
 

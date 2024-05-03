@@ -12,10 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Formulator.Core.Entities;
 using Formulator.Core.Interfaces;
+using Formulator.Infrastructure.Data;
 
-namespace Formulator.Application.Services;
-
-public class FormService : IFormService
+namespace Formulator.Application.Services
 {
+    public class FormService : IFormService
+    {
+        private readonly ApplicationDbContext _context;
+
+        public FormService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public Form AddForm(Form form)
+        {
+            // todo
+            return form;
+        }
+
+        public Form GetForm(int id)
+        {
+            // todo
+            return new Form
+            {
+                Title = "from service 123567"
+            };
+        }
+        public IEnumerable<Form> GetUserForms(ApplicationUser user)
+        {
+            // todo
+
+            var forms = new Form[]
+            {
+                new() {
+                    Title = "test"
+                }
+            };
+            return forms;
+        }
+
+        public Form UpdateForm(Form form)
+        {
+            // todo
+            return form;
+        }
+
+        public Form DeleteForm(int id)
+        {
+            // todo
+            return new Form
+            {
+                Title = "test"
+            };
+        }
+    }
 }

@@ -12,10 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
+using Formulator.Core.Entities;
 
-namespace Formulator.Core.Interfaces;
-
-public interface IFormService
+namespace Formulator.Core.Interfaces
 {
+    public interface IFormService
+    {
+        Form AddForm(Form form);
+
+        Form GetForm(int id);
+        IEnumerable<Form> GetUserForms(ApplicationUser user);
+
+        Form UpdateForm(Form form);
+        Form DeleteForm(int id);
+    }
 }

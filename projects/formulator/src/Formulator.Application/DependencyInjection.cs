@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Formulator.Core.Interfaces;
+using Formulator.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Formulator.Application
@@ -20,6 +22,8 @@ namespace Formulator.Application
     {
         public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
         {
+            services.AddScoped<IFormService, FormService>();
+
             return services;
         }
     }

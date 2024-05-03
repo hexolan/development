@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Formulator.Application\Formulator.Application.csproj" />
+    <ProjectReference Include="..\Formulator.Core\Formulator.Core.csproj" />
   </ItemGroup>
 
 </Project>
