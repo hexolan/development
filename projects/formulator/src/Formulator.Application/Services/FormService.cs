@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Formulator.Core.Entities;
-using Formulator.Core.Interfaces;
 using Formulator.Infrastructure.Data;
 
 namespace Formulator.Application.Services
@@ -41,7 +40,7 @@ namespace Formulator.Application.Services
                 Title = "from service 123567"
             };
         }
-        public IEnumerable<Form> GetUserForms(ApplicationUser user)
+        public IEnumerable<Form> GetUserForms(User user)
         {
             // todo
 

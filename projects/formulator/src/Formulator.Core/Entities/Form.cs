@@ -19,7 +19,7 @@ namespace Formulator.Core.Entities
         public int Id { get; set; }
 
         public int CreatorId { get; set; }
-        public ApplicationUser? Creator { get; set; }
+        public User? Creator { get; set; }
 
         public required string Title { get; set; }
         public string? Description { get; set; }

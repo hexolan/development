@@ -1939,6 +1939,11 @@ html {
   list-style-type: disc;
 }
 
+.columns-2 {
+  -moz-columns: 2;
+       columns: 2;
+}
+
 .grid-flow-col {
   grid-auto-flow: column;
 }
@@ -2032,6 +2037,10 @@ html {
 
 .font-bold {
   font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
 }
 
 .text-base-content {

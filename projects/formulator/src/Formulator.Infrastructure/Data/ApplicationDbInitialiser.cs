@@ -23,28 +23,13 @@ namespace Formulator.Infrastructure.Data
             // todo: instead ensure migrations
             context.Database.EnsureCreated();
 
+            /*
             // Check if the database has already been seeded
             if (context.Users.Any())
             {
                 return;
             }
-
-            // Add seed data
-            context.AddRange(new ApplicationUser[]
-            {
-                new ApplicationUser{
-                    Id = 1,
-                    DisplayName = "user1",
-                    Email = "user1@localhost"
-                },
-                new ApplicationUser{
-                    Id = 2,
-                    DisplayName = "user2",
-                    Email = "user2@localhost"
-                },
-            });
-
-            context.SaveChanges();
+            */
         }
     }
 }

@@ -15,16 +15,25 @@
 using Formulator.WebUI.Components;
 using Formulator.Application;
 using Formulator.Infrastructure;
+using Formulator.Infrastructure.Data;
+using Formulator.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddApplicationLayer();
-builder.Services.AddInfrastructureLayer(builder.Configuration);
 
+builder.Services.AddInfrastructureLayer(builder.Configuration);
+builder.Services.AddApplicationLayer(builder.Configuration);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthentication().AddIdentityCookies();
+
+builder.Services.AddDefaultIdentity<ApplicationUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -43,5 +52,8 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

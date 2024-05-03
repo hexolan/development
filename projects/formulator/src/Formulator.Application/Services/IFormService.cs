@@ -14,14 +14,14 @@
 
 using Formulator.Core.Entities;
 
-namespace Formulator.Core.Interfaces
+namespace Formulator.Application.Services
 {
     public interface IFormService
     {
         Form AddForm(Form form);
 
         Form GetForm(int id);
-        IEnumerable<Form> GetUserForms(ApplicationUser user);
+        IEnumerable<Form> GetUserForms(User user);
 
         Form UpdateForm(Form form);
         Form DeleteForm(int id);

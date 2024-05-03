@@ -1,5 +1,7 @@
 {
 	"scripts": {
+		"css-dev": "tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --watch",
+		"css-build": "tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --minify",
 		"dev": "concurrently --kill-others \"tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --watch\" \"dotnet run\"",
 		"build": "tailwindcss -i ./Styles/app.css -o ./wwwroot/app.css --minify & dotnet build"
 	},

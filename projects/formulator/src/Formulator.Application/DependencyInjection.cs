@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Formulator.Core.Interfaces;
 using Formulator.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace Formulator.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+        public static IServiceCollection AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IFormService, FormService>();
 

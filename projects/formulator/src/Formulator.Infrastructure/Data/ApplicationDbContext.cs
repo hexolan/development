@@ -13,24 +13,19 @@
 // limitations under the License.
 
 using Formulator.Core.Entities;
+using Formulator.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Formulator.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext 
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-
-        }
-
         public DbSet<Form> Forms { get; set; }
         public DbSet<FormQuestion> FormQuestions { get; set; }
 
         public DbSet<FormSubmission> FormSubmissions { get; set; }
         public DbSet<FormSubmissionResponse> FormSubmissionResponses { get; set; }
-
-        public DbSet<ApplicationUser> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

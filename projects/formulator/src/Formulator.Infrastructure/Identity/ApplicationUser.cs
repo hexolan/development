@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Formulator.Core.Entities
+using Microsoft.AspNetCore.Identity;
+
+namespace Formulator.Infrastructure.Identity
 {
-    public class ApplicationUser : Entity
+    public class ApplicationUser : IdentityUser
     {
-        public int Id { get; set; }
-
-        public required string DisplayName { get; set; }
-
-        public required string Email { get; set; }
     }
 }

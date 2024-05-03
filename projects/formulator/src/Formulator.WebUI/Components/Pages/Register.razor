@@ -22,7 +22,7 @@
         <div class="text-center lg:text-left lg:ml-5">
             <h1 class="text-4xl font-bold">Register for Formulator</h1>
             <p class="py-6">
-                Already have an account?
+                <span class="font-medium">Already have an account?</span>
                 <br />
                 <a class="link link-hover" href="/login">Login instead.</a>
             </p>
@@ -31,18 +31,29 @@
             <form class="card-body">
                 <div class="form-control">
                     <label class="label">
+                        <span class="label-text">Display Name</span>
+                    </label>
+                    <input type="text" placeholder="name" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
                         <span class="label-text">Email</span>
                     </label>
                     <input type="email" placeholder="email" class="input input-bordered" required />
                 </div>
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Password</span>
-                    </label>
-                    <input type="password" placeholder="password" class="input input-bordered" required />
-                    <label class="label">
-                        <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
-                    </label>
+                <div class="columns-2">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Password</span>
+                        </label>
+                        <input type="password" placeholder="password" class="input input-bordered" required />
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Confirm Password</span>
+                        </label>
+                        <input type="password" placeholder="confirm password" class="input input-bordered" required />
+                    </div>
                 </div>
                 <div class="form-control mt-6">
                     <button class="btn btn-secondary">Register</button>
