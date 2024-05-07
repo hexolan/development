@@ -9,11 +9,15 @@ TODO: implement
 ## 🧰 Technologies
 
 * C#
-* [ASP.NET Core 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-* [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
+* [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [ASP.NET Core Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
 
-* [Tailwind CSS](https://tailwindcss.com/) with [Daisy UI](https://daisyui.com/)
+* Entity Framework Core
+* ASP.NET Core Identity
 * Microsoft SQL Server 2022
+
+* [Tailwind CSS](https://tailwindcss.com/)
+* [Daisy UI](https://daisyui.com/)
 
 ## 💻 Usage
 

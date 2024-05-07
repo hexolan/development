@@ -31,6 +31,7 @@ namespace Formulator.Infrastructure.Data
         {
             modelBuilder.Entity<FormSubmissionResponse>()
                 .HasKey(m => new { m.SubmissionId, m.QuestionId });
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

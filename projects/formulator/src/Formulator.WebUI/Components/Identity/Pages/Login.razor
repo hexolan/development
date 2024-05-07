@@ -1,0 +1,114 @@
+﻿@page "/account/login"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject ILogger<Login> Logger
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Formulator | Login</PageTitle>
+
+<div class="hero min-h-screen bg-base-200">
+    <div class="hero-content flex-col lg:flex-row">
+        <StatusMessage Message="@errorMessage" />
+
+        <div class="text-center lg:text-left">
+            <h1 class="text-4xl font-bold">Login to Formulator</h1>
+            <p class="py-6">
+                <span class="font-medium">Don't have an account?</span>
+                <br />
+                <a class="link link-hover" href="/account/register">Register instead.</a>
+            </p>
+        </div>
+
+        <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+            <EditForm class="card-body" Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-red-500" role="alert" />
+
+                <div class="form-control">
+                    <label class="label label-text">Email</label>
+                    <InputText type="email" @bind-Value="Input.Email" class="input input-bordered" placeholder="email" aria-required="true" />
+                    <ValidationMessage For="() => Input.Email" class="text-red-500" />
+                </div>
+
+                <div class="form-control">
+                    <label class="label label-text">Password</label>
+                    <InputText type="password" @bind-Value="Input.Password" class="input input-bordered" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <ValidationMessage For="() => Input.Password" class="text-red-500" />
+                </div>
+
+                <label class="label">
+                    <a href="/account/forgotpassword" class="label-text-alt link link-hover">Forgot password?</a>
+                </label>
+
+                <div class="form-control mt-2">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? errorMessage;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        {
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
+    }
+
+    public async Task LoginUser()
+    {
+        // This doesn't count login failures towards account lockout
+        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, isPersistent: true, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+            Logger.LogInformation("User logged in.");
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+        else if (result.RequiresTwoFactor)
+        {
+            RedirectManager.RedirectTo(
+                "account/twofactor",
+                new() { ["returnUrl"] = ReturnUrl });
+        }
+        else if (result.IsLockedOut)
+        {
+            Logger.LogWarning("User account locked out.");
+            RedirectManager.RedirectTo("account/locked");
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+    }
+}
