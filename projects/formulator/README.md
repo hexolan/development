@@ -1,10 +1,6 @@
 # Formulator
 
-A full-stack form creator and survey management tool built with C#, .NET 8 and Blazor.
-
-## 📝 Features
-
-TODO: implement
+A form creator/survey management tool built with C#, .NET 8 and Blazor.
 
 ## 🧰 Technologies
 
@@ -51,4 +47,4 @@ Contributions are welcome! Please feel free to open a pull request or an issue t
 
 ## 📜 License
 
-This application is licensed under the [Apache License v2.0](/LICENSE).
+This application is licensed under the [MIT License](/LICENSE).

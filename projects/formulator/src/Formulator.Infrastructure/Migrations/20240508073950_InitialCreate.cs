@@ -30,6 +30,7 @@ namespace Formulator.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -51,17 +52,19 @@ namespace Formulator.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Forms",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequiresAuth = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Forms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,28 +174,6 @@ namespace Formulator.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Forms",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RequiresAuth = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Forms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Forms_User_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "FormQuestions",
                 columns: table => new
                 {
@@ -232,11 +213,6 @@ namespace Formulator.Infrastructure.Migrations
                         principalTable: "Forms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_FormSubmissions_User_SubmittorId",
-                        column: x => x.SubmittorId,
-                        principalTable: "User",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -309,11 +285,6 @@ namespace Formulator.Infrastructure.Migrations
                 column: "FormId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Forms_CreatorId",
-                table: "Forms",
-                column: "CreatorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_FormSubmissionResponses_QuestionId",
                 table: "FormSubmissionResponses",
                 column: "QuestionId");
@@ -322,11 +293,6 @@ namespace Formulator.Infrastructure.Migrations
                 name: "IX_FormSubmissions_FormId",
                 table: "FormSubmissions",
                 column: "FormId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FormSubmissions_SubmittorId",
-                table: "FormSubmissions",
-                column: "SubmittorId");
         }
 
         /// <inheritdoc />
@@ -364,9 +330,6 @@ namespace Formulator.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Forms");
-
-            migrationBuilder.DropTable(
-                name: "User");
         }
     }
 }

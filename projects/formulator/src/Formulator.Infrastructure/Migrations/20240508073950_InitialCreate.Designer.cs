@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Formulator.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240506232917_InitialCreate")]
+    [Migration("20240508073950_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,8 +47,6 @@ namespace Formulator.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
 
                     b.ToTable("Forms");
                 });
@@ -99,8 +97,6 @@ namespace Formulator.Infrastructure.Migrations
 
                     b.HasIndex("FormId");
 
-                    b.HasIndex("SubmittorId");
-
                     b.ToTable("FormSubmissions");
                 });
 
@@ -123,27 +119,6 @@ namespace Formulator.Infrastructure.Migrations
                     b.ToTable("FormSubmissionResponses");
                 });
 
-            modelBuilder.Entity("Formulator.Core.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("Formulator.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -154,6 +129,9 @@ namespace Formulator.Infrastructure.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -342,17 +320,6 @@ namespace Formulator.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Formulator.Core.Entities.Form", b =>
-                {
-                    b.HasOne("Formulator.Core.Entities.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("Formulator.Core.Entities.FormQuestion", b =>
                 {
                     b.HasOne("Formulator.Core.Entities.Form", "Form")
@@ -372,13 +339,7 @@ namespace Formulator.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Formulator.Core.Entities.User", "Submittor")
-                        .WithMany()
-                        .HasForeignKey("SubmittorId");
-
                     b.Navigation("Form");
-
-                    b.Navigation("Submittor");
                 });
 
             modelBuilder.Entity("Formulator.Core.Entities.FormSubmissionResponse", b =>

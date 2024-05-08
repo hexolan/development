@@ -1,19 +1,7 @@
-﻿// Copyright 2024 Declan Teevan
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+﻿using Formulator.Application.Interfaces;
 using Formulator.Core.Entities;
 using Formulator.Infrastructure.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace Formulator.Application.Services
 {
@@ -26,46 +14,38 @@ namespace Formulator.Application.Services
             _context = context;
         }
 
-        public Form AddForm(Form form)
+        public Form CreateForm(Form form)
         {
-            // todo
+            _context.Add(form);
+            _context.SaveChanges();
+
             return form;
         }
 
         public Form GetForm(int id)
         {
-            // todo
-            return new Form
-            {
-                Title = "from service 123567"
-            };
+            var form = _context.Forms.Find(id);
+            ArgumentNullException.ThrowIfNull(form);
+            return form;
         }
         public IEnumerable<Form> GetUserForms(User user)
         {
-            // todo
-
-            var forms = new Form[]
-            {
-                new() {
-                    Title = "test"
-                }
-            };
+            var forms = _context.Forms.Where(f => f.CreatorId == user.Id).ToList();
             return forms;
         }
 
-        public Form UpdateForm(Form form)
+        public void UpdateForm(Form form)
         {
-            // todo
-            return form;
+            var formEntity = _context.Forms.Find(form.Id);
+            ArgumentNullException.ThrowIfNull(formEntity);
+            _context.Entry(formEntity).CurrentValues.SetValues(form);
         }
 
-        public Form DeleteForm(int id)
+        public void DeleteForm(int id)
         {
-            // todo
-            return new Form
-            {
-                Title = "test"
-            };
+            var formEntity = _context.Forms.Find(id);
+            ArgumentNullException.ThrowIfNull(formEntity);
+            _context.Remove(formEntity);
         }
     }
 }
